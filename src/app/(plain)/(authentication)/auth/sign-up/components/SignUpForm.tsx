@@ -1,4 +1,3 @@
-
 import PasswordFormInput from '@/components/form/PasswordFormInput'
 import TextFormInput from '@/components/form/TextFormInput'
 import PasswordStrengthMeter from '@/components/PasswordStrengthMeter'
@@ -9,10 +8,11 @@ import { useEffect, useState } from 'react'
 import { Button, FormCheck } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
+import useSignUp from './useSignUp'
 
 const SignUpForm = () => {
   const [firstPassword, setFirstPassword] = useState<string>('')
-
+  const {signUp,redirectUser} = useSignUp();
   const signUpSchema = yup.object({
     email: yup.string().email('Please enter a valid email').required('please enter your email'),
     password: yup.string().required('Please enter your password'),
@@ -26,7 +26,7 @@ const SignUpForm = () => {
     setFirstPassword(getValues().password)
   }, [watch('password')])
   return (
-    <form className="mt-4" onSubmit={handleSubmit(() => {})}>
+    <form className="mt-4" onSubmit={signUp}>
       <div className="mb-3">
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
         <small>We&apos;ll never share your email with anyone else.</small>
