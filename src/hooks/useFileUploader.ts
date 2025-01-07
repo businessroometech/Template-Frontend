@@ -3,30 +3,45 @@ import { useState } from 'react'
 type FileType = File & {
   preview?: string
   formattedSize?: string
+  base64?: string // Added base64 property
 }
 
 export default function useFileUploader(showPreview: boolean = true) {
   const [selectedFiles, setSelectedFiles] = useState<FileType[]>([])
 
   /**
-   * Handled the accepted files and shows the preview
+   * Handles the accepted files and shows the preview
    */
   const handleAcceptedFiles = (files: FileType[], callback?: (files: FileType[]) => void) => {
     let allFiles: FileType[] = []
 
     if (showPreview) {
-      files.map((file) =>
-        Object.assign(file, {
-          preview: file['type'].split('/')[0] === 'image' ? URL.createObjectURL(file) : null,
-          formattedSize: formatBytes(file.size),
-        }),
-      )
+      files.map((file) => {
+        // Read file as base64
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          // Add base64 data and other properties
+          const base64String = reader.result as string
+          const fileWithDetails: FileType = {
+            ...file,
+            preview: file['type'].split('/')[0] === 'image' ? URL.createObjectURL(file) : null,
+            formattedSize: formatBytes(file.size),
+            base64: base64String, // Store the base64 string here
+          }
 
+          // Add the file with base64 to the allFiles array
+          allFiles = [...selectedFiles, fileWithDetails]
+          setSelectedFiles(allFiles)
+
+          if (callback) callback(allFiles)
+        }
+
+        reader.readAsDataURL(file) // Read file as base64
+      })
+    } else {
       allFiles = [...selectedFiles, ...files]
       setSelectedFiles(allFiles)
     }
-
-    if (callback) callback(allFiles)
   }
 
   /**

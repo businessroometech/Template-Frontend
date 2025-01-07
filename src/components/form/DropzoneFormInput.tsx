@@ -1,26 +1,35 @@
-import useFileUploader from '@/hooks/useFileUploader'
-import { type ReactNode } from 'react'
+import { useState } from 'react'
 import { Card, Col, FormLabel, FormText } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
-import { type IconBaseProps, type IconType } from 'react-icons'
 import { BsUpload } from 'react-icons/bs'
 import { FaTimes } from 'react-icons/fa'
 
 type FileType = File & {
   preview?: string
   formattedSize?: string
+  base64?: string // Base64 string for the file content
 }
 
 type DropzoneFormInputProps = {
   label?: string
   labelClassName?: string
-  helpText?: ReactNode | string
+  helpText?: string
   showPreview?: boolean
-  icon?: IconType
-  iconProps?: IconBaseProps
+  icon?: React.ComponentType<any>
+  iconProps?: React.ComponentProps<any>
   text?: string
   textClassName?: string
-  onFileUpload?: (files: FileType[]) => void
+  onFileUpload?: (files: FileUpload[]) => void // Updated callback to return FileUpload type
+}
+
+interface FileUpload {
+  key: string
+  fileType: string
+  fileObject: string // Base64 encoded file content
+  documentType: string
+  documentName: string
+  documentDescription: string
+  fileSize: number
 }
 
 const DropzoneFormInput = ({
@@ -34,14 +43,55 @@ const DropzoneFormInput = ({
   textClassName,
   onFileUpload,
 }: DropzoneFormInputProps) => {
-  const { selectedFiles, handleAcceptedFiles, removeFile } = useFileUploader(showPreview)
+  const [selectedFiles, setSelectedFiles] = useState<FileType[]>([])
+
+  const handleAcceptedFiles = async (files: File[]) => {
+    let allFiles: FileUpload[] = []
+
+    for (let file of files) {
+      // Read file as base64
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64String = reader.result as string
+
+        const fileUploadData: FileUpload = {
+          key: file.name,
+          fileType: file.type,
+          fileObject: base64String, // Base64 content of the file
+          documentType: 'image', // Set appropriate document type
+          documentName: file.name,
+          documentDescription: 'Uploaded image file',
+          fileSize: file.size,
+        }
+
+        // Add preview URL for images
+        if (file.type.startsWith('image/')) {
+          file.preview = URL.createObjectURL(file) // Create an object URL for image preview
+        }
+
+        allFiles.push(fileUploadData)
+        setSelectedFiles((prevFiles) => [...prevFiles, file])
+
+        if (onFileUpload) onFileUpload(allFiles) // Pass the formatted files to parent component
+      }
+
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeFile = (file: FileType) => {
+    const newFiles = [...selectedFiles]
+    newFiles.splice(newFiles.indexOf(file), 1)
+    setSelectedFiles(newFiles)
+  }
 
   const Icon = icon ?? BsUpload
+
   return (
     <>
       <FormLabel className={labelClassName}>{label}</FormLabel>
 
-      <Dropzone onDrop={(acceptedFiles) => handleAcceptedFiles(acceptedFiles, onFileUpload)} maxFiles={5}>
+      <Dropzone onDrop={(acceptedFiles) => handleAcceptedFiles(acceptedFiles)} maxFiles={5}>
         {({ getRootProps, getInputProps }) => (
           <div className="dropzone dropzone-custom cursor-pointer">
             <div className="dz-message" {...getRootProps()}>
@@ -51,7 +101,7 @@ const DropzoneFormInput = ({
             </div>
             {showPreview && selectedFiles.length > 0 && (
               <div className="dz-preview row g-4">
-                {(selectedFiles || []).map((file, idx) => (
+                {selectedFiles.map((file, idx) => (
                   <Col md={4} sm={6} key={`file-${idx}-${file.name}`}>
                     <Card className="p-2 mb-0 shadow-none border position-relative h-100">
                       {file.preview ? (
@@ -81,7 +131,7 @@ const DropzoneFormInput = ({
         )}
       </Dropzone>
 
-      {helpText && typeof helpText === 'string' ? <FormText>{helpText}</FormText> : helpText}
+      {helpText && <FormText>{helpText}</FormText>}
     </>
   )
 }

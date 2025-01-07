@@ -1,6 +1,6 @@
 import { getAllFeeds } from '@/helpers/data'
 
-import type { ReactNode } from 'react'
+import { useContext, useEffect, useState, type ReactNode } from 'react'
 import {
   Button,
   Card,
@@ -45,6 +45,23 @@ import { Link } from 'react-router-dom'
 import LoadMoreButton from './LoadMoreButton'
 import SuggestedStories from './SuggestedStories'
 import { useFetchData } from '@/hooks/useFetchData'
+import { GET_ALL_POST, GetAllPost } from '@/utils/api'
+import { useAuthContext } from '@/context/useAuthContext'
+import httpClient from '@/helpers/httpClient'
+import axios from 'axios'
+import makeApiRequest from '@/utils/apiServer'
+
+// ----------------- data type --------------------
+interface Post {
+  id: string
+  title: string
+  content: string
+}
+
+interface GetAllPostsResponse {
+  data: Post[]
+}
+// --------------------------------------------------
 
 const ActionMenu = ({ name }: { name?: string }) => {
   return (
@@ -56,28 +73,24 @@ const ActionMenu = ({ name }: { name?: string }) => {
       <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardFeedAction">
         <li>
           <DropdownItem>
-            
             <BsBookmark size={22} className="fa-fw pe-2" />
             Save post
           </DropdownItem>
         </li>
         <li>
           <DropdownItem>
-            
             <BsPersonX size={22} className="fa-fw pe-2" />
             Unfollow {name}
           </DropdownItem>
         </li>
         <li>
           <DropdownItem>
-            
             <BsXCircle size={22} className="fa-fw pe-2" />
             Hide post
           </DropdownItem>
         </li>
         <li>
           <DropdownItem>
-            
             <BsSlashCircle size={22} className="fa-fw pe-2" />
             Block
           </DropdownItem>
@@ -87,7 +100,6 @@ const ActionMenu = ({ name }: { name?: string }) => {
         </li>
         <li>
           <DropdownItem>
-            
             <BsFlag size={22} className="fa-fw pe-2" />
             Report post
           </DropdownItem>
@@ -105,7 +117,6 @@ const SponsoredCard = () => {
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               <span role="button">
-                
                 <img className="avatar-img rounded-circle" src={logo12} alt="image" />
               </span>
             </div>
@@ -138,7 +149,6 @@ const SponsoredCard = () => {
       <CardFooter className="border-0 d-flex justify-content-between align-items-center">
         <p className="mb-0">Currently v5.1.3 </p>
         <Button variant="primary-soft" size="sm">
-          
           Download now
         </Button>
       </CardFooter>
@@ -154,14 +164,12 @@ const Post2 = () => {
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               <span role="button">
-                
                 <img className="avatar-img rounded-circle" src={logo13} alt="logo" />
               </span>
             </div>
 
             <div>
               <h6 className="card-title mb-0">
-                
                 <Link to=""> Apple Education </Link>
               </h6>
               <p className="mb-0 small">9 November at 23:29</p>
@@ -187,7 +195,6 @@ const Post2 = () => {
           </li>
           <li className="nav-item ms-sm-auto">
             <Link className="nav-link" to="">
-              
               <BsChatFill size={18} className="pe-1" />
               Comments (12)
             </Link>
@@ -199,7 +206,6 @@ const Post2 = () => {
         <ul className="nav nav-fill nav-stack small">
           <li className="nav-item">
             <Link className="nav-link mb-0 active" to="">
-              
               <BsHeart className="pe-1" size={18} />
               Liked (56)
             </Link>
@@ -214,28 +220,24 @@ const Post2 = () => {
             <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction6">
               <li>
                 <DropdownItem>
-                  
                   <BsEnvelope size={22} className="fa-fw pe-2" />
                   Send via Direct Message
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsBookmarkCheck size={22} className="fa-fw pe-2" />
                   Bookmark
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsLink size={22} className="fa-fw pe-2" />
                   Copy link to post
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsShare size={22} className="fa-fw pe-2" />
                   Share post via …
                 </DropdownItem>
@@ -245,7 +247,6 @@ const Post2 = () => {
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsPencilSquare size={22} className="fa-fw pe-2" />
                   Share to News Feed
                 </DropdownItem>
@@ -255,7 +256,6 @@ const Post2 = () => {
 
           <li className="nav-item">
             <Link className="nav-link mb-0" to="">
-              
               <BsSendFill className="pe-1" size={18} />
               Send
             </Link>
@@ -274,14 +274,12 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               <span role="button">
-                
                 <img className="avatar-img rounded-circle" src={avatar4} alt="image-4" />
               </span>
             </div>
 
             <div>
               <h6 className="card-title mb-0">
-                
                 <Link to=""> All in the Mind </Link>
               </h6>
               <p className="mb-0 small">9 November at 23:29</p>
@@ -320,7 +318,6 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
           </li>
           <li className="nav-item ms-sm-auto">
             <Link className="nav-link" to="">
-              
               <BsChatFill size={18} className="pe-1" />
               Comments (12)
             </Link>
@@ -332,7 +329,6 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
         <ul className="nav nav-fill nav-stack small">
           <li className="nav-item">
             <Link className="nav-link mb-0 active" to="">
-              
               <BsHeart className="pe-1" size={18} />
               Liked (56)
             </Link>
@@ -347,28 +343,24 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
             <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction6">
               <li>
                 <DropdownItem>
-                  
                   <BsEnvelope size={22} className="fa-fw pe-2" />
                   Send via Direct Message
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsBookmarkCheck size={22} className="fa-fw pe-2" />
                   Bookmark
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsLink size={22} className="fa-fw pe-2" />
                   Copy link to post
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsShare size={22} className="fa-fw pe-2" />
                   Share post via …
                 </DropdownItem>
@@ -378,7 +370,6 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsPencilSquare size={22} className="fa-fw pe-2" />
                   Share to News Feed
                 </DropdownItem>
@@ -388,7 +379,6 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
 
           <li className="nav-item">
             <Link className="nav-link mb-0" to="">
-              
               <BsSendFill className="pe-1" size={18} />
               Send
             </Link>
@@ -407,13 +397,11 @@ const Post3 = () => {
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               <span role="button">
-                
                 <img className="avatar-img rounded-circle" src={logo11} alt="logo" />
               </span>
             </div>
             <div>
               <h6 className="card-title mb-0">
-                
                 <Link to=""> Webestica </Link>
               </h6>
               <p className="small mb-0">9 December at 10:00 </p>
@@ -431,7 +419,6 @@ const Post3 = () => {
       </CardBody>
 
       <span role="button">
-        
         <img src={postImg4} alt="post-image" />
       </span>
 
@@ -447,14 +434,12 @@ const Post3 = () => {
         <ul className="nav nav-fill nav-stack small">
           <li className="nav-item">
             <Link className="nav-link mb-0 active" to="">
-              
               <BsHeart size={18} className="pe-1" />
               Liked (56)
             </Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link mb-0" to="">
-              
               <BsChatFill size={18} className="pe-1" />
               Comments (12)
             </Link>
@@ -469,28 +454,24 @@ const Post3 = () => {
             <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction6">
               <li>
                 <DropdownItem>
-                  
                   <BsEnvelope size={22} className="fa-fw pe-2" />
                   Send via Direct Message
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsBookmarkCheck size={22} className="fa-fw pe-2" />
                   Bookmark
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsLink size={22} className="fa-fw pe-2" />
                   Copy link to post
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsShare size={22} className="fa-fw pe-2" />
                   Share post via …
                 </DropdownItem>
@@ -500,7 +481,6 @@ const Post3 = () => {
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsPencilSquare size={22} className="fa-fw pe-2" />
                   Share to News Feed
                 </DropdownItem>
@@ -510,7 +490,6 @@ const Post3 = () => {
 
           <li className="nav-item">
             <Link className="nav-link mb-0" to="">
-              
               <BsSendFill size={18} className="pe-1" />
               Send
             </Link>
@@ -521,52 +500,71 @@ const Post3 = () => {
   )
 }
 
-const Feeds =  () => {
+// poll
+const Feeds = () => {
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState<boolean>(false) // Loading state
+  const [error, setError] = useState<string | null>(null) // Error state
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+  
+    try {
+      const data = await makeApiRequest<{ data: any[] }>({
+        method: 'POST',
+        url: 'post/get-all-post',
+        data: { userId: '018faa07809d523c34ac1186d761459d' },
+      });
+  
+      console.log('Fetched Posts:', data);
+      setPosts(data.data || []);
+    } catch (error: any) {
+      console.error('Error fetching posts:', error.message);
+      setError(error.message || 'An unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  
+
   const postData = [
     { progress: 25, title: 'We have cybersecurity insurance coverage' },
     { progress: 15, title: 'Our dedicated staff will protect us' },
     { progress: 10, title: 'We give regular training for best practices' },
     { progress: 55, title: 'Third-party vendor protection' },
   ]
-  const allPosts = useFetchData(getAllFeeds)
+
+  // Conditional rendering
+  if (loading) {
+    return <div>Loading posts...</div> // Show a loading spinner or message
+  }
+
+  if (error) {
+    return <div>Error: {error}</div> // Show an error message
+  }
+
   return (
     <>
-      {allPosts?.map((post, idx) => (
-        <PostCard {...post} key={idx} />
-      ))}
+      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} />) : <p>No posts found.</p>}</div>
 
       <SponsoredCard />
       <Post2 />
       <People />
       <CommonPost>
         <div className="vstack gap-2">
-          <div>
-            <input type="radio" className="btn-check" name="poll" id="option" />
-            <label className="btn btn-outline-primary w-100" htmlFor="option">
-              We have cybersecurity insurance coverage
-            </label>
-          </div>
-
-          <div>
-            <input type="radio" className="btn-check" name="poll" id="option2" />
-            <label className="btn btn-outline-primary w-100" htmlFor="option2">
-              Our dedicated staff will protect us
-            </label>
-          </div>
-
-          <div>
-            <input type="radio" className="btn-check" name="poll" id="option3" />
-            <label className="btn btn-outline-primary w-100" htmlFor="option3">
-              We give regular training for best practices
-            </label>
-          </div>
-
-          <div>
-            <input type="radio" className="btn-check" name="poll" id="option4" />
-            <label className="btn btn-outline-primary w-100" htmlFor="option4">
-              Third-party vendor protection
-            </label>
-          </div>
+          {postData.map((item, idx) => (
+            <div key={idx}>
+              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
+              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
+                {item.title}
+              </label>
+            </div>
+          ))}
         </div>
       </CommonPost>
 
@@ -585,10 +583,10 @@ const Feeds =  () => {
                       className="progress-bar bg-primary bg-opacity-25"
                       role="progressbar"
                       style={{ width: `${item.progress}%` }}
-                      aria-valuenow={25}
+                      aria-valuenow={item.progress}
                       aria-valuemin={0}
                       aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.title} </span>
+                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.title}</span>
                   </div>
                 </div>
                 <div className="flex-shrink-0">{item.progress}%</div>
@@ -599,9 +597,7 @@ const Feeds =  () => {
       </CommonPost>
 
       <Post3 />
-
       <SuggestedStories />
-
       <LoadMoreButton />
     </>
   )

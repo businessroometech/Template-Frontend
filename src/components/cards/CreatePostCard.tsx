@@ -1,5 +1,3 @@
-
-
 import {
   Button,
   Card,
@@ -37,11 +35,10 @@ import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import useToggle from '@/hooks/useToggle'
-import DropzoneFormInput from '../form/DropzoneFormInput'
+import DropzoneFormInput, { FileType } from '../form/DropzoneFormInput'
 import TextFormInput from '../form/TextFormInput'
 import TextAreaFormInput from '../form/TextAreaFormInput'
 import DateFormInput from '../form/DateFormInput'
-
 import avatar1 from '@/assets/images/avatar/01.jpg'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
@@ -51,13 +48,21 @@ import avatar6 from '@/assets/images/avatar/06.jpg'
 import avatar7 from '@/assets/images/avatar/07.jpg'
 import ChoicesFormInput from '../form/ChoicesFormInput'
 import { Link } from 'react-router-dom'
+import { SendHorizontal } from 'lucide-react'
+import { useState } from 'react'
+import makeApiRequest from '@/utils/apiServer'
+import { CREATE_POST } from '@/utils/api'
+
+interface ApiResponse<T> {
+  status: number
+  data: T
+}
 
 const CreatePostCard = () => {
   const guests = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7]
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
-  const { isTrue: isOpenPost, toggle: togglePost } = useToggle()
 
   const eventFormSchema = yup.object({
     title: yup.string().required('Please enter event title'),
@@ -70,50 +75,105 @@ const CreatePostCard = () => {
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(eventFormSchema),
   })
+
+  const [thoughts, setThoughts] = useState('') // State to capture text input
+
+  const handlePostClick = async (values: string) => {
+    try {
+      // Regular expression to match hashtags
+      const hashtagRegex = /#\w+/g
+
+      const hashtags = thoughts.match(hashtagRegex) || []
+
+      // console.log('Hashtags:', hashtags)
+
+      // Making the API request
+      const response = await makeApiRequest<ApiResponse<{ url: string }>>({
+        method: 'POST',
+        url: CREATE_POST,
+        data: {
+          userId: '018faa07809d523c34ac1186d761459d',
+          content: thoughts,
+          hashtags: hashtags,
+        },
+      })
+      // console.log('API response before 201 :', response)
+
+      if (response.data) {
+        // console.log('API response into the 201:', response.data)
+        setThoughts('')
+      }
+    } catch (err) {
+      console.log('Error in the posting', err)
+    }
+  }
+
+  const [uploadedFiles, setUploadedFiles] = useState<FileType[]>([])
+
+  // This function will be triggered when files are uploaded
+  const handleFileUpload = (files: FileType[]) => {
+    setUploadedFiles(files)
+  }
+
+
+  console.log("---- photo uploading -----", uploadedFiles);
+  
+
   return (
     <>
       <Card className="card-body">
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
             <span role="button">
-              
               <img className="avatar-img rounded-circle" src={avatar3} alt="avatar3" />
             </span>
           </div>
 
-          <form className="w-100">
-            <textarea className="form-control pe-4 border-0" rows={2} data-autoresize placeholder="Share your thoughts..." defaultValue={''} />
+          <form
+            className="w-100"
+            onSubmit={handleSubmit((values) => {
+              console.log('---- create event ----', values)
+              // console.log('Post button clicked')
+            })}>
+            <textarea
+              className="form-control pe-4 border-0"
+              rows={2}
+              data-autoresize
+              placeholder="Share your thoughts..."
+              value={thoughts}
+              onChange={(e) => setThoughts(e.target.value)} // Update state with input value
+            />
           </form>
         </div>
 
         <ul className="nav nav-pills nav-stack small fw-normal">
           <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={togglePhotoModel}>
-              
               <BsImageFill size={20} className="text-success pe-2" />
               Photo
             </a>
           </li>
           <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={toggleVideoModel}>
-              
               <BsCameraReelsFill size={20} className="text-info pe-2" />
               Video
             </a>
           </li>
           <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={toggleEvent}>
-              
               <BsCalendar2EventFill size={20} className="text-danger pe-2" />
               Event
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={togglePost}>
-              
-              <BsEmojiSmileFill size={20} className="text-warning pe-2" />
-              Feeling /Activity
-            </a>
+            <button
+              type="button"
+              className="nav-link bg-light py-1 px-2 mb-0"
+              onClick={handlePostClick} // Call handlePostClick when clicked
+            >
+              <SendHorizontal size={16} color="#2f09ec" />
+              Post
+            </button>
           </li>
           <Dropdown drop="start" className="nav-item ms-lg-auto">
             <DropdownToggle
@@ -128,14 +188,12 @@ const CreatePostCard = () => {
             <DropdownMenu className="dropdown-menu-end" aria-labelledby="feedActionShare">
               <li>
                 <DropdownItem>
-                  
                   <BsEnvelope size={21} className="fa-fw pe-2" />
                   Create a poll
                 </DropdownItem>
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsBookmarkCheck size={21} className="fa-fw pe-2" />
                   Ask a question
                 </DropdownItem>
@@ -145,7 +203,6 @@ const CreatePostCard = () => {
               </li>
               <li>
                 <DropdownItem>
-                  
                   <BsPencilSquare size={21} className="fa-fw pe-2" />
                   Help
                 </DropdownItem>
@@ -181,7 +238,7 @@ const CreatePostCard = () => {
           </div>
           <div>
             <label className="form-label">Upload attachment</label>
-            <DropzoneFormInput icon={BsImages} showPreview text="Drag here or click to upload photo." />
+            <DropzoneFormInput icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
           </div>
         </ModalBody>
         <ModalFooter>
@@ -218,7 +275,7 @@ const CreatePostCard = () => {
           <Button variant="danger-soft" type="button" className="me-2">
             <BsCameraVideoFill className="pe-1" /> Live video
           </Button>
-          <Button variant="soft-success" type="button">
+          <Button variant="soft-success" type="button" className="p-relative">
             Post
           </Button>
         </ModalFooter>
@@ -234,7 +291,11 @@ const CreatePostCard = () => {
         tabIndex={-1}
         aria-labelledby="modalLabelCreateEvents"
         aria-hidden="true">
-        <form onSubmit={handleSubmit(() => {})}>
+        <form
+          onSubmit={handleSubmit((values) => {
+            console.log('---- create event ----', values)
+            console.log('Post button clicked')
+          })}>
           <ModalHeader closeButton>
             <h5 className="modal-title" id="modalLabelCreateEvents">
               Create event
@@ -287,7 +348,6 @@ const CreatePostCard = () => {
           </ModalBody>
           <ModalFooter>
             <Button variant="danger-soft" type="button" className="me-2" onClick={toggleEvent}>
-              
               Cancel
             </Button>
             <Button variant="success-soft" type="submit">
@@ -296,87 +356,8 @@ const CreatePostCard = () => {
           </ModalFooter>
         </form>
       </Modal>
-
-      {/* feeling/activity */}
-      <Modal show={isOpenPost} onHide={togglePost} className="fade" centered id="modalCreateFeed" tabIndex={-1}>
-        <ModalHeader closeButton>
-          <h5 className="modal-title" id="modalLabelCreateFeed">
-            Create post
-          </h5>
-        </ModalHeader>
-        <ModalBody>
-          <div className="d-flex mb-3">
-            <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
-            </div>
-            <form className="w-100">
-              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts..." defaultValue={''} />
-            </form>
-          </div>
-          <div className="hstack gap-2">
-            <OverlayTrigger overlay={<Tooltip>Photo</Tooltip>}>
-              <Link className="icon-md bg-success bg-opacity-10 text-success rounded-circle" to="">
-                
-                <BsImageFill />
-              </Link>
-            </OverlayTrigger>
-            <OverlayTrigger overlay={<Tooltip>Video</Tooltip>}>
-              <Link className="icon-md bg-info bg-opacity-10 text-info rounded-circle" to="">
-                
-                <BsCameraReelsFill />
-              </Link>
-            </OverlayTrigger>
-            <OverlayTrigger overlay={<Tooltip>Events</Tooltip>}>
-              <Link className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle" to="">
-                
-                <BsCalendar2EventFill />
-              </Link>
-            </OverlayTrigger>
-            <OverlayTrigger overlay={<Tooltip>Feeling/Activity</Tooltip>}>
-              <Link className="icon-md bg-warning bg-opacity-10 text-warning rounded-circle" to="">
-                
-                <BsEmojiSmileFill />
-              </Link>
-            </OverlayTrigger>
-            <OverlayTrigger overlay={<Tooltip>Check in</Tooltip>}>
-              <Link className="icon-md bg-light text-secondary rounded-circle" to="">
-                
-                <BsGeoAltFill />
-              </Link>
-            </OverlayTrigger>
-            <OverlayTrigger overlay={<Tooltip>Tag people on top</Tooltip>}>
-              <Link className="icon-md bg-primary bg-opacity-10 text-primary rounded-circle" to="">
-                
-                <BsTagFill />
-              </Link>
-            </OverlayTrigger>
-          </div>
-        </ModalBody>
-        <ModalFooter className="row justify-content-between">
-          <Col lg={3}>
-            <ChoicesFormInput
-              options={{ searchEnabled: false }}
-              className="form-select js-choice choice-select-text-none"
-              data-position="top"
-              data-search-enabled="false">
-              <option value="PB">Public</option>
-              <option value="PV">Friends</option>
-              <option value="PV">Only me</option>
-              <option value="PV">Custom</option>
-            </ChoicesFormInput>
-          </Col>
-          <Col lg={8} className="text-sm-end">
-            <Button variant="danger-soft" type="button" className="me-2">
-              
-              <BsCameraVideoFill className="pe-1" /> Live video
-            </Button>
-            <Button variant="success-soft" type="button">
-              Post
-            </Button>
-          </Col>
-        </ModalFooter>
-      </Modal>
     </>
   )
 }
+
 export default CreatePostCard
