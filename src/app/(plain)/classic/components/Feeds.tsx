@@ -160,9 +160,9 @@ const CommentItem = ({ comment, likesCount, children, socialUser, createdAt, ima
             </div>
           </div>
 
-          <ul className="comment-item-nested list-unstyled">
+          {/* <ul className="comment-item-nested list-unstyled">
             {children?.map((childComment) => <CommentItem key={childComment.id} {...childComment} />)}
-          </ul>
+          </ul> */}
           {children?.length === 2 && <LoadContentButton name="Load more replies" className="mb-3 ms-5" />}
         </>
       )}
@@ -334,7 +334,7 @@ const PostCard = ({ createdAt, likesCount, caption, comments, commentsCount, ima
             </div>
 
             <ul className="comment-wrap list-unstyled">
-              {comments.map((comment) => (
+              {comments.slice(0,1).map((comment) => (
                 <CommentItem {...comment} key={comment.id} />
               ))}
             </ul>
@@ -781,7 +781,7 @@ const Feeds =  () => {
   const allPosts = useFetchData(getAllFeeds)
   return (
     <>
-      {allPosts?.map((post, idx) => (
+      {allPosts?.slice(0,1).map((post, idx) => (
         <PostCard {...post} key={idx} />
       ))}
 
@@ -827,7 +827,7 @@ const Feeds =  () => {
             <span className="small">Results not visible to participants</span>
           </div>
           <div className="vstack gap-4 gap-sm-3 mt-3">
-            {postData.map((item, idx) => (
+            {postData.slice(0,1).map((item, idx) => (
               <div className="d-flex align-items-center justify-content-between" key={idx}>
                 <div className="overflow-hidden w-100 me-3">
                   <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { leftSidebarData } from '../data'
 
 const LeftSidebar = () => {
+
   return (
     <div className="nav-sidenav p-4 bg-mode h-100 custom-scrollbar">
       <ul className="nav nav-link-secondary flex-column fw-bold gap-2">

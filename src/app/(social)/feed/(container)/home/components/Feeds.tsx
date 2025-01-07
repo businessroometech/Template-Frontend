@@ -509,8 +509,9 @@ const Feeds = () => {
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
-  
+    return;
     try {
+      
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'post/get-all-post',
