@@ -772,6 +772,7 @@ const Post3 = () => {
 }
 
 const Feeds =  () => {
+  console.log('--------In Feeds--------')
   const postData = [
     { progress: 25, title: 'We have cybersecurity insurance coverage' },
     { progress: 15, title: 'Our dedicated staff will protect us' },

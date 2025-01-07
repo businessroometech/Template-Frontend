@@ -497,6 +497,7 @@ const Post3 = () => {
 
 // poll
 const Feeds = (isCreated: boolean) => {
+  console.log('-----In Feeds----');
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
@@ -506,13 +507,12 @@ const Feeds = (isCreated: boolean) => {
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
-    return;
     try {
       
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'post/get-all-post',
-        data: { userId: '018faa07809d523c34ac1186d761459d' },
+        data: { userId: '018faa07809d523c34ac1186d761459d', page : 1 },
       })
 
       console.log('Fetched Posts:', data)

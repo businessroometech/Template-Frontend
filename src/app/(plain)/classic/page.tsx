@@ -22,18 +22,7 @@ const ClassicHome = () => {
             <Col md={8} lg={6} xxl={4} className="vstack gap-4">
               <Stories />
               <CreatePostCard />
-             
-              <PostCard item={{
-                "Id": "4cc99455a7cda63ebfd8ad38846b9e5f",
-                "userId": "018faa07809d523c34ac1186d761459d",
-                "title": null,
-                "content": "",
-                "hashtags": [],
-                "mediaKeys": [],
-                "likeCount": 0,
-                "commentCount": 0,
-                "likeStatus": false
-              }}/>
+              <Feeds/>
             </Col>
             <Col md={2} lg={3} xxl={4}>
               <ContactSidebar />

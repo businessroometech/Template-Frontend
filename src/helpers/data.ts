@@ -153,7 +153,6 @@ export const getUserForAllComments = (commentsData: CommentType[]): CommentType[
 }
 
 export const getAllFeeds = async (): Promise<SocialPostType[]> => {
-  return;
   const data = socialPostsData.map((post) => {
     const socialUser = users.find((user) => user.id === post.socialUserId)
     const commentsData = socialCommentsData.filter((comment) => comment.postId === post.id)
