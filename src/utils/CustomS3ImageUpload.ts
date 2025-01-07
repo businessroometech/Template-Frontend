@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify'
 import { Buffer } from 'buffer'
 import makeApiRequest from './apiServer'
+import axios from 'axios'
 
 interface FileUpload {
   key: string
@@ -19,65 +20,82 @@ interface ApiResponse<T> {
 
 // Upload function to handle file uploads to S3
 export const uploadDoc = async (file: FileUpload): Promise<string | null> => {
+  const doc = file[0]
   try {
-    if (!file || typeof file !== 'object') {
+    if (!doc || typeof file !== 'object') {
       throw new Error('Invalid file object')
     }
+
+    // Step 1: Generate upload URL
     const generateUrlResponse = await makeApiRequest<ApiResponse<{ url: string }>>({
       method: 'POST',
-      url: 'generate-s3-url',
+      url: 'auth/generate-upload-url',
       data: {
-        bucketName: 'connect-dev-test',
-        key: file.key,
+        key: doc.key,
         expDate: 15,
-        contentType: file.fileType,
+        contentType: doc.fileType,
       },
-    //   tempToken: accessToken,
     })
 
     const { url } = generateUrlResponse.data
-
-    // Decode base64 string and prepare for upload
+    // Decode base64 string
     if (!file.fileObject) {
       throw new Error('File object is missing.')
     }
     const base64WithoutHeader = file.fileObject.replace(/^data:image\/\w+;base64,/, '')
     const binaryData = Buffer.from(base64WithoutHeader, 'base64')
 
-    // Upload to S3 using makeApiRequest (PUT method)
-    const uploadResponse = await makeApiRequest<ApiResponse<any>>({
-      method: 'PUT',
-      url,
-      data: binaryData,
-      contentType: file.fileType,
+    // Upload to S3
+    const uploadResponse = await axios.put(url, binaryData, {
+      headers: {
+        'Content-Type': file.fileType, // e.g., 'image/jpeg'
+      },
     })
 
     if (uploadResponse.status === 200) {
-      // Save file metadata using makeApiRequest
-      const uploadDocDetails = await makeApiRequest<ApiResponse<{ document: { id: string } }>>({
+      // Save file metadata
+      const uploadDocDetails = await makeApiRequest({
         method: 'POST',
-        url: 'upload-document',
+        url: '',
         data: {
           bucketName: 'connect-dev-test',
           key: file.key,
-          contentType: file.fileType,
-          documentType: file.documentType,
-          documentName: file.documentName,
-          documentDescription: file.documentDescription,
-          documentSize: file.fileSize,
+          contentType: doc.fileType,
+          documentType: doc.documentType,
+          documentName: doc.documentName,
+          documentDescription: doc.documentDescription,
+          documentSize: doc.fileSize,
         },
-        // tempToken: accessToken,
       })
 
+      // const uploadDocDetails = await api.post(
+      //   ListUploadDocument(),
+      //   {
+      //     bucketName: 'connect-dev-test',
+      //     key: file.key,
+      //     contentType: file.fileType,
+      //     documentType: file.documentType,
+      //     documentName: file.documentName,
+      //     documentDescription: file.documentDescription,
+      //     documentSize: file.fileSize,
+      //   },
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${accessToken}`,
+      //       'Content-Type': 'application/json',
+      //     },
+      //     withCredentials: true,
+      //   },
+      // );
+
       if (uploadDocDetails.status === 201) {
-        const docId = uploadDocDetails.data.document.id
-        toast.success('File uploaded successfully!')
-        return docId
+        const docDetails = uploadDocDetails?.data?.document
+
+        console.log('----doc details -----', docDetails.id)
+        return docDetails.id
       } else {
-        throw new Error('Metadata upload failed')
       }
     } else {
-      throw new Error('File upload failed')
     }
   } catch (error: any) {
     const errorMessage = error.message || 'An unknown error occurred.'

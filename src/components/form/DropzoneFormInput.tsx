@@ -1,14 +1,9 @@
+import { FileType } from '@/hooks/useFileUploader'
 import { useState } from 'react'
 import { Card, Col, FormLabel, FormText } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 import { BsUpload } from 'react-icons/bs'
 import { FaTimes } from 'react-icons/fa'
-
-type FileType = File & {
-  preview?: string
-  formattedSize?: string
-  base64?: string // Base64 string for the file content
-}
 
 type DropzoneFormInputProps = {
   label?: string
