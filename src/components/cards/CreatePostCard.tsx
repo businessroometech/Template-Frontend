@@ -52,6 +52,7 @@ import { SendHorizontal } from 'lucide-react'
 import { useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 import { CREATE_POST } from '@/utils/api'
+import { useAuthContext } from '@/context/useAuthContext'
 
 interface ApiResponse<T> {
   status: number
@@ -63,6 +64,7 @@ const CreatePostCard = () => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
+  const {user} = useAuthContext();
 
   const eventFormSchema = yup.object({
     title: yup.string().required('Please enter event title'),
@@ -92,7 +94,7 @@ const CreatePostCard = () => {
         method: 'POST',
         url: CREATE_POST,
         data: {
-          userId: '018faa07809d523c34ac1186d761459d',
+          userId: user?.id,
           content: thoughts,
           hashtags: hashtags,
         },
