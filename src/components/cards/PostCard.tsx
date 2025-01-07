@@ -6,15 +6,19 @@ import { Card, CardBody, CardFooter, CardHeader, Dropdown, DropdownMenu, Dropdow
 import CommentItem from './components/CommentItem'
 import LoadContentButton from '../LoadContentButton'
 import { CircleUserRound } from 'lucide-react'
+import { useAuthContext } from '@/context/useAuthContext'
 
 const PostCard = ({ item }) => {
-  console.log(item);
-  const [comments, setComments] = useState([])  // State to store comments
-  const [commentText, setCommentText] = useState('')  // State to manage comment input
-  const [isLoading, setIsLoading] = useState(true)  // State to manage loading state
+  console.log('----item-------', item);
+  const [comments, setComments] = useState([]); // State to store comments
+  const [commentText, setCommentText] = useState(''); // State to manage comment input
+  const [isLoading, setIsLoading] = useState(true); // State to manage loading state
+  const { user } = useAuthContext();
+  const [refresh, setRefresh] = useState(0); // Add state for triggering refresh
 
   // Fetch comments from API when the post is available
   useEffect(() => {
+    setIsLoading(true);
     const fetchComments = async () => {
       try {
         const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/get-comments', {
@@ -23,50 +27,87 @@ const PostCard = ({ item }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            "page": 1,
-            "postId": "1d5b61a399792f3239e1824ec46cb70b"
-        }),
-        })
-        
+            page: 1,
+            postId: post.Id,
+          }),
+        });
+
         if (!response.ok) {
-          throw new Error('Failed to fetch comments')
+          throw new Error('Failed to fetch comments');
         }
-        
+
         const data = await response.json();
         console.log(data);
-        setComments(data.data.data)  // Set comments to state
-        // Log the fetched comments
-        setIsLoading(false)  // Set loading to false after data is fetched
+        setComments(data.data.comments); // Set comments to state
+        setIsLoading(false); // Set loading to false after data is fetched
       } catch (error) {
-        console.error('Error fetching comments:', error)
-        setIsLoading(false)  // Set loading to false even if there's an error
+        console.error('Error fetching comments:', error);
+        setIsLoading(false); // Set loading to false even if there's an error
       }
-    }
+    };
 
     if (item?.post?.Id) {
-      fetchComments()  // Call the function to fetch comments
+      fetchComments(); // Call the function to fetch comments
     }
-  }, [])  // Dependency array ensures the effect runs when the post ID changes
+  }, [refresh, item?.post?.Id]); // Add `refresh` as a dependency to trigger re-fetch when it changes
 
-  const userInfo = item?.userDetails
-  const post = item?.post
+  const userInfo = item?.userDetails;
+  const post = item?.post;
 
   const handleCommentChange = (e) => {
-    setCommentText(e.target.value)
-  }
+    setCommentText(e.target.value);
+  };
+
+  const addComment = async () => {
+    const url = 'https://app-backend-8r74.onrender.com/api/v1/post/create-comment';
+
+    // Define the comment data
+    const commentData = {
+      postId: post.Id,
+      userId: user?.id,
+      text: commentText,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Tell the server the body format
+          Authorization: 'Bearer YOUR_ACCESS_TOKEN', // Add your token if needed for authorization
+        },
+        body: JSON.stringify(commentData), // Convert the comment data into JSON format
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Comment added successfully:', responseData);
+
+      // After adding comment, trigger a refresh by incrementing the state
+      setRefresh((prev) => prev + 1);
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    }
+  };
 
   const handleCommentSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    console.log('---------in comment submit-------');
+    console.log(commentText.trim());
     if (commentText.trim()) {
+      console.log('hi');
+      console.log(post);
       // Add your comment submission logic here
-      console.log('Comment Submitted:', commentText)
-      setCommentText('')  // Clear the textarea after submission
+      addComment();
+      setCommentText(''); // Clear the textarea after submission
     }
-  }
+  };
+  console.log('------comments--------', comments);
 
- 
   return (
-    <Card className='mb-10' >
+    <Card className="mb-10">
       <CardHeader className="border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
@@ -137,20 +178,22 @@ const PostCard = ({ item }) => {
         </div>
 
         {/* Display comments */}
-        {isLoading  ? (
-          <p>Loading comments...</p>  // Display loading message while fetching
+        {isLoading ? (
+          <p>Loading comments...</p> // Display loading message while fetching
         ) : (
-          comments && <ul className="comment-wrap list-unstyled">
-          {comments.map((comment, index) => (
-            <CommentItem key={index} commentText={comment.content} />  // Render each comment dynamically
-          ))}
-        </ul>
+          comments && (
+            <ul className="comment-wrap list-unstyled">
+              {comments.map((comment, index) => (
+                <CommentItem key={index} comment={comment} />
+              ))}
+            </ul>
+          )
         )}
       </CardBody>
 
-      <CardFooter className="border-0 pt-0 ">{item?.comments && <LoadContentButton name="Load more comments" />}</CardFooter>
+      {comments && comments.length > 5 && <CardFooter className="border-0 pt-0 ">{item?.comments && <LoadContentButton name="Load more comments" />}</CardFooter>}
     </Card>
-  )
-}
+  );
+};
 
-export default PostCard
+export default PostCard;
