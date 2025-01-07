@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify'
 import makeApiRequest from './apiServer'
+import { useAuthContext } from '@/context/useAuthContext'
 
 interface FileUpload {
   key: string
@@ -25,7 +26,7 @@ function base64ToBlob(base64: string, contentType: string): Blob {
 }
 
 // Upload function to handle file uploads to S3
-export const uploadDoc = async (file: FileUpload): Promise<string | null> => {
+export const uploadDoc = async (file: FileUpload, userId: string): Promise<string[] | null> => {
   const doc = file[0]
 
   console.log('---- doc -------', doc)
@@ -34,13 +35,14 @@ export const uploadDoc = async (file: FileUpload): Promise<string | null> => {
     if (!doc || typeof file !== 'object') {
       throw new Error('Invalid file object')
     }
-
+    const key = `posts/${userId}/${Date.now()}.${doc.fileType}`;
+    console.log("--------------------------------key-------------------------:", key);
     // Step 1: Generate upload URL
     const generateUrlResponse = await makeApiRequest<ApiResponse<{ url: string }>>({
       method: 'POST',
       url: 'auth/generate-upload-url',
       data: {
-        key: doc.key,
+        key: key,
         expDate: 15,
         contentType: doc.fileType,
       },
@@ -72,34 +74,8 @@ export const uploadDoc = async (file: FileUpload): Promise<string | null> => {
     })
 
     console.log('----- uploadResponse -----', uploadResponse)
-
-    // if (uploadResponse.ok) {
-    //   // Save file metadata
-    //   const uploadDocDetails = await makeApiRequest({
-    //     method: 'POST',
-    //     url: '', // Replace with actual API endpoint for saving metadata
-    //     data: {
-    //       bucketName: 'connect-dev-test',
-    //       key: doc.key,
-    //       contentType: doc.fileType,
-    //       documentType: doc.documentType,
-    //       documentName: doc.documentName,
-    //       documentDescription: doc.documentDescription,
-    //       documentSize: doc.fileSize,
-    //     },
-    //   })
-
-    //   if (uploadDocDetails.status === 201) {
-    //     const docDetails = uploadDocDetails?.data?.document
-
-    //     console.log('----doc details -----', docDetails.id)
-    //     return docDetails.id
-    //   } else {
-    //     throw new Error('Failed to save file metadata.')
-    //   }
-    // } else {
-    //   throw new Error('Failed to upload file to S3.')
-    // }
+    const mediaKeys: string[] = [key];
+    return mediaKeys;
   } catch (error: any) {
     const errorMessage = error.message || 'An unknown error occurred.'
     toast.error(errorMessage)

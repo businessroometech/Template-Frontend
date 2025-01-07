@@ -87,7 +87,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const [thoughts, setThoughts] = useState('')
   const [photoQuote, setPhotoQuote] = useState('')
   const [videoQuote, setVideoQuote] = useState('')
-  const [awsIds, setAwsIds] = useState([])
+  const [awsIds, setAwsIds] = useState<any>([])
 
   const handlePostClick = async (values: string) => {
     // Check if thoughts is empty
@@ -131,11 +131,9 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
   const handleUpload = async () => {
     try {
-      const response = await uploadDoc(uploadedFiles) // Await the uploadDoc promise
-      console.log('---- response in the upload doc function ----', response)
-
-      setAwsIds(response?.data)
-      return true
+      const response = await uploadDoc(uploadedFiles, user?.id) // Await the uploadDoc promise
+      console.log('---- response in the upload doc function ----', response);
+      return response
     } catch (err) {
       console.error('Error in the createpostcard:', err)
       return false // Indicate failure
@@ -143,9 +141,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
-    const uploadSuccess = await handleUpload()
-    // console.log("---- upload success ----",uploadSuccess, awsIds);
-    return
+    const uploadSuccess = await handleUpload();
 
     try {
       // Wait for handleUpload to complete before proceeding
@@ -155,15 +151,16 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         const hashtagRegex = /#\w+/g
         const hashtags = photoQuote.match(hashtagRegex) || []
 
+        console.log("-------------awsIds----------------------------- :", awsIds);
         // Making the API request
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
           url: CREATE_POST,
           data: {
-            userId: '018faa07809d523c34ac1186d761459d',
+            userId: user?.id,
             content: photoQuote,
             hashtags: hashtags,
-            mediaIds: uploadSuccess || [],
+            mediaKeys: uploadSuccess,
           },
         })
 
