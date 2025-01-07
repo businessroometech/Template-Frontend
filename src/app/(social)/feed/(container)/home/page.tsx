@@ -5,14 +5,16 @@ import Followers from './components/Followers'
 import CreatePostCard from '@/components/cards/CreatePostCard'
 import { Link } from 'react-router-dom'
 import LoadContentButton from '@/components/LoadContentButton'
+import { useState } from 'react'
 
 const Home = () => {
+  const [isCreated, setIsCreated] = useState(false)
   return (
     <>
       <Col md={8} lg={6} className="vstack gap-4">
         <Stories />
-        <CreatePostCard />
-        <Feeds />
+        <CreatePostCard setIsCreated={setIsCreated} />
+        <Feeds isCreated={isCreated} />
       </Col>
 
       <Col lg={3}>

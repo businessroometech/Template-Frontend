@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-type FileType = File & {
+export type FileType = File & {
   preview?: string
   formattedSize?: string
   base64?: string // Added base64 property

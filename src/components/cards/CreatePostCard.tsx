@@ -35,7 +35,7 @@ import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import useToggle from '@/hooks/useToggle'
-import DropzoneFormInput, { FileType } from '../form/DropzoneFormInput'
+import DropzoneFormInput from '../form/DropzoneFormInput'
 import TextFormInput from '../form/TextFormInput'
 import TextAreaFormInput from '../form/TextAreaFormInput'
 import DateFormInput from '../form/DateFormInput'
@@ -52,6 +52,12 @@ import { SendHorizontal } from 'lucide-react'
 import { useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 import { CREATE_POST } from '@/utils/api'
+import { uploadDoc } from '@/utils/CustomS3ImageUpload'
+import { FileType } from '@/hooks/useFileUploader'
+
+interface CreatePostCardProps {
+  setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
+}
 import { useAuthContext } from '@/context/useAuthContext'
 
 interface ApiResponse<T> {
@@ -59,7 +65,7 @@ interface ApiResponse<T> {
   data: T
 }
 
-const CreatePostCard = () => {
+const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const guests = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7]
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
@@ -78,18 +84,23 @@ const CreatePostCard = () => {
     resolver: yupResolver(eventFormSchema),
   })
 
-  const [thoughts, setThoughts] = useState('') // State to capture text input
+  const [thoughts, setThoughts] = useState('')
+  const [photoQuote, setPhotoQuote] = useState('')
+  const [videoQuote, setVideoQuote] = useState('')
+  const [awsIds, setAwsIds] = useState([])
 
   const handlePostClick = async (values: string) => {
+    // Check if thoughts is empty
+    if (!thoughts.trim()) {
+      console.log('Thoughts cannot be empty.')
+      return
+    }
+
     try {
       // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
-
       const hashtags = thoughts.match(hashtagRegex) || []
 
-      // console.log('Hashtags:', hashtags)
-
-      // Making the API request
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
@@ -99,11 +110,10 @@ const CreatePostCard = () => {
           hashtags: hashtags,
         },
       })
-      // console.log('API response before 201 :', response)
 
       if (response.data) {
-        // console.log('API response into the 201:', response.data)
-        setThoughts('')
+        setThoughts('') // Clear thoughts after successful post
+        setIsCreated(true) // Trigger the state update in the parent component
       }
     } catch (err) {
       console.log('Error in the posting', err)
@@ -117,9 +127,91 @@ const CreatePostCard = () => {
     setUploadedFiles(files)
   }
 
+  // console.log('---- photo uploading -----', uploadedFiles)
 
-  console.log("---- photo uploading -----", uploadedFiles);
-  
+  const handleUpload = async () => {
+    try {
+      const response = await uploadDoc(uploadedFiles) // Await the uploadDoc promise
+      console.log('---- response in the upload doc function ----', response)
+
+      setAwsIds(response?.data)
+      return true
+    } catch (err) {
+      console.error('Error in the createpostcard:', err)
+      return false // Indicate failure
+    }
+  }
+
+  const handlePhotoSubmit = async () => {
+    const uploadSuccess = await handleUpload()
+    // console.log("---- upload success ----",uploadSuccess, awsIds);
+    return
+
+    try {
+      // Wait for handleUpload to complete before proceeding
+
+      if (uploadSuccess) {
+        // Regular expression to match hashtags
+        const hashtagRegex = /#\w+/g
+        const hashtags = photoQuote.match(hashtagRegex) || []
+
+        // Making the API request
+        const response = await makeApiRequest<ApiResponse<{ url: string }>>({
+          method: 'POST',
+          url: CREATE_POST,
+          data: {
+            userId: '018faa07809d523c34ac1186d761459d',
+            content: photoQuote,
+            hashtags: hashtags,
+            mediaIds: uploadSuccess || [],
+          },
+        })
+
+        console.log('---- response with photo -----', response)
+
+        if (response.data) {
+          setThoughts('') // Reset thoughts after successful post
+        }
+      } else {
+        console.log('Upload failed. Post not submitted.')
+      }
+    } catch (err) {
+      console.log('Error in the posting', err)
+    }
+  }
+
+  const handleVideoSubmit = async () => {
+    try {
+      // Wait for handleUpload to complete before proceeding
+      const uploadSuccess = await handleUpload()
+
+      if (uploadSuccess) {
+        // Regular expression to match hashtags
+        const hashtagRegex = /#\w+/g
+        const hashtags = videoQuote.match(hashtagRegex) || []
+
+        // Making the API request
+        const response = await makeApiRequest<ApiResponse<{ url: string }>>({
+          method: 'POST',
+          url: CREATE_POST,
+          data: {
+            userId: '018faa07809d523c34ac1186d761459d',
+            content: videoQuote,
+            hashtags: hashtags,
+            mediaIds: uploadSuccess || [],
+          },
+        })
+
+        if (response.data) {
+          setThoughts('') // Reset thoughts after successful post
+        }
+      } else {
+        console.log('Upload failed. Post not submitted.')
+      }
+    } catch (err) {
+      console.log('Error in the posting', err)
+    }
+  }
 
   return (
     <>
@@ -235,7 +327,13 @@ const CreatePostCard = () => {
               <img className="avatar-img rounded-circle" src={avatar3} alt="" />
             </div>
             <form className="w-100">
-              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={2} placeholder="Share your thoughts..." defaultValue={''} />
+              <textarea
+                className="form-control pe-4 fs-3 lh-1 border-0"
+                rows={2}
+                onChange={(e) => setPhotoQuote(e.target.value)}
+                placeholder="Share your thoughts..."
+                value={photoQuote} // Only use value for controlled input
+              />
             </form>
           </div>
           <div>
@@ -247,7 +345,7 @@ const CreatePostCard = () => {
           <button type="button" className="btn btn-danger-soft me-2" data-bs-dismiss="modal">
             Cancel
           </button>
-          <button type="button" className="btn btn-success-soft">
+          <button type="submit" onClick={handlePhotoSubmit} className="btn btn-success-soft">
             Post
           </button>
         </ModalFooter>
@@ -266,20 +364,33 @@ const CreatePostCard = () => {
               <img className="avatar-img rounded-circle" src={avatar3} alt="" />
             </div>
             <form className="w-100">
-              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={2} placeholder="Share your thoughts..." defaultValue={''} />
+              <textarea
+                onChange={(e) => setVideoQuote(e.target.value)}
+                value={videoQuote}
+                className="form-control pe-4 fs-3 lh-1 border-0"
+                rows={2}
+                placeholder="Share your thoughts..."
+                defaultValue={''}
+              />
             </form>
           </div>
           <div>
-            <DropzoneFormInput label="Upload attachment" icon={BsCameraReels} showPreview text="Drag here or click to upload video." />
+            <DropzoneFormInput
+              label="Upload attachment"
+              onFileUpload={handleFileUpload}
+              icon={BsCameraReels}
+              showPreview
+              text="Drag here or click to upload video."
+            />
           </div>
         </ModalBody>
         <ModalFooter>
           <Button variant="danger-soft" type="button" className="me-2">
             <BsCameraVideoFill className="pe-1" /> Live video
           </Button>
-          <Button variant="soft-success" type="button" className="p-relative">
+          <button type="submit" onClick={handleVideoSubmit} className="btn btn-success-soft">
             Post
-          </Button>
+          </button>
         </ModalFooter>
       </Modal>
 
