@@ -23,7 +23,7 @@ const CommentItem = ({ comment }: CommentItemProps) => {
     <li className="comment-item">
       <div className="bg-light rounded-start-top-0 p-3 rounded">
         <div className="d-flex justify-content-between">
-          <h6 className="mb-1">{comment.userId}</h6>
+          <h6 className="mb-1">{comment.commenterName ? comment.commenterName : comment.createdBy}</h6>
           <small className="ms-2">{formatDate(comment.createdAt)}</small>
         </div>
         <p className="small mb-0">{comment.text}</p>

@@ -92,6 +92,38 @@ const PostCard = ({ item }) => {
     }
   };
 
+  const createLike = async (userId : string, postId : string, status : string) => {
+    const url = 'https://app-backend-8r74.onrender.com/api/v1/post/create-like';
+    const likeData = {
+      userId: userId,
+      postId: postId,
+      status: status, // true or false
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Tell the server the body format
+          // Add any authorization headers if required
+        },
+        body: JSON.stringify(likeData), // Convert the like data into JSON format
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const responseData = await response.json();
+      console.log('Like created successfully:', responseData);
+      
+      return responseData;
+    } catch (error) {
+      console.error('Error creating like:', error);
+      throw error; // Rethrow the error if needed
+    }
+  };
+
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     console.log('---------in comment submit-------');
@@ -105,7 +137,7 @@ const PostCard = ({ item }) => {
     }
   };
   console.log('------comments--------', comments);
-
+  console.log('------posts----',post)
   return (
     <Card className="mb-10">
       <CardHeader className="border-0 pb-0">
@@ -136,12 +168,14 @@ const PostCard = ({ item }) => {
 
       <CardBody>
         {post?.content && <p>{post?.content}</p>}
-
+            
         <ul className="nav nav-stack py-3 small">
-          <li className="nav-item">
-            <button className="nav-link active icons-center">
+          <li className="nav-item" onClick={() => {
+            
+          }}>
+            <button className="nav-link active icons-center" onSubmit={() => console.log('clicking')}>
               <ThumbsUp size={18} />
-              Like {post?.likeCount > 0 && `(${post?.likeCount})`}
+              <span style={{marginLeft : '5px',fontSize : '17px'}}>({post.likeCount > 0 ? post.likeCount : '0' })</span>
             </button>
           </li>
           <li className="nav-item">
@@ -183,7 +217,7 @@ const PostCard = ({ item }) => {
         ) : (
           comments && (
             <ul className="comment-wrap list-unstyled">
-              {comments.map((comment, index) => (
+              {comments.slice(0,2).map((comment, index) => (
                 <CommentItem key={index} comment={comment} />
               ))}
             </ul>
@@ -191,7 +225,7 @@ const PostCard = ({ item }) => {
         )}
       </CardBody>
 
-      {comments && comments.length > 5 && <CardFooter className="border-0 pt-0 ">{item?.comments && <LoadContentButton name="Load more comments" />}</CardFooter>}
+      {comments && comments.length > 2 && <CardFooter className="border-0 pt-0 ">{item?.comments && <LoadContentButton name="Load more comments" />}</CardFooter>}
     </Card>
   );
 };
