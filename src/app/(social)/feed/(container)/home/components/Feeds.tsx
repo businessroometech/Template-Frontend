@@ -554,6 +554,10 @@ const Feeds = (isCreated: boolean) => {
     return <div>Error: {error}</div> // Show an error message
   }
 
+  if(posts) {
+    return <PostCard item={posts[0]} key={0} />
+  }
+
   return (
     <>
       <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} />) : <p>No posts found.</p>}</div>
@@ -602,7 +606,7 @@ const Feeds = (isCreated: boolean) => {
         </Card>
       </CommonPost>
 
-      <Post3 />
+      {/* <Post3 /> */}
       <SuggestedStories />
       <LoadMoreButton />
     </>
