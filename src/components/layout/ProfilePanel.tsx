@@ -6,12 +6,14 @@ import { Card, CardBody, CardFooter } from 'react-bootstrap'
 import avatar7 from '@/assets/images/avatar/07.jpg'
 import bgBannerImg from '@/assets/images/bg/01.jpg'
 import { Link } from 'react-router-dom'
+import { useAuthContext } from '@/context/useAuthContext'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
 }
 
 const ProfilePanel = ({ links }: ProfilePanelProps) => {
+  const {user} = useAuthContext();
   return (
     <>
       <Card className="overflow-hidden h-100">
@@ -30,9 +32,9 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
 
             <h5 className="mb-0">
               
-              <Link to="">Sam Lanson </Link>
+              <Link to="">{user?.firstName}</Link>
             </h5>
-            <small>Web Developer at Webestica</small>
+            <small>{user?.email}</small>
             <p className="mt-3">I&apos;d love to change the world, but they won’t give me the source code.</p>
 
             <div className="hstack gap-2 gap-xl-3 justify-content-center">
