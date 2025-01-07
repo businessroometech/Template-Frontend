@@ -334,7 +334,7 @@ const PostCard = ({ createdAt, likesCount, caption, comments, commentsCount, ima
             </div>
 
             <ul className="comment-wrap list-unstyled">
-              {comments.slice(0,1).map((comment) => (
+              {comments.slice(0,2).map((comment) => (
                 <CommentItem {...comment} key={comment.id} />
               ))}
             </ul>
