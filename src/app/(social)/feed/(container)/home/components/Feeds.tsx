@@ -1,6 +1,6 @@
 import { getAllFeeds } from '@/helpers/data'
 
-import { useContext, useEffect, useState, type ReactNode } from 'react'
+import { useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Button,
   Card,
@@ -44,11 +44,6 @@ import PostCard from '@/components/cards/PostCard'
 import { Link } from 'react-router-dom'
 import LoadMoreButton from './LoadMoreButton'
 import SuggestedStories from './SuggestedStories'
-import { useFetchData } from '@/hooks/useFetchData'
-import { GET_ALL_POST, GetAllPost } from '@/utils/api'
-import { useAuthContext } from '@/context/useAuthContext'
-import httpClient from '@/helpers/httpClient'
-import axios from 'axios'
 import makeApiRequest from '@/utils/apiServer'
 
 // ----------------- data type --------------------
@@ -501,36 +496,46 @@ const Post3 = () => {
 }
 
 // poll
-const Feeds = () => {
+const Feeds = (isCreated: boolean) => {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
 
+  const hasMounted = useRef(false) // Track whether the component has mounted
+
   const fetchPosts = async () => {
-    setLoading(true);
-    setError(null);
-  
+    setLoading(true)
+    setError(null)
+
     try {
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'post/get-all-post',
         data: { userId: '018faa07809d523c34ac1186d761459d' },
-      });
-  
-      console.log('Fetched Posts:', data);
-      setPosts(data.data || []);
+      })
+
+      console.log('Fetched Posts:', data)
+      setPosts(data.data || [])
     } catch (error: any) {
-      console.error('Error fetching posts:', error.message);
-      setError(error.message || 'An unknown error occurred');
+      console.error('Error fetching posts:', error.message)
+      setError(error.message || 'An unknown error occurred')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-  
+  }
+
   useEffect(() => {
-    fetchPosts();
-  }, []);
-  
+    // If the component has mounted already, only fetch posts if `isCreated` is true
+    if (hasMounted.current) {
+      if (isCreated) {
+        fetchPosts()
+      }
+    } else {
+      // If it's the first mount, fetch posts
+      fetchPosts()
+      hasMounted.current = true // Set to true after the first call
+    }
+  }, [isCreated])
 
   const postData = [
     { progress: 25, title: 'We have cybersecurity insurance coverage' },

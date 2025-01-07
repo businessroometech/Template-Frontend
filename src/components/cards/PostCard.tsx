@@ -105,7 +105,7 @@ const PostCard = ({ item }) => {
   const { isLike, toggleLike } = useLike(post.Id, item?.isLike)
 
   return (
-    <Card>
+    <Card className='mb-10' >
       <CardHeader className="border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
@@ -257,7 +257,7 @@ const PostCard = ({ item }) => {
         )}
       </CardBody>
 
-      <CardFooter className="border-0 pt-0">{item?.comments && <LoadContentButton name="Load more comments" />}</CardFooter>
+      <CardFooter className="border-0 pt-0 ">{item?.comments && <LoadContentButton name="Load more comments" />}</CardFooter>
     </Card>
   )
 }

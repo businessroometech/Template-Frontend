@@ -55,12 +55,16 @@ import { CREATE_POST } from '@/utils/api'
 import { uploadDoc } from '@/utils/CustomS3ImageUpload'
 import { FileType } from '@/hooks/useFileUploader'
 
+interface CreatePostCardProps {
+  setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 interface ApiResponse<T> {
   status: number
   data: T
 }
 
-const CreatePostCard = () => {
+const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const guests = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7]
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
@@ -84,15 +88,17 @@ const CreatePostCard = () => {
   const [awsIds, setAwsIds] = useState([])
 
   const handlePostClick = async (values: string) => {
+    // Check if thoughts is empty
+    if (!thoughts.trim()) {
+      console.log('Thoughts cannot be empty.')
+      return
+    }
+
     try {
       // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
-
       const hashtags = thoughts.match(hashtagRegex) || []
 
-      // console.log('Hashtags:', hashtags)
-
-      // Making the API request
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
@@ -102,11 +108,10 @@ const CreatePostCard = () => {
           hashtags: hashtags,
         },
       })
-      // console.log('API response before 201 :', response)
 
       if (response.data) {
-        // console.log('API response into the 201:', response.data)
-        setThoughts('')
+        setThoughts('') // Clear thoughts after successful post
+        setIsCreated(true) // Trigger the state update in the parent component
       }
     } catch (err) {
       console.log('Error in the posting', err)
@@ -125,10 +130,10 @@ const CreatePostCard = () => {
   const handleUpload = async () => {
     try {
       const response = await uploadDoc(uploadedFiles) // Await the uploadDoc promise
-      console.log("---- response in the upload doc function ----", response);
-      
+      console.log('---- response in the upload doc function ----', response)
+
       setAwsIds(response?.data)
-      return true 
+      return true
     } catch (err) {
       console.error('Error in the createpostcard:', err)
       return false // Indicate failure
@@ -138,9 +143,8 @@ const CreatePostCard = () => {
   const handlePhotoSubmit = async () => {
     const uploadSuccess = await handleUpload()
     // console.log("---- upload success ----",uploadSuccess, awsIds);
-    return;
-    
-    
+    return
+
     try {
       // Wait for handleUpload to complete before proceeding
 
@@ -161,11 +165,9 @@ const CreatePostCard = () => {
           },
         })
 
-        console.log("---- response with photo -----",response);
-        
+        console.log('---- response with photo -----', response)
+
         if (response.data) {
-
-
           setThoughts('') // Reset thoughts after successful post
         }
       } else {

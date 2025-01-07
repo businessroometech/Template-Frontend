@@ -1,7 +1,5 @@
 import { toast } from 'react-toastify'
-import { Buffer } from 'buffer'
 import makeApiRequest from './apiServer'
-import axios from 'axios'
 
 interface FileUpload {
   key: string
@@ -18,9 +16,20 @@ interface ApiResponse<T> {
   data: T
 }
 
+// Function to convert base64 string to a Blob
+function base64ToBlob(base64: string, contentType: string): Blob {
+  const byteCharacters = atob(base64) // Decode base64 string to binary
+  const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i))
+  const byteArray = new Uint8Array(byteNumbers)
+  return new Blob([byteArray], { type: contentType })
+}
+
 // Upload function to handle file uploads to S3
 export const uploadDoc = async (file: FileUpload): Promise<string | null> => {
   const doc = file[0]
+
+  console.log('---- doc -------', doc)
+
   try {
     if (!doc || typeof file !== 'object') {
       throw new Error('Invalid file object')
@@ -38,65 +47,59 @@ export const uploadDoc = async (file: FileUpload): Promise<string | null> => {
     })
 
     const { url } = generateUrlResponse.data
-    // Decode base64 string
-    if (!file.fileObject) {
+
+    console.log('---- url -----', url)
+
+    if (!doc.fileObject) {
       throw new Error('File object is missing.')
     }
-    const base64WithoutHeader = file.fileObject.replace(/^data:image\/\w+;base64,/, '')
-    const binaryData = Buffer.from(base64WithoutHeader, 'base64')
+
+    // Remove the base64 header (e.g., 'data:image/png;base64,')
+    const base64WithoutHeader = doc.fileObject.replace(/^data:image\/\w+;base64,/, '')
+
+    // Convert base64 string to a Blob
+    const blob = base64ToBlob(base64WithoutHeader, doc.fileType)
+
+    console.log('---- blob ------', blob)
 
     // Upload to S3
-    const uploadResponse = await axios.put(url, binaryData, {
+    const uploadResponse = await fetch(url, {
+      method: 'PUT',
+      body: blob, // Pass the Blob directly
       headers: {
-        'Content-Type': file.fileType, // e.g., 'image/jpeg'
+        'Content-Type': doc.fileType, // e.g., 'image/jpeg' or 'video/mp4'
       },
     })
 
-    if (uploadResponse.status === 200) {
-      // Save file metadata
-      const uploadDocDetails = await makeApiRequest({
-        method: 'POST',
-        url: '',
-        data: {
-          bucketName: 'connect-dev-test',
-          key: file.key,
-          contentType: doc.fileType,
-          documentType: doc.documentType,
-          documentName: doc.documentName,
-          documentDescription: doc.documentDescription,
-          documentSize: doc.fileSize,
-        },
-      })
+    console.log('----- uploadResponse -----', uploadResponse)
 
-      // const uploadDocDetails = await api.post(
-      //   ListUploadDocument(),
-      //   {
-      //     bucketName: 'connect-dev-test',
-      //     key: file.key,
-      //     contentType: file.fileType,
-      //     documentType: file.documentType,
-      //     documentName: file.documentName,
-      //     documentDescription: file.documentDescription,
-      //     documentSize: file.fileSize,
-      //   },
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${accessToken}`,
-      //       'Content-Type': 'application/json',
-      //     },
-      //     withCredentials: true,
-      //   },
-      // );
+    // if (uploadResponse.ok) {
+    //   // Save file metadata
+    //   const uploadDocDetails = await makeApiRequest({
+    //     method: 'POST',
+    //     url: '', // Replace with actual API endpoint for saving metadata
+    //     data: {
+    //       bucketName: 'connect-dev-test',
+    //       key: doc.key,
+    //       contentType: doc.fileType,
+    //       documentType: doc.documentType,
+    //       documentName: doc.documentName,
+    //       documentDescription: doc.documentDescription,
+    //       documentSize: doc.fileSize,
+    //     },
+    //   })
 
-      if (uploadDocDetails.status === 201) {
-        const docDetails = uploadDocDetails?.data?.document
+    //   if (uploadDocDetails.status === 201) {
+    //     const docDetails = uploadDocDetails?.data?.document
 
-        console.log('----doc details -----', docDetails.id)
-        return docDetails.id
-      } else {
-      }
-    } else {
-    }
+    //     console.log('----doc details -----', docDetails.id)
+    //     return docDetails.id
+    //   } else {
+    //     throw new Error('Failed to save file metadata.')
+    //   }
+    // } else {
+    //   throw new Error('Failed to upload file to S3.')
+    // }
   } catch (error: any) {
     const errorMessage = error.message || 'An unknown error occurred.'
     toast.error(errorMessage)
