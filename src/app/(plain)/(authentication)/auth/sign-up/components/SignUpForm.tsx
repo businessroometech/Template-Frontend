@@ -11,25 +11,52 @@ import * as yup from 'yup'
 import useSignUp from './useSignUp'
 
 const SignUpForm = () => {
-  const [firstPassword, setFirstPassword] = useState<string>('')
-  const {signUp,redirectUser} = useSignUp();
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [firstPassword, setFirstPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+
+  const {signUp} = useSignUp();
+  
   const signUpSchema = yup.object({
-    email: yup.string().email('Please enter a valid email').required('please enter your email'),
+    firstName : yup.string().required('Please enter First Name'),
+    lastName : yup.string().required('Please enter Last Name'),
+    email: yup.string().email('Please enter a valid email').required('Please enter your email'),
     password: yup.string().required('Please enter your password'),
-    confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
+    confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Please enter your confirm password'),
   })
-  const { control, handleSubmit, watch, getValues } = useForm({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { control, handleSubmit, getValues,watch } = useForm({
     resolver: yupResolver(signUpSchema),
   })
-
+  
   useEffect(() => {
     setFirstPassword(getValues().password)
-  }, [watch('password')])
+    setConfirmPassword(getValues().confirmPassword)
+    setEmail(getValues().email)
+    setFirstName(getValues().firstName);
+    setLastName(getValues().lastName);
+  }, [watch('email'),watch('password'),watch('firstName'),watch('lastName'),watch('confirmPassword')])
   return (
-    <form className="mt-4" onSubmit={signUp}>
+    <form className="mt-4" onSubmit={handleSubmit(async () => {
+      console.log("In Handle Submit");
+      await signUp({
+        email : email,
+        firstName : firstName,
+        lastName : lastName,
+        firstPassword : firstPassword,
+        confirmPassword : confirmPassword
+      });
+    })}>
+      <div className="mb-3">
+        <TextFormInput name="firstName" control={control} containerClassName="input-group-lg" placeholder="Enter your First Name" />
+      </div>
+      <div className="mb-3">
+        <TextFormInput name="lastName" control={control} containerClassName="input-group-lg" placeholder="Enter your Last Name" />
+      </div>
       <div className="mb-3">
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
-        <small>We&apos;ll never share your email with anyone else.</small>
       </div>
       <div className="mb-3 position-relative">
         <PasswordFormInput name="password" control={control} size="lg" placeholder="Enter new password" />
@@ -56,4 +83,4 @@ const SignUpForm = () => {
     </form>
   )
 }
-export default SignUpForm
+export default SignUpForm;

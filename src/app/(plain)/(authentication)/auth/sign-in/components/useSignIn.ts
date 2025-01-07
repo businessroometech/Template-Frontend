@@ -1,36 +1,39 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import type { AxiosResponse } from 'axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import * as yup from 'yup'
-
 import { useAuthContext } from '@/context/useAuthContext'
 import { useNotificationContext } from '@/context/useNotificationContext'
-import httpClient from '@/helpers/httpClient'
-import type { UserType } from '@/types/auth'
+
+
 
 const useSignIn = () => {
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-
-  const { saveSession } = useAuthContext()
-  const [searchParams] = useSearchParams()
-
-  const { showNotification } = useNotificationContext()
+  const [loading, setLoading] = useState<boolean>(false);
+  const [email,setEmail] = useState<string>("");
+  const [password,setPassword] = useState<string>("");
+  const navigate = useNavigate();
+  const { saveSession } = useAuthContext();
+  const [searchParams] = useSearchParams();
+  const { showNotification } = useNotificationContext();
 
   const loginFormSchema = yup.object({
     email: yup.string().email('Please enter a valid email').required('Please enter your email'),
     password: yup.string().required('Please enter your password'),
-  })
+  });
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit,getValues,watch} = useForm({
     resolver: yupResolver(loginFormSchema),
     defaultValues: {
-      email: 'user@demo.com',
-      password: '123456',
+      email: '',
+      password: '',
     },
   })
+
+  useEffect(() => {
+      setEmail(getValues().email);
+      setPassword(getValues().password);
+  },[watch('email'),watch('password')])
 
   type LoginFormFields = yup.InferType<typeof loginFormSchema>
 
@@ -40,18 +43,32 @@ const useSignIn = () => {
     else navigate('/')
   }
 
-  const login = handleSubmit(async (values: LoginFormFields) => {
+  const login = handleSubmit(async () => {
+
+    const body : LoginFormFields = {
+      email : email,
+      password : password,
+    }
+    console.log(body);
     try {
-      const res: AxiosResponse<UserType> = await httpClient.post('/login', values)
-      if (res.data.token) {
-        saveSession({
-          ...(res.data ?? {}),
-          token: res.data.token,
-        })
+      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      console.log(json);
+      if (json?.data?.accessToken) {
+        saveSession(json?.data?.user);
         redirectUser()
         showNotification({ message: 'Successfully logged in. Redirecting....', variant: 'success' })
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      else {
+        showNotification({ message: 'Login Failed...', variant: 'danger' })
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.response?.data?.error) {
         showNotification({ message: e.response?.data?.error, variant: 'danger' })

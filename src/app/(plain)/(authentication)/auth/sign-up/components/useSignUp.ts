@@ -1,12 +1,22 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import type { AxiosResponse } from 'axios';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useNotificationContext } from '@/context/useNotificationContext';
-import httpClient from '@/helpers/httpClient';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
+interface SignUpFormData { 
+  email : string;
+  firstName : string;
+  lastName : string;
+  firstPassword : string;
+  confirmPassword : string | undefined;
+}
+
+interface toSendSignUp {
+  emailAddress : string;
+  firstName : string;
+  lastName : string;
+  password : string;
+}
 
 const useSignUp = () => {
   const { saveSession } = useAuthContext();
@@ -16,46 +26,55 @@ const useSignUp = () => {
   const navigate = useNavigate();
 
   const redirectUser = () => {
-    console.log('In redirecting')
-    const redirectLink = searchParams.get('redirectTo')
-    if (redirectLink) navigate(redirectLink)
-    else navigate('/404')
-  }
+    const redirectLink = searchParams.get('redirectTo');
+    if (redirectLink) navigate(redirectLink);
+    else navigate('/');
+  };
 
-  const signUpSchema = yup.object({
-    email: yup.string().email('Please enter a valid email').required('Please enter your email'),
-    password: yup.string().required('Please enter your password'),
-    confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
-  });
-
-  const { control, handleSubmit, watch } = useForm({
-    resolver: yupResolver(signUpSchema),
-  });
-
-  const password = watch('password'); // Watch the password field dynamically
-
-  const signUp = handleSubmit(async (formData) => {
-    console.log('In handleSumbit')
-    redirectUser();
-    return;
+  const signUp = async (formData : SignUpFormData) => {
     setLoading(true);
-    try {
-    //   const res: AxiosResponse = await httpClient.post('https://app-backend-8r74.onrender.com/api/v1/auth/signup', formData);
 
-      if (true) {
-        saveSession(res.data);
+    const data : toSendSignUp = {
+      firstName : formData.firstName,
+      lastName : formData.lastName,
+      emailAddress : formData.email,
+      password : formData.firstPassword
+    }
+    console.log('---data---',data)
+    try {
+      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body : JSON.stringify(data),
+      });
+      const json = await res.json();
+      console.log(json);
+      if(json?.data?.user) {
+        saveSession(json?.data.user);
         showNotification({ message: 'Signup successful!', variant: 'success' });
-      } else {
-        showNotification({ message: 'Signup failed. Please try again.', variant: 'danger' });
+        redirectUser();
       }
-    } catch (error) {
-      showNotification({ message: 'An error occurred. Please try again.', variant: 'danger' });
+      else {
+        showNotification({
+          message: 'Signup failed. Please try again.',
+          variant: 'danger',
+        });
+      } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Signup error:', error.response || error.message);
+      showNotification({
+        message: error.response?.data?.message || 'Signup failed. Please try again.',
+        variant: 'danger',
+      });
     } finally {
       setLoading(false);
     }
-  });
+  };
 
-  return { signUp, control, loading, password ,redirectUser};
+  return { signUp, loading, redirectUser };
 };
 
 export default useSignUp;

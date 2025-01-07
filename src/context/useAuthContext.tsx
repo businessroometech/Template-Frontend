@@ -35,7 +35,7 @@ export function AuthProvider({ children }: ChildrenType) {
   const [user, setUser] = useState<UserType | undefined>(getSession())
 
   const saveSession = (user: UserType) => {
-    setCookie(authSessionKey, JSON.stringify(user))
+    setCookie(authSessionKey,JSON.stringify(user))
     setUser(user)
   }
 
