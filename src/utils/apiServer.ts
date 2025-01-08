@@ -1,3 +1,5 @@
+import { LIVE_URL } from "./api"
+
 interface APIRequestParams {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   url: string
@@ -7,7 +9,7 @@ interface APIRequestParams {
   // tempToken?: string | null;
 }
 
-const API_BASE_URL = 'https://app-backend-8r74.onrender.com/api/v1/' // Replace with your base URL
+const API_BASE_URL = LIVE_URL // Replace with your base URL
 
 const handleError = (error: any): string => {
   if (!navigator.onLine) {
@@ -44,7 +46,7 @@ const makeApiRequest = async <T>({
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${url}`, requestOptions)
+    const response = await fetch(`${LIVE_URL}${url}`, requestOptions)
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

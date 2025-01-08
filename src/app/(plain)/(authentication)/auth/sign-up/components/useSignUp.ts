@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useNotificationContext } from '@/context/useNotificationContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { LIVE_URL } from '@/utils/api';
 
 interface SignUpFormData { 
   email : string;
@@ -42,7 +43,7 @@ const useSignUp = () => {
     }
     console.log('---data---',data)
     try {
-      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/auth/signup", {
+      const res = await fetch(`${LIVE_URL}api/v1/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

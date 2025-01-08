@@ -6,6 +6,7 @@ import LoadContentButton from '../LoadContentButton';
 import useToggle from '@/hooks/useToggle';
 import { useAuthContext } from '@/context/useAuthContext';
 import fallBackAvatar from '../../assets/images/avatar/01.jpg';
+import { LIVE_URL } from '@/utils/api';
 
 const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh }) => {
   const [comments, setComments] = useState([]);
@@ -31,7 +32,7 @@ const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh }) => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          'https://app-backend-8r74.onrender.com/api/v1/post/get-comments',
+          `${LIVE_URL}api/v1/post/get-comments`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -57,7 +58,7 @@ const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh }) => {
 
     try {
       const response = await fetch(
-        'https://app-backend-8r74.onrender.com/api/v1/post/create-comment',
+        `${LIVE_URL}api/v1/post/create-comment`,
         {
           method: 'POST',
           headers: {
@@ -82,7 +83,7 @@ const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh }) => {
   const toggleLike = async () => {
     try {
       const response = await fetch(
-        'https://app-backend-8r74.onrender.com/api/v1/post/create-like',
+        `${LIVE_URL}api/v1/post/create-like`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

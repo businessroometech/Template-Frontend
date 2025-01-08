@@ -45,6 +45,7 @@ import { Link } from 'react-router-dom'
 import LoadMoreButton from './LoadMoreButton'
 import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
+import { LIVE_URL } from '@/utils/api'
 
 // ----------------- data type --------------------
 interface Post {
@@ -511,7 +512,7 @@ const Feeds = (isCreated: boolean) => {
       
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
-        url: 'post/get-all-post',
+        url: 'api/v1/post/get-all-post',
         data: { userId: '018faa07809d523c34ac1186d761459d', page : 1},
       })
 
@@ -559,7 +560,7 @@ const Feeds = (isCreated: boolean) => {
       <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
         
   try {
-    const response = await fetch('http://localhost:5000/api/v1/post/delete-userpost-byPostId', {
+    const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

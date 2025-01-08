@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useNotificationContext } from '@/context/useNotificationContext'
+import { LIVE_URL } from '@/utils/api'
 
 
 
@@ -50,7 +51,7 @@ const useSignIn = () => {
     }
     console.log(body);
     try {
-      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/auth/login", {
+      const res = await fetch(`${LIVE_URL}api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
