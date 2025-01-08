@@ -103,7 +103,8 @@ const PostCard = ({ item, onDelete }) => {
 
   const handleDeletePost = async () => {
     try {
-      await onDelete(post.Id); // Call the parent-provided delete function
+      const bool = await onDelete(post.Id); // Call the parent-provided delete function
+      if()setRefresh()
     } catch (error) {
       console.error('Error deleting post:', error);
     }
@@ -118,7 +119,7 @@ const PostCard = ({ item, onDelete }) => {
               {userInfo?.avatar ? (
                 <img
                   className="avatar-img rounded-circle"
-                  src={userInfo.avatar || fallBackAvatar}
+                  src={userInfo.avatar ? userInfo.avatar : fallBackAvatar}
                   alt={userInfo.firstName}
                 />
               ) : (
