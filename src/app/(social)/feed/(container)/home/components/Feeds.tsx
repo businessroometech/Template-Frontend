@@ -501,7 +501,7 @@ const Feeds = (isCreated: boolean) => {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
-
+  const [refresh,setRefresh] = useState<number>(0);
   const hasMounted = useRef(false) // Track whether the component has mounted
 
   const fetchPosts = async () => {
@@ -556,7 +556,36 @@ const Feeds = (isCreated: boolean) => {
 
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} />) : <p>No posts found.</p>}</div>
+      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/v1/post/delete-userpost-byPostId', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
+      },
+      body: JSON.stringify({
+        userId: '018faa07809d523c34ac1186d761459d',
+        PostId: post.post?.Id,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(refresh) // Assuming the response is JSON
+    setRefresh(() => refresh+1);
+    console.log(refresh)
+    console.log(data);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Error Deleting post:', error.message);
+  } finally {
+    console.log('call done')
+  }
+}}/>) : <p>No posts found.</p>}</div>
 
       <SponsoredCard />
       <Post2 />
