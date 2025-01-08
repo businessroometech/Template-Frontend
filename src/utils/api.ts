@@ -37,3 +37,4 @@ export const CREATE_POST = "api/v1/post/create-userpost"
 export const BASE_URL = 'http://localhost:5000/'
 export const RENDER_URL = 'https://app-backend-8r74.onrender.com/'
 export const LIVE_URL = RENDER_URL;
+export const IS_RENDER_URL = false;

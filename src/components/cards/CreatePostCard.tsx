@@ -100,7 +100,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
-
+      console.log('------user--------',user,user?.id)
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
