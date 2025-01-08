@@ -47,7 +47,7 @@ const CommentItem = ({ comment }: CommentItemProps) => {
           {/* Actions */}
           <div className="d-flex align-items-center gap-3 small">
             <span role="button" className="text-primary d-flex align-items-center">
-              <ThumbsUp size={16} className="me-1" /> Like ({comment.likesCount || 0})
+              <ThumbsUp size={16} className="me-1" /> Like 
             </span>
             <span role="button" className="text-primary d-flex align-items-center">
               <MessageSquare size={16} className="me-1" /> Reply

@@ -523,7 +523,7 @@ const Feeds = ({ isCreated }: { isCreated: boolean }) => {
   const deletePost = async (postId: string) => {
     try {
       const response = await fetch(
-        'https://app-backend-8r74.onrender.com/api/v1/posts/delete-userpost-byPostId',
+        'https://app-backend-8r74.onrender.com/api/v1/tpost/delete-userpost-byPostId',
         {
           method: 'POST',
           headers: {
