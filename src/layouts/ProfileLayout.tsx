@@ -238,27 +238,6 @@ const {user} = useAuthContext();
   };
 
 
-  // console.log(profile, "***********profile***********");
-
-  const [profile, setProfile] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.post('http://localhost:5000/api/v1/auth/get-user-Profile', {
-          userId:"018faa07809d523c34ac1186d761459d"
-        });
-        setProfile(response.data); 
-        console.log(response.data, "***********profile***********");
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-
-    fetchUser();
-  }, []); 
-
-
   return (
     <>
       <Suspense fallback={<Preloader/>}>
