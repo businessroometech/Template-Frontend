@@ -559,7 +559,7 @@ const Feeds = (isCreated: boolean) => {
       <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
         
   try {
-    const response = await fetch('http://localhost:5000/api/v1/post/delete-userpost-byPostId', {
+    const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/delete-userpost-byPostId', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
