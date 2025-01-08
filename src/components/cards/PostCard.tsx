@@ -1,20 +1,16 @@
 import { useState, useEffect } from 'react';
-import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
-import { ThumbsUp } from 'lucide-react';
-import { Card, CardBody, CardFooter, CardHeader } from 'react-bootstrap';
-import CommentItem from './components/CommentItem'; // Reintegrated CommentItem
+import { BsSendFill, BsThreeDots, BsHeart, BsHeartFill, BsChatDots, BsShare } from 'react-icons/bs';
+import { Card, Button, Image, Form, Dropdown } from 'react-bootstrap';
+import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
-import { CircleUserRound } from 'lucide-react';
-import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
+import { useAuthContext } from '@/context/useAuthContext';
 import fallBackAvatar from '../../assets/images/avatar/01.jpg';
 
-const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh}) => {
+const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh }) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [menuVisible, setMenuVisible] = useState(false); // State for options menu
   const { user } = useAuthContext();
   const [refresh, setRefresh] = useState(0);
   const [likeStatus, setLikeStatus] = useState(false);
@@ -101,126 +97,127 @@ const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh}) => {
     }
   };
 
-  const handleDeletePost = async () => {
-    try {
-      const bool = await onDelete(post.Id); // Call the parent-provided delete function
-      if(bool) setRefresh(refresh + 1);
-    } catch (error) {
-      console.error('Error deleting post:', error);
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Check out this post',
+        text: post?.content,
+        url: window.location.href,
+      }).catch(console.error);
     }
   };
 
   return (
-    <Card className="mb-10">
-      <CardHeader className="border-0 pb-0">
-        <div className="d-flex align-items-center justify-content-between">
+    <Card className="mb-3">
+      <Card.Header className="bg-white border-0">
+        <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center">
-            <div className="avatar me-2">
-              {userInfo?.avatar ? (
-                <img
-                  className="avatar-img rounded-circle"
-                  src={userInfo.avatar ? userInfo.avatar : fallBackAvatar}
-                  alt={userInfo.firstName}
-                />
-              ) : (
-                <img
-                  className="avatar-img rounded-circle"
-                  src={fallBackAvatar}
-                  alt={userInfo.firstName}
-                />
-              )}
-            </div>
+            <Image
+              src={userInfo?.avatar || fallBackAvatar}
+              roundedCircle
+              style={{ width: '48px', height: '48px', objectFit: 'cover' }}
+              className="me-3"
+            />
             <div>
-              <div className="nav nav-divider">
-                <h6 className="nav-item card-title mb-0">
-                  {userInfo?.firstName + ' ' + userInfo?.lastName}
-                </h6>
-                <span className="nav-item small">{userInfo?.timestamp}</span>
-              </div>
+              <h6 className="mb-0">
+                {userInfo?.firstName} {userInfo?.lastName}
+              </h6>
+              <small className="text-muted">{userInfo?.timestamp}</small>
             </div>
           </div>
-          {/* Options Menu */}
-          <div className="position-relative">
-            <button
-              className="btn btn-light btn-sm"
-              onClick={() => setMenuVisible((prev) => !prev)}
-            >
-              ⋮
-            </button>
-            {menuVisible && (
-              <div className="position-absolute bg-white shadow rounded p-2" style={{ right: 0 }}>
-                <button
-                  className="dropdown-item text-danger"
-                  onClick={handleDeletePost}
-                >
-                  Delete Post
-                </button>
-              </div>
-            )}
-          </div>
+          <Dropdown align="end">
+            <Dropdown.Toggle variant="light" size="sm" className="no-caret">
+              <BsThreeDots />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => onDelete(post.Id)} className="text-danger">
+                Delete Post
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
-      </CardHeader>
+      </Card.Header>
 
-      <CardBody>
+      <Card.Body>
         {post?.content && <p>{post.content}</p>}
         {post?.mediaUrls?.length > 0 && (
           <div className="text-center mb-3">
-            <img
+            <Image
               src={post.mediaUrls[0]}
-              style={{ maxWidth: '100%', maxHeight: '500px' }}
-              alt="post media"
+              fluid
+              rounded
+              style={{ maxHeight: '500px', objectFit: 'cover' }}
             />
           </div>
         )}
 
-        <div className="d-flex mb-3 align-items-center">
-          <div className="avatar avatar-xs me-2">
-              <img
-                  className="avatar-img rounded-circle"
-                  src={fallBackAvatar}
-                  alt={userInfo.firstName}
-              />
-          </div>
-          <form className="d-flex w-100" onSubmit={handleCommentSubmit}>
-            <textarea
-              className="form-control pe-5 bg-light me-2"
-              rows={1}
-              placeholder="Add a comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-            />
-            <button
-              className="btn btn-primary"
-              type="submit"
-            >
-              <BsSendFill />
-            </button>
-          </form>
+        <div className="d-flex justify-content-between align-items-center border-top border-bottom py-2 mt-3">
+          <Button 
+            variant="link" 
+            className={`text-decoration-none ${likeStatus ? 'text-primary' : 'text-muted'}`}
+            onClick={toggleLike}
+          >
+            {likeStatus ? <BsHeartFill className="me-2" /> : <BsHeart className="me-2" />}
+            Like
+          </Button>
+          <Button
+            variant="link"
+            className="text-decoration-none text-muted"
+          >
+            <BsChatDots className="me-2" />
+            Comment
+          </Button>
+          <Button
+            variant="link"
+            className="text-decoration-none text-muted"
+            onClick={handleShare}
+          >
+            <BsShare className="me-2" />
+            Share
+          </Button>
         </div>
 
-        {isLoading ? (
-          <p>Loading comments...</p>
-        ) : (
-          <ul className="list-unstyled">
-            {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-                <CommentItem
-                  comment={comment}
-                  key={comment.id}
+        <div className="mt-3">
+          <Form onSubmit={handleCommentSubmit}>
+            <div className="d-flex gap-2">
+              <Image
+                src={user?.avatar || fallBackAvatar}
+                roundedCircle
+                style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+              />
+              <Form.Group className="flex-grow-1">
+                <Form.Control
+                  as="textarea"
+                  rows={1}
+                  placeholder="Add a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
                 />
+              </Form.Group>
+              <Button type="submit" variant="primary" size="sm">
+                <BsSendFill />
+              </Button>
+            </div>
+          </Form>
+        </div>
+
+        {!isLoading && comments.length > 0 && (
+          <div className="mt-3">
+            {(loadMore ? comments : comments.slice(0, 2)).map((comment) => (
+              <CommentItem key={comment.id} comment={comment} />
             ))}
-          </ul>
+          </div>
         )}
-      </CardBody>
+      </Card.Body>
 
       {comments.length > 2 && (
-        <CardFooter
-          className="border-0 pt-0"
-          onClick={() => {
-            setLoadMore((prev) => !prev);
-          }}
-        >
-          <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
-        </CardFooter>
+        <Card.Footer className="bg-white border-0 pt-0">
+          <LoadContentButton 
+            name={!loadMore ? "Load more comments" : "Show less"} 
+            toggle={loadMore}
+            onClick={() => setLoadMore(!loadMore)}
+          />
+        </Card.Footer>
       )}
     </Card>
   );
