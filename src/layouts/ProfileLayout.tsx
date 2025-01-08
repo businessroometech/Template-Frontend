@@ -55,6 +55,7 @@ import { Link, useLocation } from "react-router-dom"
 import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
 import axios from "axios"
+import { useAuthContext } from "@/context/useAuthContext"
 
 const Experience = () => {
   return (
@@ -189,25 +190,55 @@ const Friends = () => {
 
 const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
+const {user} = useAuthContext();
+  const [profile, setProfile] = useState({});
 
-  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.post('http://localhost:5000/api/v1/auth/get-user-Profile', {
-          userId:"018faa07809d523c34ac1186d761459d"
+        const response = await fetch('http://localhost:5000/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id
+          })
         });
-        setProfile(response.data); 
-        console.log(response.data, "***********profile***********");
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json(); 
+        setProfile(data.data); 
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
     };
-
+    if (profile.personalDetails){
+      return;
+    }
     fetchUser();
-  }, []); 
+  }, [profile.personalDetails]); 
+  
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    };
+    return date.toLocaleString('en-GB', options).replace(',', ' at');
+  };
 
+
+  // console.log(profile, "***********profile***********");
 
   return (
     <>
@@ -215,7 +246,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
         <TopHeader />
       </Suspense>
 
-      <main>
+     {profile.personalDetails&&( <main>
         <Container>
           <Row className="g-4">
             <Col lg={8} className="vstack gap-4">
@@ -223,7 +254,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                 <div
                   className="h-200px rounded-top"
                   style={{
-                    backgroundImage: `url(${background5})`,
+                    backgroundImage: `url(${profile.coverimurl?profile.coverimurl:background5})`,
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
@@ -233,14 +264,14 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                   <div className="d-sm-flex align-items-start text-center text-sm-start">
                     <div>
                       <div className="avatar avatar-xxl mt-n5 mb-3">
-                        <img className="avatar-img rounded-circle border border-white border-3" src={avatar7} alt="avatar" />
+                        <img className="avatar-img rounded-circle border border-white border-3" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
                       </div>
                     </div>
                     <div className="ms-sm-4 mt-sm-3">
                       <h1 className="mb-0 h5">
-                        Sam Lanson <BsPatchCheckFill className="text-success small" />
+                      {profile?.personalDetails?.firstName} {profile?.personalDetails?.lastName} <BsPatchCheckFill className="text-success small" />
                       </h1>
-                      <p>250 connections</p>
+                      <p>{profile.personalDetails.bio}</p>
                     </div>
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
                       <Button variant="danger-soft" className="me-2" type="button">
@@ -298,13 +329,14 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                   </div>
                   <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
                     <li className="list-inline-item">
-                      <BsBriefcase className="me-1" /> Lead Developer
+                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation}
                     </li>
                     <li className="list-inline-item">
-                      <BsGeoAlt className="me-1" /> New Hampshire
+                      <BsGeoAlt className="me-1" /> {profile?.personalDetails?.permanentAddress?.city} {profile?.personalDetails?.permanentAddress?.state}
                     </li>
                     <li className="list-inline-item">
-                      <BsCalendar2Plus className="me-1" /> Joined on Nov 26, 2019
+                      <BsCalendar2Plus className="me-1" /> Joined on {profile?.personalDetails?.createdAt && formatDate(profile.personalDetails?.createdAt)}
+   
                     </li>
                   </ul>
                 </CardBody>
@@ -363,7 +395,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
             </Col>
           </Row>
         </Container>
-      </main>
+      </main>)}
     </>
   )
 }
