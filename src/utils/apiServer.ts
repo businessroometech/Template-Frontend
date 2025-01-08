@@ -46,7 +46,7 @@ const makeApiRequest = async <T>({
   }
 
   try {
-    const response = await fetch(`${LIVE_URL}/api/v1/${url}`, requestOptions)
+    const response = await fetch(`${LIVE_URL}${url}`, requestOptions)
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
