@@ -45,6 +45,7 @@ import { Link } from 'react-router-dom'
 import LoadMoreButton from './LoadMoreButton'
 import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
+import { LIVE_URL } from '@/utils/api'
 
 // ----------------- data type --------------------
 interface Post {
@@ -501,8 +502,8 @@ const Feeds = (isCreated: boolean) => {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
-  const [refresh,setRefresh] = useState<number>(0);
   const hasMounted = useRef(false) // Track whether the component has mounted
+  const [tlRefresh, setTlRefresh] = useState<number>();
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -511,7 +512,7 @@ const Feeds = (isCreated: boolean) => {
       
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
-        url: 'post/get-all-post',
+        url: 'api/v1/post/get-all-post',
         data: { userId: '018faa07809d523c34ac1186d761459d', page : 1},
       })
 
@@ -557,8 +558,9 @@ const Feeds = (isCreated: boolean) => {
   return (
     <>
       <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
+        
   try {
-    const response = await fetch('http://localhost:5000/api/v1/post/delete-userpost-byPostId', {
+    const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -575,9 +577,9 @@ const Feeds = (isCreated: boolean) => {
     }
 
     const data = await response.json();
-    console.log(refresh) // Assuming the response is JSON
-    setRefresh(() => refresh+1);
-    console.log(refresh)
+    console.log(tlRefresh) // Assuming the response is JSON
+    setTlRefresh(tlRefresh+1 || 1);
+    console.log(tlRefresh)
     console.log(data);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

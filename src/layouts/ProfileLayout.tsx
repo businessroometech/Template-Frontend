@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 
 const TopHeader = lazy(() => import("@/components/layout/TopHeader"))
 import GlightBox from '@/components/GlightBox'
@@ -54,6 +54,7 @@ import { experienceData } from "@/assets/data/layout"
 import { Link, useLocation } from "react-router-dom"
 import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
+import axios from "axios"
 
 const Experience = () => {
   return (
@@ -93,7 +94,7 @@ const Experience = () => {
 }
 
 const Photos = () => {
-  return (
+  return ( 
     <Card>
       <CardHeader className="d-sm-flex justify-content-between border-0">
         <CardTitle>Photos</CardTitle>
@@ -188,6 +189,25 @@ const Friends = () => {
 
 const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
+
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.post('http://localhost:5000/api/v1/auth/get-user-Profile', {
+          userId:"018faa07809d523c34ac1186d761459d"
+        });
+        setProfile(response.data); 
+        console.log(response.data, "***********profile***********");
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUser();
+  }, []); 
+
 
   return (
     <>
