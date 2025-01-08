@@ -501,8 +501,8 @@ const Feeds = (isCreated: boolean) => {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
-  const [refresh,setRefresh] = useState<number>(0);
   const hasMounted = useRef(false) // Track whether the component has mounted
+  const [tlRefresh, setTlRefresh] = useState<number>();
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -557,6 +557,7 @@ const Feeds = (isCreated: boolean) => {
   return (
     <>
       <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
+        
   try {
     const response = await fetch('http://localhost:5000/api/v1/post/delete-userpost-byPostId', {
       method: 'POST',
@@ -575,9 +576,9 @@ const Feeds = (isCreated: boolean) => {
     }
 
     const data = await response.json();
-    console.log(refresh) // Assuming the response is JSON
-    setRefresh(() => refresh+1);
-    console.log(refresh)
+    console.log(tlRefresh) // Assuming the response is JSON
+    setTlRefresh(tlRefresh+1);
+    console.log(tlRefresh)
     console.log(data);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

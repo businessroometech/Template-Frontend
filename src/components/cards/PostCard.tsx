@@ -10,7 +10,7 @@ import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
 import fallBackAvatar from '../../assets/images/avatar/01.jpg';
 
-const PostCard = ({ item, onDelete }) => {
+const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh}) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
