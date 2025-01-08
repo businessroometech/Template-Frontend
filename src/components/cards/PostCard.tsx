@@ -21,7 +21,7 @@ const PostCard = ({ item }) => {
   const post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
-
+  console.log('------item------',item);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -105,7 +105,9 @@ const PostCard = ({ item }) => {
                   <img className="avatar-img rounded-circle" src={userInfo.avatar} alt={userInfo.firstName} />
                 </span>
               ) : (
-                <CircleUserRound size={20} className="avatar-img rounded-circle" />
+                <span role="button">
+                  <img className="avatar-img rounded-circle" src={fallBackAvatar} alt={'avatar'} />
+                </span>
               )}
             </div>
             <div>
