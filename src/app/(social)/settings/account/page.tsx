@@ -5,8 +5,8 @@ const Account = () => {
   return (
     <>
       <PageMetaData title='Account Settings' />
-      {/* <AccountSettings /> */}
-      <InvestorPreferences/>
+      <AccountSettings /> 
+      {/*<InvestorPreferences/>*/}
     </>
   )
 }

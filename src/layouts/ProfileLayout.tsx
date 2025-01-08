@@ -54,6 +54,8 @@ import { experienceData } from "@/assets/data/layout"
 import { Link, useLocation } from "react-router-dom"
 import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
+import { useAuthContext } from "@/context/useAuthContext"
+import axios from "axios"
 
 const Experience = () => {
   return (
@@ -187,8 +189,15 @@ const Friends = () => {
 
 
 const ProfileLayout = ({ children }: ChildrenType) => {
-  const { pathname } = useLocation()
 
+
+const editprofile = () => {
+  axios.post("http://localhost:5000/api/v1/auth/update-or-create-Profile")
+}
+
+  const { pathname } = useLocation()
+const {user} = useAuthContext()
+console.log( "ProfileLayoutuse :",user)
   return (
     <>
       <Suspense fallback={<Preloader/>}>
@@ -218,14 +227,14 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                     </div>
                     <div className="ms-sm-4 mt-sm-3">
                       <h1 className="mb-0 h5">
-                        Sam Lanson <BsPatchCheckFill className="text-success small" />
+                        {user?.firstName +" "+ user?.lastName} <BsPatchCheckFill className="text-success small" />
                       </h1>
                       <p>250 connections</p>
                     </div>
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
                       <Button variant="danger-soft" className="me-2" type="button">
                         
-                        <BsPencilFill size={19} className="pe-1" /> Edit profile
+                        <BsPencilFill size={19} className="pe-1" onClick={editprofile}/> Edit profile
                       </Button>
                       <Dropdown>
                         <DropdownToggle
@@ -278,13 +287,13 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                   </div>
                   <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
                     <li className="list-inline-item">
-                      <BsBriefcase className="me-1" /> Lead Developer
+                      <BsBriefcase className="me-1" /> {user?.role }
                     </li>
                     <li className="list-inline-item">
                       <BsGeoAlt className="me-1" /> New Hampshire
                     </li>
                     <li className="list-inline-item">
-                      <BsCalendar2Plus className="me-1" /> Joined on Nov 26, 2019
+                  <BsCalendar2Plus className="me-1" /> Joined on {"8 Jan 2025"}
                     </li>
                   </ul>
                 </CardBody>
@@ -324,7 +333,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                         </li>
                         <li>
                           
-                          <BsEnvelope size={18} className="fa-fw pe-1" /> Email: <strong> webestica@gmail.com </strong>
+                          <BsEnvelope size={18} className="fa-fw pe-1" /> Email: <strong> {user?.email} </strong>
                         </li>
                       </ul>
                     </CardBody>

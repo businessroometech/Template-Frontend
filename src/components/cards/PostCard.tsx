@@ -12,9 +12,67 @@ const PostCard = ({ item }) => {
   const [comments, setComments] = useState([])  // State to store comments
   const [commentText, setCommentText] = useState('')  // State to manage comment input
   const [isLoading, setIsLoading] = useState(true)  // State to manage loading state
+  const [like , setLikeCount] = useState(0)
+
+
+
+  const fetchLikes = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/get-likes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "postId": "1d5b61a399792f3239e1824ec46cb70b",
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch likes');
+      }
+  
+      const data = await response.json();
+      console.log(data);
+      // Assuming likeCount is in the data object
+      setLikeCount(data?.likeCount);
+    } catch (error) {
+      console.error('Error fetching likes:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchLikes();  // Fetch likes when the post is available
+  }, []);
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Fetch comments from API when the post is available
   useEffect(() => {
+
+ 
+
+
     const fetchComments = async () => {
       try {
         const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/get-comments', {

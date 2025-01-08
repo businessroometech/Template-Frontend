@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getAllFeeds } from '@/helpers/data'
 
 import { useContext, useEffect, useRef, useState, type ReactNode } from 'react'
@@ -178,7 +179,7 @@ const Post2 = () => {
           Find out how you can save time in the classroom this year. Earn recognition while you learn new skills on iPad and Mac. Start recognition
           your first Apple Teacher badge today!
         </p>
-
+        
         <ul className="nav nav-stack pb-2 small">
           <li className="nav-item">
             <Link className="nav-link active text-secondary" to="">
@@ -493,8 +494,8 @@ const Post3 = () => {
       </CardFooter>
     </Card>
   )
-}
-
+}      
+//................................................................................................................//
 // poll
 const Feeds = (isCreated: boolean) => {
   console.log('-----In Feeds----');

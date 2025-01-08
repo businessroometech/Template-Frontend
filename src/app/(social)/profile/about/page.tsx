@@ -1,8 +1,18 @@
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'react-bootstrap'
 import { interestsData } from './data'
-
 import PageMetaData from '@/components/PageMetaData'
-import { BsBriefcase, BsCalendarDate, BsEnvelope, BsGeoAlt, BsHeart, BsPencilSquare, BsPlusCircleDotted, BsThreeDots, BsTrash } from 'react-icons/bs'
+import { 
+  BsBriefcase, 
+  BsCalendarDate, 
+  BsEnvelope, 
+  BsGeoAlt, 
+  BsHeart, 
+  BsPencilSquare, 
+  BsPlusCircleDotted, 
+  BsThreeDots, 
+  BsTrash,
+  BsTelephone
+} from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 
 const Interests = () => {
@@ -11,7 +21,6 @@ const Interests = () => {
       <CardHeader className="d-sm-flex justify-content-between border-0 pb-0">
         <CardTitle>Interests</CardTitle>
         <Button variant="primary-soft" size="sm">
-          
           See all
         </Button>
       </CardHeader>
@@ -25,7 +34,6 @@ const Interests = () => {
                 </div>
                 <div className="ms-2">
                   <h6 className="mb-0">
-                    
                     <Link className="stretched-link" to="">
                       {item.name}
                     </Link>
@@ -56,14 +64,12 @@ const ActionDropdown = () => {
       <DropdownMenu className="dropdown-menu-end" aria-labelledby="aboutAction">
         <li>
           <DropdownItem>
-            
             <BsPencilSquare size={22} className="fa-fw pe-2" />
             Edit
           </DropdownItem>
         </li>
         <li>
           <DropdownItem>
-            
             <BsTrash size={22} className="fa-fw pe-2" />
             Delete
           </DropdownItem>
@@ -76,10 +82,10 @@ const ActionDropdown = () => {
 const About = () => {
   return (
     <>
-    <PageMetaData title='About'/>
+      <PageMetaData title='About'/>
       <Card>
         <CardHeader className="border-0 pb-0">
-          <CardTitle> Profile Info</CardTitle>
+          <CardTitle>Profile Info</CardTitle>
         </CardHeader>
         <CardBody>
           <div className="rounded border px-3 py-2 mb-3">
@@ -104,7 +110,7 @@ const About = () => {
             <Col sm={6}>
               <div className="d-flex align-items-center rounded border px-3 py-2">
                 <p className="mb-0">
-                  <BsHeart className="fa-fw me-2" /> Status: <strong> Single </strong>
+                  <BsHeart className="fa-fw me-2" /> Gender: <strong> Male </strong>
                 </p>
                 <ActionDropdown />
               </div>
@@ -141,16 +147,22 @@ const About = () => {
                 <ActionDropdown />
               </div>
             </Col>
+            <Col sm={6}>
+              <div className="d-flex align-items-center rounded border px-3 py-2">
+                <p className="mb-0">
+                  <BsTelephone className="fa-fw me-2" /> Mobile: <strong> +1 (555) 123-4567 </strong>
+                </p>
+                <ActionDropdown />
+              </div>
+            </Col>
             <Col sm={6} className="position-relative">
               <Link className="btn btn-dashed rounded w-100 icons-center justify-content-center" to="">
-                
                 <BsPlusCircleDotted className="me-1" />
                 Add a workplace
               </Link>
             </Col>
             <Col sm={6} className="position-relative">
               <Link className="btn btn-dashed rounded w-100 icons-center justify-content-center" to="">
-                
                 <BsPlusCircleDotted className="me-1" />
                 Add a education
               </Link>
@@ -162,4 +174,5 @@ const About = () => {
     </>
   )
 }
+
 export default About
