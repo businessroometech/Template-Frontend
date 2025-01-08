@@ -47,7 +47,7 @@ const ProfileDropdown = () => {
     useEffect(() => {
       const fetchUser = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/v1/auth/get-user-Profile', {
+          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
