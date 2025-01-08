@@ -4,8 +4,7 @@ import ContactSidebar from './components/ContactSidebar'
 import LeftSidebar from './components/LeftSidebar'
 import Feeds from './components/Feeds'
 import Stories from './components/Stories'
-import CreatePostCard from '@/components/cards/CreatePostCard'
-import PostCard from '@/components/cards/PostCard'
+import CreatePostCard from '@/components/cards/CreatePostCard';
 
 const ClassicHome = () => {
   return (

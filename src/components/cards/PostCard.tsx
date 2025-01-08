@@ -7,6 +7,8 @@ import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
 import { CircleUserRound } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
+import useToggle from '@/hooks/useToggle';
+import fallBackAvatar from '../../assets/images/avatar/01.jpg';
 
 const PostCard = ({ item }) => {
   const [comments, setComments] = useState([]);
@@ -15,9 +17,10 @@ const PostCard = ({ item }) => {
   const { user } = useAuthContext();
   const [refresh, setRefresh] = useState(0);
   const [likeStatus, setLikeStatus] = useState(false);
-
+  const [loadMore, setLoadMore] = useState<boolean>(false);
   const post = item?.post;
   const userInfo = item?.userDetails;
+  const { setTrue, setFalse } = useToggle();
 
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
@@ -26,6 +29,7 @@ const PostCard = ({ item }) => {
   }, [post?.likeStatus]);
 
   useEffect(() => {
+    likeStatus ? setTrue() : setFalse();
     const fetchComments = async () => {
       setIsLoading(true);
       try {
@@ -150,7 +154,12 @@ const PostCard = ({ item }) => {
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
             <span role="button">
-              <img className="avatar-img rounded-circle" src={userInfo?.avatar} alt="avatar" />
+              <img
+                className="avatar-img rounded-circle"
+                style={{ width: '52px', height: '35px', objectFit: 'cover'}}
+                src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
+                alt="avatar"
+              />
             </span>
           </div>
           <form className="nav nav-item w-100 position-relative" onSubmit={handleCommentSubmit}>
@@ -175,15 +184,20 @@ const PostCard = ({ item }) => {
           <p>Loading comments...</p>
         ) : (
           <ul className="comment-wrap list-unstyled">
-            {comments.slice(0, 2).map((comment, index) => (
+            {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
               <CommentItem key={index} comment={comment} />
             ))}
           </ul>
         )}
       </CardBody>
       {comments.length > 2 && (
-        <CardFooter className="border-0 pt-0">
-          <LoadContentButton name="Load more comments" />
+        <CardFooter
+          className="border-0 pt-0"
+          onClick={() => {
+            setLoadMore(() => !loadMore);
+          }}
+        >
+          <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
         </CardFooter>
       )}
     </Card>

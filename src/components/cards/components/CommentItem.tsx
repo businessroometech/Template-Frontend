@@ -1,12 +1,21 @@
+import { useState } from 'react';
+import { ChevronDown, ChevronUp, ThumbsUp, MessageSquare } from 'lucide-react';
+import fallbackAvatar from '../../../assets/images/avatar/03.jpg'; // Import the fallback avatar
+
 type CommentType = {
   id: string;
   userId: string;
   postId: string;
   text: string;
+  commenterName: string;
+  timestamp: string;
   createdBy: string;
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
+  avatar?: string;
+  likesCount?: number;
+  replies?: CommentType[];
 };
 
 type CommentItemProps = {
@@ -14,20 +23,64 @@ type CommentItemProps = {
 };
 
 const CommentItem = ({ comment }: CommentItemProps) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString(); // Formats date and time based on the user's locale
-  };
+  const [showReplies, setShowReplies] = useState(false);
 
   return (
     <li className="comment-item">
-      <div className="bg-light rounded-start-top-0 p-3 rounded">
-        <div className="d-flex justify-content-between">
-          <h6 className="mb-1">{comment.commenterName ? comment.commenterName : comment.createdBy}</h6>
-          <small className="ms-2">{formatDate(comment.createdAt)}</small>
+      <div className="d-flex align-items-start mb-3">
+        {/* Avatar */}
+        <img
+          src={comment.avatar || fallbackAvatar} // Use the fallback image if avatar is not provided
+          alt={`${comment.commenterName || comment.createdBy}-avatar`} // Corrected interpolation
+          className="rounded-circle me-3"
+          style={{ width: '35px', height: '35px', objectFit: 'cover' }} // Reduced size by 80%
+        />
+
+        {/* Comment Content */}
+        <div className="bg-light rounded p-3 flex-grow-1">
+          <div className="d-flex justify-content-between">
+            <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
+            <small className="ms-2">{comment.timestamp}</small>
+          </div>
+          <p className="small mb-2">{comment.text}</p>
+
+          {/* Actions */}
+          <div className="d-flex align-items-center gap-3 small">
+            <span role="button" className="text-primary d-flex align-items-center">
+              <ThumbsUp size={16} className="me-1" /> Like ({comment.likesCount || 0})
+            </span>
+            <span role="button" className="text-primary d-flex align-items-center">
+              <MessageSquare size={16} className="me-1" /> Reply
+            </span>
+            {comment.replies && comment.replies.length > 0 && (
+              <span
+                role="button"
+                className="text-secondary d-flex align-items-center"
+                onClick={() => setShowReplies((prev) => !prev)}
+              >
+                {showReplies ? (
+                  <>
+                    <ChevronUp size={16} className="me-1" /> Hide Replies
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown size={16} className="me-1" /> View Replies ({comment.replies.length})
+                  </>
+                )}
+              </span>
+            )}
+          </div>
         </div>
-        <p className="small mb-0">{comment.text}</p>
       </div>
+
+      {/* Nested Replies */}
+      {showReplies && comment.replies && comment.replies.length > 0 && (
+        <ul className="list-unstyled ms-5">
+          {comment.replies.map((reply) => (
+            <CommentItem key={reply.id} comment={reply} />
+          ))}
+        </ul>
+      )}
     </li>
   );
 };

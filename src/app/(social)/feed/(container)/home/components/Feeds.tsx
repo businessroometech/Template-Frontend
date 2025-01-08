@@ -512,7 +512,7 @@ const Feeds = (isCreated: boolean) => {
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'post/get-all-post',
-        data: { userId: '018faa07809d523c34ac1186d761459d', page : 1 },
+        data: { userId: '018faa07809d523c34ac1186d761459d', page : 1},
       })
 
       console.log('Fetched Posts:', data)
