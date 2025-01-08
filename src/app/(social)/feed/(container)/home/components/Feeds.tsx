@@ -496,146 +496,111 @@ const Post3 = () => {
 }
 
 // poll
-const Feeds = (isCreated: boolean) => {
-  console.log('-----In Feeds----');
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState<boolean>(false) // Loading state
-  const [error, setError] = useState<string | null>(null) // Error state
-  const hasMounted = useRef(false) // Track whether the component has mounted
-  const [tlRefresh, setTlRefresh] = useState<number>();
+import { useState, useEffect, useRef } from 'react';
+import { Card } from 'react-bootstrap';
+import PostCard from './PostCard';
+import SponsoredCard from './SponsoredCard';
+import Post2 from './Post2';
+import People from './People';
+import CommonPost from './CommonPost';
+import SuggestedStories from './SuggestedStories';
+import LoadMoreButton from './LoadMoreButton';
+
+const Feeds = ({ isCreated }: { isCreated: boolean }) => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const hasMounted = useRef(false);
 
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
     try {
-      
       const data = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'post/get-all-post',
-        data: { userId: '018faa07809d523c34ac1186d761459d', page : 1},
-      })
+        data: { userId: '018faa07809d523c34ac1186d761459d', page: 1 },
+      });
 
-      console.log('Fetched Posts:', data)
-      setPosts(data.data || [])
+      setPosts(data.data || []);
     } catch (error: any) {
-      console.error('Error fetching posts:', error.message)
-      setError(error.message || 'An unknown error occurred')
+      setError(error.message || 'An unknown error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  const deletePost = async (postId: string) => {
+    try {
+      const response = await fetch(
+        'https://app-backend-8r74.onrender.com/api/v1/post/delete-userpost-byPostId',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Replace with actual token if required
+          },
+          body: JSON.stringify({
+            userId: '018faa07809d523c34ac1186d761459d',
+            PostId: postId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Remove post optimistically
+      setPosts((prevPosts) => prevPosts.filter((post) => post.post?.Id !== postId));
+
+      // Alternatively, fetch posts again to refresh the list
+      await fetchPosts();
+    } catch (error: any) {
+      console.error('Error deleting post:', error.message);
+    }
+  };
 
   useEffect(() => {
-    // If the component has mounted already, only fetch posts if `isCreated` is true
     if (hasMounted.current) {
       if (isCreated) {
-        fetchPosts()
+        fetchPosts();
       }
     } else {
-      // If it's the first mount, fetch posts
-      fetchPosts()
-      hasMounted.current = true // Set to true after the first call
+      fetchPosts();
+      hasMounted.current = true;
     }
-  }, [isCreated])
+  }, [isCreated]);
 
-  const postData = [
-    { progress: 25, title: 'We have cybersecurity insurance coverage' },
-    { progress: 15, title: 'Our dedicated staff will protect us' },
-    { progress: 10, title: 'We give regular training for best practices' },
-    { progress: 55, title: 'Third-party vendor protection' },
-  ]
-
-  // Conditional rendering
-  if (loading) {
-    return <div>Loading posts...</div> // Show a loading spinner or message
-  }
-
-  if (error) {
-    return <div>Error: {error}</div> // Show an error message
-  }
+  if (loading) return <div>Loading posts...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
-        
-  try {
-    const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/delete-userpost-byPostId', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
-      },
-      body: JSON.stringify({
-        userId: '018faa07809d523c34ac1186d761459d',
-        PostId: post.post?.Id,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(tlRefresh) // Assuming the response is JSON
-    setTlRefresh(tlRefresh+1);
-    console.log(tlRefresh)
-    console.log(data);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error('Error Deleting post:', error.message);
-  } finally {
-    console.log('call done')
-  }
-}}/>) : <p>No posts found.</p>}</div>
-
+      <div>
+        {posts.length !== 0 ? (
+          posts.map((post) => (
+            <PostCard
+              key={post.post?.Id}
+              item={post}
+              onDelete={() => deletePost(post.post?.Id)}
+            />
+          ))
+        ) : (
+          <p>No posts found.</p>
+        )}
+      </div>
       <SponsoredCard />
       <Post2 />
       <People />
       <CommonPost>
-        <div className="vstack gap-2">
-          {postData.map((item, idx) => (
-            <div key={idx}>
-              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
-              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
-                {item.title}
-              </label>
-            </div>
-          ))}
-        </div>
+        {/* Your content */}
       </CommonPost>
-
-      <CommonPost>
-        <Card className="card-body mt-4">
-          <div className="d-sm-flex justify-content-sm-between align-items-center">
-            <span className="small">16/20 responded</span>
-            <span className="small">Results not visible to participants</span>
-          </div>
-          <div className="vstack gap-4 gap-sm-3 mt-3">
-            {postData.map((item, idx) => (
-              <div className="d-flex align-items-center justify-content-between" key={idx}>
-                <div className="overflow-hidden w-100 me-3">
-                  <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>
-                    <div
-                      className="progress-bar bg-primary bg-opacity-25"
-                      role="progressbar"
-                      style={{ width: `${item.progress}%` }}
-                      aria-valuenow={item.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.title}</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">{item.progress}%</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </CommonPost>
-
-      {/* <Post3 /> */}
       <SuggestedStories />
       <LoadMoreButton />
     </>
-  )
-}
-export default Feeds
+  );
+};
+
+export default Feeds;
+
