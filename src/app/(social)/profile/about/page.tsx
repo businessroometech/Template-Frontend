@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row } from 'react-bootstrap'
 import { interestsData } from './data'
 import PageMetaData from '@/components/PageMetaData'
+import { useEffect , useState} from 'react'
 import { 
   BsBriefcase, 
   BsCalendarDate, 
@@ -80,6 +81,30 @@ const ActionDropdown = () => {
 }
 
 const About = () => {
+
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/v1/auth/get-user-Profile');
+        console.log(response)
+        setProfile(response.data);
+
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading profile: {error.message}</p>;
+
   return (
     <>
       <PageMetaData title='About'/>
