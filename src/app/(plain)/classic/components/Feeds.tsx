@@ -108,6 +108,7 @@ const ActionMenu = ({ name }: { name?: string }) => {
 }
 
 const CommentItem = ({ comment, likesCount, children, socialUser, createdAt, image }: CommentType) => {
+  console.log('----comment----',comment);
   return (
     <li className="comment-item">
       {socialUser && (
@@ -125,7 +126,7 @@ const CommentItem = ({ comment, likesCount, children, socialUser, createdAt, ima
                     
                     <Link to=""> {socialUser.name} </Link>
                   </h6>
-                  <small className="ms-2">{timeSince(createdAt)}</small>
+                  <small className="ms-2">{comment.timestamp}</small>
                 </div>
                 <p className="small mb-0">{comment}</p>
                 {image && (
@@ -334,7 +335,7 @@ const PostCard = ({ createdAt, likesCount, caption, comments, commentsCount, ima
             </div>
 
             <ul className="comment-wrap list-unstyled">
-              {comments.slice(0,1).map((comment) => (
+              {comments.slice(0,2).map((comment) => (
                 <CommentItem {...comment} key={comment.id} />
               ))}
             </ul>
