@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { CommentType, SocialPostType } from '@/types/data'
 import { timeSince } from '@/utils/date'
@@ -773,6 +773,7 @@ const Post3 = () => {
 }
 
 const Feeds =  () => {
+
   console.log('--------In Feeds (postData wala)--------')
   const postData = [
     { progress: 25, title: 'We have cybersecurity insurance coverage' },
@@ -780,11 +781,12 @@ const Feeds =  () => {
     { progress: 10, title: 'We give regular training for best practices' },
     { progress: 55, title: 'Third-party vendor protection' },
   ]
-  const allPosts = useFetchData(getAllFeeds)
+  const allPosts = useFetchData(getAllFeeds);
+  const [refresh,setRefresh] = useState<number>(0);
   return (
     <>
       {allPosts?.slice(0,1).map((post, idx) => (
-        <PostCard {...post} key={idx} />
+        <PostCard {...post} key={idx} tlR/>
       ))}
 
       <SponsoredCard />

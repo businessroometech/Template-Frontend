@@ -496,16 +496,6 @@ const Post3 = () => {
 }
 
 // poll
-import { useState, useEffect, useRef } from 'react';
-import { Card } from 'react-bootstrap';
-import PostCard from './PostCard';
-import SponsoredCard from './SponsoredCard';
-import Post2 from './Post2';
-import People from './People';
-import CommonPost from './CommonPost';
-import SuggestedStories from './SuggestedStories';
-import LoadMoreButton from './LoadMoreButton';
-
 const Feeds = ({ isCreated }: { isCreated: boolean }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
