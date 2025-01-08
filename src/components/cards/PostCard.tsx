@@ -104,7 +104,7 @@ const PostCard = ({ item, onDelete }) => {
   const handleDeletePost = async () => {
     try {
       const bool = await onDelete(post.Id); // Call the parent-provided delete function
-      if()setRefresh()
+      if(bool) setRefresh(refresh + 1);
     } catch (error) {
       console.error('Error deleting post:', error);
     }
@@ -123,7 +123,11 @@ const PostCard = ({ item, onDelete }) => {
                   alt={userInfo.firstName}
                 />
               ) : (
-                <CircleUserRound size={20} className="avatar-img rounded-circle" />
+                <img
+                  className="avatar-img rounded-circle"
+                  src={fallBackAvatar}
+                  alt={userInfo.firstName}
+                />
               )}
             </div>
             <div>
@@ -171,12 +175,11 @@ const PostCard = ({ item, onDelete }) => {
 
         <div className="d-flex mb-3 align-items-center">
           <div className="avatar avatar-xs me-2">
-            <img
-              className="avatar-img rounded-circle"
-              src={userInfo?.avatar || fallBackAvatar}
-              alt="avatar"
-              style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-            />
+              <img
+                  className="avatar-img rounded-circle"
+                  src={fallBackAvatar}
+                  alt={userInfo.firstName}
+              />
           </div>
           <form className="d-flex w-100" onSubmit={handleCommentSubmit}>
             <textarea
