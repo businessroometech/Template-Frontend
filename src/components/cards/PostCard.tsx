@@ -138,7 +138,6 @@ const PostCard = ({ item, onDelete, tlRefresh, setTlRefresh }) => {
           </Dropdown>
         </div>
       </Card.Header>
-
       <Card.Body>
         {post?.content && <p>{post.content}</p>}
         {post?.mediaUrls?.length > 0 && (
