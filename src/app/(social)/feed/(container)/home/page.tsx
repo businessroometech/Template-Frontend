@@ -28,7 +28,9 @@ const Home = () => {
           <Button 
             variant="outline-primary" 
             className="w-100"
-            style={{ borderColor: '#2D63ED', color: '#2D63ED' }}
+            style={{ borderColor: '#2D63ED', color: '#2D63ED'}}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'white')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#2D63ED')}
             onClick={() => {
               navigate('/join-live')
             }}
@@ -49,7 +51,7 @@ const Home = () => {
           <Col sm={6} lg={12}>
             <Card>
               <CardHeader className="pb-0 border-0">
-                <CardTitle className="mb-0">Today’s news</CardTitle>
+                <CardTitle className="mb-0">Businessroom News</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="mb-3">

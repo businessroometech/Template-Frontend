@@ -12,7 +12,7 @@ const Followers =  () => {
   return (
     <Card>
       <CardHeader className="pb-0 border-0">
-        <CardTitle className="mb-0">Who to follow</CardTitle>
+        <CardTitle className="mb-0">Suggested Connections</CardTitle>
       </CardHeader>
 
       <CardBody>
