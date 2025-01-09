@@ -7,6 +7,8 @@ import FeedLayout from '@/layouts/FeedLayout'
 import SocialLayout from '@/layouts/SocialLayout'
 import ProfileLayout from '@/layouts/ProfileLayout'
 import SettingLayout from '@/layouts/SettingLayout'
+import JoinRoom from '@/components/live/JoinRoom'
+import Live from '@/components/live/Live'
 
 const AppRouter = (props: RouteProps) => {
   const { isAuthenticated } = useAuthContext()
@@ -81,6 +83,8 @@ const AppRouter = (props: RouteProps) => {
           }
         />
       ))}
+      <Route path='/join-live' element={JoinRoom()} />
+      <Route path='/live' element={Live()} />
     </Routes>
   )
 }

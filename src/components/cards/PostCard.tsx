@@ -22,11 +22,16 @@ const PostCard = ({ item }) => {
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
   console.log('------item------',item);
+  console.log('----post like status',post.likeStatus === true);
   useEffect(() => {
+    console.log('-----in post like use effect------',post.likeStatus);
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
     }
-  }, [post?.likeStatus]);
+    else {
+      setLikeStatus(false);
+    }
+  }, [post.likeStatus]);
 
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
