@@ -8,6 +8,7 @@ import bgBannerImg from '@/assets/images/bg/01.jpg'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
+import { Globe } from 'lucide-react'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
@@ -80,12 +81,21 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               </span>
             </div>
 
-            <h5 className="mb-0">
-              
-              <Link to="">{profile.personalDetails?.firstName? profile.personalDetails?.firstName:user?.firstName}  {profile.personalDetails?.lastName?profile.personalDetails?.lastName:user?.lastName}</Link>
+            <h5 className="mb-2 fw-semibold">
+              <Link to="" className="text-dark text-decoration-none">
+                {profile.personalDetails?.firstName ? profile.personalDetails?.firstName : user?.firstName}{' '}
+                {profile.personalDetails?.lastName ? profile.personalDetails?.lastName : user?.lastName}
+              </Link>
             </h5>
-            <small>{profile.personalDetails?.emailAddress?profile.personalDetails?.emailAddress:user?.email}</small>
-            <p className="mt-3">{profile.personalDetails?.bio?profile.personalDetails?.bio:"Software Developer"}</p>
+            
+            <p className="text-dark fs-6 mb-2">Founder</p>
+            <div className="d-flex align-items-center justify-content-center gap-2 text-secondary mb-2">
+              <Globe size={16} />
+              <span className="fs-6">India</span>
+            </div>
+            <p className="text-dark fs-6 mt-3 mb-0">
+              {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
+            </p>
 
             <div className="hstack gap-2 gap-xl-3 justify-content-center">
               <div>
