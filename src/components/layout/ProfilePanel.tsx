@@ -22,7 +22,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
     useEffect(() => {
       const fetchUser = async () => {
         try {
-          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+          const response = await fetch('http://localhost:5000/api/v1/auth/get-user-Profile', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           style={{ backgroundImage: `url(${profile.coverimurl?profile.coverimurl:bgBannerImg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
         />
 
-       {  profile.personalDetails&&( <CardBody className="pt-0">
+       {  profile.coverimurl&&( <CardBody className="pt-0">
           <div className="text-center">
             <div className="avatar avatar-lg mt-n5 mb-3">
               <span role="button">
