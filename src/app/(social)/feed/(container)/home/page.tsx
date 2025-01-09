@@ -18,24 +18,24 @@ const Home = () => {
           <Button 
             variant="primary" 
             className="w-100"
-            style={{ backgroundColor: '#2D63ED', borderColor: '#2D63ED' }}
+            style={{ backgroundColor: 'red', borderColor: 'red', fontWeight : 'bold'}}
             onClick={() => {
               navigate('/live/')
             }}
           >
-            Create Meeting
+            Go Live
           </Button>
           <Button 
             variant="outline-primary" 
             className="w-100"
-            style={{ borderColor: '#2D63ED', color: '#2D63ED'}}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'white')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#2D63ED')}
+            style={{ borderColor: '#0f6fec',backgroundColor: '#0f6fec', color: 'white'}}
+            // onMouseEnter={(e) => (e.currentTarget.style.color = 'white')}
+            // onMouseLeave={(e) => (e.currentTarget.style.color = '#2D63ED')}
             onClick={() => {
               navigate('/join-live')
             }}
           >
-            Join Meeting
+            Join Businessroom Live
           </Button>
         </div>
         <CreatePostCard setIsCreated={setIsCreated} />

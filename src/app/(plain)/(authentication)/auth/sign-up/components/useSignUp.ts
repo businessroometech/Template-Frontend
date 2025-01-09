@@ -10,6 +10,7 @@ interface SignUpFormData {
   lastName : string;
   firstPassword : string;
   confirmPassword : string | undefined;
+  country : string
 }
 
 interface toSendSignUp {
@@ -17,6 +18,7 @@ interface toSendSignUp {
   firstName : string;
   lastName : string;
   password : string;
+  country : string
 }
 
 const useSignUp = () => {
@@ -39,7 +41,8 @@ const useSignUp = () => {
       firstName : formData.firstName,
       lastName : formData.lastName,
       emailAddress : formData.email,
-      password : formData.firstPassword
+      password : formData.firstPassword,
+      country : formData.country
     }
     console.log('---data---',data)
     try {

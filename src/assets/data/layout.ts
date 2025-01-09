@@ -52,7 +52,7 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
   },
   {
     image: chatImg,
-    name: 'Groups',
+    name: 'Who viewed your profile',
     link: '/feed/groups',
   },
   {
