@@ -269,9 +269,9 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
   return (
     <>
-      {show && profile.profileimgurl === undefined &&
+      {/* {show && profile.profileimgurl === undefined &&
         <div className="modal-body w-100 " >
-          <div className="modal fade show d-block " style={{backgroundColor:"#000000ab"}} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+          <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header d-flex row">
@@ -285,7 +285,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               </div>
             </div>
           </div>
-        </div>}
+        </div>} */}
 
       <Card className="card-body">
         <div className="d-flex mb-3">
@@ -332,7 +332,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
             </a>
           </li>
           <li className="nav-item">
-          <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
+            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
               <SendHorizontal size={14} color="#2f09ec" />
               {"  Post"}
             </a>
