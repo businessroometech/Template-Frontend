@@ -49,7 +49,7 @@ import avatar7 from '@/assets/images/avatar/07.jpg'
 import ChoicesFormInput from '../form/ChoicesFormInput'
 import { Link } from 'react-router-dom'
 import { SendHorizontal } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 import { CREATE_POST } from '@/utils/api'
 import { uploadDoc } from '@/utils/CustomS3ImageUpload'
@@ -70,7 +70,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
-  const {user} = useAuthContext();
+  const { user } = useAuthContext();
 
   const eventFormSchema = yup.object({
     title: yup.string().required('Please enter event title'),
@@ -89,6 +89,55 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const [videoQuote, setVideoQuote] = useState('')
   const [awsIds, setAwsIds] = useState<any>([])
 
+
+
+  // const {user} = useAuthContext();
+  const [profile, setProfile] = useState({});
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setProfile(data.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    if (profile.coverimurl) {
+      return;
+    }
+    fetchUser();
+  }, [profile.personalDetails]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    };
+    return date.toLocaleString('en-GB', options).replace(',', ' at');
+  };
+
   const handlePostClick = async (values: string) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
@@ -100,7 +149,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
-      console.log('------user--------',user,user?.id)
+      console.log('------user--------', user, user?.id)
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
@@ -216,7 +265,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
             <span role="button">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="avatar3" />
+              <img className="avatar-img rounded-circle" src={profile.profileimgurl ? profile.profileimgurl : avatar7} alt="avatar3" />
             </span>
           </div>
 
