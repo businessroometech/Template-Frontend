@@ -7,7 +7,8 @@ import FeedLayout from '@/layouts/FeedLayout'
 import SocialLayout from '@/layouts/SocialLayout'
 import ProfileLayout from '@/layouts/ProfileLayout'
 import SettingLayout from '@/layouts/SettingLayout'
-
+import FourProfiles from '@/app/(plain)/FourProfiles/FourProfiles'
+import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm'
 const AppRouter = (props: RouteProps) => {
   const { isAuthenticated } = useAuthContext()
 
@@ -28,7 +29,7 @@ const AppRouter = (props: RouteProps) => {
         )
         } />
       ))}
-
+    
       {(socialWithTopbarRoutes || []).map((route, idx) => (
         <Route
           key={idx + route.name}
@@ -51,6 +52,8 @@ const AppRouter = (props: RouteProps) => {
         ) :
           (
             <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
+            
+            
           )
         } />
       ))}
@@ -81,6 +84,8 @@ const AppRouter = (props: RouteProps) => {
           }
         />
       ))}
+      <Route path='/fourprofiles' element={<FourProfiles></FourProfiles>}></Route>
+      <Route path='/businesssellerform' element={<BusinessSellerForm></BusinessSellerForm>}></Route>
     </Routes>
   )
 }

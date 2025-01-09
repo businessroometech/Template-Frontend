@@ -96,7 +96,7 @@ export type GroupType = {
   name: string
   type: 'Public' | 'Private'
   ppd: number
-  members: string[]
+  //members: string[]
   memberCount: string
   isJoin?: boolean
 }

@@ -169,7 +169,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
       },
       {
         key: 'pages-groups',
-        label: 'Groups',
+        label: 'Marketplace',
         url: '/feed/groups',
         parentKey: 'pages',
       },

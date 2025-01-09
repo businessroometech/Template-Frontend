@@ -5,8 +5,30 @@ import { Link } from 'react-router-dom'
 import { Card, CardBody, Col, Container, Row } from 'react-bootstrap'
 import { BsGlobe, BsLock } from 'react-icons/bs'
 import { useFetchData } from '@/hooks/useFetchData'
+//import { useEffect } from 'react'
 
 const GroupCard = ({ image, logo, memberCount, members, name, ppd, type }: GroupType) => {
+
+//....................................................................//
+/*
+  const data = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/businessseller/getall");
+      console.log(res)
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();  // Parse the JSON data from the response
+      console.log(result);  // Log the actual data
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
+  
+  useEffect(() => {
+    data();  // Call the async function
+  }, []);
+*/
   return (
     <Card>
       <div
@@ -32,7 +54,7 @@ const GroupCard = ({ image, logo, memberCount, members, name, ppd, type }: Group
         <div className="hstack gap-2 gap-xl-3 justify-content-center mt-3">
           <div>
             <h6 className="mb-0">{memberCount}</h6>
-            <small>Members</small>
+            <small></small>
           </div>
           <div className="vr" />
           <div>
