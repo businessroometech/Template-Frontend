@@ -270,8 +270,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   return (
     <>
       {show && profile.profileimgurl === undefined &&
-        <div className="modal-body w-100 bg-dark">
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div className="modal-body w-100 " >
+          <div className="modal fade show d-block " style={{backgroundColor:"#000000ab"}} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header d-flex row">
