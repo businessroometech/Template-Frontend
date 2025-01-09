@@ -23,7 +23,7 @@ const Home = () => {
               navigate('/live/')
             }}
           >
-            Go <br/> Live
+            Live
           </Button>
           <Button 
             variant="outline-primary" 
@@ -35,7 +35,7 @@ const Home = () => {
               navigate('/join-live')
             }}
           >
-            Join <br/>Businessroom Live
+            Businessroom Live
           </Button>
           <Button 
             variant="outline-success" 
@@ -47,7 +47,7 @@ const Home = () => {
               navigate('/feed/groups')
             }}
           >
-            Acquireroom Marketplace
+            Acquireroom 
           </Button>
         </div>
         <CreatePostCard setIsCreated={setIsCreated} />
