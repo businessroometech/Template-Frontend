@@ -12,9 +12,9 @@ const Home = () => {
   const navigate = useNavigate();
   return (
     <>
-      <Col md={8} lg={6} className="vstack gap-4">
+      <Col md={8} lg={6} className="vstack  gap-4">
         <Stories />
-        <div className="d-flex justify-content-between gap-3 px-3 py-2">
+        <div className="d-flex justify-content-between gap-3 px-1 py-2 ">
           <Button 
             variant="primary" 
             className="w-100"
@@ -23,7 +23,7 @@ const Home = () => {
               navigate('/live/')
             }}
           >
-            Go Live
+            Go <br/> Live
           </Button>
           <Button 
             variant="outline-primary" 
@@ -35,7 +35,19 @@ const Home = () => {
               navigate('/join-live')
             }}
           >
-            Join Businessroom Live
+            Join <br/>Businessroom Live
+          </Button>
+          <Button 
+            variant="outline-success" 
+            className="w-100 bg-success"
+            style={{ dbackgroundColor: '#0f6fec', color: 'white'}}
+            // onMouseEnter={(e) => (e.currentTarget.style.color = 'white')}
+            // onMouseLeave={(e) => (e.currentTarget.style.color = '#2D63ED')}
+            onClick={() => {
+              navigate('/feed/groups')
+            }}
+          >
+            Acquireroom Marketplace
           </Button>
         </div>
         <CreatePostCard setIsCreated={setIsCreated} />

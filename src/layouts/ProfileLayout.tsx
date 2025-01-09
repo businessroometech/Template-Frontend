@@ -51,7 +51,7 @@ import album3 from '@/assets/images/albums/03.jpg'
 import album4 from '@/assets/images/albums/04.jpg'
 import album5 from '@/assets/images/albums/05.jpg'
 import { experienceData } from "@/assets/data/layout"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
 import axios from "axios"
@@ -192,7 +192,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
 const {user} = useAuthContext();
   const [profile, setProfile] = useState({});
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -284,7 +284,7 @@ const {user} = useAuthContext();
                 </div>
                 {/* Action Buttons */}
                 <div className="d-flex mt-3 justify-content-center ms-sm-auto">
-                  <Button variant="danger-soft" className="me-2" type="button">
+                  <Button variant="danger-soft" className="me-2" type="button" onClick={() => navigate("/settings/account") }>
                     <BsPencilFill size={19} className="pe-1" /> Edit profile
                   </Button>
                   <Dropdown>

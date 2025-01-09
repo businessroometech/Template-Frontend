@@ -12,7 +12,7 @@ import * as yup from 'yup';
 import TextFormInput from '@/components/form/TextFormInput';
 import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import DateFormInput from '@/components/form/DateFormInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import avatar7 from '@/assets/images/avatar/07.jpg';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
@@ -26,7 +26,7 @@ const AccountSettings = () => {
   
   const [profile, setProfile] = useState({});
   const schema = yup.object({
-    fName: yup.string().required('Please enter your first name').default("Sachin"), 
+    fName: yup.string().required('Please enter your first name'), 
     lName: yup.string().required('Please enter your last name'), 
     occupation: yup.string().required('Please enter your occupation'), 
     dob: yup.date().required('Please enter your date of birth'), 
@@ -44,7 +44,7 @@ const AccountSettings = () => {
     }),
 });
 
-
+const navigate = useNavigate();
 
   const { user } = useAuthContext();
 
@@ -88,6 +88,7 @@ const AccountSettings = () => {
     }
   }
   const onSubmit = async (data) => {
+    console.log('----data----',data)
     try {
       const profilePhoto = await handleUploadprofile()
       const coverPhoto = await handleUploadprofileBg()
@@ -110,17 +111,17 @@ const AccountSettings = () => {
           permanentAddress: {
             addressLine1: data.permanentAddress.addressLine1,
             addressLine2: "Apt 4B",
-            city: data.permanentAddress.city,
-            state: data.permanentAddress.state,
-            pincode: data.permanentAddress.pincode,
+            city: data?.permanentAddress?.city || "unknown",
+            state: data?.permanentAddress?.state,
+            pincode: data?.permanentAddress?.pincode,
           },
-          currentAddress: {
-            addressLine1: data?.currentAddress?.addressLine1,
-            addressLine2: "Apt 4B",
-            city: data.currentAddress.city,
-            state: data.currentAddress.state,
-            pincode: data.currentAddress.pincode,
-          },
+          // currentAddress: {
+          //   addressLine1: data?.currentAddress?.addressLine1,
+          //   addressLine2: "Apt 4B",
+          //   city: data?.currentAddress?.city,
+          //   state: data.currentAddress.state,
+          //   pincode: data.currentAddress.pincode,
+          // },
           aadharNumberUploadId: "111e2227-c34d-78d3-e456-426614174333",
           panNumberUploadId: "222e3337-d45e-89d3-f456-426614174444"
         };
@@ -141,6 +142,7 @@ const AccountSettings = () => {
 
       const result = await response.json();
       console.log(result); // Handle response accordingly
+      navigate("/");
 
     }
     else{

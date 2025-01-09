@@ -9,6 +9,8 @@ import { useFetchData } from '@/hooks/useFetchData'
 
 const GroupCard = ({ image, logo, memberCount, members, name, ppd, type }: GroupType) => {
 
+  
+
 //....................................................................//
 /*
   const data = async () => {
