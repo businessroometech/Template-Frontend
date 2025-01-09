@@ -7,14 +7,11 @@ import FeedLayout from '@/layouts/FeedLayout'
 import SocialLayout from '@/layouts/SocialLayout'
 import ProfileLayout from '@/layouts/ProfileLayout'
 import SettingLayout from '@/layouts/SettingLayout'
-<<<<<<< HEAD
 import FourProfiles from '@/app/(plain)/FourProfiles/FourProfiles'
 import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm'
-=======
 import JoinRoom from '@/components/live/JoinRoom'
 import Live from '@/components/live/Live'
 
->>>>>>> 00385d0f32f2209610b37cc6840ad6d7dee51d54
 const AppRouter = (props: RouteProps) => {
   const { isAuthenticated } = useAuthContext()
 
@@ -90,13 +87,10 @@ const AppRouter = (props: RouteProps) => {
           }
         />
       ))}
-<<<<<<< HEAD
       <Route path='/fourprofiles' element={<FourProfiles></FourProfiles>}></Route>
       <Route path='/businesssellerform' element={<BusinessSellerForm></BusinessSellerForm>}></Route>
-=======
       <Route path='/join-live' element={JoinRoom()} />
       <Route path='/live' element={Live()} />
->>>>>>> 00385d0f32f2209610b37cc6840ad6d7dee51d54
     </Routes>
   )
 }
