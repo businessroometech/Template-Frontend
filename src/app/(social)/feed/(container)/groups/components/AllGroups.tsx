@@ -125,7 +125,7 @@ const AllGroups = () => {
         <CardHeader className="border-0 pb-0">
             <Row className="g-4 align-items-center">
               <Col xs={12} lg={6}>
-                <h1 className="h3 card-title mb-0">Acquireroom Market Place</h1>
+                <h1 className="h3 card-title mb-0">Acquireroom Marketplace</h1>
               </Col>
               <Col xs={12} lg={4} className="ms-lg-auto">
                 <div className="d-flex flex-column">
