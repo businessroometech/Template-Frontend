@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 
 import avatar7 from '@/assets/images/avatar/07.jpg'
 import { useAuthContext } from '@/context/useAuthContext'
+import { useEffect, useState } from 'react'
 
 type ThemeModeType = {
   theme: ThemeType
@@ -36,6 +37,57 @@ const ProfileDropdown = () => {
 
   const { theme: themeMode, updateTheme } = useLayoutContext()
   const { removeSession } = useAuthContext()
+
+
+  
+  const {user} = useAuthContext();
+    const [profile, setProfile] = useState({});
+  
+  
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: user?.id
+            })
+          });
+  
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+  
+          const data = await response.json(); 
+          setProfile(data.data); 
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      };
+      if (profile.personalDetails){
+        return;
+      }
+      fetchUser();
+    }, [profile.personalDetails]); 
+    
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      };
+      return date.toLocaleString('en-GB', options).replace(',', ' at');
+    };
+  
+  
   return (
     <Dropdown as="li" className="nav-item ms-2" drop="down" align="end">
       <DropdownToggle
@@ -55,9 +107,9 @@ const ProfileDropdown = () => {
             </div>
             <div>
               <Link className="h6 stretched-link" to="">
-                Lori Ferguson
+               {profile.personalDetails?.firstName}  {profile.personalDetails?.lastName}
               </Link>
-              <p className="small m-0">Web Developer</p>
+              <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>
           </div>
           <Link className="dropdown-item btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">

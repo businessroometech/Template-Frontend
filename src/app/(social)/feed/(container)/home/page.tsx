@@ -1,18 +1,43 @@
-import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
+import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row } from 'react-bootstrap'
 import Stories from './components/Stories'
 import Feeds from './components/Feeds'
 import Followers from './components/Followers'
 import CreatePostCard from '@/components/cards/CreatePostCard'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import LoadContentButton from '@/components/LoadContentButton'
 import { useState } from 'react'
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false)
+  const navigate = useNavigate();
   return (
     <>
       <Col md={8} lg={6} className="vstack gap-4">
         <Stories />
+        <div className="d-flex justify-content-between gap-3 px-3 py-2">
+          <Button 
+            variant="primary" 
+            className="w-100"
+            style={{ backgroundColor: '#2D63ED', borderColor: '#2D63ED' }}
+            onClick={() => {
+              navigate('/live/')
+            }}
+          >
+            Create Meeting
+          </Button>
+          <Button 
+            variant="outline-primary" 
+            className="w-100"
+            style={{ borderColor: '#2D63ED', color: '#2D63ED'}}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'white')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#2D63ED')}
+            onClick={() => {
+              navigate('/join-live')
+            }}
+          >
+            Join Meeting
+          </Button>
+        </div>
         <CreatePostCard setIsCreated={setIsCreated} />
         <Feeds isCreated={isCreated} />
       </Col>
@@ -26,7 +51,7 @@ const Home = () => {
           <Col sm={6} lg={12}>
             <Card>
               <CardHeader className="pb-0 border-0">
-                <CardTitle className="mb-0">Today’s news</CardTitle>
+                <CardTitle className="mb-0">Businessroom News</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="mb-3">

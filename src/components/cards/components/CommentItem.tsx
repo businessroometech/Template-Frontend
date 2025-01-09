@@ -20,11 +20,14 @@ type CommentType = {
 
 type CommentItemProps = {
   comment: CommentType;
+  level : number;
 };
 
-const CommentItem = ({ comment }: CommentItemProps) => {
+const CommentItem = ({ comment,level }: CommentItemProps,) => {
   const [showReplies, setShowReplies] = useState(false);
-
+  console.log('-----comment------',comment);
+  console.log('-----show replies------',showReplies);
+  comment.replies = [comment,comment,comment];
   return (
     <li className="comment-item">
       <div className="d-flex align-items-start mb-3">
@@ -50,15 +53,15 @@ const CommentItem = ({ comment }: CommentItemProps) => {
               <ThumbsUp size={16} className="me-1" /> Like 
             </span>
             <span role="button" className="text-primary d-flex align-items-center">
-              <MessageSquare size={16} className="me-1" /> Reply
+              <MessageSquare size={16} className="me-1" />{"Reply"} 
             </span>
-            {comment.replies && comment.replies.length > 0 && (
+            {comment.replies && comment.replies.length > 0 &&  level < 1 &&(
               <span
                 role="button"
                 className="text-secondary d-flex align-items-center"
                 onClick={() => setShowReplies((prev) => !prev)}
               >
-                {showReplies ? (
+                {showReplies  ? (
                   <>
                     <ChevronUp size={16} className="me-1" /> Hide Replies
                   </>
@@ -77,7 +80,7 @@ const CommentItem = ({ comment }: CommentItemProps) => {
       {showReplies && comment.replies && comment.replies.length > 0 && (
         <ul className="list-unstyled ms-5">
           {comment.replies.map((reply) => (
-            <CommentItem key={reply.id} comment={reply} />
+            <CommentItem key={reply.id} comment={reply} level={level + 1} />
           ))}
         </ul>
       )}

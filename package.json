@@ -15,7 +15,13 @@
     "@emoji-mart/react": "^1.1.1",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.0",
+<<<<<<< HEAD
     "axios": "^1.7.9",
+=======
+    "@zegocloud/zego-uikit-prebuilt": "^2.14.0",
+    "@zegocloud/zego-uikit-prebuilt-live-streaming-rn": "^2.5.2",
+    "axios": "^1.7.2",
+>>>>>>> 00385d0f32f2209610b37cc6840ad6d7dee51d54
     "axios-mock-adapter": "^1.22.0",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
@@ -40,6 +46,7 @@
     "simplebar-react": "^3.2.6",
     "tiny-slider": "^2.9.4",
     "yup": "^1.4.0",
+    "zego-express-engine-reactnative": "^3.17.1",
     "zuck.js": "^1.5.4"
   },
   "devDependencies": {

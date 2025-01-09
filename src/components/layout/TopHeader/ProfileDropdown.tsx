@@ -13,6 +13,7 @@ import { useLayoutContext } from '@/context/useLayoutContext'
 import { toSentenceCase } from '@/utils/change-casing'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 type ThemeModeType = {
   theme: ThemeType
@@ -38,6 +39,53 @@ const ProfileDropdown = () => {
   const { theme: themeMode, updateTheme } = useLayoutContext()
   const { removeSession } = useAuthContext()
 
+  const {user} = useAuthContext();
+    const [profile, setProfile] = useState({});
+  
+  
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: user?.id
+            })
+          });
+  
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+  
+          const data = await response.json(); 
+          setProfile(data.data); 
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      };
+      if (profile.personalDetails){
+        return;
+      }
+      fetchUser();
+    }, [profile.personalDetails]); 
+    
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      };
+      return date.toLocaleString('en-GB', options).replace(',', ' at');
+    };
+
   return (
     <Dropdown as="li" className="nav-item ms-2" drop="down" align="end">
       <DropdownToggle
@@ -47,19 +95,19 @@ const ProfileDropdown = () => {
         data-bs-display="static"
         data-bs-toggle="dropdown"
         aria-expanded="false">
-        <img className="avatar-img rounded-2" src={avatar7} alt="avatar" />
+        <img className="avatar-img rounded-2" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end pt-3 small me-md-n3" aria-labelledby="profileDropdown">
         <li className="px-3">
           <div className="d-flex align-items-center position-relative">
             <div className="avatar me-3">
-              <img className="avatar-img rounded-circle" src={avatar7} alt="avatar" />
+              <img className="avatar-img rounded-circle" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
             </div>
             <div>
               <Link className="h6 stretched-link" to="">
-                Lori Ferguson
+                {profile.personalDetails?.firstName}  {profile.personalDetails?.lastName}
               </Link>
-              <p className="small m-0">Web Developer</p>
+              <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>
           </div>
           <DropdownItem as={Link} className="btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">

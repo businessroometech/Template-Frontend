@@ -40,7 +40,7 @@ export const uploadDoc = async (file: FileUpload, userId: string): Promise<strin
     // Step 1: Generate upload URL
     const generateUrlResponse = await makeApiRequest<ApiResponse<{ url: string }>>({
       method: 'POST',
-      url: 'auth/generate-upload-url',
+      url: 'api/v1/auth/generate-upload-url',
       data: {
         key: key,
         expDate: 15,

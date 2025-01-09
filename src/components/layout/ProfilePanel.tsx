@@ -7,6 +7,7 @@ import avatar7 from '@/assets/images/avatar/07.jpg'
 import bgBannerImg from '@/assets/images/bg/01.jpg'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/context/useAuthContext'
+import { useEffect, useState } from 'react'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
@@ -14,28 +15,77 @@ type ProfilePanelProps = {
 
 const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const {user} = useAuthContext();
+    const [profile, setProfile] = useState({});
+  
+
+  // console.log("user", user);
+  
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: user?.id
+            })
+          });
+  
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+  
+          const data = await response.json(); 
+          setProfile(data.data); 
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      };
+      if (profile.profileimgurl){
+        return;
+      }
+      fetchUser();
+    }, [profile.personalDetails]); 
+    
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      };
+      return date.toLocaleString('en-GB', options).replace(',', ' at');
+    };
+  
+  
   return (
     <>
       <Card className="overflow-hidden h-100">
         <div
           className="h-50px"
-          style={{ backgroundImage: `url(${bgBannerImg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
+          style={{ backgroundImage: `url(${profile.coverimurl?profile.coverimurl:bgBannerImg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
         />
 
         <CardBody className="pt-0">
           <div className="text-center">
             <div className="avatar avatar-lg mt-n5 mb-3">
               <span role="button">
-                <img height={64} width={64} src={avatar7} alt="avatar" className="avatar-img rounded border border-white border-3" />
+                <img height={64} width={64} src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" className="avatar-img rounded border border-white border-3" />
               </span>
             </div>
 
             <h5 className="mb-0">
               
-              <Link to="">{user?.firstName}</Link>
+              <Link to="">{profile.personalDetails?.firstName? profile.personalDetails?.firstName:user?.firstName}  {profile.personalDetails?.lastName?profile.personalDetails?.lastName:user?.lastName}</Link>
             </h5>
-            <small>{user?.email}</small>
-            <p className="mt-3">I&apos;d love to change the world, but they won’t give me the source code.</p>
+            <small>{profile.personalDetails?.emailAddress?profile.personalDetails?.emailAddress:user?.email}</small>
+            <p className="mt-3">{profile.personalDetails?.bio?profile.personalDetails?.bio:"Software Developer"}</p>
 
             <div className="hstack gap-2 gap-xl-3 justify-content-center">
               <div>
@@ -62,7 +112,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               <li key={item.name + idx} className="nav-item">
                 <Link className="nav-link" to={item.link}>
                   <img src={item.image} alt="icon" height={20} width={20} className="me-2 h-20px fa-fw" />
-                  <span>{item.name} </span>
+                  <span>{item.name?item.name:"Arun Jain"}  </span>
                 </Link>
               </li>
             ))}

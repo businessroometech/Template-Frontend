@@ -53,7 +53,7 @@ export const PROFILE_MENU_ITEMS: MenuItemType[] = [
 export const APP_MENU_ITEMS: MenuItemType[] = [
   {
     key: 'demos',
-    label: 'Demo',
+    label: 'Home',
     isTitle: true,
     children: [
       {

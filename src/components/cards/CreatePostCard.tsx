@@ -49,7 +49,7 @@ import avatar7 from '@/assets/images/avatar/07.jpg'
 import ChoicesFormInput from '../form/ChoicesFormInput'
 import { Link } from 'react-router-dom'
 import { SendHorizontal } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 import { CREATE_POST } from '@/utils/api'
 import { uploadDoc } from '@/utils/CustomS3ImageUpload'
@@ -59,6 +59,7 @@ interface CreatePostCardProps {
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
+import UserModel from './UserModel'
 
 interface ApiResponse<T> {
   status: number
@@ -70,7 +71,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
-  const {user} = useAuthContext();
+  const { user } = useAuthContext();
 
   const eventFormSchema = yup.object({
     title: yup.string().required('Please enter event title'),
@@ -89,6 +90,55 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const [videoQuote, setVideoQuote] = useState('')
   const [awsIds, setAwsIds] = useState<any>([])
 
+
+
+  // const {user} = useAuthContext();
+  const [profile, setProfile] = useState({});
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setProfile(data.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    if (profile.coverimurl) {
+      return;
+    }
+    fetchUser();
+  }, [profile.personalDetails]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    };
+    return date.toLocaleString('en-GB', options).replace(',', ' at');
+  };
+
   const handlePostClick = async (values: string) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
@@ -100,7 +150,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
-
+      console.log('------user--------', user, user?.id)
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
@@ -209,14 +259,39 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       console.log('Error in the posting', err)
     }
   }
+  console.log("profile", profile);
+
+
+  const [show, setShow] = useState(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
 
   return (
     <>
+      {/* {show && profile.profileimgurl === undefined &&
+        <div className="modal-body w-100 " >
+          <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header d-flex row">
+                  <h5 className="modal-title w-50" id="exampleModalLongTitle">Complete your profile</h5>
+                  <button type="button" className="close border-0 w-25 text-info justify-content-around" onClick={handleClose} aria-label="Close">
+                    skip
+                  </button>
+                </div>
+                <UserModel />
+
+              </div>
+            </div>
+          </div>
+        </div>} */}
+
       <Card className="card-body">
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
             <span role="button">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="avatar3" />
+              <img className="avatar-img rounded-circle" src={profile.profileimgurl ? profile.profileimgurl : avatar7} alt="avatar3" />
             </span>
           </div>
 
@@ -257,14 +332,10 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
             </a>
           </li>
           <li className="nav-item">
-            <button
-              type="button"
-              className="nav-link bg-light py-1 px-2 mb-0"
-              onClick={handlePostClick} // Call handlePostClick when clicked
-            >
-              <SendHorizontal size={16} color="#2f09ec" />
-              Post
-            </button>
+            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
+              <SendHorizontal size={14} color="#2f09ec" />
+              {"  Post"}
+            </a>
           </li>
           <Dropdown drop="start" className="nav-item ms-lg-auto">
             <DropdownToggle
@@ -469,5 +540,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     </>
   )
 }
+
+
 
 export default CreatePostCard
