@@ -18,11 +18,12 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
     const [profile, setProfile] = useState({});
   
 
+  // console.log("user", user);
   
     useEffect(() => {
       const fetchUser = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/v1/auth/get-user-Profile', {
+          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           style={{ backgroundImage: `url(${profile.coverimurl?profile.coverimurl:bgBannerImg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
         />
 
-       {  profile.coverimurl&&( <CardBody className="pt-0">
+        <CardBody className="pt-0">
           <div className="text-center">
             <div className="avatar avatar-lg mt-n5 mb-3">
               <span role="button">
@@ -81,10 +82,10 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
 
             <h5 className="mb-0">
               
-              <Link to="">{profile.personalDetails?.firstName}  {profile.personalDetails?.lastName}</Link>
+              <Link to="">{profile.personalDetails?.firstName? profile.personalDetails?.firstName:user?.firstName}  {profile.personalDetails?.lastName?profile.personalDetails?.lastName:user?.lastName}</Link>
             </h5>
-            <small>{profile.personalDetails?.emailAddress}</small>
-            <p className="mt-3">{profile.personalDetails?.bio}</p>
+            <small>{profile.personalDetails?.emailAddress?profile.personalDetails?.emailAddress:user?.email}</small>
+            <p className="mt-3">{profile.personalDetails?.bio?profile.personalDetails?.bio:"Software Developer"}</p>
 
             <div className="hstack gap-2 gap-xl-3 justify-content-center">
               <div>
@@ -111,12 +112,12 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               <li key={item.name + idx} className="nav-item">
                 <Link className="nav-link" to={item.link}>
                   <img src={item.image} alt="icon" height={20} width={20} className="me-2 h-20px fa-fw" />
-                  <span>{item.name} </span>
+                  <span>{item.name?item.name:"Arun Jain"}  </span>
                 </Link>
               </li>
             ))}
           </ul>
-        </CardBody>)}
+        </CardBody>
 
         <CardFooter className="text-center py-2">
           <Link  className="btn btn-sm btn-link" to="/profile/feed">
