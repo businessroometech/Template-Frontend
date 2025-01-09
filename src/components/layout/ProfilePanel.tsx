@@ -18,6 +18,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
     const [profile, setProfile] = useState({});
   
 
+  // console.log("user", user);
   
     useEffect(() => {
       const fetchUser = async () => {
@@ -81,9 +82,9 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
 
             <h5 className="mb-0">
               
-              <Link to="">{profile.personalDetails?.firstName? profile.personalDetails?.firstName:"Arun"}  {profile.personalDetails?.lastName?profile.personalDetails?.lastName:"Jain"}</Link>
+              <Link to="">{profile.personalDetails?.firstName? profile.personalDetails?.firstName:user?.firstName}  {profile.personalDetails?.lastName?profile.personalDetails?.lastName:user?.lastName}</Link>
             </h5>
-            <small>{profile.personalDetails?.emailAddress?profile.personalDetails?.emailAddress:"arun@businessroom.ai"}</small>
+            <small>{profile.personalDetails?.emailAddress?profile.personalDetails?.emailAddress:user?.email}</small>
             <p className="mt-3">{profile.personalDetails?.bio?profile.personalDetails?.bio:"Software Developer"}</p>
 
             <div className="hstack gap-2 gap-xl-3 justify-content-center">
