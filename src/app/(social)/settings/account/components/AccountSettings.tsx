@@ -77,14 +77,14 @@ const AccountSettings = () => {
       phoneNo: '(678) 324-1251',
     },
   })
-  return (
+  return ( 
     <>
       <Card className="mb-4">
         <CardHeader className="border-0 pb-0">
           <h1 className="h5 card-title">Account Settings</h1>
           <p className="mb-0">
             He moonlights difficult engrossed it, sportsmen. Interested has all Devonshire difficulty gay assistance joy. Unaffected at ye of
-            compliment alteration to.
+            compliment alteration to. 
           </p>
         </CardHeader>
         <CardBody>

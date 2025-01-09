@@ -217,7 +217,7 @@ const {user} = useAuthContext();
         console.error("Error fetching user profile:", error);
       }
     };
-    if (profile.personalDetails){
+    if (profile?.coverimurl){
       return;
     }
     fetchUser();
@@ -244,7 +244,7 @@ const {user} = useAuthContext();
         <TopHeader />
       </Suspense>
 
-     {profile.personalDetails&&( <main>
+     {profile?.coverimurl&&( <main>
         <Container>
           <Row className="g-4">
             <Col lg={8} className="vstack gap-4">
