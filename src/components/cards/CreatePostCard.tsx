@@ -59,6 +59,7 @@ interface CreatePostCardProps {
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
+import UserModel from './UserModel'
 
 interface ApiResponse<T> {
   status: number
@@ -258,9 +259,34 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       console.log('Error in the posting', err)
     }
   }
+  console.log("profile", profile);
+
+
+  const [show, setShow] = useState(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
 
   return (
     <>
+      {show && profile.profileimgurl === undefined &&
+        <div className="modal-body w-100 bg-dark">
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header d-flex row">
+                  <h5 className="modal-title w-50" id="exampleModalLongTitle">Complete your profile</h5>
+                  <button type="button" className="close border-0 w-25 text-info justify-content-around" onClick={handleClose} aria-label="Close">
+                    skip
+                  </button>
+                </div>
+                <UserModel />
+
+              </div>
+            </div>
+          </div>
+        </div>}
+
       <Card className="card-body">
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
@@ -518,5 +544,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     </>
   )
 }
+
+
 
 export default CreatePostCard
