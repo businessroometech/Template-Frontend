@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { ThumbsUp } from 'lucide-react';
-import { Card, CardBody, CardFooter, CardHeader } from 'react-bootstrap';
+import { MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
 import { CircleUserRound } from 'lucide-react';
@@ -17,18 +17,15 @@ const PostCard = ({ item }) => {
   const { user } = useAuthContext();
   const [refresh, setRefresh] = useState(0);
   const [likeStatus, setLikeStatus] = useState(false);
-  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [loadMore, setLoadMore] = useState(false);
   const post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
-  console.log('------item------',item);
-  console.log('----post like status',post.likeStatus === true);
+
   useEffect(() => {
-    console.log('-----in post like use effect------',post.likeStatus);
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
-    }
-    else {
+    } else {
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
@@ -100,7 +97,7 @@ const PostCard = ({ item }) => {
   };
 
   return (
-    <Card className="mb-10">
+    <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
@@ -120,7 +117,7 @@ const PostCard = ({ item }) => {
                 <h6 className="nav-item card-title mb-0">
                   <span role="button">{userInfo?.firstName + ' ' + userInfo?.lastName}</span>
                 </h6>
-                <span className="nav-item small"> {userInfo?.timestamp}</span>
+                <span className="nav-item small ms-2"> {userInfo?.timestamp}</span>
               </div>
             </div>
           </div>
@@ -128,38 +125,67 @@ const PostCard = ({ item }) => {
       </CardHeader>
 
       <CardBody>
-        {post?.content && <p>{post.content}</p>}
+        {post?.content && <p className="mb-3">{post.content}</p>}
         {post?.mediaUrls?.length > 0 && (
           <div
             style={{
               width: '100%',
-              height: '500px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              marginBottom: '1rem'
             }}
           >
-            <img src={post.mediaUrls[0]} style={{ maxWidth: '100%', maxHeight: '100%' }} alt="post media" />
+            <img 
+              src={post.mediaUrls[0]} 
+              style={{ 
+                maxWidth: '100%',
+                height: 'auto',
+                maxHeight: '500px',
+                objectFit: 'contain'
+              }} 
+              alt="post media" 
+            />
           </div>
         )}
-        <ul className="nav nav-stack py-3 small">
-          <li className="nav-item">
-            <button className="nav-link active icons-center" onClick={toggleLike}>
-              {likeStatus ? <BsFillHandThumbsUpFill /> : <ThumbsUp size={18} />}
-              <span style={{ marginLeft: '5px', fontSize: '17px' }}>Like</span>
-            </button>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link icons-center" to="">
-              <span style={{ marginLeft: '5px', fontSize: '17px' }}>
-                Comments ({post.commentCount || 0})
-              </span>
-            </Link>
-          </li>
-        </ul>
 
-        <div className="d-flex mb-3">
-          <div className="avatar avatar-xs me-2">
+        <ButtonGroup className="w-100 py-3 border-top border-bottom mb-3">
+          <Button
+            variant={likeStatus ? "primary" : "light"}
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+            onClick={toggleLike}
+          >
+            {likeStatus ? <BsFillHandThumbsUpFill /> : <ThumbsUp size={18} />}
+            <span>Like</span>
+          </Button>
+
+          <Button 
+            variant="light"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+          >
+            <MessageSquare size={18} />
+            <span>Comment ({post.commentCount || 0})</span>
+          </Button>
+
+          <Button 
+            variant="light"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+          >
+            <Repeat size={18} />
+            <span>Repost</span>
+          </Button>
+
+          <Button 
+            variant="light"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+          >
+            <Share size={18} />
+            <span>Share</span>
+          </Button>
+        </ButtonGroup>
+
+        <div className="d-flex mb-4 px-3">
+          <div className="avatar avatar-xs me-3">
             <span role="button">
               <img
                 className="avatar-img rounded-circle"
@@ -190,18 +216,19 @@ const PostCard = ({ item }) => {
         {isLoading ? (
           <p>Loading comments...</p>
         ) : (
-          <ul className="comment-wrap list-unstyled">
+          <ul className="comment-wrap list-unstyled px-3">
             {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
               <CommentItem key={index} comment={comment} level={0} />
             ))}
           </ul>
         )}
       </CardBody>
+
       {comments.length > 2 && (
         <CardFooter
           className="border-0 pt-0"
           onClick={() => {
-            setLoadMore(() => !loadMore);
+            setLoadMore(!loadMore);
           }}
         >
           <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
