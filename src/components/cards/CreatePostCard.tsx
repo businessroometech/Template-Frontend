@@ -306,14 +306,10 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
             </a>
           </li>
           <li className="nav-item">
-            <button
-              type="button"
-              className="nav-link bg-light py-1 px-2 mb-0"
-              onClick={handlePostClick} // Call handlePostClick when clicked
-            >
-              <SendHorizontal size={16} color="#2f09ec" />
-              Post
-            </button>
+          <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
+              <SendHorizontal size={14} color="#2f09ec" />
+              {"  Post"}
+            </a>
           </li>
           <Dropdown drop="start" className="nav-item ms-lg-auto">
             <DropdownToggle

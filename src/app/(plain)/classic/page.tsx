@@ -24,6 +24,7 @@ const ClassicHome = () => {
               <Feeds/>
             </Col>
             <Col md={2} lg={3} xxl={4}>
+          
               <ContactSidebar />
             </Col>
           </Row>
