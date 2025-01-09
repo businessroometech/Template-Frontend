@@ -333,8 +333,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </li>
           <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
-              <SendHorizontal size={14} color="#2f09ec" />
-              {"  Post"}
+              <SendHorizontal size={14} color="#2f09ec" style={{marginRight : '3px'}} />
+              {"   Post"}
             </a>
           </li>
           <Dropdown drop="start" className="nav-item ms-lg-auto">
