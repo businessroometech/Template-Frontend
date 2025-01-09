@@ -32,7 +32,11 @@ import placeholderImg from '@/assets/images/avatar/placeholder.jpg'
 import { FaPencil } from 'react-icons/fa6'
 
 const GroupCard = ({ group }: { group: GroupType }) => {
-  const { image, logo, memberCount, members, name, ppd, type, isJoin } = group
+
+
+
+  
+  const { image, logo, memberCount, members ,name, ppd, type, isJoin } = group
   return (
     <Card>
       <div
@@ -50,17 +54,17 @@ const GroupCard = ({ group }: { group: GroupType }) => {
           <Link to="/feed/groups/details">{name}</Link>
         </h5>
         <small className="icons-center gap-1">
-          {type === 'Private' ? <BsLock size={17} className="pe-1" /> : <BsGlobe size={18} className="pe-1" />} {type} Group
+          {type === 'Private' ? <BsLock size={17} className="pe-1" /> : <BsGlobe size={18} className="pe-1" />} {type} 
         </small>
         <div className="hstack gap-2 gap-xl-3 justify-content-center mt-3">
           <div>
             <h6 className="mb-0">{memberCount}</h6>
-            <small>Members</small>
+            <small>TTM Revenue</small>
           </div>
           <div className="vr" />
           <div>
             <h6 className="mb-0">{ppd}</h6>
-            <small>Post per day</small>
+            <small>Asking Price</small>
           </div>
         </div>
         <ul className="avatar-group list-unstyled align-items-center justify-content-center mb-0 mt-3">
@@ -69,17 +73,30 @@ const GroupCard = ({ group }: { group: GroupType }) => {
               <img className="avatar-img rounded-circle" src={avatar} alt="avatar" />
             </li>
           ))}
-          <li className="avatar avatar-xs">
+
+            
+          
+{/*}
+      
+          /<li className="avatar avatar-xs">
             <div className="avatar-img rounded-circle bg-primary">
               <span className="smaller text-white position-absolute top-50 start-50 translate-middle">+{Math.floor(Math.random() * 30)}</span>
             </div>
           </li>
+*/}
         </ul>
+        <Button>connect</Button>
       </div>
+
+    
       <CardFooter className="text-center">
-        <Button variant={isJoin ? 'danger-soft' : 'success-soft'} size="sm">
-          {isJoin ? 'Leave' : 'Join'} group
+        {/*<Button variant={isJoin ? 'danger-soft' : 'success-soft'} size="sm">
+          {isJoin ? 'Leave' : 'Join'} 
         </Button>
+        */}  
+
+<p>{group.desc} </p>
+
       </CardFooter>
     </Card>
   )
@@ -105,27 +122,27 @@ const AllGroups = () => {
     <>
       <CardBody>
         <Card>
-          <CardHeader className="border-0 pb-0">
-            <Row className="g-2">
-              <Col lg={2}>
-                <h1 className="h4 card-title mb-lg-0">Group</h1>
+        <CardHeader className="border-0 pb-0">
+            <Row className="g-4 align-items-center">
+              <Col xs={12} lg={6}>
+                <h1 className="h3 card-title mb-0">Market Place</h1>
               </Col>
-              <Col sm={6} lg={3} className="ms-lg-auto">
-                <ChoicesFormInput
-                  options={{ searchEnabled: false }}
-                  className="form-select js-choice choice-select-text-none"
-                  data-search-enabled="false">
-                  <option value="AB">Alphabetical</option>
-                  <option value="NG">Newest group</option>
-                  <option value="RA">Recently active</option>
-                  <option value="SG">Suggested</option>
-                </ChoicesFormInput>
-              </Col>
-              <Col sm={6} lg={3}>
-                <Button variant="primary-soft" className="ms-auto w-100" onClick={toggle}>
-                  
-                  <FaPlus className="pe-1" /> Create group
-                </Button>
+              <Col xs={12} lg={4} className="ms-lg-auto">
+                <div className="d-flex flex-column">
+                  <label className="form-label mb-2">Sort by Categories</label>
+                  <ChoicesFormInput
+                    options={{ searchEnabled: false }}
+                    className="form-select js-choice choice-select-text-none"
+                    data-search-enabled="false">
+                    <option value="saas">Saas</option>
+                    <option value="content">Content</option>
+                    <option value="shopify">Shopify App</option>
+                    <option value="mainstreet">Main Street</option>
+                    <option value="ecommerce">Ecommerce</option>
+                    <option value="mobile">Mobile App</option>
+                    <option value="other">Other</option>
+                  </ChoicesFormInput>
+                </div>
               </Col>
             </Row>
           </CardHeader>
@@ -134,10 +151,11 @@ const AllGroups = () => {
               <Nav className="nav-tabs nav-bottom-line justify-content-center justify-content-md-start">
                 <NavItem>
                   
-                  <NavLink eventKey="tab-1"> Friends&apos; groups </NavLink>
+                  <NavLink eventKey="tab-1"> Market Place </NavLink>
                 </NavItem>
+                   {/*
                 <NavItem>
-                  
+               
                   <NavLink eventKey="tab-2"> Suggested for you </NavLink>
                 </NavItem>
                 <NavItem>
@@ -148,6 +166,7 @@ const AllGroups = () => {
                   
                   <NavLink eventKey="tab-4"> More suggestions </NavLink>
                 </NavItem>
+                  */}
               </Nav>
               <TabContent className="mb-0 pb-0">
                 <TabPane eventKey="tab-1" className="fade" id="tab-1">

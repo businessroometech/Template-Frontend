@@ -40,7 +40,7 @@ const useSignIn = () => {
   const redirectUser = () => {
     const redirectLink = searchParams.get('redirectTo')
     if (redirectLink) navigate(redirectLink)
-    else navigate('/')
+    else navigate('/fourprofiles')
   }
 
   const login = handleSubmit(async () => {

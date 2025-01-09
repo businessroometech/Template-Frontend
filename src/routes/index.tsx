@@ -1,6 +1,18 @@
 import { lazy } from 'react'
 import { Navigate, type RouteProps } from 'react-router-dom'
 
+
+
+// profiles for seller //
+//const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
+
+
+
+
+
+
+
+
 //demo pages
 const HomeDemo = lazy(() => import('@/app/(social)/feed/(container)/home/page'))
 const HomeClassic = lazy(() => import('@/app/(plain)/classic/page'))

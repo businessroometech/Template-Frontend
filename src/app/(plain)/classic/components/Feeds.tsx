@@ -533,7 +533,7 @@ const CommonPost = ({ children }: { children: ReactNode }) => {
             <div>
               <h6 className="card-title mb-0">
                 
-                <Link to=""> All in the Mind </Link>
+                <Link to="">SAAS Platform</Link>
               </h6>
               <p className="mb-0 small">9 November at 23:29</p>
             </div>
