@@ -11,6 +11,9 @@ import FourProfiles from '@/app/(plain)/FourProfiles/FourProfiles'
 import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm'
 import JoinRoom from '@/components/live/JoinRoom'
 import Live from '@/components/live/Live'
+import BusinessBuyerForm from '@/app/(plain)/BusinessBuyer/BusinessBuyer'
+import Entrepreneurform from '@/app/(plain)/Entrepreneur/Entrepreneurform'
+import InvestorForm from '@/app/(plain)/Investor/InvestorForm'
 
 const AppRouter = (props: RouteProps) => {
   const { isAuthenticated } = useAuthContext()
@@ -87,10 +90,12 @@ const AppRouter = (props: RouteProps) => {
           }
         />
       ))}
-      <Route path='/fourprofiles' element={<FourProfiles></FourProfiles>}></Route>
-      <Route path='/businesssellerform' element={<BusinessSellerForm></BusinessSellerForm>}></Route>
-      <Route path='/join-live' element={JoinRoom()} />
-      <Route path='/live' element={Live()} />
+      <Route path='/business-seller' element={<BusinessSellerForm/>}></Route>
+      <Route path='/business-acquirer' element={<BusinessBuyerForm></BusinessBuyerForm>}></Route>
+      <Route path='/entreprenuer' element={<Entrepreneurform/>}></Route>
+      <Route path='/investor' element={<InvestorForm/>}></Route>
+      <Route path='/join-live' element={<JoinRoom/>} />
+      <Route path='/live' element={<Live/>} />
     </Routes>
   )
 }
