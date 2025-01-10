@@ -26,7 +26,7 @@ const BusinessBuyingForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('http://localhost:5000/business/buy', {
+      fetch('http://localhost:5000/businessbuyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
