@@ -15,7 +15,7 @@ const GroupCard = ({ image, logo, memberCount, members, name, ppd, type }: Group
 /*
   const data = async () => {
     try {
-      const response = await fetch("http://localhost:5000/businessseller/getall");
+      const response = await fetch("https://app-backend-8r74.onrender.com/businessseller/getall");
       console.log(res)
       if (!response.ok) {
         throw new Error('Network response was not ok');
