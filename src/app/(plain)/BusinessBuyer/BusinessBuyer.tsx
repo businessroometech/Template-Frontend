@@ -445,6 +445,8 @@ export default BusinessBuyerForm;
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
+import { FaRegLightbulb, FaInfoCircle, FaBusinessTime, FaMoneyBillWave, FaHandshake, FaChartLine, FaClipboardList, FaUser, FaBuilding, FaIndustry, FaMapMarkerAlt, FaDollarSign, FaUsers, FaPercentage, FaQuestionCircle, FaBriefcase, FaFileAlt, FaTrophy, FaGavel, FaCalendarAlt } from 'react-icons/fa';
 
 const BusinessBuyerForm = () => {
   const navigate = useNavigate();
@@ -474,7 +476,15 @@ const BusinessBuyerForm = () => {
     additionalInformation: '',
   });
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const sections = [
+    { title: "Seller Information", icon: <FaInfoCircle /> },
+    { title: "Business Details", icon: <FaBusinessTime /> },
+    { title: "Financial Information", icon: <FaMoneyBillWave /> },
+    { title: "Ownership & Sale Information", icon: <FaHandshake /> },
+    { title: "Additional Business Details", icon: <FaChartLine /> },
+    { title: "Final Business Information", icon: <FaClipboardList /> },
+  ];
 
   const handleInputChange = (name, value) => {
     setFormData((prev) => ({
@@ -502,243 +512,96 @@ const BusinessBuyerForm = () => {
     navigate('/');
   };
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  const setCurrentSection = (index) => {
+    setStep(index);
+  };
 
   const renderStep = () => {
+    const renderFormFields = (fields) => (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4">
+            {sections[step].icon} {sections[step].title}
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          {fields.map((field, index) => (
+            <div className="mb-3" key={index}>
+              <label htmlFor={field.id} className="form-label">
+                {field.icon} {field.label}
+              </label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  id={field.id}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  rows={field.rows || 3}
+                  required={field.required}
+                />
+              ) : (
+                <input
+                  id={field.id}
+                  type={field.inputType || 'text'}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  placeholder={field.placeholder || ''}
+                  required={field.required}
+                />
+              )}
+            </div>
+          ))}
+        </Card.Body>
+      </Card>
+    );
+
     switch (step) {
+      case 0:
+        return renderFormFields([
+          { id: 'sellerName', label: 'Your Name', name: 'sellerName', icon: <FaUser />, required: true },
+          { id: 'businessName', label: 'Business Name', name: 'businessName', icon: <FaBuilding />, required: true },
+          {
+            id: 'businessType', label: 'Business Type', name: 'businessType', icon: <FaIndustry />, inputType: 'select', required: true,
+            options: ['Sole Proprietorship', 'Partnership', 'LLC', 'Corporation', 'Other']
+          }
+        ]);
       case 1:
-        return (
-          <div>
-            <h5>Seller Information</h5>
-            <div className="mb-3">
-              <label htmlFor="sellerName" className="form-label">Your Name</label>
-              <input
-                id="sellerName"
-                type="text"
-                value={formData.sellerName}
-                onChange={(e) => handleInputChange('sellerName', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="businessName" className="form-label">Business Name</label>
-              <input
-                id="businessName"
-                type="text"
-                value={formData.businessName}
-                onChange={(e) => handleInputChange('businessName', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Business Type</label>
-              <select
-                value={formData.businessType}
-                onChange={(e) => handleInputChange('businessType', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Sole Proprietorship">Sole Proprietorship</option>
-                <option value="Partnership">Partnership</option>
-                <option value="LLC">LLC</option>
-                <option value="Corporation">Corporation</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          {
+            id: 'businessStage', label: 'Business Stage', name: 'businessStage', icon: <FaBriefcase />, inputType: 'select', required: true,
+            options: ['Startup', 'Growth', 'Mature', 'Declining']
+          },
+          { id: 'industry', label: 'Industry', name: 'industry', icon: <FaIndustry />, required: true },
+          { id: 'location', label: 'Location of Business', name: 'location', icon: <FaMapMarkerAlt />, required: true }
+        ]);
       case 2:
-        return (
-          <div>
-            <h5>Business Details</h5>
-            <div className="mb-3">
-              <label>Business Stage</label>
-              <select
-                value={formData.businessStage}
-                onChange={(e) => handleInputChange('businessStage', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Startup">Startup</option>
-                <option value="Growth">Growth</option>
-                <option value="Mature">Mature</option>
-                <option value="Declining">Declining</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>Industry</label>
-              <input
-                type="text"
-                value={formData.industry}
-                onChange={(e) => handleInputChange('industry', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Location of Business</label>
-              <input
-                type="text"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'revenue', label: 'Annual Revenue', name: 'revenue', icon: <FaDollarSign />, placeholder: 'Annual Revenue', required: true },
+          { id: 'profit', label: 'Annual Profit', name: 'profit', icon: <FaDollarSign />, placeholder: 'Annual Profit' },
+          { id: 'numberOfEmployees', label: 'Number of Employees', name: 'numberOfEmployees', icon: <FaUsers />, inputType: 'number', required: true }
+        ]);
       case 3:
-        return (
-          <div>
-            <h5>Financial Information</h5>
-            <div className="mb-3">
-              <label>Annual Revenue</label>
-              <input
-                type="text"
-                value={formData.revenue}
-                onChange={(e) => handleInputChange('revenue', e.target.value)}
-                className="form-control"
-                placeholder="Annual Revenue"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Annual Profit</label>
-              <input
-                type="text"
-                value={formData.profit}
-                onChange={(e) => handleInputChange('profit', e.target.value)}
-                className="form-control"
-                placeholder="Annual Profit"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Number of Employees</label>
-              <input
-                type="number"
-                value={formData.numberOfEmployees}
-                onChange={(e) => handleInputChange('numberOfEmployees', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'ownershipPercentage', label: 'Ownership Percentage Available for Sale', name: 'ownershipPercentage', icon: <FaPercentage />, placeholder: 'Ownership Percentage', required: true },
+          { id: 'reasonForSelling', label: 'Reason for Selling the Business', name: 'reasonForSelling', icon: <FaQuestionCircle />, required: true },
+          { id: 'askingPrice', label: 'Asking Price', name: 'askingPrice', icon: <FaDollarSign />, required: true }
+        ]);
       case 4:
-        return (
-          <div>
-            <h5>Ownership & Sale Information</h5>
-            <div className="mb-3">
-              <label>Ownership Percentage Available for Sale</label>
-              <input
-                type="text"
-                value={formData.ownershipPercentage}
-                onChange={(e) => handleInputChange('ownershipPercentage', e.target.value)}
-                className="form-control"
-                placeholder="Ownership Percentage"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Reason for Selling the Business</label>
-              <input
-                type="text"
-                value={formData.reasonForSelling}
-                onChange={(e) => handleInputChange('reasonForSelling', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Asking Price</label>
-              <input
-                type="text"
-                value={formData.askingPrice}
-                onChange={(e) => handleInputChange('askingPrice', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'intellectualProperty', label: 'Intellectual Property (Patents, Trademarks, etc.)', name: 'intellectualProperty', icon: <FaFileAlt />, placeholder: 'Intellectual Property Details' },
+          { id: 'assetsForSale', label: 'Assets for Sale', name: 'assetsForSale', icon: <FaFileAlt />, placeholder: 'Assets' },
+          { id: 'liabilities', label: 'Liabilities', name: 'liabilities', icon: <FaFileAlt />, placeholder: 'Liabilities' }
+        ]);
       case 5:
-        return (
-          <div>
-            <h5>Additional Business Details</h5>
-            <div className="mb-3">
-              <label>Intellectual Property (Patents, Trademarks, etc.)</label>
-              <input
-                type="text"
-                value={formData.intellectualProperty}
-                onChange={(e) => handleInputChange('intellectualProperty', e.target.value)}
-                className="form-control"
-                placeholder="Intellectual Property Details"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Assets for Sale</label>
-              <input
-                type="text"
-                value={formData.assetsForSale}
-                onChange={(e) => handleInputChange('assetsForSale', e.target.value)}
-                className="form-control"
-                placeholder="Assets"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Liabilities</label>
-              <input
-                type="text"
-                value={formData.liabilities}
-                onChange={(e) => handleInputChange('liabilities', e.target.value)}
-                className="form-control"
-                placeholder="Liabilities"
-              />
-            </div>
-          </div>
-        );
-      case 6:
-        return (
-          <div>
-            <h5>Final Business Information</h5>
-            <div className="mb-3">
-              <label>Business's Financial History</label>
-              <textarea
-                value={formData.financialHistory}
-                onChange={(e) => handleInputChange('financialHistory', e.target.value)}
-                className="form-control"
-                rows="3"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Sales Forecast for the Next Year</label>
-              <input
-                type="text"
-                value={formData.salesForecast}
-                onChange={(e) => handleInputChange('salesForecast', e.target.value)}
-                className="form-control"
-                placeholder="Sales Forecast"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Exit Strategy</label>
-              <input
-                type="text"
-                value={formData.exitStrategy}
-                onChange={(e) => handleInputChange('exitStrategy', e.target.value)}
-                className="form-control"
-                placeholder="Exit Strategy"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'financialHistory', label: 'Business\'s Financial History', name: 'financialHistory', icon: <FaFileAlt />, type: 'textarea', required: true },
+          { id: 'salesForecast', label: 'Sales Forecast for the Next Year', name: 'salesForecast', icon: <FaChartLine />, placeholder: 'Sales Forecast' },
+          { id: 'exitStrategy', label: 'Exit Strategy', name: 'exitStrategy', icon: <FaTrophy />, placeholder: 'Exit Strategy', required: true },
+          { id: 'legalIssues', label: 'Legal Issues (if any)', name: 'legalIssues', icon: <FaGavel />, placeholder: 'Legal Issues' },
+          { id: 'expectedTimeline', label: 'Expected Timeline for Sale', name: 'expectedTimeline', icon: <FaCalendarAlt />, placeholder: 'Expected Timeline' },
+          { id: 'additionalInformation', label: 'Additional Information', name: 'additionalInformation', icon: <FaClipboardList />, type: 'textarea' }
+        ]);
       default:
         return null;
     }
@@ -746,13 +609,25 @@ const BusinessBuyerForm = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Business Seller Form</h2>
+      <h2 className="text-center mb-4">Business Seller</h2>
+      <div className="d-flex justify-content-center mb-4">
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            type="button"
+            className={`btn mx-2 ${step === index ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setCurrentSection(index)}
+          >
+            {section.icon} {section.title}
+          </button>
+        ))}
+      </div>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
         <div className="d-flex justify-content-between mt-4">
-          {step > 1 && <button type="button" className="btn btn-secondary" onClick={prevStep}>Previous</button>}
-          {step < 6 && <button type="button" className="btn btn-primary" onClick={nextStep}>Next</button>}
-          {step === 6 && <button type="submit" className="btn btn-primary">Submit</button>}
+          {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
+          {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+          {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
           <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
         </div>
       </form>
@@ -761,3 +636,4 @@ const BusinessBuyerForm = () => {
 };
 
 export default BusinessBuyerForm;
+
