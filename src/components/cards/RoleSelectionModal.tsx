@@ -1,40 +1,41 @@
-import { Modal, Card, Row, Col } from 'react-bootstrap';
-import { 
-  FaBuilding, 
-  FaHandshake, 
-  FaPiggyBank, 
-  FaStore 
-} from 'react-icons/fa';
+import React from "react";
+import { Modal, Card, Row, Col } from "react-bootstrap";
+import {
+  FaBuilding,
+  FaHandshake,
+  FaPiggyBank,
+  FaStore,
+} from "react-icons/fa";
 
-// Don't forget to import bootstrap CSS in your main file:
+// Ensure to import bootstrap CSS in your main file:
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 const RoleSelectionModal = ({ show, onHide, onSelectRole }) => {
   const roles = [
     {
-      id: 'entrepreneur',
-      title: 'Entrepreneur',
-      icon: <FaBuilding size={40} />,
-      description: 'Start and grow your own business'
+      id: "entrepreneur",
+      title: "Entrepreneur",
+      icon: <FaBuilding size={30} />,
+      description: "Find a co-founder or investor to scale your startup.",
     },
     {
-      id: 'acquirer',
-      title: 'Business Acquirer',
-      icon: <FaHandshake size={40} />,
-      description: 'Find and purchase established businesses'
+      id: "investor",
+      title: "Investor",
+      icon: <FaPiggyBank size={30} />,
+      description: "Empowering growth through startup investments.",
     },
     {
-      id: 'investor',
-      title: 'Investor',
-      icon: <FaPiggyBank size={40} />,
-      description: 'Invest in promising businesses'
+      id: "seller",
+      title: "Business Seller",
+      icon: <FaStore size={30} />,
+      description: "List and sell your startup with ease.",
     },
     {
-      id: 'seller',
-      title: 'Business Seller',
-      icon: <FaStore size={40} />,
-      description: 'List and sell your business'
-    }
+      id: "acquirer",
+      title: "Business Acquirer",
+      icon: <FaHandshake size={30} />,
+      description: "Discover and Acquire promising startups.",
+    },
   ];
 
   const handleRoleSelect = (roleId) => {
@@ -43,39 +44,55 @@ const RoleSelectionModal = ({ show, onHide, onSelectRole }) => {
   };
 
   return (
-    <Modal 
-      show={show} 
+    <Modal
+      show={show}
       onHide={onHide}
-      fullscreen
+      centered
       backdrop="static"
       keyboard={false}
     >
-      <Modal.Header className="border-0 justify-content-center">
-        <Modal.Title className="text-center h3">
+      <Modal.Header
+        className="border-0 bg-light justify-content-center"
+        style={{ borderBottom: "none" }}
+      >
+        <Modal.Title className="text-center h5 text-secondary">
           Select Your Role
         </Modal.Title>
       </Modal.Header>
-      
-      <Modal.Body className="d-flex align-items-center">
-        <Row className="w-100 g-4">
+
+      <Modal.Body className="bg-light">
+        <Row className="g-3 justify-content-center">
           {roles.map((role) => (
-            <Col key={role.id} xs={12} md={6}>
+            <Col key={role.id} xs={12} md={6} className="text-center">
               <Card
                 onClick={() => handleRoleSelect(role.id)}
-                className="h-100 text-center p-4 cursor-pointer"
-                style={{ 
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s',
+                className="h-100 shadow-sm border-0 p-3"
+                style={{
+                  cursor: "pointer",
+                  transition: "box-shadow 0.3s",
                 }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.boxShadow =
+                    "0 4px 15px rgba(0, 0, 0, 0.2)")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.boxShadow =
+                    "0 2px 8px rgba(0, 0, 0, 0.1)")
+                }
               >
-                <Card.Body className="d-flex flex-column align-items-center justify-content-center gap-3">
-                  <div className="rounded-circle bg-light p-4 mb-2">
+                <Card.Body>
+                  <div
+                    className="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto"
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      marginBottom: "15px",
+                    }}
+                  >
                     {role.icon}
                   </div>
-                  <h4 className="mb-2">{role.title}</h4>
-                  <p className="text-muted mb-0">{role.description}</p>
+                  <h6 className="mb-1">{role.title}</h6>
+                  <p className="text-muted small mb-0">{role.description}</p>
                 </Card.Body>
               </Card>
             </Col>

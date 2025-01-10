@@ -10,7 +10,7 @@ import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const handleRoleSelect = (roleId) => {
@@ -21,6 +21,12 @@ const Home = () => {
     else if(roleId === 'seller') navigate('/business-seller');
     else alert('Error : Invalid role Id');
   };
+
+  if(showModal) return <RoleSelectionModal
+  show={showModal}
+  onHide={() => setShowModal(false)}
+  onSelectRole={handleRoleSelect}
+  />
   return (
     <>
       <Col md={8} lg={6} className="vstack  gap-4">
