@@ -6,10 +6,21 @@ import CreatePostCard from '@/components/cards/CreatePostCard'
 import { Link, useNavigate } from 'react-router-dom'
 import LoadContentButton from '@/components/LoadContentButton'
 import { useState } from 'react'
+import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
 
 const Home = () => {
-  const [isCreated, setIsCreated] = useState(false)
+  const [isCreated, setIsCreated] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const navigate = useNavigate();
+
+  const handleRoleSelect = (roleId) => {
+    console.log('Selected role:', roleId);
+    if(roleId === 'entrepreneur') navigate('/entreprenuer');
+    else if(roleId === 'investor') navigate('/investor');
+    else if(roleId === 'acquirer') navigate('/business-acquirer');
+    else if(roleId === 'seller') navigate('/business-seller');
+    else alert('Error : Invalid role Id');
+  };
   return (
     <>
       <Col md={8} lg={6} className="vstack  gap-4">
@@ -50,6 +61,11 @@ const Home = () => {
             Acquireroom 
           </Button>
         </div>
+        <RoleSelectionModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onSelectRole={handleRoleSelect}
+        />
         <CreatePostCard setIsCreated={setIsCreated} />
         <Feeds isCreated={isCreated} />
       </Col>
