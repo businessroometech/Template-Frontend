@@ -44,7 +44,7 @@ const Entrepreneurform = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('http://localhost:5000/entrepreneur/create', {
+      fetch('https://app-backend-8r74.onrender.com//entrepreneur/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
