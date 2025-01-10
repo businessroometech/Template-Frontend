@@ -347,6 +347,23 @@ export default InvestorForm;
 */
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -410,7 +427,7 @@ const InvestorForm = () => {
       <h2 className="text-center mb-4">Investor Form</h2>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
 
-        {/* Investor Identity Section */}
+        {/* Investor Identity Section }
         <div className="card mb-4">
           <div className="card-header">
             <h5 className="mb-0">Investor Identity</h5>
@@ -471,7 +488,7 @@ const InvestorForm = () => {
           </div>
         </div>
 
-        {/* Investor Preferences Section */}
+        {/* Investor Preferences Section }
         <div className="card mb-4">
           <div className="card-header">
             <h5 className="mb-0">Investor Preferences</h5>
@@ -549,7 +566,7 @@ const InvestorForm = () => {
           </div>
         </div>
 
-        {/* Additional Preferences Section */}
+        {/* Additional Preferences Section }
         <div className="card mb-4">
           <div className="card-header">
             <h5 className="mb-0">Additional Preferences</h5>
@@ -610,7 +627,7 @@ const InvestorForm = () => {
           </div>
         </div>
 
-        {/* Experience and Success Section */}
+        {/* Experience and Success Section }
         <div className="card mb-4">
           <div className="card-header">
             <h5 className="mb-0">Experience and Success Stories</h5>
@@ -661,7 +678,7 @@ const InvestorForm = () => {
           </div>
         </div>
 
-        {/* Decision and Evaluation Section */}
+        {/* Decision and Evaluation Section }
         <div className="card mb-4">
           <div className="card-header">
             <h5 className="mb-0">Decision and Evaluation Criteria</h5>
@@ -733,7 +750,7 @@ const InvestorForm = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit Button }
 
       </form>
     </div>
@@ -741,4 +758,459 @@ const InvestorForm = () => {
 };
 
 export default InvestorForm;
+
+*/
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const InvestorForm = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    investorName: '',
+    isAccredited: '',
+    groupName: '',
+    investorType: '',
+    interestedStartups: '',
+    preferredStage: [],
+    regionPreference: '',
+    investmentSize: '',
+    totalBudget: '',
+    coInvesting: '',
+    equityPercentage: '',
+    investmentType: '',
+    returnExpectations: '',
+    involvementLevel: '',
+    additionalSupport: '',
+    previousInvestment: '',
+    investmentExperience: '',
+    numberOfStartups: '',
+    successStories: '',
+    decisionProcess: '',
+    evaluationCriteria: [],
+    exitStrategyPreference: '',
+    fundraisingStage: '',
+    expectedInvolvement: '',
+    preferredIndustry: '',
+    riskTolerance: '',
+    startupCriteria: [],
+    investmentGoals: [],
+    geographicPreferences: '',
+    involvementAfterInvestment: '',
+    additionalInformation: '',
+    receiveUpdates: ''
+  });
+
+  const [step, setStep] = useState(1);
+
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      fetch('https://app-backend-8r74.onrender.com/investor/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      }).then(() => navigate('/'));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSkip = () => {
+    navigate('/');
+  };
+
+  const nextStep = () => setStep(step + 1);
+  const prevStep = () => setStep(step - 1);
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div>
+            <h5>Investor Identity</h5>
+            {/* Form fields for Investor Identity */}
+            <div className="mb-3">
+              <label htmlFor="investorName" className="form-label">Investor Name</label>
+              <input
+                id="investorName"
+                type="text"
+                value={formData.investorName}
+                onChange={(e) => handleInputChange('investorName', e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label>Are you a member of any accreditation group?</label>
+              <select
+                value={formData.isAccredited}
+                onChange={(e) => handleInputChange('isAccredited', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            {formData.isAccredited === 'Yes' && (
+              <div className="mb-3">
+                <label htmlFor="groupName" className="form-label">Name of group(s)</label>
+                <input
+                  id="groupName"
+                  type="text"
+                  value={formData.groupName}
+                  onChange={(e) => handleInputChange('groupName', e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            )}
+            <div className="mb-3">
+              <label>How will you describe yourself?</label>
+              <select
+                value={formData.investorType}
+                onChange={(e) => handleInputChange('investorType', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Micro Investor">Micro Investor</option>
+                <option value="Angel Investor">Angel Investor</option>
+                <option value="Venture Capital">Venture Capital</option>
+                <option value="Strategic Investor">Strategic Investor</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div>
+            <h5>Investor Preferences</h5>
+            {/* Form fields for Investor Preferences */}
+            <div className="mb-3">
+              <label>What type of startups are you interested in investing in?</label>
+              <select
+                value={formData.interestedStartups}
+                onChange={(e) => handleInputChange('interestedStartups', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Tech">Tech</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Retail">Retail</option>
+                <option value="SaaS">SaaS</option>
+                <option value="Fintech">Fintech</option>
+                <option value="Consumer Goods">Consumer Goods</option>
+                <option value="Sustainability">Sustainability</option>
+                <option value="AI/ML">AI/ML</option>
+                <option value="Biotech">Biotech</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label>What is your preferred stage of startup to invest in?</label>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  value="Seed Stage"
+                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
+                />
+                <label className="form-check-label">Seed Stage</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  value="Early Stage"
+                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
+                />
+                <label className="form-check-label">Early Stage</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  value="Growth Stage"
+                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
+                />
+                <label className="form-check-label">Growth Stage</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  value="Mature Stage"
+                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
+                />
+                <label className="form-check-label">Mature Stage</label>
+              </div>
+            </div>
+            <div className="mb-3">
+              <label>What is your preferred industry or sector for investments?</label>
+              <input
+                type="text"
+                value={formData.preferredIndustry}
+                onChange={(e) => handleInputChange('preferredIndustry', e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label>Do you prefer investing in startups based in a specific region or country?</label>
+              <input
+                type="text"
+                value={formData.regionPreference}
+                onChange={(e) => handleInputChange('regionPreference', e.target.value)}
+                className="form-control"
+                placeholder="Region or Country"
+              />
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div>
+            <h5>Investment Preferences</h5>
+            <div className="mb-3">
+              <label>What is your preferred investment size per startup?</label>
+              <select
+                value={formData.investmentSize}
+                onChange={(e) => handleInputChange('investmentSize', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Under $50k">Under $50k</option>
+                <option value="$50k - $200k">$50k - $200k</option>
+                <option value="$200k - $500k">$200k - $500k</option>
+                <option value="$500k - $1M">$500k - $1M</option>
+                <option value="Over $1M">Over $1M</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label>What is your total budget or available capital for investing in startups?</label>
+              <input
+                type="text"
+                value={formData.totalBudget}
+                onChange={(e) => handleInputChange('totalBudget', e.target.value)}
+                className="form-control"
+                placeholder="Total Budget"
+              />
+            </div>
+            <div className="mb-3">
+              <label>Are you open to co-investing with other investors or firms?</label>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="coInvesting"
+                  value="Yes"
+                  onChange={(e) => handleInputChange('coInvesting', e.target.value)}
+                />
+                <label className="form-check-label">Yes</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="coInvesting"
+                  value="No"
+                  onChange={(e) => handleInputChange('coInvesting', e.target.value)}
+                />
+                <label className="form-check-label">No</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="coInvesting"
+                  value="Maybe"
+                  onChange={(e) => handleInputChange('coInvesting', e.target.value)}
+                />
+                <label className="form-check-label">Maybe</label>
+              </div>
+            </div>
+            <div className="mb-3">
+              <label>What percentage of equity are you willing to take in exchange for your investment?</label>
+              <input
+                type="text"
+                value={formData.equityPercentage}
+                onChange={(e) => handleInputChange('equityPercentage', e.target.value)}
+                className="form-control"
+                placeholder="Equity Percentage"
+              />
+            </div>
+            <div className="mb-3">
+              <label>What type of investment do you prefer?</label>
+              <select
+                value={formData.investmentType}
+                onChange={(e) => handleInputChange('investmentType', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Equity">Equity</option>
+                <option value="Convertible Notes">Convertible Notes</option>
+                <option value="SAFE Notes">SAFE Notes</option>
+                <option value="Debt">Debt</option>
+                <option value="Revenue Share">Revenue Share</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div>
+            <h5>Investment Experience</h5>
+            <div className="mb-3">
+              <label>What are your preferred return expectations on investment?</label>
+              <input
+                type="text"
+                value={formData.returnExpectations}
+                onChange={(e) => handleInputChange('returnExpectations', e.target.value)}
+                className="form-control"
+                placeholder="Return expectations"
+              />
+            </div>
+            <div className="mb-3">
+              <label>What involvement level are you comfortable with in the startup post-investment?</label>
+              <select
+                value={formData.involvementLevel}
+                onChange={(e) => handleInputChange('involvementLevel', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Active (Advisory/Board)">Active (Advisory/Board)</option>
+                <option value="Passive">Passive</option>
+                <option value="Both">Both</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label>How long are you willing to wait for returns on your investment?</label>
+              <select
+                value={formData.expectedInvolvement}
+                onChange={(e) => handleInputChange('expectedInvolvement', e.target.value)}
+                className="form-control"
+                required
+              >
+                <option value="">Select</option>
+                <option value="1-3 years">1-3 years</option>
+                <option value="3-5 years">3-5 years</option>
+                <option value="5+ years">5+ years</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label>Are you interested in providing additional support to startups (e.g., mentorship, networking, expertise)?</label>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="additionalSupport"
+                  value="Yes"
+                  onChange={(e) => handleInputChange('additionalSupport', e.target.value)}
+                />
+                <label className="form-check-label">Yes</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="additionalSupport"
+                  value="No"
+                  onChange={(e) => handleInputChange('additionalSupport', e.target.value)}
+                />
+                <label className="form-check-label">No</label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="additionalSupport"
+                  value="Maybe"
+                  onChange={(e) => handleInputChange('additionalSupport', e.target.value)}
+                />
+                <label className="form-check-label">Maybe</label>
+              </div>
+            </div>
+          </div>
+        );
+      case 5:
+        return (
+          <div>
+            <h5>Decision and Evaluation Criteria</h5>
+            <div className="mb-3">
+              <label>Decision Process</label>
+              <textarea
+                value={formData.decisionProcess}
+                onChange={(e) => handleInputChange('decisionProcess', e.target.value)}
+                className="form-control"
+                rows="3"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label>Evaluation Criteria</label>
+              <textarea
+                value={formData.evaluationCriteria}
+                onChange={(e) => handleInputChange('evaluationCriteria', e.target.value)}
+                className="form-control"
+                rows="3"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label>Exit Strategy Preference</label>
+              <input
+                type="text"
+                value={formData.exitStrategyPreference}
+                onChange={(e) => handleInputChange('exitStrategyPreference', e.target.value)}
+                className="form-control"
+                placeholder="Exit Strategy"
+                required
+              />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="container mt-5">
+      <h2 className="text-center mb-4">Investor Form</h2>
+      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+        {renderStep()}
+        <div className="d-flex justify-content-between mt-4">
+          {step > 1 && <button type="button" className="btn btn-secondary" onClick={prevStep}>Previous</button>}
+          {step < 5 && <button type="button" className="btn btn-primary" onClick={nextStep}>Next</button>}
+          {step === 5 && <button type="submit" className="btn btn-primary">Submit</button>}
+          <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default InvestorForm;
+
+
+
+
+
 
