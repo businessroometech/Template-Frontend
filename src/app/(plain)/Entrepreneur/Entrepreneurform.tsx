@@ -1,731 +1,277 @@
-/*
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Form, Card, Row, Col, InputGroup, Button, ButtonGroup } from "react-bootstrap";
+import { FaRegLightbulb, FaGlobe, FaCity, FaClock, FaIndustry, FaBalanceScale, FaExchangeAlt, FaTasks, FaExclamationTriangle, FaHandsHelping, FaInfoCircle } from "react-icons/fa";
+import { FaBullseye, FaDollarSign, FaFlagCheckered, FaHandshake, FaPeopleArrows, FaRoad, FaUserTie } from "react-icons/fa6";
 
-const Entrepreneurform = () => {
+const EntrepreneurForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    businessName: '',
-    businessLocationCountry: '',
-    businessLocationCity: '',
-    businessIdea: '',
-    businessStage: '',
-    industrySector: '',
-    businessDuration: '',
-    problemSolving: '',
-    traction: '',
-    investorType: '',
-    fundingAmount: '',
-    useOfFunds: '',
-    investmentType: '',
-    businessValuation: '',
-    equityInExchange: '',
-    exitPlans: '',
-    partnerType: '',
-    partnerSkills: '',
-    partnerInvolvement: '',
-    partnerEquityCompensation: '',
-    partnershipStructure: '',
-    businessChallenges: '',
-    keyPriorities: '',
-    supportNeeded: '',
-    businessPlanStatus: '',
-    milestones: '',
-    longTermGoals: '',
-    additionalInfo: ''
-  });
-
-  const handleInputChange = (name, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    try {
-      fetch('https://app-backend-8r74.onrender.com/entrepreneur/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      }).then(() => navigate("/"));
-      console.log(formData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSkip = () => {
-    navigate('/');
-  };
-
-  return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">Entrepreneur Form</h2>
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-
-        <div className="card mb-4">
-          <div className="card-header">
-            <h5 className="mb-0">Business Information</h5>
-          </div>
-          <div className="card-body">
-            <div className="mb-3">
-              <label htmlFor="businessName" className="form-label">What is the name of your business?</label>
-              <input
-                id="businessName"
-                type="text"
-                value={formData.businessName}
-                onChange={(e) => handleInputChange('businessName', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="businessLocationCountry" className="form-label">Where is your business located?</label>
-              <select
-                value={formData.businessLocationCountry}
-                onChange={(e) => handleInputChange('businessLocationCountry', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select Country</option>
-                <option value="USA">USA</option>
-                <option value="Canada">Canada</option>
-                <option value="UK">UK</option>
-                <option value="India">India</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="businessLocationCity" className="form-label">City</label>
-              <input
-                id="businessLocationCity"
-                type="text"
-                value={formData.businessLocationCity}
-                onChange={(e) => handleInputChange('businessLocationCity', e.target.value)}
-                className="form-control"
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="businessIdea" className="form-label">What is your business idea about?</label>
-              <textarea
-                id="businessIdea"
-                value={formData.businessIdea}
-                onChange={(e) => handleInputChange('businessIdea', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>What stage is your business currently at?</label>
-              <select
-                value={formData.businessStage}
-                onChange={(e) => handleInputChange('businessStage', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Idea/Concept">Idea/Concept</option>
-                <option value="Prototype">Prototype</option>
-                <option value="Pre-revenue">Pre-revenue</option>
-                <option value="Revenue-generating">Revenue-generating</option>
-                <option value="Growth">Growth</option>
-                <option value="Scaling">Scaling</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What is the industry/sector of your business?</label>
-              <select
-                value={formData.industrySector}
-                onChange={(e) => handleInputChange('industrySector', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="SaaS">SaaS</option>
-                <option value="Content">Content</option>
-                <option value="Marketplace">Marketplace</option>
-                <option value="Agency">Agency</option>
-                <option value="Mobile App">Mobile App</option>
-                <option value="Shopify App">Shopify App</option>
-                <option value="Main Street">Main Street</option>
-                <option value="Ecommerce">Ecommerce</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>How long has your business been operating?</label>
-              <select
-                value={formData.businessDuration}
-                onChange={(e) => handleInputChange('businessDuration', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Less than 6 months">Less than 6 months</option>
-                <option value="6-12 months">6-12 months</option>
-                <option value="1-2 years">1-2 years</option>
-                <option value="2+ years">2+ years</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="problemSolving" className="form-label">What problem does your business solve, and who is your target audience?</label>
-              <textarea
-                id="problemSolving"
-                value={formData.problemSolving}
-                onChange={(e) => handleInputChange('problemSolving', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Do you have any traction?</label>
-              <select
-                value={formData.traction}
-                onChange={(e) => handleInputChange('traction', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="card mb-4">
-          <div className="card-header">
-            <h5 className="mb-0">Investor Preferences</h5>
-          </div>
-          <div className="card-body">
-            <div className="mb-3">
-              <label>What type of investor are you looking for?</label>
-              <select
-                value={formData.investorType}
-                onChange={(e) => handleInputChange('investorType', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Micro Investor">Micro Investor</option>
-                <option value="Angel Investor">Angel Investor</option>
-                <option value="Venture Capital">Venture Capital</option>
-                <option value="Strategic Investor">Strategic Investor</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What is the amount of funding you are seeking?</label>
-              <select
-                value={formData.fundingAmount}
-                onChange={(e) => handleInputChange('fundingAmount', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Under $50k">Under $50k</option>
-                <option value="$50k - $200k">$50k - $200k</option>
-                <option value="$200k - $500k">$200k - $500k</option>
-                <option value="$500k - $1M">$500k - $1M</option>
-                <option value="Over $1M">Over $1M</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What is the intended use of the investment funds?</label>
-              <select
-                value={formData.useOfFunds}
-                onChange={(e) => handleInputChange('useOfFunds', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Product Development">Product Development</option>
-                <option value="Marketing & Sales">Marketing & Sales</option>
-                <option value="Hiring">Hiring</option>
-                <option value="Scaling Operations">Scaling Operations</option>
-                <option value="Technology Infrastructure">Technology Infrastructure</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What type of investment are you open to?</label>
-              <select
-                value={formData.investmentType}
-                onChange={(e) => handleInputChange('investmentType', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Equity">Equity</option>
-                <option value="Convertible Notes">Convertible Notes</option>
-                <option value="SAFE Notes">SAFE Notes</option>
-                <option value="Debt">Debt</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="businessValuation" className="form-label">What is the current valuation of your business (if applicable)?</label>
-              <input
-                id="businessValuation"
-                type="text"
-                value={formData.businessValuation}
-                onChange={(e) => handleInputChange('businessValuation', e.target.value)}
-                className="form-control"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Are you open to giving equity in exchange for investment?</label>
-              <select
-                value={formData.equityInExchange}
-                onChange={(e) => handleInputChange('equityInExchange', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Negotiable">Negotiable</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="exitPlans" className="form-label">What are your exit plans or expected timeline for exit?</label>
-              <textarea
-                id="exitPlans"
-                value={formData.exitPlans}
-                onChange={(e) => handleInputChange('exitPlans', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="card mb-4">
-          <div className="card-header">
-
-            <h5 className="mb-0">Business Partner Preferences</h5>
-          </div>
-
-
-
-
-          <div className="card-body">
-            <div className="mb-3">
-              <label>What type of business partners are you looking for?</label>
-              <select
-                value={formData.partnerType}
-                onChange={(e) => handleInputChange('partnerType', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Co-founder">Co-founder</option>
-                <option value="Strategic Partner">Strategic Partner</option>
-                <option value="Technical Co-founder">Technical Co-founder</option>
-                <option value="Sales/Marketing Expert">Sales/Marketing Expert</option>
-                <option value="Operations Expert">Operations Expert</option>
-                <option value="Mentor">Mentor</option>
-                <option value="Advisor">Advisor</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="partnerSkills" className="form-label">What specific expertise or skills are you seeking in a business partner?</label>
-              <textarea
-                id="partnerSkills"
-                value={formData.partnerSkills}
-                onChange={(e) => handleInputChange('partnerSkills', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>What is the desired level of involvement from a business partner?</label>
-              <select
-                value={formData.partnerInvolvement}
-                onChange={(e) => handleInputChange('partnerInvolvement', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Advisory">Advisory</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>Are you open to partners who are willing to work in exchange for equity or other non-cash compensation?</label>
-              <select
-                value={formData.partnerEquityCompensation}
-                onChange={(e) => handleInputChange('partnerEquityCompensation', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Negotiable">Negotiable</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What type of partnership structure are you looking for?</label>
-              <select
-                value={formData.partnershipStructure}
-                onChange={(e) => handleInputChange('partnershipStructure', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Co-founder">Co-founder</option>
-                <option value="Equity-based Partnership">Equity-based Partnership</option>
-                <option value="Joint Venture">Joint Venture</option>
-                <option value="Advisory Role">Advisory Role</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-
-
-
-
-
-        <div className="card mb-4">
-          <div className="card-header">
-
-            <h5 className="mb-0">Business Needs & Goals</h5>
-          </div>
-          <div className="card-body">
-
-
-
-
-            <div className="mb-3">
-              <label htmlFor="businessChallenges" className="form-label">What are the biggest challenges your business is currently facing?</label>
-              <textarea
-                id="businessChallenges"
-                value={formData.businessChallenges}
-                onChange={(e) => handleInputChange('businessChallenges', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="keyPriorities" className="form-label">What are your key priorities over the next 6-12 months?</label>
-              <textarea
-                id="keyPriorities"
-                value={formData.keyPriorities}
-                onChange={(e) => handleInputChange('keyPriorities', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="supportNeeded" className="form-label">What specific support are you looking for from an investor or business partner?</label>
-              <textarea
-                id="supportNeeded"
-                value={formData.supportNeeded}
-                onChange={(e) => handleInputChange('supportNeeded', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Do you have a clear business plan or roadmap for growth?</label>
-              <select
-                value={formData.businessPlanStatus}
-                onChange={(e) => handleInputChange('businessPlanStatus', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="In progress">In progress</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="milestones" className="form-label">What milestones do you plan to achieve in the next 6 months?</label>
-              <textarea
-                id="milestones"
-                value={formData.milestones}
-                onChange={(e) => handleInputChange('milestones', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-
-
-
-
-
-
-        <div className="card mb-4">
-          <div className="card-header">
-            <h5 className="mb-0">Additional Information</h5>
-          </div>
-          <div className="card-body">
-            <div className="mb-3">
-              <label htmlFor="longTermGoals" className="form-label">What are your long-term goals for the business?</label>
-              <textarea
-                id="longTermGoals"
-                value={formData.longTermGoals}
-                onChange={(e) => handleInputChange('longTermGoals', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="additionalInfo" className="form-label">Is there anything else a potential investor or partner should know about you or your business?</label>
-              <textarea
-                id="additionalInfo"
-                value={formData.additionalInfo}
-                onChange={(e) => handleInputChange('additionalInfo', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="d-flex justify-content-between">
-          
-          <button type="submit" className="btn btn-primary">Submit</button>
-          <button type="button" className="btn btn-secondary me-2" onClick={handleSkip}>Skip</button>
-          
-        </div>
-      </form>
-    </div>
-  );
-};
-
-export default Entrepreneurform;
-
-*/
-
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const Entrepreneurform = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    businessName: '',
-    businessLocationCountry: '',
-    businessLocationCity: '',
-    businessIdea: '',
-    businessStage: '',
-    industrySector: '',
-    businessDuration: '',
-    problemSolving: '',
-    traction: '',
-    investorType: '',
-    fundingAmount: '',
-    useOfFunds: '',
-    investmentType: '',
-    businessValuation: '',
-    equityInExchange: '',
-    exitPlans: '',
-    partnerType: '',
-    partnerSkills: '',
-    partnerInvolvement: '',
-    partnerEquityCompensation: '',
-    partnershipStructure: '',
-    businessChallenges: '',
-    keyPriorities: '',
-    supportNeeded: '',
-    businessPlanStatus: '',
-    milestones: '',
-    longTermGoals: '',
-    additionalInfo: ''
+    businessName: "",
+    businessLocationCountry: "",
+    businessLocationCity: "",
+    businessIdea: "",
+    businessStage: "",
+    industrySector: "",
+    businessDuration: "",
+    problemSolving: "",
+    traction: "",
+    investorType: "",
+    fundingAmount: "",
+    useOfFunds: "",
+    investmentType: "",
+    businessValuation: "",
+    equityInExchange: "",
+    exitPlans: "",
+    partnerType: "",
+    partnerSkills: "",
+    partnerInvolvement: "",
+    partnerEquityCompensation: "",
+    partnershipStructure: "",
+    businessChallenges: "",
+    keyPriorities: "",
+    supportNeeded: "",
+    businessPlanStatus: "",
+    milestones: "",
+    longTermGoals: "",
+    additionalInfo: "",
   });
 
   const [currentSection, setCurrentSection] = useState(0);
 
   const sections = [
-    'Business Information',
-    'Investor Preferences',
-    'Business Partner Preferences',
-    'Business Needs & Goals',
-    'Additional Information'
+    "Business Information",
+    "Investor Preferences",
+    "Business Partner Preferences",
+    "Business Needs & Goals",
+    "Additional Information",
   ];
 
   const handleInputChange = (name, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      fetch('https://app-backend-8r74.onrender.com/entrepreneur/create', {
-        method: 'POST',
+      console.log(formData);
+  
+      const response = await fetch("https://app-backend-8r74.onrender.com/entrepreneur/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      }).then(() => navigate("/"));
-      console.log(formData);
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log('--after request--',formData);
     } catch (error) {
-      console.log(error);
+      console.error("Error submitting form:", error);
     }
   };
 
   const handleSkip = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const renderSection = () => {
     switch (currentSection) {
       case 0:
         return (
-          <><div className="card-body">
-            {/* Business Information form fields */}
-            <div className="card-body">
-              <div className="mb-3">
-                <label htmlFor="businessName" className="form-label">What is the name of your business?</label>
-                <input
-                  id="businessName"
-                  type="text"
-                  value={formData.businessName}
-                  onChange={(e) => handleInputChange('businessName', e.target.value)}
-                  className="form-control"
-                  required />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="businessLocationCountry" className="form-label">Where is your business located?</label>
-                <select
-                  value={formData.businessLocationCountry}
-                  onChange={(e) => handleInputChange('businessLocationCountry', e.target.value)}
-                  className="form-control"
-                  required
-                >
-                  <option value="">Select Country</option>
-                  <option value="USA">USA</option>
-                  <option value="Canada">Canada</option>
-                  <option value="UK">UK</option>
-                  <option value="India">India</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label htmlFor="businessLocationCity" className="form-label">City</label>
-                <input
-                  id="businessLocationCity"
-                  type="text"
-                  value={formData.businessLocationCity}
-                  onChange={(e) => handleInputChange('businessLocationCity', e.target.value)}
-                  className="form-control" />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="businessIdea" className="form-label">What is your business idea about?</label>
-                <textarea
-                  id="businessIdea"
-                  value={formData.businessIdea}
-                  onChange={(e) => handleInputChange('businessIdea', e.target.value)}
-                  className="form-control"
-                  required />
-              </div>
-              <div className="mb-3">
-                <label>What stage is your business currently at?</label>
-                <select
-                  value={formData.businessStage}
-                  onChange={(e) => handleInputChange('businessStage', e.target.value)}
-                  className="form-control"
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="Idea/Concept">Idea/Concept</option>
-                  <option value="Prototype">Prototype</option>
-                  <option value="Pre-revenue">Pre-revenue</option>
-                  <option value="Revenue-generating">Revenue-generating</option>
-                  <option value="Growth">Growth</option>
-                  <option value="Scaling">Scaling</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label>What is the industry/sector of your business?</label>
-                <select
-                  value={formData.industrySector}
-                  onChange={(e) => handleInputChange('industrySector', e.target.value)}
-                  className="form-control"
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="SaaS">SaaS</option>
-                  <option value="Content">Content</option>
-                  <option value="Marketplace">Marketplace</option>
-                  <option value="Agency">Agency</option>
-                  <option value="Mobile App">Mobile App</option>
-                  <option value="Shopify App">Shopify App</option>
-                  <option value="Main Street">Main Street</option>
-                  <option value="Ecommerce">Ecommerce</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label>How long has your business been operating?</label>
-                <select
-                  value={formData.businessDuration}
-                  onChange={(e) => handleInputChange('businessDuration', e.target.value)}
-                  className="form-control"
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="Less than 6 months">Less than 6 months</option>
-                  <option value="6-12 months">6-12 months</option>
-                  <option value="1-2 years">1-2 years</option>
-                  <option value="2+ years">2+ years</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label htmlFor="problemSolving" className="form-label">What problem does your business solve, and who is your target audience?</label>
-                <textarea
-                  id="problemSolving"
-                  value={formData.problemSolving}
-                  onChange={(e) => handleInputChange('problemSolving', e.target.value)}
-                  className="form-control"
-                  required />
-              </div>
-              <div className="mb-3">
-                <label>Do you have any traction?</label>
-                <select
-                  value={formData.traction}
-                  onChange={(e) => handleInputChange('traction', e.target.value)}
-                  className="form-control"
-                  required
-                >
-                  <option value="">Select</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-            </div>
-          </div><div className="card mb-4">
-              <div className="card-header"></div>
-            </div></>
+          <Card className="mb-4 shadow-sm">
+            <Card.Header className="bg-primary text-white">
+              <h5 className="fs-4"> {/* Increased font size using fs-4 */}
+                <FaRegLightbulb className="me-2" />
+                Business Information
+              </h5>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="businessName">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      What is the name of your business?
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter your business name"
+                      value={formData.businessName}
+                      onChange={(e) => handleInputChange("businessName", e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="businessLocationCountry">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      <FaGlobe className="me-2" />
+                      Where is your business located?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.businessLocationCountry}
+                      onChange={(e) => handleInputChange("businessLocationCountry", e.target.value)}
+                      required
+                    >
+                      <option value="">Select Country</option>
+                      <option value="USA">USA</option>
+                      <option value="Canada">Canada</option>
+                      <option value="UK">UK</option>
+                      <option value="India">India</option>
+                      <option value="Other">Other</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group as={Col} controlId="businessLocationCity">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      <FaCity className="me-2" />
+                      City
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter city"
+                      value={formData.businessLocationCity}
+                      onChange={(e) => handleInputChange("businessLocationCity", e.target.value)}
+                    />
+                  </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <Form.Group controlId="businessIdea">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      <FaRegLightbulb className="me-2" />
+                      What is your business idea about?
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      placeholder="Describe your business idea"
+                      value={formData.businessIdea}
+                      onChange={(e) => handleInputChange("businessIdea", e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="businessStage">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      What stage is your business currently at?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.businessStage}
+                      onChange={(e) => handleInputChange("businessStage", e.target.value)}
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="Idea/Concept">Idea/Concept</option>
+                      <option value="Prototype">Prototype</option>
+                      <option value="Pre-revenue">Pre-revenue</option>
+                      <option value="Revenue-generating">Revenue-generating</option>
+                      <option value="Growth">Growth</option>
+                      <option value="Scaling">Scaling</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group as={Col} controlId="industrySector">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      <FaIndustry className="me-2" />
+                      What is the industry/sector of your business?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.industrySector}
+                      onChange={(e) => handleInputChange("industrySector", e.target.value)}
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="SaaS">SaaS</option>
+                      <option value="Content">Content</option>
+                      <option value="Marketplace">Marketplace</option>
+                      <option value="Agency">Agency</option>
+                      <option value="Mobile App">Mobile App</option>
+                      <option value="Shopify App">Shopify App</option>
+                      <option value="Main Street">Main Street</option>
+                      <option value="Ecommerce">Ecommerce</option>
+                      <option value="Other">Other</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="businessDuration">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      <FaClock className="me-2" />
+                      How long has your business been operating?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.businessDuration}
+                      onChange={(e) => handleInputChange("businessDuration", e.target.value)}
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="Less than 6 months">Less than 6 months</option>
+                      <option value="6-12 months">6-12 months</option>
+                      <option value="1-2 years">1-2 years</option>
+                      <option value="2+ years">2+ years</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <Form.Group controlId="problemSolving">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      What problem does your business solve, and who is your target audience?
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      placeholder="Describe the problem and target audience"
+                      value={formData.problemSolving}
+                      onChange={(e) => handleInputChange("problemSolving", e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <Form.Group controlId="traction">
+                    <Form.Label className="fs-5"> {/* Increased font size */}
+                      Do you have any traction?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.traction}
+                      onChange={(e) => handleInputChange("traction", e.target.value)}
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
         );
       case 1:
-        return (
-          <div className="card-body">
-            {/* Investor Preferences form fields */}
-            <div className="card-body">
-              <div className="mb-3">
-                <label>What type of investor are you looking for?</label>
-                <select
+            return (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4"> {/* Increased font size using fs-4 */}
+            <FaRegLightbulb className="me-2" />
+            Investor Preferences
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="investorType">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaRegLightbulb className="me-2" />
+                  What type of investor are you looking for?
+                </Form.Label>
+                <Form.Select
                   value={formData.investorType}
-                  onChange={(e) => handleInputChange('investorType', e.target.value)}
-                  className="form-control"
+                  onChange={(e) => handleInputChange("investorType", e.target.value)}
                   required
                 >
                   <option value="">Select</option>
@@ -734,14 +280,18 @@ const Entrepreneurform = () => {
                   <option value="Venture Capital">Venture Capital</option>
                   <option value="Strategic Investor">Strategic Investor</option>
                   <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label>What is the amount of funding you are seeking?</label>
-                <select
+                </Form.Select>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="fundingAmount">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaGlobe className="me-2" />
+                  What is the amount of funding you are seeking?
+                </Form.Label>
+                <Form.Select
                   value={formData.fundingAmount}
-                  onChange={(e) => handleInputChange('fundingAmount', e.target.value)}
-                  className="form-control"
+                  onChange={(e) => handleInputChange("fundingAmount", e.target.value)}
                   required
                 >
                   <option value="">Select</option>
@@ -750,14 +300,18 @@ const Entrepreneurform = () => {
                   <option value="$200k - $500k">$200k - $500k</option>
                   <option value="$500k - $1M">$500k - $1M</option>
                   <option value="Over $1M">Over $1M</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label>What is the intended use of the investment funds?</label>
-                <select
+                </Form.Select>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group controlId="useOfFunds">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaCity className="me-2" />
+                  What is the intended use of the investment funds?
+                </Form.Label>
+                <Form.Select
                   value={formData.useOfFunds}
-                  onChange={(e) => handleInputChange('useOfFunds', e.target.value)}
-                  className="form-control"
+                  onChange={(e) => handleInputChange("useOfFunds", e.target.value)}
                   required
                 >
                   <option value="">Select</option>
@@ -767,14 +321,18 @@ const Entrepreneurform = () => {
                   <option value="Scaling Operations">Scaling Operations</option>
                   <option value="Technology Infrastructure">Technology Infrastructure</option>
                   <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label>What type of investment are you open to?</label>
-                <select
+                </Form.Select>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="investmentType">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaClock className="me-2" />
+                  What type of investment are you open to?
+                </Form.Label>
+                <Form.Select
                   value={formData.investmentType}
-                  onChange={(e) => handleInputChange('investmentType', e.target.value)}
-                  className="form-control"
+                  onChange={(e) => handleInputChange("investmentType", e.target.value)}
                   required
                 >
                   <option value="">Select</option>
@@ -783,227 +341,498 @@ const Entrepreneurform = () => {
                   <option value="SAFE Notes">SAFE Notes</option>
                   <option value="Debt">Debt</option>
                   <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label htmlFor="businessValuation" className="form-label">What is the current valuation of your business (if applicable)?</label>
-                <input
-                  id="businessValuation"
-                  type="text"
-                  value={formData.businessValuation}
-                  onChange={(e) => handleInputChange('businessValuation', e.target.value)}
-                  className="form-control" />
-              </div>
-              <div className="mb-3">
-                <label>Are you open to giving equity in exchange for investment?</label>
-                <select
+                </Form.Select>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="businessValuation">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaIndustry className="me-2" />
+                  What is the current valuation of your business (if applicable)?
+                </Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>$</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter valuation"
+                    value={formData.businessValuation}
+                    onChange={(e) =>
+                      handleInputChange("businessValuation", e.target.value)
+                    }
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="equityInExchange">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaRegLightbulb className="me-2" />
+                  Are you open to giving equity in exchange for investment?
+                </Form.Label>
+                <Form.Select
                   value={formData.equityInExchange}
-                  onChange={(e) => handleInputChange('equityInExchange', e.target.value)}
-                  className="form-control"
+                  onChange={(e) =>
+                    handleInputChange("equityInExchange", e.target.value)
+                  }
                   required
                 >
                   <option value="">Select</option>
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
                   <option value="Negotiable">Negotiable</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label htmlFor="exitPlans" className="form-label">What are your exit plans or expected timeline for exit?</label>
-                <textarea
-                  id="exitPlans"
+                </Form.Select>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group controlId="exitPlans">
+                <Form.Label className="fs-5"> {/* Increased font size */}
+                  <FaClock className="me-2" />
+                  What are your exit plans or expected timeline for exit?
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Describe your exit plans"
                   value={formData.exitPlans}
-                  onChange={(e) => handleInputChange('exitPlans', e.target.value)}
-                  className="form-control"
-                  required />
-              </div>
-            </div>
-          </div>
-          
-           
-        );
+                  onChange={(e) =>
+                    handleInputChange("exitPlans", e.target.value)
+                  }
+                  required
+                />
+              </Form.Group>
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+          );
       case 2:
-        return (
-          <div className="card-body">
-            {/* Business Partner Preferences form fields */}
-             
-            
-            <div className="mb-3">
-              <label>What type of business partners are you looking for?</label>
-              <select
-                value={formData.partnerType}
-                onChange={(e) => handleInputChange('partnerType', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Co-founder">Co-founder</option>
-                <option value="Strategic Partner">Strategic Partner</option>
-                <option value="Technical Co-founder">Technical Co-founder</option>
-                <option value="Sales/Marketing Expert">Sales/Marketing Expert</option>
-                <option value="Operations Expert">Operations Expert</option>
-                <option value="Mentor">Mentor</option>
-                <option value="Advisor">Advisor</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="partnerSkills" className="form-label">What specific expertise or skills are you seeking in a business partner?</label>
-              <textarea
-                id="partnerSkills"
-                value={formData.partnerSkills}
-                onChange={(e) => handleInputChange('partnerSkills', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>What is the desired level of involvement from a business partner?</label>
-              <select
-                value={formData.partnerInvolvement}
-                onChange={(e) => handleInputChange('partnerInvolvement', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Advisory">Advisory</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>Are you open to partners who are willing to work in exchange for equity or other non-cash compensation?</label>
-              <select
-                value={formData.partnerEquityCompensation}
-                onChange={(e) => handleInputChange('partnerEquityCompensation', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Negotiable">Negotiable</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What type of partnership structure are you looking for?</label>
-              <select
-                value={formData.partnershipStructure}
-                onChange={(e) => handleInputChange('partnershipStructure', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Co-founder">Co-founder</option>
-                <option value="Equity-based Partnership">Equity-based Partnership</option>
-                <option value="Joint Venture">Joint Venture</option>
-                <option value="Advisory Role">Advisory Role</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-        
+    return (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4"> {/* Increased font size for header */}
+            <FaHandshake className="me-2" />
+            Business Partner Preferences
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            {/* Partner Type */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="partnerType">
+                <Form.Label className="fs-5"> {/* Consistent font size */}
+                  <FaUserTie className="me-2" />
+                  What type of business partners are you looking for?
+                </Form.Label>
+                <Form.Select
+                  value={formData.partnerType}
+                  onChange={(e) => handleInputChange("partnerType", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Co-founder">Co-founder</option>
+                  <option value="Strategic Partner">Strategic Partner</option>
+                  <option value="Technical Co-founder">Technical Co-founder</option>
+                  <option value="Sales/Marketing Expert">Sales/Marketing Expert</option>
+                  <option value="Operations Expert">Operations Expert</option>
+                  <option value="Mentor">Mentor</option>
+                  <option value="Advisor">Advisor</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
 
+            {/* Partner Skills */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="partnerSkills">
+                <Form.Label className="fs-5"> {/* Consistent font size */}
+                  <FaPeopleArrows className="me-2" />
+                  What specific expertise or skills are you seeking in a business partner?
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  value={formData.partnerSkills}
+                  onChange={(e) => handleInputChange("partnerSkills", e.target.value)}
+                  rows={3}
+                  placeholder="Describe the skills or expertise needed"
+                  required
+                />
+              </Form.Group>
+            </Row>
 
-          
-        );
+            {/* Partner Involvement */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="partnerInvolvement">
+                <Form.Label className="fs-5"> {/* Consistent font size */}
+                  <FaBalanceScale className="me-2" />
+                  What is the desired level of involvement from a business partner?
+                </Form.Label>
+                <Form.Select
+                  value={formData.partnerInvolvement}
+                  onChange={(e) => handleInputChange("partnerInvolvement", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Advisory">Advisory</option>
+                  <option value="Other">Other</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
+
+            {/* Equity/Compensation */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="partnerEquityCompensation">
+                <Form.Label className="fs-5"> {/* Consistent font size */}
+                  <FaExchangeAlt className="me-2" />
+                  Are you open to partners who are willing to work in exchange for equity or other non-cash compensation?
+                </Form.Label>
+                <Form.Select
+                  value={formData.partnerEquityCompensation}
+                  onChange={(e) => handleInputChange("partnerEquityCompensation", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                  <option value="Negotiable">Negotiable</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
+
+            {/* Partnership Structure */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="partnershipStructure">
+                <Form.Label className="fs-5"> {/* Consistent font size */}
+                  <FaHandshake className="me-2" />
+                  What type of partnership structure are you looking for?
+                </Form.Label>
+                <Form.Select
+                  value={formData.partnershipStructure}
+                  onChange={(e) => handleInputChange("partnershipStructure", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Co-founder">Co-founder</option>
+                  <option value="Equity-based Partnership">Equity-based Partnership</option>
+                  <option value="Joint Venture">Joint Venture</option>
+                  <option value="Advisory Role">Advisory Role</option>
+                  <option value="Other">Other</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+    );
       case 3:
-        return (
-          <div className="card-body">
-            {/* Business Needs & Goals form fields */}
-            <div className="mb-3">
-              <label htmlFor="businessChallenges" className="form-label">What are the biggest challenges your business is currently facing?</label>
-              <textarea
-                id="businessChallenges"
-                value={formData.businessChallenges}
-                onChange={(e) => handleInputChange('businessChallenges', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="keyPriorities" className="form-label">What are your key priorities over the next 6-12 months?</label>
-              <textarea
-                id="keyPriorities"
-                value={formData.keyPriorities}
-                onChange={(e) => handleInputChange('keyPriorities', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="supportNeeded" className="form-label">What specific support are you looking for from an investor or business partner?</label>
-              <textarea
-                id="supportNeeded"
-                value={formData.supportNeeded}
-                onChange={(e) => handleInputChange('supportNeeded', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Do you have a clear business plan or roadmap for growth?</label>
-              <select
-                value={formData.businessPlanStatus}
-                onChange={(e) => handleInputChange('businessPlanStatus', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="In progress">In progress</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="milestones" className="form-label">What milestones do you plan to achieve in the next 6 months?</label>
-              <textarea
-                id="milestones"
-                value={formData.milestones}
-                onChange={(e) => handleInputChange('milestones', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        
-
-
-
-
-
-
-          
-        );
+      return (
+        <Card className="mb-4 shadow-sm">
+          <Card.Header className="bg-primary text-white">
+            <h5 className="fs-4">
+              <FaTasks className="me-2" style={{ color: "black" }} />
+              Business Needs & Goals
+            </h5>
+          </Card.Header>
+          <Card.Body>
+            <Form>
+              {/* Business Challenges */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="businessChallenges">
+                  <Form.Label className="fs-5">
+                    <FaExclamationTriangle className="me-2" style={{ color: "#757885" }} />
+                    What are the biggest challenges your business is currently facing?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.businessChallenges}
+                    onChange={(e) => handleInputChange("businessChallenges", e.target.value)}
+                    rows={3}
+                    placeholder="Describe the key challenges"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+  
+              {/* Key Priorities */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="keyPriorities">
+                  <Form.Label className="fs-5">
+                    <FaTasks className="me-2" style={{ color: "#757885" }} />
+                    What are your key priorities over the next 6-12 months?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.keyPriorities}
+                    onChange={(e) => handleInputChange("keyPriorities", e.target.value)}
+                    rows={3}
+                    placeholder="Outline your short-term priorities"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+  
+              {/* Support Needed */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="supportNeeded">
+                  <Form.Label className="fs-5">
+                    <FaHandsHelping className="me-2" style={{ color: "#757885" }} />
+                    What specific support are you looking for from an investor or business partner?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.supportNeeded}
+                    onChange={(e) => handleInputChange("supportNeeded", e.target.value)}
+                    rows={3}
+                    placeholder="Specify the type of support needed"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+  
+              {/* Business Plan */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="businessPlanStatus">
+                  <Form.Label className="fs-5">
+                    <FaRoad className="me-2" style={{ color: "#757885" }} />
+                    Do you have a clear business plan or roadmap for growth?
+                  </Form.Label>
+                  <Form.Select
+                    value={formData.businessPlanStatus}
+                    onChange={(e) => handleInputChange("businessPlanStatus", e.target.value)}
+                    required
+                  >
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                    <option value="In progress">In progress</option>
+                  </Form.Select>
+                </Form.Group>
+              </Row>
+  
+              {/* Milestones */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="milestones">
+                  <Form.Label className="fs-5">
+                    <FaFlagCheckered className="me-2" style={{ color: "#757885" }} />
+                    What milestones do you plan to achieve in the next 6 months?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.milestones}
+                    onChange={(e) => handleInputChange("milestones", e.target.value)}
+                    rows={3}
+                    placeholder="List your planned milestones"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+            </Form>
+          </Card.Body>
+        </Card>
+      );
+      return (
+        <Card className="mb-4 shadow-sm">
+          <Card.Header className="bg-primary text-white">
+            <h5 className="fs-4">
+              <FaTasks className="me-2" />
+              Business Needs & Goals
+            </h5>
+          </Card.Header>
+          <Card.Body>
+            <Form>
+              {/* Business Challenges */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="businessChallenges">
+                  <Form.Label className="fs-5">
+                    <FaExclamationTriangle className="me-2 text-danger" />
+                    What are the biggest challenges your business is currently facing?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.businessChallenges}
+                    onChange={(e) => handleInputChange("businessChallenges", e.target.value)}
+                    rows={3}
+                    placeholder="Describe the key challenges"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+  
+              {/* Key Priorities */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="keyPriorities">
+                  <Form.Label className="fs-5">
+                    <FaTasks className="me-2 text-primary" />
+                    What are your key priorities over the next 6-12 months?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.keyPriorities}
+                    onChange={(e) => handleInputChange("keyPriorities", e.target.value)}
+                    rows={3}
+                    placeholder="Outline your short-term priorities"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+  
+              {/* Support Needed */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="supportNeeded">
+                  <Form.Label className="fs-5">
+                    <FaHandsHelping className="me-2 text-success" />
+                    What specific support are you looking for from an investor or business partner?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.supportNeeded}
+                    onChange={(e) => handleInputChange("supportNeeded", e.target.value)}
+                    rows={3}
+                    placeholder="Specify the type of support needed"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+  
+              {/* Business Plan */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="businessPlanStatus">
+                  <Form.Label className="fs-5">
+                    <FaRoad className="me-2 text-primary" />
+                    Do you have a clear business plan or roadmap for growth?
+                  </Form.Label>
+                  <Form.Select
+                    value={formData.businessPlanStatus}
+                    onChange={(e) => handleInputChange("businessPlanStatus", e.target.value)}
+                    required
+                  >
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                    <option value="In progress">In progress</option>
+                  </Form.Select>
+                </Form.Group>
+              </Row>
+  
+              {/* Milestones */}
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="milestones">
+                  <Form.Label className="fs-5">
+                    <FaFlagCheckered className="me-2 text-warning" />
+                    What milestones do you plan to achieve in the next 6 months?
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={formData.milestones}
+                    onChange={(e) => handleInputChange("milestones", e.target.value)}
+                    rows={3}
+                    placeholder="List your planned milestones"
+                    required
+                  />
+                </Form.Group>
+              </Row>
+            </Form>
+          </Card.Body>
+        </Card>
+      );
       case 4:
+    return (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4">
+            <FaInfoCircle className="me-2" style={{ color: "black" }} />
+            Additional Information
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            {/* Long-Term Goals */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="longTermGoals">
+                <Form.Label className="fs-5">
+                  <FaBullseye className="me-2" style={{ color: "#757885" }} />
+                  What are your long-term goals for the business?
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  value={formData.longTermGoals}
+                  onChange={(e) => handleInputChange("longTermGoals", e.target.value)}
+                  rows={4}
+                  placeholder="Describe your vision for the future"
+                  required
+                />
+              </Form.Group>
+            </Row>
+
+            {/* Additional Information */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="additionalInfo">
+                <Form.Label className="fs-5">
+                  <FaInfoCircle className="me-2" style={{ color: "#757885" }} />
+                  Is there anything else a potential investor or partner should know about you or your business?
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  value={formData.additionalInfo}
+                  onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
+                  rows={4}
+                  placeholder="Provide any additional information"
+                  required
+                />
+              </Form.Group>
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+    );
         return (
-          <div className="card-body">
-            {/* Additional Information form fields */}
-            <div className="mb-3">
-              <label htmlFor="longTermGoals" className="form-label">What are your long-term goals for the business?</label>
-              <textarea
-                id="longTermGoals"
-                value={formData.longTermGoals}
-                onChange={(e) => handleInputChange('longTermGoals', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="additionalInfo" className="form-label">Is there anything else a potential investor or partner should know about you or your business?</label>
-              <textarea
-                id="additionalInfo"
-                value={formData.additionalInfo}
-                onChange={(e) => handleInputChange('additionalInfo', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        
-
-
-          
+          <Card className="mb-4 shadow-sm">
+            <Card.Header className="bg-primary text-white">
+              <h5 className="fs-4">
+                <FaInfoCircle className="me-2" />
+                Additional Information
+              </h5>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                {/* Long-Term Goals */}
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="longTermGoals">
+                    <Form.Label className="fs-5">
+                      <FaBullseye className="me-2 text-success" />
+                      What are your long-term goals for the business?
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      value={formData.longTermGoals}
+                      onChange={(e) => handleInputChange("longTermGoals", e.target.value)}
+                      rows={4}
+                      placeholder="Describe your vision for the future"
+                      required
+                    />
+                  </Form.Group>
+                </Row>
+    
+                {/* Additional Information */}
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="additionalInfo">
+                    <Form.Label className="fs-5">
+                      <FaInfoCircle className="me-2 text-primary" />
+                      Is there anything else a potential investor or partner should know about you or your business?
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      value={formData.additionalInfo}
+                      onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
+                      rows={4}
+                      placeholder="Provide any additional information"
+                      required
+                    />
+                  </Form.Group>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
         );
       default:
         return null;
@@ -1011,48 +840,62 @@ const Entrepreneurform = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">Entrepreneur Form</h2>
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-        <div className="card mb-4">
-          <div className="card-header">
-            <h5 className="mb-0">{sections[currentSection]}</h5>
-          </div>
-          {renderSection()}
-        </div>
-        <div className="d-flex justify-content-between">
+    <div>
+    {/* Styled Tabs */}
+    <div className="d-flex justify-content-center mb-4">
+        {sections.map((title, index) => (
           <button
+            key={index}
             type="button"
-            className="btn btn-primary"
-            onClick={() => setCurrentSection((prev) => (prev > 0 ? prev - 1 : prev))}
+            className={`btn mx-2 ${currentSection === index ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setCurrentSection(index)}
+          >
+            {title}
+          </button>
+        ))}
+    </div>
+
+    <form onSubmit={handleSubmit}>
+      {renderSection()}
+
+      {/* Navigation Buttons */}
+      <div className="d-flex justify-content-between mt-4">
+        <ButtonGroup>
+          <Button
+            variant="secondary"
+            type="button"
             disabled={currentSection === 0}
+            onClick={() => setCurrentSection((prev) => prev - 1)}
           >
             Previous
-          </button>
-          {currentSection < sections.length - 1 ? (
-            <button
+          </Button>
+          {currentSection < sections.length - 1 && (
+            <Button
+              variant="primary"
               type="button"
-              className="btn btn-primary"
-              onClick={() => setCurrentSection((prev) => (prev < sections.length - 1 ? prev + 1 : prev))}
+              onClick={() => setCurrentSection((prev) => prev + 1)}
             >
               Next
-            </button>
-          ) : (
-            <button type="submit" className="btn btn-success">
-              Submit
-            </button>
+            </Button>
           )}
-        </div>
-        <button
+          {currentSection === sections.length - 1 && (
+            <Button variant="success" type="submit">
+              Submit
+            </Button>
+          )}
+        </ButtonGroup>
+        <Button
+          variant="warning"
           type="button"
-          className="btn btn-secondary mt-3"
+          className="ms-3"
           onClick={handleSkip}
         >
           Skip
-        </button>
-      </form>
-    </div>
+        </Button>
+      </div>
+    </form>
+  </div>
   );
 };
 
-export default Entrepreneurform;
+export default EntrepreneurForm;
