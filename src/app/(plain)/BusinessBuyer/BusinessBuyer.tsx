@@ -26,7 +26,7 @@ const BusinessBuyingForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com//businessbuyer/create', {
+      fetch('https://app-backend-8r74.onrender.com/businessbuyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

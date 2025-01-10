@@ -48,7 +48,7 @@ const BusinessSellerForm = () => {
     e.preventDefault();
    console.log(formData);
   try {
-    fetch('https://app-backend-8r74.onrender.com//businessseller/create', {
+    fetch('https://app-backend-8r74.onrender.com/businessseller/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
