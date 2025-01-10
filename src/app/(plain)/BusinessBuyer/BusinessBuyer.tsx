@@ -447,7 +447,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 import { FaRegLightbulb, FaInfoCircle, FaBusinessTime, FaMoneyBillWave, FaHandshake, FaChartLine, FaClipboardList, FaUser, FaBuilding, FaIndustry, FaMapMarkerAlt, FaDollarSign, FaUsers, FaPercentage, FaQuestionCircle, FaBriefcase, FaFileAlt, FaTrophy, FaGavel, FaCalendarAlt } from 'react-icons/fa';
-
+import axios from 'axios';
 const BusinessBuyerForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -496,17 +496,22 @@ const BusinessBuyerForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/business-seller/create', {
+      fetch('https://app-backend-8r74.onrender.com/businessselle/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       }).then(() => navigate('/'));
+      console.log(formData)
     } catch (error) {
       console.log(error);
     }
   };
+
+
+
+
 
   const handleSkip = () => {
     navigate('/');
@@ -627,7 +632,7 @@ const BusinessBuyerForm = () => {
         <div className="d-flex justify-content-between mt-4">
           {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
           {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
-          {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
+{step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
           <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
         </div>
       </form>
