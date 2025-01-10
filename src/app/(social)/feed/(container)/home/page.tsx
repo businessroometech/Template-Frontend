@@ -15,6 +15,11 @@ const Home = () => {
 
   const handleRoleSelect = (roleId) => {
     console.log('Selected role:', roleId);
+    if(roleId === 'entrepreneur') navigate('/entreprenuer');
+    else if(roleId === 'investor') navigate('/investor');
+    else if(roleId === 'acquirer') navigate('/business-acquirer');
+    else if(roleId === 'seller') navigate('/business-seller');
+    else alert('Error : Invalid role Id');
   };
   return (
     <>
