@@ -1,7 +1,7 @@
 
 // BusinessSellerForm
 
-
+/*
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -83,7 +83,7 @@ const BusinessSellerForm = () => {
       <h2 className="text-center mb-4">Business Seller Form</h2>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         
-        {/* Business Information */}
+        {/* Business Information }
         {currentSection === 0 && (
           <div className="card mb-4">
             <div className="card-header">
@@ -118,7 +118,7 @@ const BusinessSellerForm = () => {
           </div>
         )}
 
-        {/* Financial Information */}
+        {/* Financial Information }
         {currentSection === 1 && (
           <div className="card mb-4">
             <div className="card-header">
@@ -151,7 +151,7 @@ const BusinessSellerForm = () => {
           </div>
         )}
 
-        {/* Operational Details */}
+        {/* Operational Details }
         {currentSection === 2 && (
           <div className="card mb-4">
             <div className="card-header">
@@ -190,7 +190,7 @@ const BusinessSellerForm = () => {
           </div>
         )}
 
-        {/* Employee & Structure Information */}
+        {/* Employee & Structure Information }
         {currentSection === 3 && (
           <div className="card mb-4">
             <div className="card-header">
@@ -223,7 +223,7 @@ const BusinessSellerForm = () => {
           </div>
         )}
 
-        {/* Legal Information */}
+        {/* Legal Information }
         {currentSection === 4 && (
           <div className="card mb-4">
             <div className="card-header">
@@ -256,7 +256,7 @@ const BusinessSellerForm = () => {
           </div>
         )}
 
-        {/* Final Details */}
+        {/* Final Details }
         {currentSection === 5 && (
           <div className="card mb-4">
             <div className="card-header">
@@ -334,7 +334,7 @@ const BusinessSellerForm = () => {
           </div>
         )}
 
-        {/* Navigation Buttons */}
+        {/* Navigation Buttons }
         <div className="d-flex justify-content-between">
           {currentSection > 0 && (
             <button type="button" onClick={prevSection} className="btn btn-secondary">Previous</button>
@@ -353,3 +353,220 @@ const BusinessSellerForm = () => {
 };
 
 export default BusinessSellerForm;
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
+import { FaRegLightbulb, FaInfoCircle, FaBusinessTime, FaMoneyBillWave, FaHandshake, FaChartLine, FaClipboardList, FaUser, FaBuilding, FaIndustry, FaMapMarkerAlt, FaDollarSign, FaUsers, FaPercentage, FaQuestionCircle, FaBriefcase, FaFileAlt, FaTrophy, FaGavel, FaCalendarAlt } from 'react-icons/fa';
+import axios from 'axios';
+const BusinessBuyerForm = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    sellerName: '',
+    businessName: '',
+    businessType: '',
+    businessStage: '',
+    industry: '',
+    location: '',
+    revenue: '',
+    profit: '',
+    numberOfEmployees: '',
+    ownershipPercentage: '',
+    reasonForSelling: '',
+    askingPrice: '',
+    intellectualProperty: '',
+    assetsForSale: '',
+    liabilities: '',
+    financialHistory: '',
+    salesForecast: '',
+    marketingStrategy: '',
+    competition: '',
+    exitStrategy: '',
+    legalIssues: '',
+    expectedTimeline: '',
+    additionalInformation: '',
+  });
+
+  const [step, setStep] = useState(0);
+  const sections = [
+    { title: "Seller Information", icon: <FaInfoCircle /> },
+    { title: "Business Details", icon: <FaBusinessTime /> },
+    { title: "Financial Information", icon: <FaMoneyBillWave /> },
+    { title: "Ownership & Sale Information", icon: <FaHandshake /> },
+    { title: "Additional Business Details", icon: <FaChartLine /> },
+    { title: "Final Business Information", icon: <FaClipboardList /> },
+  ];
+
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      fetch('https://app-backend-8r74.onrender.com/businessselle/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      }).then(() => navigate('/'));
+      console.log(formData)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+
+
+  const handleSkip = () => {
+    navigate('/');
+  };
+
+  const setCurrentSection = (index) => {
+    setStep(index);
+  };
+
+  const renderStep = () => {
+    const renderFormFields = (fields) => (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4">
+            {sections[step].icon} {sections[step].title}
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          {fields.map((field, index) => (
+            <div className="mb-3" key={index}>
+              <label htmlFor={field.id} className="form-label">
+                {field.icon} {field.label}
+              </label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  id={field.id}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  rows={field.rows || 3}
+                  required={field.required}
+                />
+              ) : (
+                <input
+                  id={field.id}
+                  type={field.inputType || 'text'}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  placeholder={field.placeholder || ''}
+                  required={field.required}
+                />
+              )}
+            </div>
+          ))}
+        </Card.Body>
+      </Card>
+    );
+
+    switch (step) {
+      case 0:
+        return renderFormFields([
+          { id: 'sellerName', label: 'Your Name', name: 'sellerName', icon: <FaUser />, required: true },
+          { id: 'businessName', label: 'Business Name', name: 'businessName', icon: <FaBuilding />, required: true },
+          {
+            id: 'businessType', label: 'Business Type', name: 'businessType', icon: <FaIndustry />, inputType: 'select', required: true,
+            options: ['Sole Proprietorship', 'Partnership', 'LLC', 'Corporation', 'Other']
+          }
+        ]);
+      case 1:
+        return renderFormFields([
+          {
+            id: 'businessStage', label: 'Business Stage', name: 'businessStage', icon: <FaBriefcase />, inputType: 'select', required: true,
+            options: ['Startup', 'Growth', 'Mature', 'Declining']
+          },
+          { id: 'industry', label: 'Industry', name: 'industry', icon: <FaIndustry />, required: true },
+          { id: 'location', label: 'Location of Business', name: 'location', icon: <FaMapMarkerAlt />, required: true }
+        ]);
+      case 2:
+        return renderFormFields([
+          { id: 'revenue', label: 'Annual Revenue', name: 'revenue', icon: <FaDollarSign />, placeholder: 'Annual Revenue', required: true },
+          { id: 'profit', label: 'Annual Profit', name: 'profit', icon: <FaDollarSign />, placeholder: 'Annual Profit' },
+          { id: 'numberOfEmployees', label: 'Number of Employees', name: 'numberOfEmployees', icon: <FaUsers />, inputType: 'number', required: true }
+        ]);
+      case 3:
+        return renderFormFields([
+          { id: 'ownershipPercentage', label: 'Ownership Percentage Available for Sale', name: 'ownershipPercentage', icon: <FaPercentage />, placeholder: 'Ownership Percentage', required: true },
+          { id: 'reasonForSelling', label: 'Reason for Selling the Business', name: 'reasonForSelling', icon: <FaQuestionCircle />, required: true },
+          { id: 'askingPrice', label: 'Asking Price', name: 'askingPrice', icon: <FaDollarSign />, required: true }
+        ]);
+      case 4:
+        return renderFormFields([
+          { id: 'intellectualProperty', label: 'Intellectual Property (Patents, Trademarks, etc.)', name: 'intellectualProperty', icon: <FaFileAlt />, placeholder: 'Intellectual Property Details' },
+          { id: 'assetsForSale', label: 'Assets for Sale', name: 'assetsForSale', icon: <FaFileAlt />, placeholder: 'Assets' },
+          { id: 'liabilities', label: 'Liabilities', name: 'liabilities', icon: <FaFileAlt />, placeholder: 'Liabilities' }
+        ]);
+      case 5:
+        return renderFormFields([
+          { id: 'financialHistory', label: 'Business\'s Financial History', name: 'financialHistory', icon: <FaFileAlt />, type: 'textarea', required: true },
+          { id: 'salesForecast', label: 'Sales Forecast for the Next Year', name: 'salesForecast', icon: <FaChartLine />, placeholder: 'Sales Forecast' },
+          { id: 'exitStrategy', label: 'Exit Strategy', name: 'exitStrategy', icon: <FaTrophy />, placeholder: 'Exit Strategy', required: true },
+          { id: 'legalIssues', label: 'Legal Issues (if any)', name: 'legalIssues', icon: <FaGavel />, placeholder: 'Legal Issues' },
+          { id: 'expectedTimeline', label: 'Expected Timeline for Sale', name: 'expectedTimeline', icon: <FaCalendarAlt />, placeholder: 'Expected Timeline' },
+          { id: 'additionalInformation', label: 'Additional Information', name: 'additionalInformation', icon: <FaClipboardList />, type: 'textarea' }
+        ]);
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="container mt-5">
+      <h2 className="text-center mb-4">Business Seller</h2>
+      <div className="d-flex justify-content-center mb-4">
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            type="button"
+            className={`btn mx-2 ${step === index ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setCurrentSection(index)}
+          >
+            {section.icon} {section.title}
+          </button>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+        {renderStep()}
+        <div className="d-flex justify-content-between mt-4">
+          {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
+          {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+{step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
+          <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default BusinessBuyerForm;
+
