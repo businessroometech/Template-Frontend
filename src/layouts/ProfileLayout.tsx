@@ -29,6 +29,8 @@ import {
   BsEnvelope,
   BsFileEarmarkPdf,
   BsGear,
+  BsGenderFemale,
+  BsGenderMale,
   BsGeoAlt,
   BsHeart,
   BsLock,
@@ -56,6 +58,7 @@ import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
 import axios from "axios"
 import { useAuthContext } from "@/context/useAuthContext"
+import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 
 const Experience = () => {
   return (
@@ -63,7 +66,7 @@ const Experience = () => {
       <CardHeader className="d-flex justify-content-between border-0">
         <h5 className="card-title">Experience</h5>
         <Button variant="primary-soft" size="sm">
-          
+
           <FaPlus />
         </Button>
       </CardHeader>
@@ -72,7 +75,7 @@ const Experience = () => {
           <div className="d-flex" key={idx}>
             <div className="avatar me-3">
               <span role="button">
-                
+
                 <img className="avatar-img rounded-circle" src={experience.logo} alt="" />
               </span>
             </div>
@@ -95,12 +98,12 @@ const Experience = () => {
 }
 
 const Photos = () => {
-  return ( 
+  return (
     <Card>
       <CardHeader className="d-sm-flex justify-content-between border-0">
         <CardTitle>Photos</CardTitle>
         <Button variant="primary-soft" size="sm">
-          
+
           See all photo
         </Button>
       </CardHeader>
@@ -147,7 +150,7 @@ const Friends = () => {
           Friends <span className="badge bg-danger bg-opacity-10 text-danger">230</span>
         </CardTitle>
         <Button variant="primary-soft" size="sm">
-          
+
           See all friends
         </Button>
       </CardHeader>
@@ -163,18 +166,18 @@ const Friends = () => {
                     </span>
                   </div>
                   <h6 className="card-title mb-1 mt-3">
-                    
+
                     <Link to=""> {friend.name} </Link>
                   </h6>
                   <p className="mb-0 small lh-sm">{friend.mutualCount} mutual connections</p>
                 </CardBody>
                 <div className="card-footer p-2 border-0">
                   <button className="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Send message">
-                    
+
                     <BsChatLeftText />
                   </button>
                   <button className="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove friend">
-                    
+
                     <BsPersonX />
                   </button>
                 </div>
@@ -190,39 +193,19 @@ const Friends = () => {
 
 const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
-const {user} = useAuthContext();
+  const { user } = useAuthContext();
   const [profile, setProfile] = useState({});
+  const [sent, setSent] = useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: user?.id
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json(); 
-        setProfile(data?.data); 
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-    if (profile?.coverimurl && profile?.personalDetails){
+    if (profile?.coverimurl && profile?.personalDetails) {
       return;
     }
     fetchUser();
-  }, [profile?.personalDetails]); 
-  
-  const formatDate = (dateString) => {
+  }, [profile?.personalDetails]);
+
+  const formatDate = (dateString:Date) => {
     const date = new Date(dateString);
     const options = {
       year: 'numeric',
@@ -237,170 +220,238 @@ const {user} = useAuthContext();
   };
 
 
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: "88ca28f9ead2f6978248404e0e68c5b4"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setProfile(data?.data);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+  const UserRequest = async (userId: string) => {
+    setSent(!sent);
+  
+    const apiUrl = sent
+      ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
+      : "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          requesterId: user?.id,
+          receiverId: userId,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
+      }  
+      const data = await res.json();
+      console.log(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
+    } catch (error) {
+      console.error(`Error while trying to ${sent ? "send" : "unsend"} connection request:`, error);
+    }
+  };  
   return (
     <>
-      <Suspense fallback={<Preloader/>}>
+      <Suspense fallback={<Preloader />}>
         <TopHeader />
       </Suspense>
-
-      {profile?.profileimgurl && profile?.personalDetails && (
-  
- <main>
-    <Container>
-      <Row className="g-4">
-        {/* Main Profile Section */}
-        <Col lg={8} className="vstack gap-4">
-        <Card>
-            {/* Profile Cover Image */}
-            <div
-              className="h-200px rounded-top"
-              style={{
-                backgroundImage: `url(${profile?.coverimurl ? profile?.coverimurl : background5})`,
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-              }}
-            />
-            <CardBody className="py-0">
-              {/* Profile Info Section */}
-              <div className="d-sm-flex align-items-start text-center text-sm-start">
-                {/* Profile Picture */}
-                <div>
-                  <div className="avatar avatar-xxl mt-n5 mb-3">
-                    <img
-                      className="avatar-img rounded-circle border border-white border-3"
-                      src={profile.profileimgurl ? profile.profileimgurl : avatar7}
-                      alt="avatar"
-                    />
-                  </div>
-                </div>
-                {/* Name and Bio */}
-                <div className="ms-sm-4 mt-sm-3">
-                  <h1 className="mb-0 h5">
-                    {profile?.personalDetails?.firstName} {profile?.personalDetails?.lastName}{' '}
-                    <BsPatchCheckFill className="text-success small" />
-                  </h1>
-                  <p>{profile.personalDetails?.bio}</p>
-                </div>
-                {/* Action Buttons */}
-                <div className="d-flex mt-3 justify-content-center ms-sm-auto">
-                  <Button variant="danger-soft" className="me-2" type="button" onClick={() => navigate("/settings/account") }>
-                    <BsPencilFill size={19} className="pe-1" /> Edit profile
-                  </Button>
-                  <Dropdown>
-                    <DropdownToggle
-                      as="a"
-                      className="icon-md btn btn-light content-none"
-                      id="profileAction2"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <BsThreeDots />
-                    </DropdownToggle>
-                    <DropdownMenu className="dropdown-menu-end" aria-labelledby="profileAction2">
-                      <DropdownItem>
-                        <BsBookmark size={22} className="fa-fw pe-2" /> Share profile in a message
-                      </DropdownItem>
-                      <DropdownItem>
-                        <BsFileEarmarkPdf size={22} className="fa-fw pe-2" /> Save your profile to PDF
-                      </DropdownItem>
-                      <DropdownItem>
-                        <BsLock size={22} className="fa-fw pe-2" /> Lock profile
-                      </DropdownItem>
-                      <hr className="dropdown-divider" />
-                      <DropdownItem>
-                        <BsGear size={22} className="fa-fw pe-2" /> Profile settings
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </div>
-              </div>
-              {/* Profile Details */}
-              <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
-                <li className="list-inline-item">
-                  <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation}
-                </li>
-                <li className="list-inline-item">
-                  <BsGeoAlt className="me-1" />{' '}
-                  {profile?.personalDetails?.permanentAddress?.city}{' '}
-                  {profile?.personalDetails?.permanentAddress?.state}
-                </li>
-                <li className="list-inline-item">
-                  <BsCalendar2Plus className="me-1" /> Joined on{' '}
-                  {profile?.personalDetails?.createdAt &&
-                    formatDate(profile.personalDetails?.createdAt)}
-                </li>
-              </ul>
-            </CardBody>
-            <CardFooter className="card-footer mt-3 pt-2 pb-0">
-              <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
-                {PROFILE_MENU_ITEMS.map((item, idx) => (
-                  <li className="nav-item" key={idx}>
-                    <Link
-                      className={clsx('nav-link', { active: pathname === item.url })}
-                      to={item.url ?? ''}
-                    >
-                      {item.label}{' '}
-                      {item.badge && (
-                        <span className="badge bg-success bg-opacity-10 text-success small">
-                          {item.badge.text}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </CardFooter>
-          </Card>
-          {/* <Suspense fallback={<FallbackLoading />}>{children}</Suspense> */}
-        </Col>
-
-        {/* Sidebar Section */}
-        <Col lg={4}>
+      <main>
+        <Container>
           <Row className="g-4">
-            {/* About Card */}
-            <Col md={6} lg={12}>
+            {/* Main Profile Section */}
+            <Col lg={8} className="vstack gap-4">
               <Card>
-                <CardHeader className="border-0 pb-0">
-                  <CardTitle>About</CardTitle>
-                </CardHeader>
-                <CardBody className="position-relative pt-0">
-                  <p>
-                    He moonlights difficult engrossed it, sportsmen. Interested has all Devonshire
-                    difficulty gay assistance joy.
-                  </p>
-                  <ul className="list-unstyled mt-3 mb-0">
-                    <li className="mb-2">
-                      <BsCalendarDate size={18} className="fa-fw pe-1" /> Born:{' '}
-                      <strong>October 20, 1990</strong>
+                {/* Profile Cover Image */}
+                <div
+                  className="h-200px rounded-top"
+                  style={{
+                    backgroundImage: `url(${profile?.coverimurl ? profile?.coverimurl : background5})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                />
+                <CardBody className="py-0">
+                  {/* Profile Info Section */}
+                  <div className="d-sm-flex align-items-start text-center text-sm-start">
+                    {/* Profile Picture */}
+                    <div>
+                      <div className="avatar avatar-xxl mt-n5 mb-3">
+                        <img
+                          className="avatar-img rounded-circle border border-white border-3"
+                          src={profile.profileimgurl ? profile.profileimgurl : avatar7}
+                          alt="avatar"
+                        />
+                      </div>
+                    </div>
+                    {/* Name and Bio */}
+                    <div className="ms-sm-4 mt-sm-3">
+                      <h1 className="mb-0 h5">
+                        {profile?.personalDetails?.firstName} {profile?.personalDetails?.lastName}{' '}
+                        <BsPatchCheckFill className="text-success small" />
+                      </h1>
+                      <p>{profile.connectionsCount ? profile.connectionsCount : 0} connections</p>
+                    </div>
+                    {/* Action Buttons */}
+                    <div className="d-flex mt-3 justify-content-center ms-sm-auto">
+                      {user?.id === profile?.personalDetails?.id ? (
+                        <Button
+                          variant="danger-soft"
+                          className="me-2"
+                          type="button"
+                          onClick={() => navigate("/settings/account")}
+                        >
+                          <BsPencilFill size={19} className="pe-1" /> Edit profile
+                        </Button>
+                      ) : (
+                        <Button
+                          variant={sent?"success-soft":"primary-soft"}
+                          className="me-2"
+                          type="button"
+                          onClick={() => UserRequest(profile?.personalDetails?.id)}
+                        >
+                          {!sent ? (
+                            <>
+                              <FaUserPlus size={19} className="pe-1" /> Send connection request
+                            </>
+                          ) : (
+                            <>
+                              <FaUserCheck size={19} className="pe-1" /> Request sent
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      <Dropdown>
+                        <DropdownToggle
+                          as="a"
+                          className="icon-md btn btn-light content-none"
+                          id="profileAction2"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <BsThreeDots />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-end" aria-labelledby="profileAction2">
+                          <DropdownItem>
+                            <BsBookmark size={22} className="fa-fw pe-2" /> Share profile in a message
+                          </DropdownItem>
+                          <DropdownItem>
+                            <BsFileEarmarkPdf size={22} className="fa-fw pe-2" /> Save your profile to PDF
+                          </DropdownItem>
+                          <DropdownItem>
+                            <BsLock size={22} className="fa-fw pe-2" /> Lock profile
+                          </DropdownItem>
+                          <hr className="dropdown-divider" />
+                          <DropdownItem>
+                            <BsGear size={22} className="fa-fw pe-2" /> Profile settings
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  </div>
+                  {/* Profile Details */}
+                  <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
+                    <li className="list-inline-item">
+                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation : "User occupation not available"}
                     </li>
-                    <li className="mb-2">
-                      <BsHeart size={18} className="fa-fw pe-1" /> Status: <strong>Single</strong>
+                    <li className="list-inline-item">
+                      <BsGeoAlt className="me-1" />{' '}
+                      {profile?.personalDetails?.permanentAddress?.city ? profile?.personalDetails?.permanentAddress?.city : "User Address not available"}{' '}
+                      {profile?.personalDetails?.permanentAddress?.state}
                     </li>
-                    <li>
-                      <BsEnvelope size={18} className="fa-fw pe-1" /> Email:{' '}
-                      <strong>businessroom@ai.com</strong>
+                    <li className="list-inline-item">
+                      <BsCalendar2Plus className="me-1" /> Joined on{' '}
+                      {profile?.personalDetails?.createdAt &&
+                        formatDate(profile.personalDetails?.createdAt)}
                     </li>
                   </ul>
                 </CardBody>
+                <CardFooter className="card-footer mt-3 pt-2 pb-0">
+                  <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
+                    {PROFILE_MENU_ITEMS.map((item, idx) => (
+                      <li className="nav-item" key={idx}>
+                        <Link
+                          className={clsx('nav-link', { active: pathname === item.url })}
+                          to={item.url ?? ''}
+                        >
+                          {item.label}{' '}
+                          {item.badge && (
+                            <span className="badge bg-success bg-opacity-10 text-success small">
+                              {item.badge.text}
+                            </span>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </CardFooter>
               </Card>
+              {/* <Suspense fallback={<FallbackLoading />}>{children}</Suspense> */}
             </Col>
-            {/* Additional Components */}
-            <Col md={6} lg={12}>
-              <Experience />
-            </Col>
-            <Col md={6} lg={12}>
-              <Photos />
-            </Col>
-            <Col md={6} lg={12}>
-              <Friends />
+
+            {/* Sidebar Section */}
+            <Col lg={4}>
+              <Row className="g-4">
+                {/* About Card */}
+                <Col md={6} lg={12}>
+                  <Card>
+                    <CardHeader className="border-0 pb-0">
+                      <CardTitle>About</CardTitle>
+                    </CardHeader>
+                    <CardBody className="position-relative pt-0">
+                      <p>
+                        {profile?.personalDetails?.bio}
+                      </p>
+                      <ul className="list-unstyled mt-3 mb-0">
+                        <li className="mb-2">
+                          <BsCalendarDate size={18} className="fa-fw pe-1" /> Born:{' '}
+                          <strong>{profile?.personalDetails?.dob}</strong>
+                        </li>
+                        <li className="mb-2">
+                          {profile?.personalDetails?.gender!=="male"?<BsGenderFemale size={18} className="fa-fw pe-1" />:<BsGenderMale size={18} className="fa-fw pe-1" />} Gender: <strong>{profile?.personalDetails?.gender}</strong>
+                        </li>
+                        <li>
+                          <BsEnvelope size={18} className="fa-fw pe-1" /> Email:{' '}
+                          <strong>{profile?.personalDetails?.emailAddress}</strong>
+                        </li>
+                      </ul>
+                    </CardBody>
+                  </Card>
+                </Col>
+                {/* Additional Components */}
+                <Col md={6} lg={12}>
+                  <Experience />
+                </Col>
+                <Col md={6} lg={12}>
+                  <Photos />
+                </Col>
+                <Col md={6} lg={12}>
+                  <Friends />
+                </Col>
+              </Row>
             </Col>
           </Row>
-        </Col>
-      </Row>
-    </Container>
-    </main>
-)}
+        </Container>
+      </main>
+
 
     </>
   )
