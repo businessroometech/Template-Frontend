@@ -766,8 +766,15 @@ import { Card, Col, Form, Row } from 'react-bootstrap';
 import { FaBalanceScale, FaCalendarAlt, FaExchangeAlt, FaListAlt, FaMapMarkerAlt, FaMoneyCheckAlt, FaTasks } from 'react-icons/fa';
 import { FaBullhorn, FaBullseye, FaCertificate, FaChartLine, FaDollarSign, FaHandshake, FaHeadset, FaHourglassHalf, FaIndustry, FaMedal, FaRegHandPointUp, FaRocket, FaTag, FaUser, FaUsers, FaUserTie, FaWallet } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { useAuthContext } from '@/context/useAuthContext';
+
 
 const InvestorForm = () => {
+
+  const { id } = useContext(useAuthContext);
+
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     investorName: '',
@@ -807,7 +814,7 @@ const InvestorForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData , id) 
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);

@@ -672,8 +672,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaLightbulb, FaBriefcase, FaDollarSign, FaHandshake, FaCalendarAlt, FaQuestionCircle, FaBuilding, FaUsers, FaClipboardList } from 'react-icons/fa';
-
+import { useContext } from 'react';
+import { useAuthContext } from '@/context/useAuthContext';
 const BusinessBuyerForm = () => {
+const { id } = useContext(useAuthContext);
+  console.log(id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     budget: '',
@@ -719,7 +722,7 @@ const BusinessBuyerForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData , id),
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);

@@ -11,6 +11,7 @@ interface SignUpFormData {
   firstPassword : string;
   confirmPassword : string | undefined;
   country : string
+  role : string
 }
 
 interface toSendSignUp {
@@ -18,13 +19,15 @@ interface toSendSignUp {
   firstName : string;
   lastName : string;
   password : string;
-  country : string
+  country : string;
+  userRole : string;
 }
 
 const useSignUp = () => {
   const { saveSession } = useAuthContext();
   const { showNotification } = useNotificationContext();
   const [loading, setLoading] = useState(false);
+  const [role,setRole] = useState<string>("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -34,6 +37,14 @@ const useSignUp = () => {
     else navigate('/');
   };
 
+  const getRole = (roleId : string) => {
+    if(roleId === 'investor') return 'Investor'
+    else if(roleId === 'entrepreneur') return 'Entrepreneur'
+    else if (roleId === 'acquirer') return 'Business Acquirer'
+    else if(roleId === 'seller') return 'Business Seller'
+    else return ''
+  }
+
   const signUp = async (formData : SignUpFormData) => {
     setLoading(true);
 
@@ -42,7 +53,8 @@ const useSignUp = () => {
       lastName : formData.lastName,
       emailAddress : formData.email,
       password : formData.firstPassword,
-      country : formData.country
+      country : formData.country,
+      userRole : getRole(formData.role)
     }
     console.log('---data---',data)
     try {
