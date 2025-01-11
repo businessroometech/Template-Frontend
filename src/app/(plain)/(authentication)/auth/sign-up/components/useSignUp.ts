@@ -74,7 +74,7 @@ const useSignUp = () => {
       }
       else {
         showNotification({
-          message: 'Signup failed. Please try again.',
+          message: json.message,
           variant: 'danger',
         });
       } 
