@@ -69,7 +69,7 @@ const useSignIn = () => {
         showNotification({ message: json.message, variant: 'danger' })
       }
       else {
-        showNotification({ message: 'Login Failed...', variant: 'danger' })
+        showNotification({ message: json.message || 'Login Failed...', variant: 'danger' })
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
