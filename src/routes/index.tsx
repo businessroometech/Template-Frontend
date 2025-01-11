@@ -1,3 +1,4 @@
+import RolePage from '@/components/RolePage'
 import { lazy } from 'react'
 import { Navigate, type RouteProps } from 'react-router-dom'
 
@@ -203,6 +204,11 @@ export const settingPagesRoutes:RoutesProps[]=[
     path: '/settings/account',
     name: 'Account Settings',
     element: <AccountSetting />,
+  },
+  {
+    path : '/settings/role',
+    name : 'Role Settings',
+    element : <RolePage/>,
   },
   {
     path: '/settings/notification',

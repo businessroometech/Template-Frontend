@@ -842,6 +842,7 @@ const EntrepreneurForm = () => {
   return (
     <div>
     {/* Styled Tabs */}
+    <h2 className="text-center mb-4">Entrepreneur Form</h2>
     <div className="d-flex justify-content-center mb-4">
         {sections.map((title, index) => (
           <button

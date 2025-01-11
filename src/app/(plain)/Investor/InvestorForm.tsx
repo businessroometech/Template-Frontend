@@ -1215,7 +1215,7 @@ const InvestorForm = () => {
         </Card.Body>
       </Card>
     );
-case 4:
+      case 4:
   return (
     <Card className="mb-4 shadow-sm">
       <Card.Header className="bg-primary text-white">

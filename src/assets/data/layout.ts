@@ -122,6 +122,11 @@ export const settingPanelLinksData: ProfilePanelLink[] = [
     link: '/settings/account',
   },
   {
+    image : personImg,
+    name : 'Your Role',
+    link : '/settings/role'
+  },
+  {
     image: notificationImg,
     name: 'Notification',
     link: '/settings/notification',
