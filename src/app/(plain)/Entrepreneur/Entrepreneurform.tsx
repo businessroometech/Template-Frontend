@@ -7,10 +7,6 @@ import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 
 const EntrepreneurForm = () => {
-
-
-  const { id } = useContext(useAuthContext);
-
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
@@ -45,6 +41,7 @@ const EntrepreneurForm = () => {
   const {user} = useAuthContext();
   console.log('----user----',user);
   const [currentSection, setCurrentSection] = useState(0);
+  const id = user.id;
 
   const sections = [
     "Business Information",

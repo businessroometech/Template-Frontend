@@ -1,4 +1,4 @@
-import BusinessBuyerForm from "@/app/(plain)/BusinessSeller/BusinessSellerForm.tsx";
+import BusinessBuyerForm from "@/app/(plain)/BusinessBuyer/BusinessBuyer.tsx";
 import EntrepreneurForm from "@/app/(plain)/Entrepreneur/Entrepreneurform";
 import InvestorForm from "@/app/(plain)/Investor/InvestorForm.tsx";
 import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm';
@@ -13,12 +13,17 @@ const RolePage = () => {
       switch (role) {
         case "Entrepreneur" :
           return <EntrepreneurForm/>;
+          break;
         case "Investor":
           return <InvestorForm/>;
-        case "BussinessAcquirer":
+          break;
+        case "Business Acquirer":
+          console.log('--render ba---')
           return <BusinessBuyerForm/>;
-        case "BussinessSeller":
-          return <BusinessSellerForm/>;
+          break;
+        case "Business Seller":
+          return <BusinessSellerForm/>
+          break;
         default:
           return (<div>Error configuring roles</div>);
       }

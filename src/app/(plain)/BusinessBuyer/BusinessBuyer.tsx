@@ -675,7 +675,8 @@ import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaL
 import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 const BusinessBuyerForm = () => {
-const { id } = useContext(useAuthContext);
+  const { user } = useAuthContext();
+  const id = user?.id;
   console.log(id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -870,7 +871,7 @@ const { id } = useContext(useAuthContext);
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Business Buyer Form</h2>
+      <h2 className="text-center mb-4">Business Acquirer</h2>
       <div className="d-flex justify-content-center mb-4">
         {sections.map((section, index) => (
           <button
