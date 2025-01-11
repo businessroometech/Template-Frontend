@@ -293,7 +293,7 @@ export  const socialWithTopbarRoutes: RoutesProps[] = [
 
 export const profilePagesRoutes: RoutesProps[] = [
   {
-    path: '/profile/feed',
+    path: '/profile/feed/:id', // Define the dynamic parameter in the path
     name: 'Feed',
     element: <ProfileFeed />,
   },

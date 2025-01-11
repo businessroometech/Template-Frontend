@@ -1,5 +1,5 @@
 
-import { Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Button, Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import type { IconType } from 'react-icons'
 import { BsCardText, BsCircleHalf, BsGear, BsLifePreserver, BsMoonStars, BsPower, BsSun } from 'react-icons/bs'
@@ -110,9 +110,13 @@ const ProfileDropdown = () => {
               <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>
           </div>
-          <DropdownItem as={Link} className="btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">
+          {/* <DropdownItem as={Link} className="btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">
             View profile
-          </DropdownItem>
+          </DropdownItem> */}
+
+          <Link className="btn btn-primary-soft btn-sm my-2 text-center mx-5" to= {(`/profile/feed/${user?.id}`)} >
+          View profile
+          </Link>
         </li>
 
         <li>

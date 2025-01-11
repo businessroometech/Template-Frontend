@@ -97,33 +97,33 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: user?.id
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        setProfile(data.data);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
     if (profile.coverimurl) {
       return;
     }
     fetchUser();
-  }, [profile.personalDetails]);
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setProfile(data.data);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -259,7 +259,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       console.log('Error in the posting', err)
     }
   }
-  console.log("profile", profile);
+  // console.log("profile", profile);
 
 
   const [show, setShow] = useState(true);

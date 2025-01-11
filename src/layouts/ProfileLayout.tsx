@@ -4,6 +4,7 @@ const TopHeader = lazy(() => import("@/components/layout/TopHeader"))
 import GlightBox from '@/components/GlightBox'
 import { useFetchData } from '@/hooks/useFetchData'
 import type { ChildrenType } from '@/types/component'
+import { RiUserUnfollowFill } from "react-icons/ri";
 import clsx from 'clsx'
 import {
   Button,
@@ -36,6 +37,7 @@ import {
   BsLock,
   BsPatchCheckFill,
   BsPencilFill,
+  BsPersonCheckFill,
   BsPersonX,
   BsThreeDots,
 } from 'react-icons/bs'
@@ -53,12 +55,13 @@ import album3 from '@/assets/images/albums/03.jpg'
 import album4 from '@/assets/images/albums/04.jpg'
 import album5 from '@/assets/images/albums/05.jpg'
 import { experienceData } from "@/assets/data/layout"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
 import axios from "axios"
 import { useAuthContext } from "@/context/useAuthContext"
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
+import { toast } from "react-toastify"
 
 const Experience = () => {
   return (
@@ -196,16 +199,24 @@ const ProfileLayout = ({ children }: ChildrenType) => {
   const { user } = useAuthContext();
   const [profile, setProfile] = useState({});
   const [sent, setSent] = useState(false)
+  const [allFollowers, setAllFollowers] = useState<any[]>([])
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (profile?.coverimurl && profile?.personalDetails) {
-      return;
-    }
-    fetchUser();
-  }, [profile?.personalDetails]);
+  const { id } = useParams(); 
 
-  const formatDate = (dateString:Date) => {
+
+  useEffect(() => {
+    if (profile?.coverimurl || profile?.personalDetails) { return }
+    fetchUser();
+    fetchConnections()
+  }, [profile?.personalDetails]);
+  
+  useEffect(() => {  
+
+    // fetchConnections()
+  }, [allFollowers]);
+
+  const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
     const options = {
       year: 'numeric',
@@ -228,7 +239,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: "88ca28f9ead2f6978248404e0e68c5b4"
+          userId: id
         })
       });
 
@@ -244,7 +255,6 @@ const ProfileLayout = ({ children }: ChildrenType) => {
 
   const UserRequest = async (userId: string) => {
     setSent(!sent);
-  
     const apiUrl = sent
       ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
       : "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
@@ -259,15 +269,101 @@ const ProfileLayout = ({ children }: ChildrenType) => {
           receiverId: userId,
         }),
       });
+
       if (!res.ok) {
         throw new Error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
-      }  
+      }
       const data = await res.json();
       console.log(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
+      toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
+      fetchUser()
+      fetchConnections()
     } catch (error) {
       console.error(`Error while trying to ${sent ? "send" : "unsend"} connection request:`, error);
     }
-  };  
+  };
+
+  const fetchConnections = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: id
+        })
+      });
+      // console.log("response", response);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      // console.log("data", data);
+      
+      setAllFollowers(data);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+  
+
+  const handleAccept = async (userId:any) => {
+    try {
+      console.log("userId", userId);
+      
+      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+           userId:user?.id,
+           connectionId: userId,
+          status: "accepted",
+        }),
+      
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to accept the connection request.");
+      }
+      const data = await res.json();
+      fetchUser()
+      fetchConnections()
+      console.log("Connection request accepted successfully:", data);
+      toast.info("Connection request accepted successfully:", data);
+    } catch (error) {
+      console.error("Error while accepting connection request:", error);
+    }
+  };
+
+  const handleReject = async (userId:any) => {
+    try {
+      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId:user?.id,
+           connectionId: userId,
+          status: "rejected",
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to reject the connection request.");
+      }
+      const data = await res.json();
+      // console.log("Connection request rejected successfully:", data);
+      toast.success("Connection request rejected successfully:", data)
+    } catch (error) {
+      console.error("Error while rejecting connection request:", error);
+    }
+  };
+
   return (
     <>
       <Suspense fallback={<Preloader />}>
@@ -323,7 +419,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                         </Button>
                       ) : (
                         <Button
-                          variant={sent?"success-soft":"primary-soft"}
+                          variant={sent ? "success-soft" : "primary-soft"}
                           className="me-2"
                           type="button"
                           onClick={() => UserRequest(profile?.personalDetails?.id)}
@@ -426,7 +522,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                           <strong>{profile?.personalDetails?.dob}</strong>
                         </li>
                         <li className="mb-2">
-                          {profile?.personalDetails?.gender!=="male"?<BsGenderFemale size={18} className="fa-fw pe-1" />:<BsGenderMale size={18} className="fa-fw pe-1" />} Gender: <strong>{profile?.personalDetails?.gender}</strong>
+                          {(profile?.personalDetails?.gender !== "male" || profile?.personalDetails?.gender !== "Male") ? <BsGenderFemale size={18} className="fa-fw pe-1" /> : <BsGenderMale size={18} className="fa-fw pe-1" />} Gender: <strong>{profile?.personalDetails?.gender}</strong>
                         </li>
                         <li>
                           <BsEnvelope size={18} className="fa-fw pe-1" /> Email:{' '}
@@ -436,6 +532,66 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                     </CardBody>
                   </Card>
                 </Col>
+
+                <Card>
+                  <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
+                    <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
+                     Your connection Requests
+                    </CardTitle>
+                    <div className="bg-info p-2 rounded">
+                      <p className="mb-0 text-white" style={{ fontSize: '14px', color: '#6c757d' }}>
+                        {allFollowers.length}
+                      </p>
+                    </div>
+                  </CardHeader>
+
+                  <CardBody>
+                    {allFollowers && allFollowers.map((follower, idx) => (
+                      <div className=" d-flex row col-12  mb-3" key={idx}>
+                        {/* Avatar Section */}
+                        <div className="col-8  d-flex ">
+                          <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                            <span role="button">
+                              <img
+                                className="avatar-img rounded-circle"
+                                src={follower.profilePictureUploadUrl?follower.profilePictureUploadUrl: avatar7}
+                                alt={`${follower.firstName} ${follower.lastName}`}
+                              />
+                            </span>
+                          </div>
+                          {/* Follower Info Section */}
+                          <div className="overflow-hidden px-2">
+                            <Link className="h6 mb-0" to="">
+                              {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                            </Link>
+                            <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
+                          </div>
+                        </div>
+
+                        <div className="col-3  d-flex ">
+
+                          <Button
+                            onClick={() => handleReject(follower?.requesterDetails?.id)}
+                             variant="danger-soft"
+                            className="rounded-circle mx-1 flex-centered"
+                          >
+                            <RiUserUnfollowFill />
+                          </Button>
+                          <Button
+                            onClick={() => handleAccept(follower?.requesterDetails?.id)}
+                            variant="success-soft"
+                            className="rounded-circle mx-1 flex-centered"
+                          >
+                            <FaUserCheck size={19} className="pe-1" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </CardBody>
+
+
+                </Card>
+
                 {/* Additional Components */}
                 <Col md={6} lg={12}>
                   <Experience />
