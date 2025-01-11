@@ -25,7 +25,7 @@ const RolePage = () => {
           return <BusinessSellerForm/>
           break;
         default:
-          return (<div>Error configuring roles</div>);
+          return (<div>You have no role</div>);
       }
     };
   
