@@ -123,7 +123,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       return;
     }
     fetchUser();
-  }, [profile.personalDetails]);
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -217,7 +217,10 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         console.log('---- response with photo -----', response)
 
         if (response.data) {
+          console.log('went inside')
           setThoughts('') // Reset thoughts after successful post
+          togglePhotoModel();
+          setTimeout(() => {setIsCreated(true);}, 1000);
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -410,7 +413,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type="button" className="btn btn-danger-soft me-2" data-bs-dismiss="modal">
+          <button type="button" className="btn btn-danger-soft me-2" data-bs-dismiss="modal" onClick={() => togglePhotoModel()}>
             Cancel
           </button>
           <button type="submit" onClick={handlePhotoSubmit} className="btn btn-success-soft">
