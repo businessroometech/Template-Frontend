@@ -2,22 +2,25 @@ import BusinessBuyerForm from "@/app/(plain)/BusinessSeller/BusinessSellerForm.t
 import EntrepreneurForm from "@/app/(plain)/Entrepreneur/Entrepreneurform";
 import InvestorForm from "@/app/(plain)/Investor/InvestorForm.tsx";
 import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm';
+import { useAuthContext } from "@/context/useAuthContext";
 
 const RolePage = () => {
-    const role = "entrepreuer"; // Replace with actual role logic or props
-  
+    const {user} = useAuthContext();
+    console.log('-----user-----',user);
+    const role = user.userRole; // Replace with actual role logic or props
+    console.log(role);
     const renderContent = () => {
       switch (role) {
-        case "entrepreuer" :
+        case "Entrepreneur" :
           return <EntrepreneurForm/>;
         case "Investor":
           return <InvestorForm/>;
-        case "bussiness-buyer":
+        case "BussinessAcquirer":
           return <BusinessBuyerForm/>;
-        case "bussiness-seller":
+        case "BussinessSeller":
           return <BusinessSellerForm/>;
         default:
-          return (<div>Please log in to see your role-specific content.</div>);
+          return (<div>Error configuring roles</div>);
       }
     };
   

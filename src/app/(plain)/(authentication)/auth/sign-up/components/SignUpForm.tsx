@@ -9,6 +9,7 @@ import { Button, FormCheck } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import useSignUp from './useSignUp'
+import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
 
 const SignUpForm = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -17,6 +18,8 @@ const SignUpForm = () => {
   const [email, setEmail] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [country, setCountry] = useState<string>('');
+  const [role,setRole] = useState<string>("");
+  const [showModal,setShowModal] = useState<boolean>(false);
 
   const { signUp } = useSignUp();
   
@@ -32,6 +35,12 @@ const SignUpForm = () => {
   const { control, handleSubmit, getValues, watch } = useForm({
     resolver: yupResolver(signUpSchema),
   });
+  console.log('----role----',role);
+  const handleRoleSelect = (roleId) => {
+    console.log("Selected role:", roleId);
+    setRole(roleId);
+  };
+
   
   useEffect(() => {
     setFirstPassword(getValues().password);
@@ -42,20 +51,51 @@ const SignUpForm = () => {
     setCountry(getValues().country);
   }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country')]);
 
+
+  if (showModal) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1000,
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Black with transparency
+          backdropFilter: "blur(10px)", // Blur effect
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <RoleSelectionModal
+          show={showModal}
+          onHide={() => setShowModal(false)} // Hide the modal when clicking close
+          onSelectRole={handleRoleSelect}
+        />
+      </div>
+    );
+  }
   return (
     <form
-      className="mt-4"
-      onSubmit={handleSubmit(async () => {
-        await signUp({
-          email,
-          firstName,
-          lastName,
-          firstPassword,
-          confirmPassword,
-          country,
-        });
-      })}
-    >
+  className="mt-4"
+  onSubmit={handleSubmit(async () => {
+    if(role.trim() === '') {
+      setShowModal(true);
+      return;
+    }
+    await signUp({
+      email,
+      firstName,
+      lastName,
+      firstPassword,
+      confirmPassword,
+      role,
+      country,
+    });
+  })}
+>
       <div className="mb-3">
         <TextFormInput name="firstName" control={control} containerClassName="input-group-lg" placeholder="Enter your First Name" />
       </div>
@@ -304,11 +344,22 @@ const SignUpForm = () => {
       <div className="mb-3 text-start">
         <FormCheck label="Keep me signed in" id="termAndCondition" />
       </div>
-      <div className="d-grid">
-        <Button variant="primary" type="submit" size="lg">
-          Sign me up
-        </Button>
-      </div>
+<div className="d-grid">
+  <Button
+    variant="success"
+    className="bg-success mb-3" // Add margin-bottom for spacing
+    type="submit"
+    size="lg"
+    onClick={() => {
+      setShowModal(true);
+    }}
+  >
+    Select your Role
+  </Button>
+  <Button variant="primary" type="submit" size="lg">
+    Sign me up
+  </Button>
+</div>
       <p className="mb-0 mt-3 text-center">
         ©{currentYear}
         <Link target="_blank" to={developedByLink}>

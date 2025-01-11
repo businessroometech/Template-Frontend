@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Form, Card, Row, Col, InputGroup, Button, ButtonGroup } from "react-bootstrap";
 import { FaRegLightbulb, FaGlobe, FaCity, FaClock, FaIndustry, FaBalanceScale, FaExchangeAlt, FaTasks, FaExclamationTriangle, FaHandsHelping, FaInfoCircle } from "react-icons/fa";
 import { FaBullseye, FaDollarSign, FaFlagCheckered, FaHandshake, FaPeopleArrows, FaRoad, FaUserTie } from "react-icons/fa6";
+import { useAuthContext } from "@/context/useAuthContext";
 
 const EntrepreneurForm = () => {
   const navigate = useNavigate();
@@ -36,7 +37,8 @@ const EntrepreneurForm = () => {
     longTermGoals: "",
     additionalInfo: "",
   });
-
+  const {user} = useAuthContext();
+  console.log('----user----',user);
   const [currentSection, setCurrentSection] = useState(0);
 
   const sections = [
