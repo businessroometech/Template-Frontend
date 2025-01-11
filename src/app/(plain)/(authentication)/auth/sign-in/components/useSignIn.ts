@@ -71,7 +71,7 @@ const useSignIn = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.response?.data?.error) {
-        showNotification({ message: e.response?.data?.error, variant: 'danger' })
+        showNotification({ message: e.response?.data?.message, variant: 'danger' })
       }
     } finally {
       setLoading(false)
