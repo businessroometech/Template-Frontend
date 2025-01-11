@@ -376,7 +376,14 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 import { FaRegLightbulb, FaInfoCircle, FaBusinessTime, FaMoneyBillWave, FaHandshake, FaChartLine, FaClipboardList, FaUser, FaBuilding, FaIndustry, FaMapMarkerAlt, FaDollarSign, FaUsers, FaPercentage, FaQuestionCircle, FaBriefcase, FaFileAlt, FaTrophy, FaGavel, FaCalendarAlt } from 'react-icons/fa';
 import axios from 'axios';
+import { useContext } from 'react';
+import { useAuthContext } from '@/context/useAuthContext';
+
+
+
 const BusinessBuyerForm = () => {
+
+  const { id } = useContext(useAuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     sellerName: '',
@@ -429,7 +436,7 @@ const BusinessBuyerForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData , id),
       }).then(() => navigate('/'));
       console.log(formData)
     } catch (error) {
