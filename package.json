@@ -17,7 +17,7 @@
     "@hookform/resolvers": "^3.9.0",
     "@zegocloud/zego-uikit-prebuilt": "^2.14.0",
     "@zegocloud/zego-uikit-prebuilt-live-streaming-rn": "^2.5.2",
-    "axios": "^1.7.2",
+    "axios": "^1.7.9",
     "axios-mock-adapter": "^1.22.0",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",

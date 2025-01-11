@@ -443,9 +443,24 @@ export default BusinessBuyerForm;
 
 */
 
+
+
+
+
+
+
+
+
+
+
+/*............................................................................../*
+   THIS IS BUSINESS SELLER
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { Card } from 'react-bootstrap';
+import { FaRegLightbulb, FaInfoCircle, FaBusinessTime, FaMoneyBillWave, FaHandshake, FaChartLine, FaClipboardList, FaUser, FaBuilding, FaIndustry, FaMapMarkerAlt, FaDollarSign, FaUsers, FaPercentage, FaQuestionCircle, FaBriefcase, FaFileAlt, FaTrophy, FaGavel, FaCalendarAlt } from 'react-icons/fa';
+import axios from 'axios';
 const BusinessBuyerForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -474,7 +489,15 @@ const BusinessBuyerForm = () => {
     additionalInformation: '',
   });
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const sections = [
+    { title: "Seller Information", icon: <FaInfoCircle /> },
+    { title: "Business Details", icon: <FaBusinessTime /> },
+    { title: "Financial Information", icon: <FaMoneyBillWave /> },
+    { title: "Ownership & Sale Information", icon: <FaHandshake /> },
+    { title: "Additional Business Details", icon: <FaChartLine /> },
+    { title: "Final Business Information", icon: <FaClipboardList /> },
+  ];
 
   const handleInputChange = (name, value) => {
     setFormData((prev) => ({
@@ -486,7 +509,212 @@ const BusinessBuyerForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/business-seller/create', {
+      fetch('https://app-backend-8r74.onrender.com/businessselle/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      }).then(() => navigate('/'));
+      console.log(formData)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+
+
+  const handleSkip = () => {
+    navigate('/');
+  };
+
+  const setCurrentSection = (index) => {
+    setStep(index);
+  };
+
+  const renderStep = () => {
+    const renderFormFields = (fields) => (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4">
+            {sections[step].icon} {sections[step].title}
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          {fields.map((field, index) => (
+            <div className="mb-3" key={index}>
+              <label htmlFor={field.id} className="form-label">
+                {field.icon} {field.label}
+              </label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  id={field.id}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  rows={field.rows || 3}
+                  required={field.required}
+                />
+              ) : (
+                <input
+                  id={field.id}
+                  type={field.inputType || 'text'}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  placeholder={field.placeholder || ''}
+                  required={field.required}
+                />
+              )}
+            </div>
+          ))}
+        </Card.Body>
+      </Card>
+    );
+
+    switch (step) {
+      case 0:
+        return renderFormFields([
+          { id: 'sellerName', label: 'Your Name', name: 'sellerName', icon: <FaUser />, required: true },
+          { id: 'businessName', label: 'Business Name', name: 'businessName', icon: <FaBuilding />, required: true },
+          {
+            id: 'businessType', label: 'Business Type', name: 'businessType', icon: <FaIndustry />, inputType: 'select', required: true,
+            options: ['Sole Proprietorship', 'Partnership', 'LLC', 'Corporation', 'Other']
+          }
+        ]);
+      case 1:
+        return renderFormFields([
+          {
+            id: 'businessStage', label: 'Business Stage', name: 'businessStage', icon: <FaBriefcase />, inputType: 'select', required: true,
+            options: ['Startup', 'Growth', 'Mature', 'Declining']
+          },
+          { id: 'industry', label: 'Industry', name: 'industry', icon: <FaIndustry />, required: true },
+          { id: 'location', label: 'Location of Business', name: 'location', icon: <FaMapMarkerAlt />, required: true }
+        ]);
+      case 2:
+        return renderFormFields([
+          { id: 'revenue', label: 'Annual Revenue', name: 'revenue', icon: <FaDollarSign />, placeholder: 'Annual Revenue', required: true },
+          { id: 'profit', label: 'Annual Profit', name: 'profit', icon: <FaDollarSign />, placeholder: 'Annual Profit' },
+          { id: 'numberOfEmployees', label: 'Number of Employees', name: 'numberOfEmployees', icon: <FaUsers />, inputType: 'number', required: true }
+        ]);
+      case 3:
+        return renderFormFields([
+          { id: 'ownershipPercentage', label: 'Ownership Percentage Available for Sale', name: 'ownershipPercentage', icon: <FaPercentage />, placeholder: 'Ownership Percentage', required: true },
+          { id: 'reasonForSelling', label: 'Reason for Selling the Business', name: 'reasonForSelling', icon: <FaQuestionCircle />, required: true },
+          { id: 'askingPrice', label: 'Asking Price', name: 'askingPrice', icon: <FaDollarSign />, required: true }
+        ]);
+      case 4:
+        return renderFormFields([
+          { id: 'intellectualProperty', label: 'Intellectual Property (Patents, Trademarks, etc.)', name: 'intellectualProperty', icon: <FaFileAlt />, placeholder: 'Intellectual Property Details' },
+          { id: 'assetsForSale', label: 'Assets for Sale', name: 'assetsForSale', icon: <FaFileAlt />, placeholder: 'Assets' },
+          { id: 'liabilities', label: 'Liabilities', name: 'liabilities', icon: <FaFileAlt />, placeholder: 'Liabilities' }
+        ]);
+      case 5:
+        return renderFormFields([
+          { id: 'financialHistory', label: 'Business\'s Financial History', name: 'financialHistory', icon: <FaFileAlt />, type: 'textarea', required: true },
+          { id: 'salesForecast', label: 'Sales Forecast for the Next Year', name: 'salesForecast', icon: <FaChartLine />, placeholder: 'Sales Forecast' },
+          { id: 'exitStrategy', label: 'Exit Strategy', name: 'exitStrategy', icon: <FaTrophy />, placeholder: 'Exit Strategy', required: true },
+          { id: 'legalIssues', label: 'Legal Issues (if any)', name: 'legalIssues', icon: <FaGavel />, placeholder: 'Legal Issues' },
+          { id: 'expectedTimeline', label: 'Expected Timeline for Sale', name: 'expectedTimeline', icon: <FaCalendarAlt />, placeholder: 'Expected Timeline' },
+          { id: 'additionalInformation', label: 'Additional Information', name: 'additionalInformation', icon: <FaClipboardList />, type: 'textarea' }
+        ]);
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="container mt-5">
+      <h2 className="text-center mb-4">Business Seller</h2>
+      <div className="d-flex justify-content-center mb-4">
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            type="button"
+            className={`btn mx-2 ${step === index ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setCurrentSection(index)}
+          >
+            {section.icon} {section.title}
+          </button>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+        {renderStep()}
+        <div className="d-flex justify-content-between mt-4">
+          {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
+          {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+{step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
+          <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default BusinessBuyerForm;
+
+
+
+
+//.......................................................................//
+bUSINESS sELLER ENDS HERE
+
+
+
+*/
+
+
+
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
+import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaLightbulb, FaBriefcase, FaDollarSign, FaHandshake, FaCalendarAlt, FaQuestionCircle, FaBuilding, FaUsers, FaClipboardList } from 'react-icons/fa';
+
+const BusinessBuyerForm = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    budget: '',
+    financing: '',
+    paymentMethod: '',
+    renovationInvestment: '',
+    ownershipExperience: '',
+    professionalBackground: '',
+    skills: '',
+    involvementLevel: '',
+    goals: [],
+    purchaseTimeline: '',
+    longTermGoals: '',
+    growthPreference: '',
+    dealBreakers: '',
+    teamPreferences: '',
+    supportTraining: '',
+    ndaAgreement: '',
+    additionalInfo: '',
+  });
+
+  const [step, setStep] = useState(0);
+  const sections = [
+    { title: "Financial Information", icon: <FaMoneyCheckAlt /> },
+    { title: "Experience and Skills", icon: <FaTools /> },
+    { title: "Business Goals and Vision", icon: <FaBullseye /> },
+    { title: "Due Diligence and Preferences", icon: <FaClipboardCheck /> },
+    { title: "Additional Information", icon: <FaLightbulb /> },
+  ];
+
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      fetch('https://app-backend-8r74.onrender.com/business-buyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -502,243 +730,136 @@ const BusinessBuyerForm = () => {
     navigate('/');
   };
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  const setCurrentSection = (index) => {
+    setStep(index);
+  };
 
   const renderStep = () => {
+    const renderFormFields = (fields) => (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4">
+            {sections[step].icon} {sections[step].title}
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          {fields.map((field, index) => (
+            <div className="mb-3" key={index}>
+              <label htmlFor={field.id} className="form-label">
+                {field.icon} {field.label}
+              </label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  id={field.id}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  rows={field.rows || 3}
+                  required={field.required}
+                />
+              ) : field.type === 'select' ? (
+                <select
+                  id={field.id}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  required={field.required}
+                >
+                  {field.options.map((option, idx) => (
+                    <option key={idx} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === 'radio' ? (
+                field.options.map((option, idx) => (
+                  <div className="form-check" key={idx}>
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      id={`${field.id}-${idx}`}
+                      name={field.name}
+                      value={option}
+                      checked={formData[field.name] === option}
+                      onChange={(e) => handleInputChange(field.name, e.target.value)}
+                      required={field.required}
+                    />
+                    <label className="form-check-label" htmlFor={`${field.id}-${idx}`}>
+                      {option}
+                    </label>
+                  </div>
+                ))
+              ) : field.type === 'checkbox' ? (
+                field.options.map((option, idx) => (
+                  <div className="form-check" key={idx}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`${field.id}-${idx}`}
+                      value={option}
+                      checked={formData[field.name].includes(option)}
+                      onChange={(e) => {
+                        const updatedOptions = formData[field.name].includes(option)
+                          ? formData[field.name].filter((o) => o !== option)
+                          : [...formData[field.name], option];
+                        handleInputChange(field.name, updatedOptions);
+                      }}
+                    />
+                    <label className="form-check-label" htmlFor={`${field.id}-${idx}`}>
+                      {option}
+                    </label>
+                  </div>
+                ))
+              ) : (
+                <input
+                  id={field.id}
+                  type={field.inputType || 'text'}
+                  value={formData[field.name]}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  className="form-control"
+                  placeholder={field.placeholder || ''}
+                  required={field.required}
+                />
+              )}
+            </div>
+          ))}
+        </Card.Body>
+      </Card>
+    );
+
     switch (step) {
+      case 0:
+        return renderFormFields([
+          { id: 'budget', label: 'What is your budget for purchasing a business?', name: 'budget', icon: <FaDollarSign />, type: 'select', options: ['Under $50k', '$50k - $100k', '$100k - $500k', '$500k - $1M', 'Over $1M'], required: true },
+          { id: 'financing', label: 'Do you have financing in place for purchasing a business?', name: 'financing', icon: <FaHandshake />, type: 'radio', options: ['Yes', 'No', 'Exploring Options'], required: true },
+          { id: 'paymentMethod', label: 'What is your preferred method of payment?', name: 'paymentMethod', icon: <FaBuilding />, type: 'select', options: ['Cash', 'Loan', 'Seller Financing', 'Partnership', 'Other'], required: true },
+          { id: 'renovationInvestment', label: 'Are you open to investing in a business that requires renovation or additional investment?', name: 'renovationInvestment', icon: <FaTools />, type: 'radio', options: ['Yes', 'No', 'Maybe'], required: true },
+        ]);
       case 1:
-        return (
-          <div>
-            <h5>Seller Information</h5>
-            <div className="mb-3">
-              <label htmlFor="sellerName" className="form-label">Your Name</label>
-              <input
-                id="sellerName"
-                type="text"
-                value={formData.sellerName}
-                onChange={(e) => handleInputChange('sellerName', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="businessName" className="form-label">Business Name</label>
-              <input
-                id="businessName"
-                type="text"
-                value={formData.businessName}
-                onChange={(e) => handleInputChange('businessName', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Business Type</label>
-              <select
-                value={formData.businessType}
-                onChange={(e) => handleInputChange('businessType', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Sole Proprietorship">Sole Proprietorship</option>
-                <option value="Partnership">Partnership</option>
-                <option value="LLC">LLC</option>
-                <option value="Corporation">Corporation</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'ownershipExperience', label: 'Do you have previous business ownership experience?', name: 'ownershipExperience', icon: <FaBriefcase />, type: 'radio', options: ['Yes', 'No'], required: true },
+          { id: 'professionalBackground', label: 'What is your professional background or expertise?', name: 'professionalBackground', icon: <FaUsers />, type: 'textarea', required: false },
+          { id: 'skills', label: 'Do you have any specific skills or qualifications that would support the business you are looking to buy?', name: 'skills', icon: <FaClipboardList />, type: 'textarea', required: true },
+          { id: 'involvementLevel', label: 'What is your involvement level in running the business?', name: 'involvementLevel', icon: <FaBuilding />, type: 'select', options: ['Full-time', 'Part-time', 'Investor/Passive Role', 'Other'], required: true },
+        ]);
       case 2:
-        return (
-          <div>
-            <h5>Business Details</h5>
-            <div className="mb-3">
-              <label>Business Stage</label>
-              <select
-                value={formData.businessStage}
-                onChange={(e) => handleInputChange('businessStage', e.target.value)}
-                className="form-control"
-                required
-              >
-                <option value="">Select</option>
-                <option value="Startup">Startup</option>
-                <option value="Growth">Growth</option>
-                <option value="Mature">Mature</option>
-                <option value="Declining">Declining</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>Industry</label>
-              <input
-                type="text"
-                value={formData.industry}
-                onChange={(e) => handleInputChange('industry', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Location of Business</label>
-              <input
-                type="text"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'goals', label: 'What are your main goals in purchasing a business?', name: 'goals', icon: <FaBullseye />, type: 'checkbox', options: ['Financial Growth', 'Lifestyle Change', 'Build a Legacy', 'Exit Strategy', 'Other'], required: true },
+          { id: 'purchaseTimeline', label: 'What is your timeline for purchasing a business?', name: 'purchaseTimeline', icon: <FaCalendarAlt />, type: 'select', options: ['Immediately', '1-3 months', '6 months', '1 year', 'Flexible'], required: true },
+          { id: 'longTermGoals', label: 'What are your long-term business goals for the company once acquired?', name: 'longTermGoals', icon: <FaLightbulb />, type: 'textarea', required: true },
+          { id: 'growthPreference', label: 'Are you interested in a business that has potential for growth or one with stable cash flow?', name: 'growthPreference', icon: <FaChartPie />, type: 'radio', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
+        ]);
       case 3:
-        return (
-          <div>
-            <h5>Financial Information</h5>
-            <div className="mb-3">
-              <label>Annual Revenue</label>
-              <input
-                type="text"
-                value={formData.revenue}
-                onChange={(e) => handleInputChange('revenue', e.target.value)}
-                className="form-control"
-                placeholder="Annual Revenue"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Annual Profit</label>
-              <input
-                type="text"
-                value={formData.profit}
-                onChange={(e) => handleInputChange('profit', e.target.value)}
-                className="form-control"
-                placeholder="Annual Profit"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Number of Employees</label>
-              <input
-                type="number"
-                value={formData.numberOfEmployees}
-                onChange={(e) => handleInputChange('numberOfEmployees', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'dealBreakers', label: 'What are your deal-breakers in purchasing a business?', name: 'dealBreakers', icon: <FaQuestionCircle />, type: 'textarea', placeholder: 'e.g., debt levels, location, etc.', required: true },
+          { id: 'teamPreferences', label: 'Do you have any specific requirements or preferences regarding the business\' existing team or staff?', name: 'teamPreferences', icon: <FaUsers />, type: 'textarea', required: true },
+          { id: 'supportTraining', label: 'Are you interested in any support or training after the business purchase?', name: 'supportTraining', icon: <FaClipboardCheck />, type: 'radio', options: ['Yes', 'No', 'Maybe'], required: true },
+          { id: 'ndaAgreement', label: 'Are you willing to sign a non-disclosure agreement (NDA) before receiving sensitive business information?', name: 'ndaAgreement', icon: <FaHandshake />, type: 'radio', options: ['Yes', 'No'], required: true },
+        ]);
       case 4:
-        return (
-          <div>
-            <h5>Ownership & Sale Information</h5>
-            <div className="mb-3">
-              <label>Ownership Percentage Available for Sale</label>
-              <input
-                type="text"
-                value={formData.ownershipPercentage}
-                onChange={(e) => handleInputChange('ownershipPercentage', e.target.value)}
-                className="form-control"
-                placeholder="Ownership Percentage"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Reason for Selling the Business</label>
-              <input
-                type="text"
-                value={formData.reasonForSelling}
-                onChange={(e) => handleInputChange('reasonForSelling', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Asking Price</label>
-              <input
-                type="text"
-                value={formData.askingPrice}
-                onChange={(e) => handleInputChange('askingPrice', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-          </div>
-        );
-      case 5:
-        return (
-          <div>
-            <h5>Additional Business Details</h5>
-            <div className="mb-3">
-              <label>Intellectual Property (Patents, Trademarks, etc.)</label>
-              <input
-                type="text"
-                value={formData.intellectualProperty}
-                onChange={(e) => handleInputChange('intellectualProperty', e.target.value)}
-                className="form-control"
-                placeholder="Intellectual Property Details"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Assets for Sale</label>
-              <input
-                type="text"
-                value={formData.assetsForSale}
-                onChange={(e) => handleInputChange('assetsForSale', e.target.value)}
-                className="form-control"
-                placeholder="Assets"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Liabilities</label>
-              <input
-                type="text"
-                value={formData.liabilities}
-                onChange={(e) => handleInputChange('liabilities', e.target.value)}
-                className="form-control"
-                placeholder="Liabilities"
-              />
-            </div>
-          </div>
-        );
-      case 6:
-        return (
-          <div>
-            <h5>Final Business Information</h5>
-            <div className="mb-3">
-              <label>Business's Financial History</label>
-              <textarea
-                value={formData.financialHistory}
-                onChange={(e) => handleInputChange('financialHistory', e.target.value)}
-                className="form-control"
-                rows="3"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Sales Forecast for the Next Year</label>
-              <input
-                type="text"
-                value={formData.salesForecast}
-                onChange={(e) => handleInputChange('salesForecast', e.target.value)}
-                className="form-control"
-                placeholder="Sales Forecast"
-              />
-            </div>
-            <div className="mb-3">
-              <label>Exit Strategy</label>
-              <input
-                type="text"
-                value={formData.exitStrategy}
-                onChange={(e) => handleInputChange('exitStrategy', e.target.value)}
-                className="form-control"
-                placeholder="Exit Strategy"
-                required
-              />
-            </div>
-          </div>
-        );
+        return renderFormFields([
+          { id: 'additionalInfo', label: 'Is there anything else you would like us to know about your business buying preferences?', name: 'additionalInfo', icon: <FaLightbulb />, type: 'textarea', required: false },
+        ]);
       default:
         return null;
     }
@@ -746,13 +867,25 @@ const BusinessBuyerForm = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Business Seller Form</h2>
+      <h2 className="text-center mb-4">Business Buyer Form</h2>
+      <div className="d-flex justify-content-center mb-4">
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            type="button"
+            className={`btn mx-2 ${step === index ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setCurrentSection(index)}
+          >
+            {section.icon} {section.title}
+          </button>
+        ))}
+      </div>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
         <div className="d-flex justify-content-between mt-4">
-          {step > 1 && <button type="button" className="btn btn-secondary" onClick={prevStep}>Previous</button>}
-          {step < 6 && <button type="button" className="btn btn-primary" onClick={nextStep}>Next</button>}
-          {step === 6 && <button type="submit" className="btn btn-primary">Submit</button>}
+          {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
+          {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+          {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
           <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
         </div>
       </form>

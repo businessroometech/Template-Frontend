@@ -40,7 +40,7 @@ const InvestorForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/investor/create', {
+      fetch('http://localhost:5000/investor/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -761,7 +761,10 @@ export default InvestorForm;
 
 */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Card, Col, Form, Row } from 'react-bootstrap';
+import { FaBalanceScale, FaCalendarAlt, FaExchangeAlt, FaListAlt, FaMapMarkerAlt, FaMoneyCheckAlt, FaTasks } from 'react-icons/fa';
+import { FaBullhorn, FaBullseye, FaCertificate, FaChartLine, FaDollarSign, FaHandshake, FaHeadset, FaHourglassHalf, FaIndustry, FaMedal, FaRegHandPointUp, FaRocket, FaTag, FaUser, FaUsers, FaUserTie, FaWallet } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
 const InvestorForm = () => {
@@ -782,23 +785,9 @@ const InvestorForm = () => {
     returnExpectations: '',
     involvementLevel: '',
     additionalSupport: '',
-    previousInvestment: '',
-    investmentExperience: '',
-    numberOfStartups: '',
-    successStories: '',
     decisionProcess: '',
     evaluationCriteria: [],
-    exitStrategyPreference: '',
-    fundraisingStage: '',
-    expectedInvolvement: '',
-    preferredIndustry: '',
-    riskTolerance: '',
-    startupCriteria: [],
-    investmentGoals: [],
-    geographicPreferences: '',
-    involvementAfterInvestment: '',
-    additionalInformation: '',
-    receiveUpdates: ''
+    exitStrategyPreference: ''
   });
 
   const [step, setStep] = useState(1);
@@ -835,52 +824,63 @@ const InvestorForm = () => {
   const renderStep = () => {
     switch (step) {
       case 1:
-        return (
-          <div>
-            <h5>Investor Identity</h5>
-            {/* Form fields for Investor Identity */}
-            <div className="mb-3">
-              <label htmlFor="investorName" className="form-label">Investor Name</label>
-              <input
-                id="investorName"
-                type="text"
-                value={formData.investorName}
-                onChange={(e) => handleInputChange('investorName', e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Are you a member of any accreditation group?</label>
-              <select
+  return (
+    <Card className="mb-4 shadow-sm">
+      <Card.Header className="bg-primary text-white">
+        <h5 className="fs-4">
+          <FaUserTie className="me-2" style={{ color: "#757885" }} />
+          Investor Identity
+        </h5>
+      </Card.Header>
+      <Card.Body>
+        <Form>
+          {/* Accreditation Group */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="isAccredited">
+              <Form.Label className="fs-5">
+                <FaCertificate className="me-2" style={{ color: "#757885" }} />
+                Are you a member of any accreditation group?
+              </Form.Label>
+              <Form.Select
                 value={formData.isAccredited}
-                onChange={(e) => handleInputChange('isAccredited', e.target.value)}
-                className="form-control"
+                onChange={(e) => handleInputChange("isAccredited", e.target.value)}
                 required
               >
                 <option value="">Select</option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
-              </select>
-            </div>
-            {formData.isAccredited === 'Yes' && (
-              <div className="mb-3">
-                <label htmlFor="groupName" className="form-label">Name of group(s)</label>
-                <input
-                  id="groupName"
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          {/* Group Name */}
+          {formData.isAccredited === "Yes" && (
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="groupName">
+                <Form.Label className="fs-5">
+                  <FaUsers className="me-2" style={{ color: "#757885" }} />
+                  Name of group(s)
+                </Form.Label>
+                <Form.Control
                   type="text"
                   value={formData.groupName}
-                  onChange={(e) => handleInputChange('groupName', e.target.value)}
-                  className="form-control"
+                  onChange={(e) => handleInputChange("groupName", e.target.value)}
+                  placeholder="Enter group name"
                 />
-              </div>
-            )}
-            <div className="mb-3">
-              <label>How will you describe yourself?</label>
-              <select
+              </Form.Group>
+            </Row>
+          )}
+
+          {/* Investor Type */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="investorType">
+              <Form.Label className="fs-5">
+                <FaTag className="me-2" style={{ color: "#757885" }} />
+                How will you describe yourself?
+              </Form.Label>
+              <Form.Select
                 value={formData.investorType}
-                onChange={(e) => handleInputChange('investorType', e.target.value)}
-                className="form-control"
+                onChange={(e) => handleInputChange("investorType", e.target.value)}
                 required
               >
                 <option value="">Select</option>
@@ -889,107 +889,78 @@ const InvestorForm = () => {
                 <option value="Venture Capital">Venture Capital</option>
                 <option value="Strategic Investor">Strategic Investor</option>
                 <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-        );
-      case 2:
-        return (
-          <div>
-            <h5>Investor Preferences</h5>
-            {/* Form fields for Investor Preferences */}
-            <div className="mb-3">
-              <label>What type of startups are you interested in investing in?</label>
-              <select
-                value={formData.interestedStartups}
-                onChange={(e) => handleInputChange('interestedStartups', e.target.value)}
-                className="form-control"
+              </Form.Select>
+            </Form.Group>
+          </Row>
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="startupType">
+              <Form.Label className="fs-5">
+                <FaRocket className="me-2" style={{ color: "#757885" }} />
+                What type of startups are you interested in investing in?
+              </Form.Label>
+              <Form.Select
+                value={formData.startupType}
+                onChange={(e) => handleInputChange("startupType", e.target.value)}
                 required
               >
                 <option value="">Select</option>
-                <option value="Tech">Tech</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Retail">Retail</option>
                 <option value="SaaS">SaaS</option>
-                <option value="Fintech">Fintech</option>
-                <option value="Consumer Goods">Consumer Goods</option>
-                <option value="Sustainability">Sustainability</option>
-                <option value="AI/ML">AI/ML</option>
-                <option value="Biotech">Biotech</option>
+                <option value="Content">Content</option>
+                <option value="Marketplace">Marketplace</option>
+                <option value="Agency">Agency</option>
+                <option value="Mobile App">Mobile App</option>
+                <option value="Shopify App">Shopify App</option>
+                <option value="Main Street">Main Street</option>
+                <option value="Ecommerce">Ecommerce</option>
                 <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What is your preferred stage of startup to invest in?</label>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  value="Seed Stage"
-                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
-                />
-                <label className="form-check-label">Seed Stage</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  value="Early Stage"
-                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
-                />
-                <label className="form-check-label">Early Stage</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  value="Growth Stage"
-                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
-                />
-                <label className="form-check-label">Growth Stage</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  value="Mature Stage"
-                  onChange={(e) => handleInputChange('preferredStage', [...formData.preferredStage, e.target.value])}
-                />
-                <label className="form-check-label">Mature Stage</label>
-              </div>
-            </div>
-            <div className="mb-3">
-              <label>What is your preferred industry or sector for investments?</label>
-              <input
-                type="text"
-                value={formData.preferredIndustry}
-                onChange={(e) => handleInputChange('preferredIndustry', e.target.value)}
-                className="form-control"
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="startupStage">
+              <Form.Label className="fs-5">
+                <FaCalendarAlt className="me-2" style={{ color: "#757885" }} />
+                What is your preferred stage of startup to invest in?
+              </Form.Label>
+              <Form.Select
+                value={formData.startupStage}
+                onChange={(e) => handleInputChange("startupStage", e.target.value)}
                 required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Do you prefer investing in startups based in a specific region or country?</label>
-              <input
+              >
+                <option value="">Select</option>
+                <option value="Seed Stage">Seed Stage</option>
+                <option value="Early Stage">Early Stage</option>
+                <option value="Growth Stage">Growth Stage</option>
+                <option value="Mature Stage">Mature Stage</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="regionPreference">
+              <Form.Label className="fs-5">
+                <FaMapMarkerAlt className="me-2" style={{ color: "#757885" }} />
+                Do you prefer investing in startups based in a specific region or country?
+              </Form.Label>
+              <Form.Control
                 type="text"
                 value={formData.regionPreference}
-                onChange={(e) => handleInputChange('regionPreference', e.target.value)}
-                className="form-control"
-                placeholder="Region or Country"
+                onChange={(e) => handleInputChange("regionPreference", e.target.value)}
+                placeholder="Enter your preferred region or country"
               />
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div>
-            <h5>Investment Preferences</h5>
-            <div className="mb-3">
-              <label>What is your preferred investment size per startup?</label>
-              <select
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="investmentSize">
+              <Form.Label className="fs-5">
+                <FaMoneyCheckAlt className="me-2" style={{ color: "#757885" }} />
+                What is your preferred investment size per startup?
+              </Form.Label>
+              <Form.Select
                 value={formData.investmentSize}
-                onChange={(e) => handleInputChange('investmentSize', e.target.value)}
-                className="form-control"
+                onChange={(e) => handleInputChange("investmentSize", e.target.value)}
                 required
               >
                 <option value="">Select</option>
@@ -998,67 +969,90 @@ const InvestorForm = () => {
                 <option value="$200k - $500k">$200k - $500k</option>
                 <option value="$500k - $1M">$500k - $1M</option>
                 <option value="Over $1M">Over $1M</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>What is your total budget or available capital for investing in startups?</label>
-              <input
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="totalBudget">
+              <Form.Label className="fs-5">
+                <FaWallet className="me-2" style={{ color: "#757885" }} />
+                What is your total budget or available capital for investing in startups?
+              </Form.Label>
+              <Form.Control
                 type="text"
                 value={formData.totalBudget}
-                onChange={(e) => handleInputChange('totalBudget', e.target.value)}
-                className="form-control"
-                placeholder="Total Budget"
+                onChange={(e) => handleInputChange("totalBudget", e.target.value)}
+                placeholder="Enter your total budget"
               />
-            </div>
-            <div className="mb-3">
-              <label>Are you open to co-investing with other investors or firms?</label>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="coInvesting"
-                  value="Yes"
-                  onChange={(e) => handleInputChange('coInvesting', e.target.value)}
-                />
-                <label className="form-check-label">Yes</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="coInvesting"
-                  value="No"
-                  onChange={(e) => handleInputChange('coInvesting', e.target.value)}
-                />
-                <label className="form-check-label">No</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="coInvesting"
-                  value="Maybe"
-                  onChange={(e) => handleInputChange('coInvesting', e.target.value)}
-                />
-                <label className="form-check-label">Maybe</label>
-              </div>
-            </div>
-            <div className="mb-3">
-              <label>What percentage of equity are you willing to take in exchange for your investment?</label>
-              <input
-                type="text"
-                value={formData.equityPercentage}
-                onChange={(e) => handleInputChange('equityPercentage', e.target.value)}
-                className="form-control"
-                placeholder="Equity Percentage"
-              />
-            </div>
-            <div className="mb-3">
-              <label>What type of investment do you prefer?</label>
-              <select
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="coInvesting">
+              <Form.Label className="fs-5">
+                <FaHandshake className="me-2" style={{ color: "#757885" }} />
+                Are you open to co-investing with other investors or firms?
+              </Form.Label>
+              <Form.Select
+                value={formData.coInvesting}
+                onChange={(e) => handleInputChange("coInvesting", e.target.value)}
+                required
+              >
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="equityWillingness">
+              <Form.Label className="fs-5">
+                <FaBalanceScale className="me-2" style={{ color: "#757885" }} />
+                What percentage of equity are you willing to take in exchange for your investment?
+              </Form.Label>
+              <Form.Select
+                value={formData.equityWillingness}
+                onChange={(e) => handleInputChange("equityWillingness", e.target.value)}
+                required
+              >
+                <option value="">Select</option>
+                <option value="0-10%">0-10%</option>
+                <option value="10-20%">10-20%</option>
+                <option value="20-30%">20-30%</option>
+                <option value="30-40%">30-40%</option>
+                <option value="40-50%">40-50%</option>
+                <option value="50%+">50%+</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+        </Form>
+      </Card.Body>
+    </Card>
+  );
+      case 2:
+  return (
+    <Card className="mb-4 shadow-sm">
+      <Card.Header className="bg-primary text-white">
+        <h5 className="fs-4">
+          <FaWallet className="me-2" style={{ color: "#757885" }} />
+          Investment Strategy
+        </h5>
+      </Card.Header>
+      <Card.Body>
+        <Form>
+          {/* Investment Type */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="investmentType">
+              <Form.Label className="fs-5">
+                <FaTag className="me-2" style={{ color: "#757885" }} />
+                What type of investment do you prefer?
+              </Form.Label>
+              <Form.Select
                 value={formData.investmentType}
-                onChange={(e) => handleInputChange('investmentType', e.target.value)}
-                className="form-control"
+                onChange={(e) => handleInputChange("investmentType", e.target.value)}
                 required
               >
                 <option value="">Select</option>
@@ -1068,139 +1062,364 @@ const InvestorForm = () => {
                 <option value="Debt">Debt</option>
                 <option value="Revenue Share">Revenue Share</option>
                 <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div>
-            <h5>Investment Experience</h5>
-            <div className="mb-3">
-              <label>What are your preferred return expectations on investment?</label>
-              <input
-                type="text"
-                value={formData.returnExpectations}
-                onChange={(e) => handleInputChange('returnExpectations', e.target.value)}
-                className="form-control"
-                placeholder="Return expectations"
-              />
-            </div>
-            <div className="mb-3">
-              <label>What involvement level are you comfortable with in the startup post-investment?</label>
-              <select
-                value={formData.involvementLevel}
-                onChange={(e) => handleInputChange('involvementLevel', e.target.value)}
-                className="form-control"
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          {/* Involvement Level */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="investmentInvolvement">
+              <Form.Label className="fs-5">
+                <FaUsers className="me-2" style={{ color: "#757885" }} />
+                What involvement level are you comfortable with in the startup post-investment?
+              </Form.Label>
+              <Form.Select
+                value={formData.investmentInvolvement}
+                onChange={(e) => handleInputChange("investmentInvolvement", e.target.value)}
                 required
               >
                 <option value="">Select</option>
                 <option value="Active (Advisory/Board)">Active (Advisory/Board)</option>
                 <option value="Passive">Passive</option>
                 <option value="Both">Both</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>How long are you willing to wait for returns on your investment?</label>
-              <select
-                value={formData.expectedInvolvement}
-                onChange={(e) => handleInputChange('expectedInvolvement', e.target.value)}
-                className="form-control"
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          {/* Additional Support */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="additionalSupport">
+              <Form.Label className="fs-5">
+                <FaHeadset className="me-2" style={{ color: "#757885" }} />
+                Are you interested in providing additional support to startups (e.g., mentorship, networking, expertise)?
+              </Form.Label>
+              <Form.Select
+                value={formData.additionalSupport}
+                onChange={(e) => handleInputChange("additionalSupport", e.target.value)}
                 required
               >
                 <option value="">Select</option>
-                <option value="1-3 years">1-3 years</option>
-                <option value="3-5 years">3-5 years</option>
-                <option value="5+ years">5+ years</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label>Are you interested in providing additional support to startups (e.g., mentorship, networking, expertise)?</label>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="additionalSupport"
-                  value="Yes"
-                  onChange={(e) => handleInputChange('additionalSupport', e.target.value)}
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+        </Form>
+      </Card.Body>
+    </Card>
+  );
+      case 3:
+    return (
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="bg-primary text-white">
+          <h5 className="fs-4">
+            <FaChartLine className="me-2" style={{ color: "#757885" }} />
+            Investment Experience
+          </h5>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            {/* Previous Investment */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="previousInvestment">
+                <Form.Label className="fs-5">
+                  <FaDollarSign className="me-2" style={{ color: "#757885" }} />
+                  Have you previously invested in startups?
+                </Form.Label>
+                <Form.Select
+                  value={formData.previousInvestment}
+                  onChange={(e) => handleInputChange("previousInvestment", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
+  
+            {/* Years of Investment Experience */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="investmentExperience">
+                <Form.Label className="fs-5">
+                  <FaHourglassHalf className="me-2" style={{ color: "#757885" }} />
+                  How many years of investment experience do you have?
+                </Form.Label>
+                <Form.Select
+                  value={formData.investmentExperience}
+                  onChange={(e) => handleInputChange("investmentExperience", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="0-2 years">0-2 years</option>
+                  <option value="3-5 years">3-5 years</option>
+                  <option value="6-10 years">6-10 years</option>
+                  <option value="10+ years">10+ years</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
+  
+            {/* Total Number of Startups Invested In */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="startupsInvested">
+                <Form.Label className="fs-5">
+                  <FaListAlt className="me-2" style={{ color: "#757885" }} />
+                  What is the total number of startups you have invested in?
+                </Form.Label>
+                <Form.Control
+                  type="number"
+                  value={formData.startupsInvested}
+                  onChange={(e) => handleInputChange("startupsInvested", e.target.value)}
+                  placeholder="Enter total number"
                 />
-                <label className="form-check-label">Yes</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="additionalSupport"
-                  value="No"
-                  onChange={(e) => handleInputChange('additionalSupport', e.target.value)}
+              </Form.Group>
+            </Row>
+  
+            {/* Success Stories */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="successStories">
+                <Form.Label className="fs-5">
+                  <FaMedal className="me-2" style={{ color: "#757885" }} />
+                  Do you have any specific success stories or notable investments?
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.successStories}
+                  onChange={(e) => handleInputChange("successStories", e.target.value)}
+                  placeholder="Describe your success stories"
                 />
-                <label className="form-check-label">No</label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="additionalSupport"
-                  value="Maybe"
-                  onChange={(e) => handleInputChange('additionalSupport', e.target.value)}
-                />
-                <label className="form-check-label">Maybe</label>
-              </div>
-            </div>
-          </div>
-        );
+              </Form.Group>
+            </Row>
+  
+            {/* Decision-Making Process */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="decisionMakingProcess">
+                <Form.Label className="fs-5">
+                  <FaBullseye className="me-2" style={{ color: "#757885" }} />
+                  What is your typical investment decision-making process (e.g., individual, committee, team)?
+                </Form.Label>
+                <Form.Select
+                  value={formData.decisionMakingProcess}
+                  onChange={(e) => handleInputChange("decisionMakingProcess", e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Individual">Individual</option>
+                  <option value="Committee">Committee</option>
+                  <option value="Team">Team</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+    );
+      case 4:
+  return (
+    <Card className="mb-4 shadow-sm">
+      <Card.Header className="bg-primary text-white">
+        <h5 className="fs-4">
+          <FaChartLine className="me-2" style={{ color: "#757885" }} />
+          Startup Requirements
+        </h5>
+      </Card.Header>
+      <Card.Body>
+        <Form>
+          {/* Key Criteria */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="startupCriteria">
+              <Form.Label className="fs-5">
+                <FaListAlt className="me-2" style={{ color: "#757885" }} />
+                What are your key criteria for evaluating a startup to invest in?
+              </Form.Label>
+              <Form.Check
+                type="checkbox"
+                label="Strong Leadership Team"
+                value="Strong Leadership Team"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+              <Form.Check
+                type="checkbox"
+                label="Scalable Business Model"
+                value="Scalable Business Model"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+              <Form.Check
+                type="checkbox"
+                label="Market Demand"
+                value="Market Demand"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+              <Form.Check
+                type="checkbox"
+                label="Innovation"
+                value="Innovation"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+              <Form.Check
+                type="checkbox"
+                label="Traction (Users/Revenue)"
+                value="Traction (Users/Revenue)"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+              <Form.Check
+                type="checkbox"
+                label="Exit Potential"
+                value="Exit Potential"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+              <Form.Check
+                type="checkbox"
+                label="Other"
+                value="Other"
+                onChange={(e) => handleInputChange("startupCriteria", e.target.value)}
+                className="fs-6"
+              />
+            </Form.Group>
+          </Row>
+
+          {/* Exit Strategy Preference */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="exitStrategy">
+              <Form.Label className="fs-5">
+                <FaExchangeAlt className="me-2" style={{ color: "#757885" }} />
+                Do you prefer investing in startups with an exit strategy (e.g., IPO, acquisition) already defined?
+              </Form.Label>
+              <Form.Select
+                value={formData.exitStrategy}
+                onChange={(e) => handleInputChange("exitStrategy", e.target.value)}
+                required
+                className="fs-6"
+              >
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          {/* Stage of Fundraising Preference */}
+          <Row className="mb-3">
+            <Form.Group as={Col} controlId="fundraisingStage">
+              <Form.Label className="fs-5">
+                <FaRegHandPointUp className="me-2" style={{ color: "#757885" }} />
+                Do you have any preference regarding the startup’s current stage of fundraising (e.g., pre-seed, seed, series A, etc.)?
+              </Form.Label>
+              <Form.Select
+                value={formData.fundraisingStage}
+                onChange={(e) => handleInputChange("fundraisingStage", e.target.value)}
+                required
+                className="fs-6"
+              >
+                <option value="">Select</option>
+                <option value="Pre-seed">Pre-seed</option>
+                <option value="Seed">Seed</option>
+                <option value="Series A">Series A</option>
+                <option value="Series B+">Series B+</option>
+                <option value="Any stage">Any stage</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+        </Form>
+      </Card.Body>
+    </Card>
+  );
       case 5:
         return (
-          <div>
-            <h5>Decision and Evaluation Criteria</h5>
-            <div className="mb-3">
-              <label>Decision Process</label>
-              <textarea
-                value={formData.decisionProcess}
-                onChange={(e) => handleInputChange('decisionProcess', e.target.value)}
-                className="form-control"
-                rows="3"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Evaluation Criteria</label>
-              <textarea
-                value={formData.evaluationCriteria}
-                onChange={(e) => handleInputChange('evaluationCriteria', e.target.value)}
-                className="form-control"
-                rows="3"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Exit Strategy Preference</label>
-              <input
-                type="text"
-                value={formData.exitStrategyPreference}
-                onChange={(e) => handleInputChange('exitStrategyPreference', e.target.value)}
-                className="form-control"
-                placeholder="Exit Strategy"
-                required
-              />
-            </div>
-          </div>
+          <Card className="mb-4 shadow-sm">
+            <Card.Header className="bg-primary text-white">
+              <h5 className="fs-4">
+                <FaChartLine className="me-2" style={{ color: "#757885" }} />
+                Startup Requirements
+              </h5>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                {/* Expected Involvement */}
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="investmentGoals">
+                    <Form.Label className="fs-5">
+                      <FaBullseye className="me-2" style={{ color: "#757885" }} />
+                      What is your expected involvement with the startup after the investment?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.investmentGoals}
+                      onChange={(e) => handleInputChange("investmentGoals", e.target.value)}
+                      required
+                      className="fs-6"
+                    >
+                      <option value="">Select</option>
+                      <option value="Board Position">Board Position</option>
+                      <option value="Advisory Role">Advisory Role</option>
+                      <option value="Passive Role">Passive Role</option>
+                      <option value="Not Involved">Not Involved</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
         );
       default:
         return null;
     }
   };
 
+  const stepTitles = [
+    'Investment Preferences',
+    'Investor Strategy',
+    'Investment Experience',
+    'Startup Requirements',
+    'Investment Goal'
+  ];
+
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4">Investor Form</h2>
+      {/* Step navigation links */}
+      <div className="d-flex justify-content-center mb-4">
+        {stepTitles.map((title, index) => (
+          <button
+            key={index}
+            type="button"
+            className={`btn mx-2 ${step === index + 1 ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setStep(index + 1)}
+          >
+            {title}
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
+
         <div className="d-flex justify-content-between mt-4">
-          {step > 1 && <button type="button" className="btn btn-secondary" onClick={prevStep}>Previous</button>}
-          {step < 5 && <button type="button" className="btn btn-primary" onClick={nextStep}>Next</button>}
-          {step === 5 && <button type="submit" className="btn btn-primary">Submit</button>}
-          <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
+          {step > 1 && (
+            <button type="button" className="btn btn-secondary" onClick={prevStep}>
+              Previous
+            </button>
+          )}
+          {step < 5 && (
+            <button type="button" className="btn btn-primary" onClick={nextStep}>
+              Next
+            </button>
+          )}
+          {step === 5 && (
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          )}
+          <button type="button" className="btn btn-danger" onClick={handleSkip}>
+            Skip
+          </button>
         </div>
       </form>
     </div>
