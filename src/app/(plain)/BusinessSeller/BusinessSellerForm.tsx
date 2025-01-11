@@ -383,7 +383,8 @@ import { useAuthContext } from '@/context/useAuthContext';
 
 const BusinessBuyerForm = () => {
 
-  const { id } = useContext(useAuthContext);
+  const { user } = useAuthContext();
+  const id = user?.id;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     sellerName: '',

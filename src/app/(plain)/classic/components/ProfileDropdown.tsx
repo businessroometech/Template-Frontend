@@ -43,7 +43,8 @@ const ProfileDropdown = () => {
 
   
     const [profile, setProfile] = useState({});
-  
+    const { theme } = useLayoutContext()
+    console.log('-----theme-----',theme);
   
     useEffect(() => {
       const fetchUser = async () => {

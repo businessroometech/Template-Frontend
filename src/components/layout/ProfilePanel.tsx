@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import { Globe, Map, MapPin } from 'lucide-react'
+import { useLayoutContext } from '@/context/useLayoutContext'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
@@ -17,10 +18,12 @@ type ProfilePanelProps = {
 const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const {user} = useAuthContext();
     const [profile, setProfile] = useState({});
-  
+    const {theme} = useLayoutContext();
+    const isDarkMode = theme === 'dark';
+    console.log('----theme----',theme);
+
 
   // console.log("user", user);
-  
     useEffect(() => {
       const fetchUser = async () => {
         try {
@@ -48,7 +51,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         return;
       }
       fetchUser();
-    }, [profile.personalDetails]); 
+    }, []); 
     
     const formatDate = (dateString) => {
       const date = new Date(dateString);
@@ -82,17 +85,20 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             </div>
 
             <h5 className="mb-2 fw-semibold">
-              <Link to="" className="text-light text-decoration-none">
-                {profile.personalDetails?.firstName ? profile.personalDetails?.firstName : user?.firstName}{' '}
-                {profile.personalDetails?.lastName ? profile.personalDetails?.lastName : user?.lastName}
+              <Link
+                to=""
+                className={`${isDarkMode ? 'text-light' : 'text-dark'} text-decoration-none`}
+              >
+                {profile.personalDetails?.firstName || user?.firstName}{' '}
+                {profile.personalDetails?.lastName || user?.lastName}
               </Link>
             </h5>
             
             
-            <div className="d-flex align-items-center justify-content-center gap-2 pb-3 text-secondary mb-2">
-              <p className="text-light fs-6 mb-0">Founder</p>
+            <div className={`d-flex align-items-center justify-content-center gap-2 pb-3 ${isDarkMode ? 'text-light' : 'text-dark'} mb-2`}>
+              <p className={`fs-6 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>Founder</p>
               <MapPin size={16} className="ml-2" style={{ color: '#87CEEB' }} />
-              <span className="fs-6">India</span>
+              <span className={`fs-6 ${isDarkMode ? 'text-light' : 'text-dark'}`}>India</span>
             </div>
             {/* <p className="text-dark fs-6 mt-3 mb-0">
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
