@@ -3,8 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Form, Card, Row, Col, InputGroup, Button, ButtonGroup } from "react-bootstrap";
 import { FaRegLightbulb, FaGlobe, FaCity, FaClock, FaIndustry, FaBalanceScale, FaExchangeAlt, FaTasks, FaExclamationTriangle, FaHandsHelping, FaInfoCircle } from "react-icons/fa";
 import { FaBullseye, FaDollarSign, FaFlagCheckered, FaHandshake, FaPeopleArrows, FaRoad, FaUserTie } from "react-icons/fa6";
+import { useContext } from 'react';
+import { useAuthContext } from '@/context/useAuthContext';
 
 const EntrepreneurForm = () => {
+
+
+  const { id } = useContext(useAuthContext);
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
@@ -58,7 +64,7 @@ const EntrepreneurForm = () => {
     e.preventDefault();
   
     try {
-      console.log(formData);
+      console.log(formData , id);
   
       const response = await fetch("https://app-backend-8r74.onrender.com/entrepreneur/create", {
         method: "POST",
