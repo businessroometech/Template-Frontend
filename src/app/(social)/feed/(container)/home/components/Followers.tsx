@@ -31,7 +31,7 @@ const Followers = () => {
 
   const fetchConnectionSuggestions = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/v1/connection/get-connection-suggest", {
+      const response = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-suggest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
