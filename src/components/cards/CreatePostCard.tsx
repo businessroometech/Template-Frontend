@@ -71,6 +71,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
+  const [modelTime, setModelTime] = useState(false)
   const { user } = useAuthContext();
 
   const eventFormSchema = yup.object({
@@ -266,10 +267,15 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  if(show && profile.profileImgUrl === undefined){
+    setTimeout(() => {
+      setModelTime(true)
+    }, 5000);
+  }
 
   return (
     <>
-      {show && profile.profileImgUrl === undefined &&
+      {modelTime &&
         <div className="modal-body w-100 " >
           <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
