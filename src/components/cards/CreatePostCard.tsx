@@ -98,7 +98,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
 
   useEffect(() => {
-    if (profile?.coverImgUrl) {
+    if (modelTime) {
       return;
     }
     fetchUser();
@@ -243,7 +243,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           method: 'POST',
           url: CREATE_POST,
           data: {
-            userId: '018faa07809d523c34ac1186d761459d',
+            userId: user?.id,
             content: videoQuote,
             hashtags: hashtags,
             mediaIds: uploadSuccess || [],
@@ -264,18 +264,24 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
 
   const [show, setShow] = useState(true);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false) 
+    setModelTime(false)}
+
   const handleShow = () => setShow(true);
 
-  if(show && profile.profileImgUrl === undefined){
+  setTimeout(() => {
+  if( profile?.personalDetails?.profilePictureUploadId===null){
     setTimeout(() => {
       setModelTime(true)
-    }, 5000);
-  }
+    }, 3000);
+         }
+return
+}, 3000);
 
   return (
     <>
-      {modelTime &&
+      {show && modelTime &&
         <div className="modal-body w-100 " >
           <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
