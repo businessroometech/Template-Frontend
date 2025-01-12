@@ -13,7 +13,7 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleRoleSelect = (roleId) => {
+  const handleRoleSelect = (roleId:string) => {
     console.log("Selected role:", roleId);
     if (roleId === "entrepreneur") navigate("/entreprenuer");
     else if (roleId === "investor") navigate("/investor");

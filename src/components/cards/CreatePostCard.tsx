@@ -97,7 +97,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
 
   useEffect(() => {
-    if (profile.coverimurl) {
+    if (profile?.coverImgUrl) {
       return;
     }
     fetchUser();
@@ -213,9 +213,6 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
             mediaKeys: uploadSuccess,
           },
         })
-
-        console.log('---- response with photo -----', response)
-
         if (response.data) {
           console.log('went inside')
           setThoughts('') // Reset thoughts after successful post
@@ -272,7 +269,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
   return (
     <>
-      {show && profile.profileimgurl === undefined &&
+      {show && profile.profileImgUrl === undefined &&
         <div className="modal-body w-100 " >
           <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
@@ -294,7 +291,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
             <span role="button">
-              <img className="avatar-img rounded-circle" src={profile.profileimgurl ? profile.profileimgurl : avatar7} alt="avatar3" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
             </span>
           </div>
 

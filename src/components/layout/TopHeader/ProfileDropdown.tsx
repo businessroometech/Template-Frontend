@@ -95,13 +95,13 @@ const ProfileDropdown = () => {
         data-bs-display="static"
         data-bs-toggle="dropdown"
         aria-expanded="false">
-        <img className="avatar-img rounded-2" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
+        <img className="avatar-img rounded-2" src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" />
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end pt-3 small me-md-n3" aria-labelledby="profileDropdown">
         <li className="px-3">
           <div className="d-flex align-items-center position-relative">
             <div className="avatar me-3">
-              <img className="avatar-img rounded-circle" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" />
             </div>
             <div>
               <Link className="h6 stretched-link" to="">

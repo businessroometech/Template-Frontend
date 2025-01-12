@@ -47,7 +47,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           console.error("Error fetching user profile:", error);
         }
       };
-      if (profile.profileimgurl){
+      if (profile.profileImgUrl){
         return;
       }
       fetchUser();
@@ -73,14 +73,14 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
       <Card className="overflow-hidden h-100">
         <div
           className="h-50px"
-          style={{ backgroundImage: `url(${profile.coverimurl?profile.coverimurl:bgBannerImg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
+          style={{ backgroundImage: `url(${profile?.coverImgUrl?profile?.coverImgUrl:bgBannerImg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
         />
 
         <CardBody className="pt-0">
           <div className="text-center">
             <div className="avatar avatar-lg mt-n5 mb-3">
               <span role="button">
-                <img height={64} width={64} src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" className="avatar-img rounded border border-white border-3" />
+                <img height={64} width={64} src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" className="avatar-img rounded border border-white border-3" />
               </span>
             </div>
 
@@ -96,9 +96,9 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             
             
             <div className={`d-flex align-items-center justify-content-center gap-2 pb-3 ${isDarkMode ? 'text-light' : 'text-dark'} mb-2`}>
-              <p className={`fs-6 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>Founder</p>
+              <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
               <MapPin size={16} className="ml-2" style={{ color: '#87CEEB' }} />
-              <span className={`fs-6 ${isDarkMode ? 'text-light' : 'text-dark'}`}>India</span>
+              <span className={`fs-6 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.country}</span>
             </div>
             {/* <p className="text-dark fs-6 mt-3 mb-0">
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
@@ -106,18 +106,18 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
 
             <div className="hstack gap-2 gap-xl-3 justify-content-center">
               <div>
-                <h6 className="mb-0">256</h6>
-                <small>Post</small>
+                <h6 className="mb-0">{profile.postsCount}</h6>
+                <small>Posts</small>
               </div>
               <div className="vr" />
               <div>
-                <h6 className="mb-0">2.5K</h6>
-                <small>Followers</small>
+                <h6 className="mb-0">{profile.connectionsCount}</h6>
+                <small>Connections</small>
               </div>
               <div className="vr" />
               <div>
-                <h6 className="mb-0">365</h6>
-                <small>Following</small>
+                <h6 className="mb-0">{profile.likeCount}</h6>
+                <small>Likes</small>
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         </CardBody>
 
         <CardFooter className="text-center py-2">
-          <Link  className="btn btn-sm btn-link" to="/profile/feed">
+          <Link  className="btn btn-sm btn-link" to= {(`/profile/feed/${user?.id}`)}>
             View Profile
           </Link>
         </CardFooter>

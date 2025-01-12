@@ -61,7 +61,7 @@ import Preloader from "@/components/Preloader"
 import axios from "axios"
 import { useAuthContext } from "@/context/useAuthContext"
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
-import { toast } from "react-toastify"
+import { toast, ToastContainer } from "react-toastify"
 
 const Experience = () => {
   return (
@@ -193,28 +193,131 @@ const Friends = () => {
   )
 }
 
+export const ConnectionRequest = () => {
+  const { user } = useAuthContext();
+  const [allFollowers, setAllFollowers] = useState<any[]>([]);
 
-const ProfileLayout = ({ children }: ChildrenType) => {
+  useEffect(() => {
+if (allFollowers) {
+  return
+}
+    fetchConnections();
+  }, [allFollowers]); 
+
+  const fetchConnections = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch connection requests.');
+
+      const data = await response.json();
+      setAllFollowers(data);
+    } catch (error) {
+      console.error('Error fetching connection requests:', error);
+    }
+  };
+
+  const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id,
+          connectionId: userId,
+          status,
+        }),
+      });
+
+      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
+
+      
+      toast.success(`Connection request ${status} successfully.`);
+      fetchConnections();
+    } catch (error) {
+      console.error(`Error while updating connection status:`, error);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
+        <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
+           Connection Requests
+        </CardTitle>
+        <div className="bg-info p-2 rounded">
+          <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
+            {allFollowers&&allFollowers.length}
+          </p>
+        </div>
+      </CardHeader>
+
+      <CardBody>
+        {allFollowers&&allFollowers.map((follower, idx) => (
+          <div className="d-flex row col-12 mb-3" key={idx}>
+            {/* Avatar Section */}
+            <div className="col-8 d-flex">
+              <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                <span role="button">
+                  <img
+                    className="avatar-img rounded-circle"
+                    src={follower.profilePictureUploadUrl || avatar7}
+                    alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                  />
+                </span>
+              </div>
+              <div className="overflow-hidden px-2">
+                <Link className="h6 mb-0" to="">
+                  {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                </Link>
+                <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="col-3 d-flex">
+              <Button
+                onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                variant="danger-soft"
+                className="rounded-circle mx-1 flex-centered"
+              >
+                <RiUserUnfollowFill />
+              </Button>
+              <Button
+                onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                variant="success-soft"
+                className="rounded-circle mx-1 flex-centered"
+              >
+                <FaUserCheck size={19} className="pe-1" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </CardBody>
+    </Card>
+  );
+};
+
+export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
   const { user } = useAuthContext();
   const [profile, setProfile] = useState({});
   const [sent, setSent] = useState(false)
-  const [allFollowers, setAllFollowers] = useState<any[]>([])
   const navigate = useNavigate();
 
-  const { id } = useParams(); 
+  const { id } = useParams();
 
 
   useEffect(() => {
-    if (profile?.coverimurl || profile?.personalDetails) { return }
+    if (profile?.coverImgUrl || profile?.personalDetails) { return }
     fetchUser();
-    fetchConnections()
-  }, [profile?.personalDetails]);
-  
-  useEffect(() => {  
 
-    // fetchConnections()
-  }, [allFollowers]);
+  }, [profile?.personalDetails]);
+
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
@@ -277,95 +380,15 @@ const ProfileLayout = ({ children }: ChildrenType) => {
       console.log(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
       toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
       fetchUser()
-      fetchConnections()
+   
     } catch (error) {
       console.error(`Error while trying to ${sent ? "send" : "unsend"} connection request:`, error);
     }
   };
 
-  const fetchConnections = async () => {
-    try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: id
-        })
-      });
-      // console.log("response", response);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      // console.log("data", data);
-      
-      setAllFollowers(data);
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
-  };
-
-  
-
-  const handleAccept = async (userId:any) => {
-    try {
-      console.log("userId", userId);
-      
-      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-           userId:user?.id,
-           connectionId: userId,
-          status: "accepted",
-        }),
-      
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to accept the connection request.");
-      }
-      const data = await res.json();
-      fetchUser()
-      fetchConnections()
-      console.log("Connection request accepted successfully:", data);
-      toast.info("Connection request accepted successfully:", data);
-    } catch (error) {
-      console.error("Error while accepting connection request:", error);
-    }
-  };
-
-  const handleReject = async (userId:any) => {
-    try {
-      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId:user?.id,
-           connectionId: userId,
-          status: "rejected",
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to reject the connection request.");
-      }
-      const data = await res.json();
-      // console.log("Connection request rejected successfully:", data);
-      toast.success("Connection request rejected successfully:", data)
-    } catch (error) {
-      console.error("Error while rejecting connection request:", error);
-    }
-  };
-
   return (
     <>
+      <ToastContainer />
       <Suspense fallback={<Preloader />}>
         <TopHeader />
       </Suspense>
@@ -379,7 +402,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                 <div
                   className="h-200px rounded-top"
                   style={{
-                    backgroundImage: `url(${profile?.coverimurl ? profile?.coverimurl : background5})`,
+                    backgroundImage: `url(${profile?.coverImgUrl ? profile?.coverImgUrl : background5})`,
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
@@ -393,7 +416,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                       <div className="avatar avatar-xxl mt-n5 mb-3">
                         <img
                           className="avatar-img rounded-circle border border-white border-3"
-                          src={profile.profileimgurl ? profile.profileimgurl : avatar7}
+                          src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
                           alt="avatar"
                         />
                       </div>
@@ -532,66 +555,7 @@ const ProfileLayout = ({ children }: ChildrenType) => {
                     </CardBody>
                   </Card>
                 </Col>
-
-                <Card>
-                  <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
-                    <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
-                     Your connection Requests
-                    </CardTitle>
-                    <div className="bg-info p-2 rounded">
-                      <p className="mb-0 text-white" style={{ fontSize: '14px', color: '#6c757d' }}>
-                        {allFollowers.length}
-                      </p>
-                    </div>
-                  </CardHeader>
-
-                  <CardBody>
-                    {allFollowers && allFollowers.map((follower, idx) => (
-                      <div className=" d-flex row col-12  mb-3" key={idx}>
-                        {/* Avatar Section */}
-                        <div className="col-8  d-flex ">
-                          <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                            <span role="button">
-                              <img
-                                className="avatar-img rounded-circle"
-                                src={follower.profilePictureUploadUrl?follower.profilePictureUploadUrl: avatar7}
-                                alt={`${follower.firstName} ${follower.lastName}`}
-                              />
-                            </span>
-                          </div>
-                          {/* Follower Info Section */}
-                          <div className="overflow-hidden px-2">
-                            <Link className="h6 mb-0" to="">
-                              {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                            </Link>
-                            <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                          </div>
-                        </div>
-
-                        <div className="col-3  d-flex ">
-
-                          <Button
-                            onClick={() => handleReject(follower?.requesterDetails?.id)}
-                             variant="danger-soft"
-                            className="rounded-circle mx-1 flex-centered"
-                          >
-                            <RiUserUnfollowFill />
-                          </Button>
-                          <Button
-                            onClick={() => handleAccept(follower?.requesterDetails?.id)}
-                            variant="success-soft"
-                            className="rounded-circle mx-1 flex-centered"
-                          >
-                            <FaUserCheck size={19} className="pe-1" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </CardBody>
-
-
-                </Card>
-
+               { user?.id === profile?.personalDetails?.id &&  <ConnectionRequest />}
                 {/* Additional Components */}
                 <Col md={6} lg={12}>
                   <Experience />
