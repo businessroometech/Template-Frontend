@@ -771,7 +771,8 @@ import { useAuthContext } from '@/context/useAuthContext';
 
 const InvestorForm = () => {
 
-  const { id } = useContext(useAuthContext);
+  const { user } = useAuthContext()
+  console.log(user?.id)
 
 
   const navigate = useNavigate();

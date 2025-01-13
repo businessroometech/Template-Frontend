@@ -39,10 +39,9 @@ const EntrepreneurForm = () => {
     longTermGoals: "",
     additionalInfo: "",
   });
-  const {user} = useAuthContext();
-  console.log('----user----',user);
+
   const [currentSection, setCurrentSection] = useState(0);
-  const id = user.id;
+
 
   const sections = [
     "Business Information",
