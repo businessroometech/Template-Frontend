@@ -187,14 +187,16 @@ const PostCard = ({ item }) => {
 
         <div className="d-flex mb-4 px-3">
           <div className="avatar avatar-xs me-3">
-            <span role="button">
-              <img
-                className="avatar-img rounded-circle"
-                style={{ width: '52px', height: '35px', objectFit: 'cover'}}
-                src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
-                alt="avatar"
-              />
-            </span>
+            <Link to={`/profile/feed/${user?.id}`}>
+              <span role="button">
+                <img
+                  className="avatar-img rounded-circle"
+                  style={{ width: '52px', height: '35px', objectFit: 'cover'}}
+                  src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
+                  alt="avatar"
+                />
+              </span>
+            </Link>
           </div>
           <form className="nav nav-item w-100 position-relative" onSubmit={handleCommentSubmit}>
             <textarea

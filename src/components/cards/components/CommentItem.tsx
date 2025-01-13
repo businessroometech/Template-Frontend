@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, ThumbsUp, MessageSquare } from 'lucide-react';
 import fallbackAvatar from '../../../assets/images/avatar/03.jpg'; // Import the fallback avatar
+import { Link } from 'react-router-dom';
 
 type CommentType = {
   id: string;
@@ -30,21 +31,26 @@ const CommentItem = ({ comment,level }: CommentItemProps,) => {
   comment.replies = [comment,comment,comment];
   return (
     <li className="comment-item">
+      
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
-        <img
-          src={comment.avatar || fallbackAvatar} // Use the fallback image if avatar is not provided
-          alt={`${comment.commenterName || comment.createdBy}-avatar`} // Corrected interpolation
-          className="rounded-circle me-3"
-          style={{ width: '35px', height: '35px', objectFit: 'cover' }} // Reduced size by 80%
-        />
-
+        
+          <img
+            src={comment.avatar || fallbackAvatar} // Use the fallback image if avatar is not provided
+            alt={`${comment.commenterName || comment.createdBy}-avatar`} // Corrected interpolation
+            className="rounded-circle me-3"
+            style={{ width: '35px', height: '35px', objectFit: 'cover' }} // Reduced size by 80%
+          />
+       
         {/* Comment Content */}
         <div className="bg-light rounded p-3 flex-grow-1">
           <div className="d-flex justify-content-between">
-            <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
+            <Link to={`/profile/feed/${comment?.id}`}>
+              <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
+            </Link>
             <small className="ms-2">{comment.timestamp}</small>
-          </div>
+          </div> 
+      
           <p className="small mb-2">{comment.text}</p>
 
           {/* Actions */}

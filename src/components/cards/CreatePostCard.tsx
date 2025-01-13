@@ -301,11 +301,13 @@ return
 
       <Card className="card-body">
         <div className="d-flex mb-3">
-          <div className="avatar avatar-xs me-2">
-            <span role="button">
-              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
-            </span>
-          </div>
+          <Link to={(`/profile/feed/${user?.id}`)}>
+            <div className="avatar avatar-xs me-2">
+              <span role="button">
+                <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
+              </span>
+            </div>
+          </Link>
 
           <form
             className="w-100"
