@@ -746,11 +746,12 @@ const {user } = useAuthContext()
   const renderStep = () => {
     const renderFormFields = (fields) => (
       <Card className="mb-4 shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="fs-4">
-            {sections[step].icon} {sections[step].title}
-          </h5>
-        </Card.Header>
+       <Card.Header className="bg-transparent text-white">
+  <h5 className="fs-4">
+    {sections[step].icon} {sections[step].title}
+  </h5>
+</Card.Header>
+
         <Card.Body>
           <ToastContainer></ToastContainer>
           {fields.map((field, index) => (
@@ -880,17 +881,23 @@ const {user } = useAuthContext()
       <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Business Acquirer</h2>
 
       <div className="d-flex justify-content-center mb-4">
-        {sections.map((section, index) => (
-          <button
-            key={index}
-            type="button"
-            className={`btn mx-2 ${step === index ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setCurrentSection(index)}
-          >
-            {section.icon} {section.title}
-          </button>
-        ))}
-      </div>
+  {sections.map((section, index) => (
+    <button
+      key={index}
+      type="button"
+      className="btn mx-2"
+      style={{
+        backgroundColor: step === index ? '#1ea1f2' : 'transparent',
+        borderColor: '#1ea1f2',
+        color: step === index ? 'white' : '#1ea1f2'
+      }}
+      onClick={() => setCurrentSection(index)}
+    >
+      {section.icon} {section.title}
+    </button>
+  ))}
+</div>
+
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
         <div className="d-flex justify-content-between mt-4">
