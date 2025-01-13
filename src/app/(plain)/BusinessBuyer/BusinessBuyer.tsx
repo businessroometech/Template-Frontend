@@ -670,10 +670,13 @@ bUSINESS sELLER ENDS HERE
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from 'react-bootstrap';
+import { ButtonGroup, Card } from 'react-bootstrap';
 import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaLightbulb, FaBriefcase, FaDollarSign, FaHandshake, FaCalendarAlt, FaQuestionCircle, FaBuilding, FaUsers, FaClipboardList } from 'react-icons/fa';
 import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
+import {ToastContainer , toast} from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
+
 const BusinessBuyerForm = () => {
 
 
@@ -718,6 +721,7 @@ const {user } = useAuthContext()
 
   const handleSubmit = (e) => {
     e.preventDefault();
+   toast.success("Form submitted successfully!");
     try {
       fetch('https://app-backend-8r74.onrender.com/business-buyer/create', {
         method: 'POST',
@@ -748,6 +752,7 @@ const {user } = useAuthContext()
           </h5>
         </Card.Header>
         <Card.Body>
+          <ToastContainer></ToastContainer>
           {fields.map((field, index) => (
             <div className="mb-3" key={index}>
               <label htmlFor={field.id} className="form-label">
@@ -872,7 +877,8 @@ const {user } = useAuthContext()
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Business Acquirer</h2>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Business Acquirer</h2>
+
       <div className="d-flex justify-content-center mb-4">
         {sections.map((section, index) => (
           <button
@@ -888,10 +894,13 @@ const {user } = useAuthContext()
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
         <div className="d-flex justify-content-between mt-4">
+        <button type="button" className="btn btn-secondary btn-danger" onClick={handleSkip}>Skip</button>
+        <ButtonGroup>
           {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
           {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+          
           {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
-          <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
+          </ButtonGroup>
         </div>
       </form>
     </div>
