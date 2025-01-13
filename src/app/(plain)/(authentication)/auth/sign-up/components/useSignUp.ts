@@ -10,8 +10,9 @@ interface SignUpFormData {
   lastName : string;
   firstPassword : string;
   confirmPassword : string | undefined;
-  country : string
-  role : string
+  country : string;
+  role : string;
+  dob : string;
 }
 
 interface toSendSignUp {

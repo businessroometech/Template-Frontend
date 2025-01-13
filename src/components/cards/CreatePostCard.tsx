@@ -281,7 +281,7 @@ return
 
   return (
     <>
-      {show && modelTime &&
+      {/* {show && modelTime &&
         <div className="modal-body w-100 " >
           <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
@@ -297,7 +297,7 @@ return
               </div>
             </div>
           </div>
-        </div>}
+        </div>} */}
 
       <Card className="card-body">
         <div className="d-flex mb-3">
