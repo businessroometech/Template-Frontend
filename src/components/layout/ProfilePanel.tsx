@@ -99,17 +99,16 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               </Link>
             </h5>
             
-            
+            <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
             <div className={`d-flex align-items-center justify-content-center gap-2 pb-3 ${isDarkMode ? 'text-light' : 'text-dark'} mb-2`}>
-              <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
-              <MapPin size={16} className="ml-2" style={{ color: '#87CEEB' }} />
               <span className={`fs-6 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.country}</span>
             </div>
             {/* <p className="text-dark fs-6 mt-3 mb-0">
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
             </p> */}
 
-            <div className="hstack gap-2 gap-xl-3 justify-content-center">
+            {
+              profile.postsCount && profile.connectionsCount &&  profile.likeCount ? <div className="hstack gap-2 gap-xl-3 justify-content-center">
               <div>
                 <h6 className="mb-0">{profile.postsCount}</h6>
                 <small>Posts</small>
@@ -124,7 +123,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                 <h6 className="mb-0">{profile.likeCount}</h6>
                 <small>Likes</small>
               </div>
-            </div>
+            </div> : null
+            }
           </div>
 
           <hr />

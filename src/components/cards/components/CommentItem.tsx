@@ -30,67 +30,82 @@ const CommentItem = ({ comment,level }: CommentItemProps,) => {
   console.log('-----show replies------',showReplies);
   comment.replies = [comment,comment,comment];
   return (
-    <li className="comment-item">
-      
-      <div className="d-flex align-items-start mb-3">
-        {/* Avatar */}
-        
-          <img
-            src={comment.avatar || fallbackAvatar} // Use the fallback image if avatar is not provided
-            alt={`${comment.commenterName || comment.createdBy}-avatar`} // Corrected interpolation
-            className="rounded-circle me-3"
-            style={{ width: '35px', height: '35px', objectFit: 'cover' }} // Reduced size by 80%
-          />
-       
-        {/* Comment Content */}
-        <div className="bg-light rounded p-3 flex-grow-1">
-          <div className="d-flex justify-content-between">
+<li className="comment-item">
+  <div className="d-flex align-items-start mb-3">
+    {/* Avatar */}
+    <img
+      src={comment.avatar || fallbackAvatar}
+      alt={`${comment.commenterName || comment.createdBy}-avatar`}
+      className="rounded-circle me-3"
+      style={{ width: '35px', height: '35px', objectFit: 'cover' }}
+    />
+
+    {/* Comment Content */}
+    <div
+      className="bg-light rounded p-3 flex-grow-1"
+      style={{
+        wordWrap: 'break-word', // Ensures long words break
+        overflowWrap: 'break-word', // Support for other browsers
+        wordBreak: 'break-word', // Breaks long strings or URLs
+        maxWidth: '100%', // Prevents overflow
+      }}
+    >
+      <div className="d-flex justify-content-between">
             <Link to={`/profile/feed/${comment?.id}`}>
               <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
             </Link>
             <small className="ms-2">{comment.timestamp}</small>
-          </div> 
-      
-          <p className="small mb-2">{comment.text}</p>
+      </div> 
 
-          {/* Actions */}
-          <div className="d-flex align-items-center gap-3 small">
-            <span role="button" className="text-primary d-flex align-items-center">
-              <ThumbsUp size={16} className="me-1" /> Like 
-            </span>
-            <span role="button" className="text-primary d-flex align-items-center">
-              <MessageSquare size={16} className="me-1" />{"Reply"} 
-            </span>
-            {comment.replies && comment.replies.length > 0 &&  level < 1 &&(
-              <span
-                role="button"
-                className="text-secondary d-flex align-items-center"
-                onClick={() => setShowReplies((prev) => !prev)}
-              >
-                {showReplies  ? (
-                  <>
-                    <ChevronUp size={16} className="me-1" /> Hide Replies
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown size={16} className="me-1" /> View Replies ({comment.replies.length})
-                  </>
-                )}
-              </span>
+      <p
+        className="small mb-2"
+        style={{
+          whiteSpace: 'pre-wrap', // Preserves spacing and line breaks
+          overflow: 'hidden', // Prevents content from spilling
+          textOverflow: 'ellipsis', // Adds ellipsis for overflowing content
+        }}
+      >
+        {comment.text}
+      </p>
+
+      {/* Actions */}
+      <div className="d-flex align-items-center gap-3 small">
+        <span role="button" className="text-primary d-flex align-items-center">
+          <ThumbsUp size={16} className="me-1" /> Like
+        </span>
+        <span role="button" className="text-primary d-flex align-items-center">
+          <MessageSquare size={16} className="me-1" /> Reply
+        </span>
+        {comment.replies && comment.replies.length > 0 && level < 1 && (
+          <span
+            role="button"
+            className="text-secondary d-flex align-items-center"
+            onClick={() => setShowReplies((prev) => !prev)}
+          >
+            {showReplies ? (
+              <>
+                <ChevronUp size={16} className="me-1" /> Hide Replies
+              </>
+            ) : (
+              <>
+                <ChevronDown size={16} className="me-1" /> View Replies ({comment.replies.length})
+              </>
             )}
-          </div>
-        </div>
+          </span>
+        )}
       </div>
+    </div>
+  </div>
 
-      {/* Nested Replies */}
-      {showReplies && comment.replies && comment.replies.length > 0 && (
-        <ul className="list-unstyled ms-5">
-          {comment.replies.map((reply) => (
-            <CommentItem key={reply.id} comment={reply} level={level + 1} />
-          ))}
-        </ul>
-      )}
-    </li>
+  {/* Nested Replies */}
+  {showReplies && comment.replies && comment.replies.length > 0 && (
+    <ul className="list-unstyled ms-5">
+      {comment.replies.map((reply) => (
+        <CommentItem key={reply.id} comment={reply} level={level + 1} />
+      ))}
+    </ul>
+  )}
+</li>
   );
 };
 

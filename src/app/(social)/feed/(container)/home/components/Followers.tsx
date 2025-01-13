@@ -99,7 +99,7 @@ const Followers = () => {
           <CardTitle className="mb-0" style={{ fontSize: '17px' }}>Suggested Connections</CardTitle>
         </CardHeader>
 
-        {allFollowers.length > 0 && (<CardBody>
+        {(allFollowers.length > 0) && (<CardBody>
           {allFollowers?.map((follower, idx) => (
             <div className="hstack gap-2 mb-3" key={idx}>
               {/* Avatar Section */}
