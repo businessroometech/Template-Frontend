@@ -6,10 +6,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Button, FormCheck } from 'react-bootstrap'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import useSignUp from './useSignUp'
 import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
+import DatePicker from "react-datepicker";
+import "./datepicker.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 const SignUpForm = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -113,14 +116,21 @@ const SignUpForm = () => {
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
       </div>
       <div className="mb-3">
-        <TextFormInput
-          name="dob"
-          control={control}
-          containerClassName="input-group-lg"
-          type="date"
-          placeholder="Enter your date of birth"
-        />
-      </div>
+  <Controller
+    name="dob"
+    control={control}
+    render={({ field }) => (
+      <DatePicker
+        {...field}
+        placeholderText="Enter your date of birth"
+        className="form-control input-group-lg" // Ensures consistent styling
+        selected={field.value}
+        onChange={(date) => field.onChange(date)}
+      />
+    )}
+  />
+</div>
+
       <div className="mb-3">
         <TextFormInput
           name="country"
