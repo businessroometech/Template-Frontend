@@ -150,40 +150,45 @@ const PostCard = ({ item }) => {
           </div>
         )}
 
-        <ButtonGroup className="w-100 py-3 border-top border-bottom mb-3">
-          <Button
-            variant={likeStatus ? "primary" : "light"}
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
-            onClick={toggleLike}
-          >
-            {likeStatus ? <BsFillHandThumbsUpFill /> : <ThumbsUp size={18} />}
-            <span>Like</span>
-          </Button>
+<ButtonGroup className="w-100 border-top border-bottom mb-3">
+  <Button
+    variant={likeStatus ? "primary" : "light"}
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    onClick={toggleLike}
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+    <span>Like</span>
+  </Button>
 
-          <Button 
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
-          >
-            <MessageSquare size={18} />
-            <span>Comment ({post.commentCount || 0})</span>
-          </Button>
+  <Button
+    variant="light"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <MessageSquare size={16} />
+    <span>Comment ({post.commentCount || 0})</span>
+  </Button>
 
-          <Button 
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
-          >
-            <Repeat size={18} />
-            <span>Repost</span>
-          </Button>
+  <Button
+    variant="light"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <Repeat size={16} />
+    <span>Repost</span>
+  </Button>
 
-          <Button 
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-2"
-          >
-            <Share size={18} />
-            <span>Share</span>
-          </Button>
-        </ButtonGroup>
+  <Button
+    variant="light"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <Share size={16} />
+    <span>Share</span>
+  </Button>
+</ButtonGroup>
+
 
         <div className="d-flex mb-4 px-3">
           <div className="avatar avatar-xs me-3">
