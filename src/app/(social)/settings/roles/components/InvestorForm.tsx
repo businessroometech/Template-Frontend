@@ -77,7 +77,8 @@ const InvestorPreferences = () => {
   return (
     <Card>
       <CardHeader className="border-0 pb-0">
-        <h1 className="h5 card-title">Investor Preferences</h1>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Entrepreneur Form</h2>
+
         <p className="mb-0">Please provide your investment preferences and criteria.</p>
       </CardHeader>
       <CardBody>
