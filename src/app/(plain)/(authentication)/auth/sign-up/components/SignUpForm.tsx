@@ -90,7 +90,7 @@ const SignUpForm = () => {
     <form
   className="mt-4"
   onSubmit={handleSubmit(async () => {
-    if(role.trim() === '') {
+    if(role  === '') {
       setShowModal(true);
       return;
     }
