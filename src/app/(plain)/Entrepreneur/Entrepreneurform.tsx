@@ -90,7 +90,7 @@ const EntrepreneurForm = () => {
       case 0:
         return (
           <Card className="mb-4 shadow-sm">
-          <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+          <Card.Header style={{ backgroundColor: '', color: 'white' }}>
   <h5 className="fs-4">
     <FaRegLightbulb className="me-2 " />
     Business Information
@@ -261,7 +261,7 @@ const EntrepreneurForm = () => {
       case 1:
             return (
       <Card className="mb-4 shadow-sm">
-           <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+           <Card.Header style={{ backgroundColor: '', color: 'white' }}>
   <h5 className="fs-4">
     <FaRegLightbulb className="me-2 " />
     Investor Preferences
@@ -414,7 +414,7 @@ const EntrepreneurForm = () => {
       case 2:
     return (
       <Card className="mb-4 shadow-sm">
-        <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+        <Card.Header style={{ backgroundColor: '', color: 'white' }}>
   <h5 className="fs-4">
     <FaRegLightbulb className="me-2 " />
       Business Partner Preferences
@@ -535,7 +535,7 @@ const EntrepreneurForm = () => {
       case 3:
       return (
         <Card className="mb-4 shadow-sm">
-         <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+         <Card.Header style={{ backgroundColor: '', color: 'white' }}>
   <h5 className="fs-4">
     <FaRegLightbulb className="me-2 " />
     Business Needs & Goals
@@ -748,7 +748,7 @@ const EntrepreneurForm = () => {
       case 4:
     return (
       <Card className="mb-4 shadow-sm">
-       <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+       <Card.Header style={{ backgroundColor: '', color: 'white' }}>
   <h5 className="fs-4">
     <FaRegLightbulb className="me-2 " />
    Additional Information
@@ -880,7 +880,7 @@ const EntrepreneurForm = () => {
         <div className="d-flex justify-content-between mt-4">
           <div>
             <Button
-              variant="warning"
+              variant="btn btn-danger"
               type="button"
               onClick={handleSkip}
             >
