@@ -3,14 +3,16 @@ import useToggle from '@/hooks/useToggle'
 import clsx from 'clsx'
 import { Button } from 'react-bootstrap'
 
-const LoadMoreButton = () => {
-  const { isTrue: isLoadButton, toggle } = useToggle()
+const LoadMoreButton = ({limit,setLimit,isSpinning}) => {
   return (
     <Button
-      onClick={toggle}
+      onClick={() => {
+        setLimit(limit+5);
+        console.log('-----limit-------',limit);
+      }}
       variant="primary-soft"
       role="button"
-      className={clsx('btn-loader', { active: isLoadButton })}
+      className={clsx('btn-loader', { active: isSpinning })}
       data-bs-toggle="button"
       aria-pressed="true">
       <span className="load-text"> Load more </span>
