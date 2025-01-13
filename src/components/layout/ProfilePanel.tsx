@@ -99,10 +99,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               </Link>
             </h5>
             
-            
+            <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
             <div className={`d-flex align-items-center justify-content-center gap-2 pb-3 ${isDarkMode ? 'text-light' : 'text-dark'} mb-2`}>
-              <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
-              <MapPin size={16} className="ml-2" style={{ color: '#87CEEB' }} />
               <span className={`fs-6 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.country}</span>
             </div>
             {/* <p className="text-dark fs-6 mt-3 mb-0">

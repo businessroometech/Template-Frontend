@@ -116,7 +116,7 @@ const PostCard = ({ item }) => {
               <div className="nav nav-divider" >
                 <h6 className="nav-item card-title  mb-0" style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexDirection:"column"}}>
                   <span role="button" className="nav-item text-start mx-3 ">{userInfo?.firstName } { userInfo?.lastName}</span>
-                <span className=" small mx-3 "> {userInfo?.userRole?userInfo?.userRole:"User role not define"}</span>
+                <span className=" small mx-3" style={{color : '#0f6fec'}}> {userInfo?.userRole?userInfo?.userRole:"User role not define"}</span>
                 </h6>
               </div>
             </div>
@@ -203,22 +203,44 @@ const PostCard = ({ item }) => {
               </span>
             </Link>
           </div>
-          <form className="nav nav-item w-100 position-relative" onSubmit={handleCommentSubmit}>
-            <textarea
-              data-autoresize
-              className="form-control pe-5 bg-light"
-              rows={1}
-              placeholder="Add a comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-            />
-            <button
-              className="nav-link bg-transparent px-3 position-absolute top-50 end-0 translate-middle-y border-0"
-              type="submit"
-            >
-              <BsSendFill />
-            </button>
-          </form>
+          <form
+  className="nav nav-item w-100 d-flex align-items-center"
+  onSubmit={handleCommentSubmit}
+  style={{ gap: '10px' }} // Add spacing between the textarea and button
+>
+  <textarea
+    data-autoresize
+    className="form-control bg-light"
+    style={{
+      whiteSpace: 'nowrap',      // Keep text on a single line
+      overflow: 'hidden',        // Hide overflowing content
+      textOverflow: 'ellipsis',  // Optional: show ellipsis for overflow
+      textAlign: 'left',         // Start text and cursor from the left
+      resize: 'none',            // Disable resizing
+      height: '38px',            // Fixed height for a single line
+      flex: 1,                   // Allow textarea to take available space
+    }}
+    rows={1}
+    placeholder="Add a comment..."
+    value={commentText}
+    onChange={(e) => setCommentText(e.target.value)}
+  />
+  <button
+    className="btn border-0 d-flex align-items-center justify-content-center"
+    type="submit"
+    style={{
+      width: '38px',
+      height: '38px',
+      paddingRight : '10px',
+      paddingLeft : '10px',
+      backgroundColor: '#007bff', // Blue background
+      borderRadius: '20%',        // Circular button
+      cursor: 'pointer',
+    }}
+  >
+    <BsSendFill style={{ color: '#fff', fontSize: '18px' }} /> {/* White icon */}
+  </button>
+</form>
         </div>
 
         {isLoading ? (
