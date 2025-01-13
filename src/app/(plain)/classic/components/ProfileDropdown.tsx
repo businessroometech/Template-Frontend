@@ -1,5 +1,5 @@
 
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import { developedByLink } from '@/context/constants'
 import { useLayoutContext } from '@/context/useLayoutContext'
@@ -8,7 +8,7 @@ import { toSentenceCase } from '@/utils/change-casing'
 import clsx from 'clsx'
 import type { IconType } from 'react-icons'
 import { BsCardText, BsCircleHalf, BsGear, BsLifePreserver, BsMoonStars, BsPower, BsSun } from 'react-icons/bs'
-import { Link } from 'react-router-dom'
+import { Link, useNavigation } from 'react-router-dom'
 
 import avatar7 from '@/assets/images/avatar/07.jpg'
 import { useAuthContext } from '@/context/useAuthContext'
@@ -20,6 +20,8 @@ type ThemeModeType = {
 }
 
 const ProfileDropdown = () => {
+  const navigation = useNavigation()
+  const {user} = useAuthContext();
   const themeModes: ThemeModeType[] = [
     {
       icon: BsSun,
@@ -40,9 +42,9 @@ const ProfileDropdown = () => {
 
 
   
-  const {user} = useAuthContext();
     const [profile, setProfile] = useState({});
-  
+    const { theme } = useLayoutContext()
+    console.log('-----theme-----',theme);
   
     useEffect(() => {
       const fetchUser = async () => {
@@ -86,6 +88,7 @@ const ProfileDropdown = () => {
       };
       return date.toLocaleString('en-GB', options).replace(',', ' at');
     };
+ 
   
   
   return (
@@ -112,15 +115,18 @@ const ProfileDropdown = () => {
               <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>
           </div>
-          <Link className="dropdown-item btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">
-            View profile
-          </Link>
+          <Button
+      className="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
+      onClick={() => navigation.navigate('/profile/feed', { userId: user?.id })}
+    >
+      View Profile
+    </Button>
         </li>
 
         <li>
           <Link className="dropdown-item" to="/settings/account">
             <BsGear className="fa-fw me-2" />
-            Settings &amp; Privacy
+           
           </Link>
         </li>
         <li>

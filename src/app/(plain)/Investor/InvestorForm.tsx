@@ -40,7 +40,7 @@ const InvestorForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('http://localhost:5000/investor/create', {
+      fetch('https://app-backend-8r74.onrender.com/investor/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -766,14 +766,12 @@ import { Card, Col, Form, Row } from 'react-bootstrap';
 import { FaBalanceScale, FaCalendarAlt, FaExchangeAlt, FaListAlt, FaMapMarkerAlt, FaMoneyCheckAlt, FaTasks } from 'react-icons/fa';
 import { FaBullhorn, FaBullseye, FaCertificate, FaChartLine, FaDollarSign, FaHandshake, FaHeadset, FaHourglassHalf, FaIndustry, FaMedal, FaRegHandPointUp, FaRocket, FaTag, FaUser, FaUsers, FaUserTie, FaWallet } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 
 
 const InvestorForm = () => {
 
-  const { user } = useAuthContext();
-  console.log(user?.id)
+  const { id } = useContext(useAuthContext);
 
 
   const navigate = useNavigate();

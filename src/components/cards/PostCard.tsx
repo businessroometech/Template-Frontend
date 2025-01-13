@@ -99,7 +99,7 @@ const PostCard = ({ item }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
-        <div className="d-flex align-items-center justify-content-between">
+        <Link  to= {(`/profile/feed/${post?.userId}`)} className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               {userInfo?.avatar ? (
@@ -113,15 +113,16 @@ const PostCard = ({ item }) => {
               )}
             </div>
             <div>
-              <div className="nav nav-divider">
-                <h6 className="nav-item card-title mb-0">
-                  <span role="button">{userInfo?.firstName + ' ' + userInfo?.lastName}</span>
+              <div className="nav nav-divider" >
+                <h6 className="nav-item card-title  mb-0" style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexDirection:"column"}}>
+                  <span role="button" className="nav-item text-start mx-3 ">{userInfo?.firstName } { userInfo?.lastName}</span>
+                <span className=" small mx-3 "> {userInfo?.userRole?userInfo?.userRole:"User role not define"}</span>
                 </h6>
-                <span className="nav-item small ms-2"> {userInfo?.timestamp}</span>
               </div>
             </div>
           </div>
-        </div>
+                <span className="nav-item small mx-2"> {userInfo?.timestamp}</span>
+        </Link>
       </CardHeader>
 
       <CardBody>

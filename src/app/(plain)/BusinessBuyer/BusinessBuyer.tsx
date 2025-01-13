@@ -872,7 +872,7 @@ const {user } = useAuthContext()
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Business Buyer Form</h2>
+      <h2 className="text-center mb-4">Business Acquirer</h2>
       <div className="d-flex justify-content-center mb-4">
         {sections.map((section, index) => (
           <button

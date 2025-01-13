@@ -1,23 +1,31 @@
-import BusinessBuyerForm from "@/app/(plain)/BusinessSeller/BusinessSellerForm.tsx";
+import BusinessBuyerForm from "@/app/(plain)/BusinessBuyer/BusinessBuyer.tsx";
 import EntrepreneurForm from "@/app/(plain)/Entrepreneur/Entrepreneurform";
 import InvestorForm from "@/app/(plain)/Investor/InvestorForm.tsx";
 import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm';
+import { useAuthContext } from "@/context/useAuthContext";
 
 const RolePage = () => {
-    const role = "entrepreuer"; // Replace with actual role logic or props
-  
+    const {user} = useAuthContext();
+    console.log('-----user-----',user);
+    const role = user.userRole; // Replace with actual role logic or props
+    console.log(role);
     const renderContent = () => {
       switch (role) {
-        case "entrepreuer" :
+        case "Entrepreneur" :
           return <EntrepreneurForm/>;
+          break;
         case "Investor":
           return <InvestorForm/>;
-        case "bussiness-buyer":
+          break;
+        case "Business Acquirer":
+          console.log('--render ba---')
           return <BusinessBuyerForm/>;
-        case "bussiness-seller":
-          return <BusinessSellerForm/>;
+          break;
+        case "Business Seller":
+          return <BusinessSellerForm/>
+          break;
         default:
-          return (<div>Please log in to see your role-specific content.</div>);
+          return (<div>You have no role</div>);
       }
     };
   

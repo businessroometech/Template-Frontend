@@ -1,5 +1,5 @@
 
-import { Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Button, Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import type { IconType } from 'react-icons'
 import { BsCardText, BsCircleHalf, BsGear, BsLifePreserver, BsMoonStars, BsPower, BsSun } from 'react-icons/bs'
@@ -95,13 +95,13 @@ const ProfileDropdown = () => {
         data-bs-display="static"
         data-bs-toggle="dropdown"
         aria-expanded="false">
-        <img className="avatar-img rounded-2" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
+        <img className="avatar-img rounded-2" src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" />
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end pt-3 small me-md-n3" aria-labelledby="profileDropdown">
         <li className="px-3">
           <div className="d-flex align-items-center position-relative">
             <div className="avatar me-3">
-              <img className="avatar-img rounded-circle" src={profile.profileimgurl?profile.profileimgurl:avatar7} alt="avatar" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" />
             </div>
             <div>
               <Link className="h6 stretched-link" to="">
@@ -110,9 +110,13 @@ const ProfileDropdown = () => {
               <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>
           </div>
-          <DropdownItem as={Link} className="btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">
+          {/* <DropdownItem as={Link} className="btn btn-primary-soft btn-sm my-2 text-center" to="/profile/feed">
             View profile
-          </DropdownItem>
+          </DropdownItem> */}
+
+          <Link className="btn btn-primary-soft btn-sm my-2 text-center mx-5" to= {(`/profile/feed/${user?.id}`)} >
+          View profile
+          </Link>
         </li>
 
         <li>

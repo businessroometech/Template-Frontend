@@ -71,6 +71,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
+  const [modelTime, setModelTime] = useState(false)
   const { user } = useAuthContext();
 
   const eventFormSchema = yup.object({
@@ -97,33 +98,33 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: user?.id
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        setProfile(data.data);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-    if (profile.coverimurl) {
+    if (modelTime) {
       return;
     }
     fetchUser();
-  }, [profile.personalDetails]);
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setProfile(data.data);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -213,11 +214,11 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
             mediaKeys: uploadSuccess,
           },
         })
-
-        console.log('---- response with photo -----', response)
-
         if (response.data) {
+          console.log('went inside')
           setThoughts('') // Reset thoughts after successful post
+          togglePhotoModel();
+          setTimeout(() => {setIsCreated(true);}, 1000);
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -242,7 +243,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           method: 'POST',
           url: CREATE_POST,
           data: {
-            userId: '018faa07809d523c34ac1186d761459d',
+            userId: user?.id,
             content: videoQuote,
             hashtags: hashtags,
             mediaIds: uploadSuccess || [],
@@ -259,17 +260,28 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       console.log('Error in the posting', err)
     }
   }
-  console.log("profile", profile);
+  // console.log("profile", profile);
 
 
   const [show, setShow] = useState(true);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false) 
+    setModelTime(false)}
+
   const handleShow = () => setShow(true);
 
+  setTimeout(() => {
+  if( profile?.personalDetails?.profilePictureUploadId===null){
+    setTimeout(() => {
+      setModelTime(true)
+    }, 3000);
+         }
+return
+}, 3000);
 
   return (
     <>
-      {show && profile.profileimgurl === undefined &&
+      {/* {show && modelTime &&
         <div className="modal-body w-100 " >
           <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
@@ -285,13 +297,13 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               </div>
             </div>
           </div>
-        </div>}
+        </div>} */}
 
       <Card className="card-body">
         <div className="d-flex mb-3">
           <div className="avatar avatar-xs me-2">
             <span role="button">
-              <img className="avatar-img rounded-circle" src={profile.profileimgurl ? profile.profileimgurl : avatar7} alt="avatar3" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
             </span>
           </div>
 
@@ -410,7 +422,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type="button" className="btn btn-danger-soft me-2" data-bs-dismiss="modal">
+          <button type="button" className="btn btn-danger-soft me-2" data-bs-dismiss="modal" onClick={() => togglePhotoModel()}>
             Cancel
           </button>
           <button type="submit" onClick={handlePhotoSubmit} className="btn btn-success-soft">

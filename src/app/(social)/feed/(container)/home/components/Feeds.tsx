@@ -46,6 +46,7 @@ import LoadMoreButton from './LoadMoreButton'
 import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
+import { useAuthContext } from '@/context/useAuthContext'
 
 // ----------------- data type --------------------
 interface Post {
@@ -498,7 +499,9 @@ const Post3 = () => {
 
 // poll
 const Feeds = (isCreated: boolean) => {
-  console.log('-----In Feeds----');
+ 
+   const { user } = useAuthContext();
+ 
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
@@ -508,16 +511,15 @@ const Feeds = (isCreated: boolean) => {
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
-    try {
-      
-      const data = await makeApiRequest<{ data: any[] }>({
+    try {      
+      const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
-        data: { userId: '018faa07809d523c34ac1186d761459d', page : 1},
+        data: { userId: user?.id, page : 1},
       })
 
-      console.log('Fetched Posts:', data)
-      setPosts(data.data || [])
+      console.log('Fetched Posts:', res)
+      setPosts(res.data || [])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
       setError(error.message || 'An unknown error occurred')
@@ -567,7 +569,7 @@ const Feeds = (isCreated: boolean) => {
         Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
       },
       body: JSON.stringify({
-        userId: '018faa07809d523c34ac1186d761459d',
+        userId: user?.id,
         PostId: post.post?.Id,
       }),
     });
@@ -623,7 +625,7 @@ const Feeds = (isCreated: boolean) => {
                       aria-valuenow={item.progress}
                       aria-valuemin={0}
                       aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.title}</span>
+                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.userRole}</span>
                   </div>
                 </div>
                 <div className="flex-shrink-0">{item.progress}%</div>
