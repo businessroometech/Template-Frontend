@@ -5,12 +5,13 @@ import { FaRegLightbulb, FaGlobe, FaCity, FaClock, FaIndustry, FaBalanceScale, F
 import { FaBullseye, FaDollarSign, FaFlagCheckered, FaHandshake, FaPeopleArrows, FaRoad, FaUserTie } from "react-icons/fa6";
 import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
-
+import {ToastContainer , toast} from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 const EntrepreneurForm = () => {
 
 
-  const { id } = useContext(useAuthContext);
-
+  const { user } = useAuthContext()
+  console.log(user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
@@ -62,9 +63,9 @@ const EntrepreneurForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    toast.success("Form submitted successfully!");
     try {
-      console.log(formData , id);
+      console.log(formData , user?.id);
   
       const response = await fetch("https://app-backend-8r74.onrender.com/entrepreneur/create", {
         method: "POST",
@@ -92,13 +93,15 @@ const EntrepreneurForm = () => {
       case 0:
         return (
           <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-primary text-white">
-              <h5 className="fs-4"> {/* Increased font size using fs-4 */}
-                <FaRegLightbulb className="me-2" />
-                Business Information
-              </h5>
-            </Card.Header>
+          <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+  <h5 className="fs-4">
+    <FaRegLightbulb className="me-2 " />
+    Business Information
+  </h5>
+</Card.Header>
+
             <Card.Body>
+              <ToastContainer></ToastContainer>
               <Form>
                 <Row className="mb-3">
                   <Form.Group as={Col} controlId="businessName">
@@ -261,12 +264,12 @@ const EntrepreneurForm = () => {
       case 1:
             return (
       <Card className="mb-4 shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="fs-4"> {/* Increased font size using fs-4 */}
-            <FaRegLightbulb className="me-2" />
-            Investor Preferences
-          </h5>
-        </Card.Header>
+           <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+  <h5 className="fs-4">
+    <FaRegLightbulb className="me-2 " />
+    Investor Preferences
+  </h5>
+</Card.Header>
         <Card.Body>
           <Form>
             <Row className="mb-3">
@@ -414,12 +417,14 @@ const EntrepreneurForm = () => {
       case 2:
     return (
       <Card className="mb-4 shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="fs-4"> {/* Increased font size for header */}
-            <FaHandshake className="me-2" />
-            Business Partner Preferences
-          </h5>
-        </Card.Header>
+        <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+  <h5 className="fs-4">
+    <FaRegLightbulb className="me-2 " />
+      Business Partner Preferences
+  </h5>
+</Card.Header>
+          
+
         <Card.Body>
           <Form>
             {/* Partner Type */}
@@ -519,7 +524,7 @@ const EntrepreneurForm = () => {
                 >
                   <option value="">Select</option>
                   <option value="Co-founder">Co-founder</option>
-                  <option value="Equity-based Partnership">Equity-based Partnership</option>
+                  <option value="Equity-ed Partnership">Equity-based Partnership</option>
                   <option value="Joint Venture">Joint Venture</option>
                   <option value="Advisory Role">Advisory Role</option>
                   <option value="Other">Other</option>
@@ -533,12 +538,14 @@ const EntrepreneurForm = () => {
       case 3:
       return (
         <Card className="mb-4 shadow-sm">
-          <Card.Header className="bg-primary text-white">
-            <h5 className="fs-4">
-              <FaTasks className="me-2" style={{ color: "black" }} />
-              Business Needs & Goals
-            </h5>
-          </Card.Header>
+         <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+  <h5 className="fs-4">
+    <FaRegLightbulb className="me-2 " />
+    Business Needs & Goals
+  </h5>
+</Card.Header>
+
+            
           <Card.Body>
             <Form>
               {/* Business Challenges */}
@@ -563,7 +570,7 @@ const EntrepreneurForm = () => {
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="keyPriorities">
                   <Form.Label className="fs-5">
-                    <FaTasks className="me-2" style={{ color: "#757885" }} />
+                    <FaTasks className="me-2" style={{ color: "#0398fc" }} />
                     What are your key priorities over the next 6-12 months?
                   </Form.Label>
                   <Form.Control
@@ -581,7 +588,7 @@ const EntrepreneurForm = () => {
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="supportNeeded">
                   <Form.Label className="fs-5">
-                    <FaHandsHelping className="me-2" style={{ color: "#757885" }} />
+                    <FaHandsHelping className="me-2" style={{ color: "#0398fc" }} />
                     What specific support are you looking for from an investor or business partner?
                   </Form.Label>
                   <Form.Control
@@ -599,7 +606,7 @@ const EntrepreneurForm = () => {
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="businessPlanStatus">
                   <Form.Label className="fs-5">
-                    <FaRoad className="me-2" style={{ color: "#757885" }} />
+                    <FaRoad className="me-2" style={{ color: "#0398fc" }} />
                     Do you have a clear business plan or roadmap for growth?
                   </Form.Label>
                   <Form.Select
@@ -619,7 +626,7 @@ const EntrepreneurForm = () => {
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="milestones">
                   <Form.Label className="fs-5">
-                    <FaFlagCheckered className="me-2" style={{ color: "#757885" }} />
+                    <FaFlagCheckered className="me-2" style={{ color: "#0398fc" }} />
                     What milestones do you plan to achieve in the next 6 months?
                   </Form.Label>
                   <Form.Control
@@ -744,19 +751,20 @@ const EntrepreneurForm = () => {
       case 4:
     return (
       <Card className="mb-4 shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="fs-4">
-            <FaInfoCircle className="me-2" style={{ color: "black" }} />
-            Additional Information
-          </h5>
-        </Card.Header>
+       <Card.Header style={{ backgroundColor: '#03c6fc', color: 'white' }}>
+  <h5 className="fs-4">
+    <FaRegLightbulb className="me-2 " />
+   Additional Information
+  </h5>
+</Card.Header>
+
         <Card.Body>
           <Form>
             {/* Long-Term Goals */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="longTermGoals">
                 <Form.Label className="fs-5">
-                  <FaBullseye className="me-2" style={{ color: "#757885" }} />
+                  <FaBullseye className="me-2" style={{ color: "" }} />
                   What are your long-term goals for the business?
                 </Form.Label>
                 <Form.Control
@@ -774,7 +782,7 @@ const EntrepreneurForm = () => {
             <Row className="mb-3">
               <Form.Group as={Col} controlId="additionalInfo">
                 <Form.Label className="fs-5">
-                  <FaInfoCircle className="me-2" style={{ color: "#757885" }} />
+                  <FaInfoCircle className="me-2" style={{ color: "" }} />
                   Is there anything else a potential investor or partner should know about you or your business?
                 </Form.Label>
                 <Form.Control
@@ -847,62 +855,73 @@ const EntrepreneurForm = () => {
 
   return (
     <div>
-    {/* Styled Tabs */}
-    <h2 className="text-center mb-4">Entrepreneur Form</h2>
-    <div className="d-flex justify-content-center mb-4">
+      {/* Styled Tabs */}
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Entrepreneur Form</h2>
+
+      <div className="d-flex justify-content-center mb-4">
         {sections.map((title, index) => (
           <button
             key={index}
             type="button"
-            className={`btn mx-2 ${currentSection === index ? 'btn-primary' : 'btn-outline-primary'}`}
+            style={{
+              backgroundColor: currentSection === index ? '#03c6fc' : 'transparent',
+              color: 'black',
+              borderColor: '#03c6fc',
+            }}
+            className={`btn mx-2 ${currentSection === index ? '' : 'btn-outline'}`}
             onClick={() => setCurrentSection(index)}
           >
             {title}
           </button>
         ))}
-    </div>
-
-    <form onSubmit={handleSubmit}>
-      {renderSection()}
-
-      {/* Navigation Buttons */}
-      <div className="d-flex justify-content-between mt-4">
-        <ButtonGroup>
-          <Button
-            variant="secondary"
-            type="button"
-            disabled={currentSection === 0}
-            onClick={() => setCurrentSection((prev) => prev - 1)}
-          >
-            Previous
-          </Button>
-          {currentSection < sections.length - 1 && (
-            <Button
-              variant="primary"
-              type="button"
-              onClick={() => setCurrentSection((prev) => prev + 1)}
-            >
-              Next
-            </Button>
-          )}
-          {currentSection === sections.length - 1 && (
-            <Button variant="success" type="submit">
-              Submit
-            </Button>
-          )}
-        </ButtonGroup>
-        <Button
-          variant="warning"
-          type="button"
-          className="ms-3"
-          onClick={handleSkip}
-        >
-          Skip
-        </Button>
       </div>
-    </form>
-  </div>
+  
+      <form onSubmit={handleSubmit}>
+        {renderSection()}
+  
+        {/* Navigation Buttons */}
+        <div className="d-flex justify-content-between mt-4">
+          <div>
+            <Button
+              variant="warning"
+              type="button"
+              onClick={handleSkip}
+            >
+              Skip
+            </Button>
+          </div>
+          
+          <div>
+            <ButtonGroup>
+              <Button
+                variant="secondary"
+                type="button"
+                disabled={currentSection === 0}
+                onClick={() => setCurrentSection((prev) => prev - 1)}
+              >
+                Previous
+              </Button>
+              {currentSection < sections.length - 1 && (
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={() => setCurrentSection((prev) => prev + 1)}
+                >
+                  Next
+                </Button>
+              )}
+              {currentSection === sections.length - 1 && (
+                <Button variant="success" type="submit">
+                  Submit
+                </Button>
+              )}
+            </ButtonGroup>
+          </div>
+        </div>
+      </form>
+    </div>
   );
+    
 };
 
 export default EntrepreneurForm;

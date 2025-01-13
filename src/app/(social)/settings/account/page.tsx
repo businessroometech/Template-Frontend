@@ -7,9 +7,9 @@ const Account = () => {
   return (
     <>
       <PageMetaData title='Account Settings' />
-      <AccountSettings />
-      {/* <EntrepreneurForm/> */}
-      {/* {<InvestorForm/>} */}
+      {/*<AccountSettings /> */}
+     { /* <EntrepreneurForm/> */}
+       {<InvestorForm/>} 
       {/* <InvestorPreferences/> */}
     </>
   )

@@ -182,7 +182,7 @@ const navigate = useNavigate();
   return (
     <Card>
       <CardHeader>
-        <h5 className="card-title">Account Settings</h5>
+        <h5 className="card-title">Basic Profile</h5>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit(onSubmit)} className="row g-3">

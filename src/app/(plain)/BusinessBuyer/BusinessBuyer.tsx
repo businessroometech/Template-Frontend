@@ -675,8 +675,10 @@ import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaL
 import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 const BusinessBuyerForm = () => {
-const { id } = useContext(useAuthContext);
-  console.log(id)
+
+
+const {user } = useAuthContext()
+  console.log(user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     budget: '',
@@ -722,7 +724,7 @@ const { id } = useContext(useAuthContext);
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData , id),
+        body: JSON.stringify(formData , user?.id),
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);

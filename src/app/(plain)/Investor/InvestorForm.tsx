@@ -772,7 +772,8 @@ import { useAuthContext } from '@/context/useAuthContext';
 
 const InvestorForm = () => {
 
-  const { id } = useContext(useAuthContext);
+  const { user } = useAuthContext();
+  console.log(user?.id)
 
 
   const navigate = useNavigate();
@@ -814,7 +815,7 @@ const InvestorForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData , id) 
+        body: JSON.stringify(formData , user?.id) 
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);
@@ -835,7 +836,7 @@ const InvestorForm = () => {
     <Card className="mb-4 shadow-sm">
       <Card.Header className="bg-primary text-white">
         <h5 className="fs-4">
-          <FaUserTie className="me-2" style={{ color: "#757885" }} />
+          <FaUserTie className="me-2" style={{ color: "" }} />
           Investor Identity
         </h5>
       </Card.Header>
@@ -1390,7 +1391,8 @@ const InvestorForm = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Investor Form</h2>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Investor  Form</h2>
+
       {/* Step navigation links */}
       <div className="d-flex justify-content-center mb-4">
         {stepTitles.map((title, index) => (
@@ -1409,31 +1411,40 @@ const InvestorForm = () => {
         {renderStep()}
 
         <div className="d-flex justify-content-between mt-4">
-          {step > 1 && (
-            <button type="button" className="btn btn-secondary" onClick={prevStep}>
-              Previous
-            </button>
-          )}
-          {step < 5 && (
-            <button type="button" className="btn btn-primary" onClick={nextStep}>
-              Next
-            </button>
-          )}
-          {step === 5 && (
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
-          )}
-          <button type="button" className="btn btn-danger" onClick={handleSkip}>
-            Skip
-          </button>
-        </div>
+  <div>
+    <button type="button" className="btn btn-danger" onClick={handleSkip}>
+      Skip
+    </button>
+  </div>
+  
+  <div>
+    {step > 1 && (
+      <button type="button" className="btn btn-secondary" onClick={prevStep}>
+        Previous
+      </button>
+    )}
+    {step < 5 && (
+      <button type="button" className="btn btn-primary" onClick={nextStep}>
+        Next
+      </button>
+    )}
+    {step === 5 && (
+      <button type="submit" className="btn btn-primary">
+        Submit
+      </button>
+    )}
+  </div>
+</div>
+
       </form>
     </div>
   );
 };
 
 export default InvestorForm;
+
+
+
 
 
 

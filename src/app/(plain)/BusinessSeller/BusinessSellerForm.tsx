@@ -383,7 +383,8 @@ import { useAuthContext } from '@/context/useAuthContext';
 
 const BusinessBuyerForm = () => {
 
-  const { id } = useContext(useAuthContext);
+  const { user} = useAuthContext();
+  console.log(user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     sellerName: '',
@@ -436,7 +437,7 @@ const BusinessBuyerForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData , id),
+        body: JSON.stringify(formData , user?.id),
       }).then(() => navigate('/'));
       console.log(formData)
     } catch (error) {
