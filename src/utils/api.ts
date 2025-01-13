@@ -38,3 +38,4 @@ export const BASE_URL = 'https://app-backend-8r74.onrender.com/'
 export const RENDER_URL = 'https://app-backend-8r74.onrender.com/'
 export const LIVE_URL = RENDER_URL;
 export const IS_RENDER_URL = false;
+export const CREATE_REPLY_URL = LIVE_URL + '/api/v1/post/'

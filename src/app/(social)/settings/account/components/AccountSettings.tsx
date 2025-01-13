@@ -97,17 +97,17 @@ const navigate = useNavigate();
           emailAddress: data.email,
           bio: data.bio,
           gender: data.gender,
-          preferredLanguage: data.preferredLanguage,
-          socialMediaProfile: data.socialMediaProfile,
+          // preferredLanguage: data.preferredLanguage,
+          // socialMediaProfile: data.socialMediaProfile,
           bodyMeasurement: "38-32-40",
 
-          permanentAddress: {
-            addressLine1: data.permanentAddress.addressLine1,
-            addressLine2: "Apt 4B",
-            city: data?.permanentAddress?.city || "unknown",
-            state: data?.permanentAddress?.state,
-            pincode: data?.permanentAddress?.pincode,
-          },
+          // permanentAddress: {
+          //   addressLine1: data.permanentAddress.addressLine1,
+          //   addressLine2: "Apt 4B",
+          //   city: data?.permanentAddress?.city || "unknown",
+          //   state: data?.permanentAddress?.state,
+          //   pincode: data?.permanentAddress?.pincode,
+          // },
           // currentAddress: {
           //   addressLine1: data?.currentAddress?.addressLine1,
           //   addressLine2: "Apt 4B",
