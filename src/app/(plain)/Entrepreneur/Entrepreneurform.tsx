@@ -8,10 +8,6 @@ import { useAuthContext } from '@/context/useAuthContext';
 import {ToastContainer , toast} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 const EntrepreneurForm = () => {
-
-
-  const { user } = useAuthContext()
-  console.log(user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
