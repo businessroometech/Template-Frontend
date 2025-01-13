@@ -22,6 +22,7 @@ interface toSendSignUp {
   password : string;
   country : string;
   userRole : string;
+  dob : string;
 }
 
 const useSignUp = () => {
@@ -55,7 +56,8 @@ const useSignUp = () => {
       emailAddress : formData.email,
       password : formData.firstPassword,
       country : formData.country,
-      userRole : getRole(formData.role)
+      userRole : getRole(formData.role),
+      dob :  formData.dob,
     }
     console.log('---data---',data)
     try {
