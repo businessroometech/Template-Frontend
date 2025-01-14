@@ -12,7 +12,7 @@ const LoadMoreButton = () => {
       className={clsx('btn-loader', { active: isLoadButton })}
       data-bs-toggle="button"
       aria-pressed="true">
-      <span className="load-text"> Load more connections</span>
+      <span className="load-text"> Load more</span>
       <div className="load-icon">
         <div className="spinner-grow spinner-grow-sm" role="status">
           <span className="visually-hidden">Loading...</span>

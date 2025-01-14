@@ -500,7 +500,7 @@ const Post3 = () => {
 // poll
 const Feeds = (isCreated: boolean) => {
  
-   const { user } = useAuthContext();
+  const { user } = useAuthContext();
  
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state

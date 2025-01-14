@@ -523,7 +523,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   </ul>
                 </CardFooter>
               </Card>
-              {/* <Suspense fallback={<FallbackLoading />}>{children}</Suspense> */}
+              {<Suspense fallback={<FallbackLoading />}>{children}</Suspense>}
             </Col>
 
             {/* Sidebar Section */}

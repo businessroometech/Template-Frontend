@@ -117,7 +117,7 @@ const ProfileDropdown = () => {
           </div>
           <Button
       className="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
-      onClick={() => navigation.navigate('/profile/feed', { userId: user?.id })}
+      onClick={() => navigation.navigate(`/profile/feed/${user?.id}`)}
     >
       View Profile
     </Button>
