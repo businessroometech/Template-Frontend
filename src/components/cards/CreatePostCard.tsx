@@ -231,27 +231,34 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const handleVideoSubmit = async () => {
     try {
       // Wait for handleUpload to complete before proceeding
-      const uploadSuccess = await handleUpload()
+      const uploadSuccess = await handleUpload();
+      console.log('video upload success',uploadSuccess);
 
       if (uploadSuccess) {
         // Regular expression to match hashtags
         const hashtagRegex = /#\w+/g
         const hashtags = videoQuote.match(hashtagRegex) || []
-
+        console.log('hashtags match',hashtags);
+        console.log('---videoupload----',videoQuote)
+        console.log('---upload success---',uploadSuccess)
         // Making the API request
+        const data = {
+          userId: user?.id,
+          content: videoQuote,
+          hashtags: hashtags,
+          mediaKeys: uploadSuccess || [],
+        }
+        console.log('video request data',data);
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
           url: CREATE_POST,
-          data: {
-            userId: user?.id,
-            content: videoQuote,
-            hashtags: hashtags,
-            mediaIds: uploadSuccess || [],
-          },
+          data: data
         })
 
         if (response.data) {
           setThoughts('') // Reset thoughts after successful post
+          toggleVideoModel();
+          setTimeout(() => {setIsCreated(true);}, 1000);
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -281,8 +288,8 @@ return
 
   return (
     <>
-      {show && modelTime && <>
-        {/* <div className="modal-body w-100 " >
+      {/* {show && modelTime &&
+        <div className="modal-body w-100 " >
           <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
@@ -297,17 +304,17 @@ return
               </div>
             </div>
           </div>
-        </div> */}
-        </>
-        }
+        </div>} */}
 
       <Card className="card-body">
         <div className="d-flex mb-3">
-          <div className="avatar avatar-xs me-2">
-            <span role="button">
-              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
-            </span>
-          </div>
+          <Link to={(`/profile/feed/${user?.id}`)}>
+            <div className="avatar avatar-xs me-2">
+              <span role="button">
+                <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
+              </span>
+            </div>
+          </Link>
 
           <form
             className="w-100"

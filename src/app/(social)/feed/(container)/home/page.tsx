@@ -51,7 +51,8 @@ const Home = () => {
   return (
     <>
       <Col md={8} lg={6} className="vstack gap-4">
-        <Stories />
+      <CreatePostCard setIsCreated={setIsCreated} />
+        {/* <Stories /> */}
         <div className="d-flex justify-content-between gap-3 px-1 py-2">
           <Button
             variant="primary"
@@ -100,7 +101,7 @@ const Home = () => {
           onHide={() => setShowModal(false)}
           onSelectRole={handleRoleSelect}
         />
-        <CreatePostCard setIsCreated={setIsCreated} />
+       
         <Feeds isCreated={isCreated} />
       </Col>
 

@@ -26,6 +26,11 @@ import PostCard from '@/components/cards/PostCard'
 import { getAllFeeds } from '@/helpers/data'
 import { Link } from 'react-router-dom'
 import { useFetchData } from '@/hooks/useFetchData'
+import LoadMoreButton from '../../connections/components/LoadMoreButton'
+import { useEffect, useRef, useState } from 'react'
+import makeApiRequest from '@/utils/apiServer'
+import { useAuthContext } from '@/context/useAuthContext'
+import useToggle from '@/hooks/useToggle'
 
 const ActionMenu = ({ name }: { name?: string }) => {
   return (
@@ -78,142 +83,147 @@ const ActionMenu = ({ name }: { name?: string }) => {
   )
 }
 
-const Posts =  () => {
-  const allPosts = useFetchData(getAllFeeds)
+const Posts =  ({isCreated}) => {
+  const { user } = useAuthContext();
+ 
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState<boolean>(false) // Loading state
+  const [error, setError] = useState<string | null>(null) // Error state
+  const hasMounted = useRef(false) // Track whether the component has mounted
+  const [limit,setLimit] = useState<number>(5);
+  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  // onDelete= async () => {
+        
+  //   try {
+  //     const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
+  //       },
+  //       body: JSON.stringify({
+  //         userId: user?.id,
+  //         PostId: post.post?.Id,
+  //       }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log(tlRefresh) // Assuming the response is JSON
+  //     setTlRefresh(tlRefresh+1 || 1);
+  //     console.log(tlRefresh)
+  //     console.log(data);
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   } catch (error: any) {
+  //     console.error('Error Deleting post:', error.message);
+  //   } finally {
+  //     console.log('call done')
+  //   }
+  // }
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+    try {      
+      const res = await makeApiRequest<{ data: any[] }>({
+        method: 'POST',
+        url: 'api/v1/post/get-userpost-byUserId',
+        data: { userId: user?.id, page : 1,limit : limit},
+      })
+
+      console.log('Fetched Posts:', res)
+      setPosts(res.data.posts || [])
+    } catch (error: any) {
+      console.error(JSON.stringify(error))
+      setError("This User have no Posts")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    // If the component has mounted already, only fetch posts if `isCreated` is true
+    if (hasMounted.current) {
+      if (isCreated) {
+        fetchPosts()
+      }
+    } else {
+      // If it's the first mount, fetch posts
+      fetchPosts()
+      hasMounted.current = true // Set to true after the first call
+    }
+  }, [isCreated])
+
+  const postData = [
+    { progress: 25, title: 'We have cybersecurity insurance coverage' },
+    { progress: 15, title: 'Our dedicated staff will protect us' },
+    { progress: 10, title: 'We give regular training for best practices' },
+    { progress: 55, title: 'Third-party vendor protection' },
+  ]
+
+  // Conditional rendering
+  if (loading) {
+    return <div>Loading posts...</div> // Show a loading spinner or message
+  }
+
+  if (error) {
+    return <div>Error: {error}</div> // Show an error message
+  }
+
   return (
     <>
-      {allPosts?.slice(0, 1).map((post, idx) => (
-        <PostCard {...post} key={idx} />
-      ))}
-      <Card>
-        <div className="border-bottom">
-          <p className="small mb-0 px-4 py-2">
-            <BsHeartFill className="text-danger pe-1" size={18} />
-            Sam Lanson likes this post
-          </p>
-        </div>
-        <CardHeader className="border-0 pb-0">
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <div className="avatar me-2">
-                <span role="button">
-                  
-                  <img className="avatar-img rounded-circle" src={logo13} alt="image" />
-                </span>
-              </div>
-              <div>
-                <h6 className="card-title mb-0">
-                  
-                  <Link to=""> Apple Education </Link>
-                </h6>
-                <p className="mb-0 small">9 November at 23:29</p>
-              </div>
-            </div>
-            <ActionMenu />
-          </div>
-        </CardHeader>
-        <CardBody className="pb-0">
-          <p>
-            Find out how you can save time in the classroom this year. Earn recognition while you learn new skills on iPad and Mac. Start recognition
-            your first Apple Teacher badge today!
-          </p>
-          <ul className="nav nav-stack pb-2 small">
-            <li className="nav-item">
-              <Link className="nav-link active text-secondary " to="">
-                
-                <span className="icon-xs bg-danger text-white rounded-circle me-1">
-                  <BsHeartFill size={8} />
-                </span>
-                Louis, Billy and 126 others
-              </Link>
-            </li>
-            <li className="nav-item ms-sm-auto">
-              <Link className="nav-link" to="">
-                
-                <BsChatFill className="pe-1" size={18} />
-                Comments (12)
-              </Link>
-            </li>
-          </ul>
-        </CardBody>
-        <CardFooter className="py-3">
-          <ul className="nav nav-fill nav-stack small">
-            <li className="nav-item">
-              <Link className="nav-link mb-0 active" to="">
-                
-                <BsHeart size={18} className="pe-1" />
-                Liked (56)
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link mb-0" to="">
-                
-                <BsChatFill size={18} className="pe-1" />
-                Comments (12)
-              </Link>
-            </li>
-            <Dropdown className="nav-item">
-              <DropdownToggle
-                as="a"
-                className="nav-link mb-0 content-none cursor-pointer"
-                id="cardShareAction"
-                data-bs-toggle="dropdown"
-                aria-expanded="false">
-                <BsReplyFill size={17} className="flip-horizontal ps-1" />
-                Share (3)
-              </DropdownToggle>
+      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
 
-              <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction">
-                <li>
-                  <DropdownItem>
-                    
-                    <BsEnvelope size={22} className="fa-fw pe-2" />
-                    Send via Direct Message
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem>
-                    
-                    <BsBookmarkCheck size={22} className="fa-fw pe-2" />
-                    Bookmark
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem>
-                    
-                    <BsLink size={22} className="fa-fw pe-2" />
-                    Copy link to post
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem>
-                    
-                    <BsShare size={22} className="fa-fw pe-2" />
-                    Share post via …
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownDivider />
-                </li>
-                <li>
-                  <DropdownItem>
-                    
-                    <BsPencilSquare size={22} className="fa-fw pe-2" />
-                    Share to News Feed
-                  </DropdownItem>
-                </li>
-              </DropdownMenu>
-            </Dropdown>
-            <li className="nav-item">
-              <Link className="nav-link mb-0" to="">
-                
-                <BsSendFill size={17} className="pe-1" />
-                Send
-              </Link>
-            </li>
-          </ul>
-        </CardFooter>
-      </Card>
+      {/* <SponsoredCard /> */}
+      {/* <Post2 /> */}
+      {/* <People /> */}
+      {/* <CommonPost>
+        <div className="vstack gap-2">
+          {postData.map((item, idx) => (
+            <div key={idx}>
+              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
+              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
+                {item.title}
+              </label>
+            </div>
+          ))}
+        </div>
+      </CommonPost> */}
+
+      {/* <CommonPost>
+        <Card className="card-body mt-4">
+          <div className="d-sm-flex justify-content-sm-between align-items-center">
+            <span className="small">16/20 responded</span>
+            <span className="small">Results not visible to participants</span>
+          </div>
+          <div className="vstack gap-4 gap-sm-3 mt-3">
+            {postData.map((item, idx) => (
+              <div className="d-flex align-items-center justify-content-between" key={idx}>
+                <div className="overflow-hidden w-100 me-3">
+                  <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>
+                    <div
+                      className="progress-bar bg-primary bg-opacity-25"
+                      role="progressbar"
+                      style={{ width: `${item.progress}%` }}
+                      aria-valuenow={item.progress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}></div>
+                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.userRole}</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">{item.progress}%</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </CommonPost> */}
+
+      {/* <Post3 /> */}
+      {/* <SuggestedStories /> */}
+      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
     </>
   )
 }

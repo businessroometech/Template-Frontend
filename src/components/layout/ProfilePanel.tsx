@@ -5,7 +5,7 @@ import { Card, CardBody, CardFooter } from 'react-bootstrap'
 
 import avatar7 from '@/assets/images/avatar/07.jpg'
 import bgBannerImg from '@/assets/images/bg/01.jpg'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import { Globe, Map, MapPin } from 'lucide-react'
@@ -19,6 +19,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const {user} = useAuthContext();
     const [profile, setProfile] = useState({});
     const {theme} = useLayoutContext();
+    const navigate = useNavigate();
     const isDarkMode = theme === 'dark';
     console.log('----theme----',theme);
 
@@ -78,15 +79,19 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
 
         <CardBody className="pt-0">
           <div className="text-center">
-            <div className="avatar avatar-lg mt-n5 mb-3">
-              <span role="button">
-                <img height={64} width={64} src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" className="avatar-img rounded border border-white border-3" />
-              </span>
-            </div>
+            
+
+            <Link to={(`/profile/feed/${user?.id}`)}>
+              <div className="avatar avatar-lg mt-n5 mb-3">
+                <span role="button">
+                  <img height={64} width={64} src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" className="avatar-img rounded border border-white border-3" />
+                </span>
+              </div>
+            </Link>
 
             <h5 className="mb-2 fw-semibold">
-              <Link
-                to=""
+              <Link 
+                to={(`/profile/feed/${user?.id}`)}
                 className={`${isDarkMode ? 'text-light' : 'text-dark'} text-decoration-none`}
               >
                 {profile.personalDetails?.firstName || user?.firstName}{' '}
@@ -94,17 +99,16 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               </Link>
             </h5>
             
-            
+            <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
             <div className={`d-flex align-items-center justify-content-center gap-2 pb-3 ${isDarkMode ? 'text-light' : 'text-dark'} mb-2`}>
-              <p className={`fs-6 mx-1 mb-0 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.userRole}</p>
-              <MapPin size={16} className="ml-2" style={{ color: '#87CEEB' }} />
               <span className={`fs-6 ${isDarkMode ? 'text-light' : 'text-dark'}`}>{user?.country}</span>
             </div>
             {/* <p className="text-dark fs-6 mt-3 mb-0">
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
             </p> */}
 
-            <div className="hstack gap-2 gap-xl-3 justify-content-center">
+            {
+              profile.postsCount && profile.connectionsCount &&  profile.likeCount ? <div className="hstack gap-2 gap-xl-3 justify-content-center">
               <div>
                 <h6 className="mb-0">{profile.postsCount}</h6>
                 <small>Posts</small>
@@ -119,7 +123,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                 <h6 className="mb-0">{profile.likeCount}</h6>
                 <small>Likes</small>
               </div>
-            </div>
+            </div> : null
+            }
           </div>
 
           <hr />

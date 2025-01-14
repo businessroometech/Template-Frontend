@@ -1,0 +1,20 @@
+.react-datepicker-wrapper {
+    width: 100%;
+  }
+  
+  /* Style the input container to match your form-control */
+  .react-datepicker__input-container input {
+    width: 100%;          /* Matches the width of your input */
+    height: 50px;         /* Adjust height if necessary */
+    padding: 0.5rem 1rem; /* Same padding as your input-group-lg */
+    font-size: 1rem;      /* Same font size */
+    border: 1px solid #ccc; /* Same border as your input */
+    border-radius: 0.375rem; /* Match border-radius */
+    outline: none;        /* Remove input focus outline */
+  }
+  
+  /* Add hover and focus effects to match your inputs */
+  .react-datepicker__input-container input:focus {
+    border-color: #007bff; /* Change border color on focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Optional shadow */
+  }

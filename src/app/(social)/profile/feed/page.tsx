@@ -6,7 +6,7 @@ const Feed = () => {
   return (
     <>
     <PageMetaData title='Feed'/>
-      <CreatePostCard />
+      {/* <CreatePostCard /> */}
       <Posts />
     </>
   )

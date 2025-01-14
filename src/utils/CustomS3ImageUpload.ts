@@ -12,22 +12,67 @@ interface FileUpload {
   fileSize: number
 }
 
+interface VideoUpload {
+  key: string;
+  fileType: string; // e.g., 'video/mp4'
+  fileObject: string; // Base64 encoded file content
+  videoTitle: string;
+  videoDescription: string;
+  fileSize: number; // File size in bytes
+}
+
 interface ApiResponse<T> {
   status: number
   data: T
 }
 
-// Function to convert base64 string to a Blob
-function base64ToBlob(base64: string, contentType: string): Blob {
-  const byteCharacters = atob(base64) // Decode base64 string to binary
-  const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i))
-  const byteArray = new Uint8Array(byteNumbers)
-  return new Blob([byteArray], { type: contentType })
+
+function base64ToBlob(base64, contentType) {
+  try {
+      // Remove the data URL header if present
+      const base64WithoutHeader = base64.replace(/^data:.*;base64,/, '');
+
+      // Add padding if necessary
+      const addPadding = (str) => str.padEnd(str.length + (4 - (str.length % 4)) % 4, '=');
+      const paddedBase64 = addPadding(base64WithoutHeader);
+
+      // Validate the Base64 string
+      const isValidBase64 = (str) => {
+          try {
+              return btoa(atob(str)) === str;
+          } catch (err) {
+              return false;
+          }
+      };
+
+      if (!isValidBase64(paddedBase64)) {
+          throw new Error('Invalid base64 string');
+      }
+
+      // Decode Base64 string
+      const byteCharacters = atob(paddedBase64);
+      const byteNumbers = Array.from(byteCharacters, (char) => char.charCodeAt(0));
+      const byteArray = new Uint8Array(byteNumbers);
+
+      // Create a Blob object
+      return new Blob([byteArray], { type: contentType });
+  } catch (error) {
+      console.error('Error converting base64 to Blob:', error.message);
+      throw new Error('Invalid base64 string or decoding failed.');
+  }
 }
+
+// Function to convert base64 string to a Blob
+// function base64ToBlob(base64: string, contentType: string): Blob {
+//   const byteCharacters = atob(base64) // Decode base64 string to binary
+//   const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i))
+//   const byteArray = new Uint8Array(byteNumbers)
+//   return new Blob([byteArray], { type: contentType })
+// }
 
 // Upload function to handle file uploads to S3
 export const uploadDoc = async (file: FileUpload, userId: string): Promise<string[] | null> => {
-  const doc = file[0]
+  const doc = file[0];
 
   console.log('---- doc -------', doc)
 

@@ -670,14 +670,18 @@ bUSINESS sELLER ENDS HERE
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from 'react-bootstrap';
+import { ButtonGroup, Card } from 'react-bootstrap';
 import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaLightbulb, FaBriefcase, FaDollarSign, FaHandshake, FaCalendarAlt, FaQuestionCircle, FaBuilding, FaUsers, FaClipboardList } from 'react-icons/fa';
 import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
+import {ToastContainer , toast} from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
+
 const BusinessBuyerForm = () => {
-  const { user } = useAuthContext();
-  const id = user?.id;
-  console.log(id)
+
+
+const {user } = useAuthContext()
+  console.log(user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     budget: '',
@@ -717,13 +721,14 @@ const BusinessBuyerForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+   toast.success("Form submitted successfully!");
     try {
       fetch('https://app-backend-8r74.onrender.com/business-buyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData , id),
+        body: JSON.stringify(formData , user?.id),
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);
@@ -741,12 +746,14 @@ const BusinessBuyerForm = () => {
   const renderStep = () => {
     const renderFormFields = (fields) => (
       <Card className="mb-4 shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="fs-4">
-            {sections[step].icon} {sections[step].title}
-          </h5>
-        </Card.Header>
+       <Card.Header className="bg-transparent text-white">
+  <h5 className="fs-4">
+    {sections[step].icon} {sections[step].title}
+  </h5>
+</Card.Header>
+
         <Card.Body>
+          <ToastContainer></ToastContainer>
           {fields.map((field, index) => (
             <div className="mb-3" key={index}>
               <label htmlFor={field.id} className="form-label">
@@ -871,26 +878,36 @@ const BusinessBuyerForm = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Business Acquirer</h2>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Business Acquirer</h2>
+
       <div className="d-flex justify-content-center mb-4">
-        {sections.map((section, index) => (
-          <button
-            key={index}
-            type="button"
-            className={`btn mx-2 ${step === index ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setCurrentSection(index)}
-          >
-            {section.icon} {section.title}
-          </button>
-        ))}
-      </div>
+  {sections.map((section, index) => (
+    <button
+      key={index}
+      type="button"
+      className="btn mx-2"
+      style={{
+        backgroundColor: step === index ? '#1ea1f2' : 'transparent',
+        borderColor: '#1ea1f2',
+        color: step === index ? 'white' : '#1ea1f2'
+      }}
+      onClick={() => setCurrentSection(index)}
+    >
+      {section.icon} {section.title}
+    </button>
+  ))}
+</div>
+
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
         <div className="d-flex justify-content-between mt-4">
+        <button type="button" className="btn btn-secondary btn-danger" onClick={handleSkip}>Skip</button>
+        <ButtonGroup>
           {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
           {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+          
           {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
-          <button type="button" className="btn btn-secondary" onClick={handleSkip}>Skip</button>
+          </ButtonGroup>
         </div>
       </form>
     </div>

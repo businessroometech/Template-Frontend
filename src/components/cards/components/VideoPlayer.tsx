@@ -1,16 +1,15 @@
 import Plyr from 'plyr-react'
 import 'plyr-react/plyr.css'
 
-const VideoPlayer = () => {
+const VideoPlayer = ({src}) => {
   return (
-    <div className="overflow-hidden fullscreen-video w-100">
+    <div className="overflow-hidden fullscreen-video w-100 mb-3">
       <Plyr
         crossOrigin="anonymous"
         controls
         source={{
           type: 'video',
-          poster: '/videos/poster.jpg',
-          sources: [{ src: '/videos/video-feed.mp4' }],
+          sources: [{ src: src }],
         }}
       />
     </div>

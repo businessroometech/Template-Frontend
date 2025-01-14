@@ -1,67 +1,83 @@
-import { useState } from 'react';
-import { ChevronDown, ChevronUp, ThumbsUp, MessageSquare } from 'lucide-react';
-import fallbackAvatar from '../../../assets/images/avatar/03.jpg'; // Import the fallback avatar
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
+import { BsSendFill } from 'react-icons/bs';
+import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
+import axios from 'axios';
 
-type CommentType = {
-  id: string;
-  userId: string;
-  postId: string;
-  text: string;
-  commenterName: string;
-  timestamp: string;
-  createdBy: string;
-  updatedBy: string;
-  createdAt: string;
-  updatedAt: string;
-  avatar?: string;
-  likesCount?: number;
-  replies?: CommentType[];
-};
-
-type CommentItemProps = {
-  comment: CommentType;
-  level : number;
-};
-
-const CommentItem = ({ comment,level }: CommentItemProps,) => {
+const CommentItem = ({ comment, level }: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
-  console.log('-----comment------',comment);
-  console.log('-----show replies------',showReplies);
-  comment.replies = [comment,comment,comment];
+  const [reply, setReply] = useState(false);
+  const [commentText, setCommentText] = useState('');
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (commentText.trim()) {
+      console.log('New reply:', commentText);
+      const data = axios.post('')
+      setCommentText('');
+      setReply(false);
+    }
+  };
+
   return (
     <li className="comment-item">
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <img
-          src={comment.avatar || fallbackAvatar} // Use the fallback image if avatar is not provided
-          alt={`${comment.commenterName || comment.createdBy}-avatar`} // Corrected interpolation
+          src={comment.avatar || fallBackAvatar}
+          alt={`${comment.commenterName || comment.createdBy}-avatar`}
           className="rounded-circle me-3"
-          style={{ width: '35px', height: '35px', objectFit: 'cover' }} // Reduced size by 80%
+          style={{ width: '35px', height: '35px', objectFit: 'cover' }}
         />
 
         {/* Comment Content */}
-        <div className="bg-light rounded p-3 flex-grow-1">
+        <div
+          className="bg-light rounded p-3 flex-grow-1"
+          style={{
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            wordBreak: 'break-word',
+            maxWidth: '100%',
+          }}
+        >
           <div className="d-flex justify-content-between">
-            <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
+            <Link to={`/profile/feed/${comment?.id}`}>
+              <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
+            </Link>
             <small className="ms-2">{comment.timestamp}</small>
           </div>
-          <p className="small mb-2">{comment.text}</p>
+
+          <p
+            className="small mb-2"
+            style={{
+              whiteSpace: 'pre-wrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {comment.text}
+          </p>
 
           {/* Actions */}
           <div className="d-flex align-items-center gap-3 small">
             <span role="button" className="text-primary d-flex align-items-center">
-              <ThumbsUp size={16} className="me-1" /> Like 
+              <ThumbsUp size={16} className="me-1" /> Like
             </span>
-            <span role="button" className="text-primary d-flex align-items-center">
-              <MessageSquare size={16} className="me-1" />{"Reply"} 
+            <span
+              role="button"
+              className="text-primary d-flex align-items-center"
+              onClick={() => setReply((prev) => !prev)}
+            >
+              <MessageSquare size={16} className="me-1" /> Reply
             </span>
-            {comment.replies && comment.replies.length > 0 &&  level < 1 &&(
+            {comment.replies && comment.replies.length > 0 && level < 1 && (
               <span
                 role="button"
                 className="text-secondary d-flex align-items-center"
                 onClick={() => setShowReplies((prev) => !prev)}
               >
-                {showReplies  ? (
+                {showReplies ? (
                   <>
                     <ChevronUp size={16} className="me-1" /> Hide Replies
                   </>
@@ -76,11 +92,70 @@ const CommentItem = ({ comment,level }: CommentItemProps,) => {
         </div>
       </div>
 
+      {/* Reply Input Box */}
+      {reply && (
+        <div className="d-flex mb-4 px-3">
+          <div className="avatar avatar-xs me-3">
+            <Link to={`/profile/feed/${comment.commenterId}`}>
+              <span role="button">
+                <img
+                  className="avatar-img rounded-circle"
+                  style={{ width: '35px', height: '35px', objectFit: 'cover' }}
+                  src={comment.avatar || fallBackAvatar}
+                  alt="avatar"
+                />
+              </span>
+            </Link>
+          </div>
+          <form
+            className="nav nav-item w-100 d-flex align-items-center"
+            onSubmit={handleCommentSubmit}
+            style={{ gap: '10px' }}
+          >
+            <textarea
+              data-autoresize
+              className="form-control bg-light"
+              style={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                textAlign: 'left',
+                resize: 'none',
+                height: '38px',
+                flex: 1,
+              }}
+              rows={1}
+              placeholder="Add a reply..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+            <button
+              className="btn border-0 d-flex align-items-center justify-content-center"
+              type="submit"
+              style={{
+                width: '45px', // Increased size for better visibility
+                height: '40px', // Increased size for better visibility
+                backgroundColor: '#007bff', // Blue background
+                borderRadius: '20%', // Circular button
+                cursor: 'pointer',
+              }}
+            >
+              <BsSendFill 
+                style={{ 
+                  color: '#fff', 
+                  fontSize:'20px' // Larger icon size for better visibility
+                }} 
+              />
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Nested Replies */}
       {showReplies && comment.replies && comment.replies.length > 0 && (
         <ul className="list-unstyled ms-5">
-          {comment.replies.map((reply) => (
-            <CommentItem key={reply.id} comment={reply} level={level + 1} />
+          {comment.replies.map((reply, idx) => (
+            <CommentItem key={idx} comment={reply} level={level + 1} />
           ))}
         </ul>
       )}

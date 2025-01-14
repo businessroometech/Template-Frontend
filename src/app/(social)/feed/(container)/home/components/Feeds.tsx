@@ -47,6 +47,7 @@ import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import useToggle from '@/hooks/useToggle'
 
 // ----------------- data type --------------------
 interface Post {
@@ -507,6 +508,8 @@ const Feeds = (isCreated: boolean) => {
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
   const [tlRefresh, setTlRefresh] = useState<number>();
+  const [limit,setLimit] = useState<number>(5);
+  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -515,7 +518,7 @@ const Feeds = (isCreated: boolean) => {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page : 1},
+        data: { userId: user?.id, page : 1,limit : limit},
       })
 
       console.log('Fetched Posts:', res)
@@ -525,11 +528,13 @@ const Feeds = (isCreated: boolean) => {
       setError(error.message || 'An unknown error occurred')
     } finally {
       setLoading(false)
+      setFalse();
     }
   }
 
   useEffect(() => {
     // If the component has mounted already, only fetch posts if `isCreated` is true
+    setTrue();
     if (hasMounted.current) {
       if (isCreated) {
         fetchPosts()
@@ -539,7 +544,7 @@ const Feeds = (isCreated: boolean) => {
       fetchPosts()
       hasMounted.current = true // Set to true after the first call
     }
-  }, [isCreated])
+  }, [limit,isCreated])
 
   const postData = [
     { progress: 25, title: 'We have cybersecurity insurance coverage' },
@@ -591,10 +596,10 @@ const Feeds = (isCreated: boolean) => {
   }
 }}/>) : <p>No posts found.</p>}</div>
 
-      <SponsoredCard />
-      <Post2 />
-      <People />
-      <CommonPost>
+      {/* <SponsoredCard /> */}
+      {/* <Post2 /> */}
+      {/* <People /> */}
+      {/* <CommonPost>
         <div className="vstack gap-2">
           {postData.map((item, idx) => (
             <div key={idx}>
@@ -605,9 +610,9 @@ const Feeds = (isCreated: boolean) => {
             </div>
           ))}
         </div>
-      </CommonPost>
+      </CommonPost> */}
 
-      <CommonPost>
+      {/* <CommonPost>
         <Card className="card-body mt-4">
           <div className="d-sm-flex justify-content-sm-between align-items-center">
             <span className="small">16/20 responded</span>
@@ -633,11 +638,11 @@ const Feeds = (isCreated: boolean) => {
             ))}
           </div>
         </Card>
-      </CommonPost>
+      </CommonPost> */}
 
       {/* <Post3 /> */}
-      <SuggestedStories />
-      <LoadMoreButton />
+      {/* <SuggestedStories /> */}
+      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
     </>
   )
 }

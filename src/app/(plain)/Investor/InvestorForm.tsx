@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 //InvestorForm
 /*
 import React, { useState } from 'react';
@@ -767,12 +768,12 @@ import { FaBalanceScale, FaCalendarAlt, FaExchangeAlt, FaListAlt, FaMapMarkerAlt
 import { FaBullhorn, FaBullseye, FaCertificate, FaChartLine, FaDollarSign, FaHandshake, FaHeadset, FaHourglassHalf, FaIndustry, FaMedal, FaRegHandPointUp, FaRocket, FaTag, FaUser, FaUsers, FaUserTie, FaWallet } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
-
+import {ToastContainer , Toast} from 'react-bootstrap';
 
 const InvestorForm = () => {
 
-  const { user } = useAuthContext();
-  const id = user?.id;
+  const { user } = useAuthContext()
+  console.log(user?.id)
 
 
   const navigate = useNavigate();
@@ -808,13 +809,14 @@ const InvestorForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+     toast.success("Form submitted successfully!");
     try {
       fetch('https://app-backend-8r74.onrender.com/investor/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData , id) 
+        body: JSON.stringify(formData , user?.id) 
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);
@@ -833,13 +835,15 @@ const InvestorForm = () => {
       case 1:
   return (
     <Card className="mb-4 shadow-sm">
-      <Card.Header className="bg-primary text-white">
-        <h5 className="fs-4">
-          <FaUserTie className="me-2" style={{ color: "#757885" }} />
-          Investor Identity
-        </h5>
-      </Card.Header>
+    <Card.Header className="bg-white text-black">
+  <h5 className="fs-4">
+    <FaUserTie className="me-2" style={{ color: "" }} />
+    Investor Preferences
+  </h5>
+</Card.Header>
+
       <Card.Body>
+        <ToastContainer></ToastContainer>
         <Form>
           {/* Accreditation Group */}
           <Row className="mb-3">
@@ -1042,12 +1046,13 @@ const InvestorForm = () => {
       case 2:
   return (
     <Card className="mb-4 shadow-sm">
-      <Card.Header className="bg-primary text-white">
-        <h5 className="fs-4">
-          <FaWallet className="me-2" style={{ color: "#757885" }} />
-          Investment Strategy
-        </h5>
-      </Card.Header>
+     <Card.Header className="bg-white text-black">
+  <h5 className="fs-4">
+    <FaUserTie className="me-2" style={{ color: "" }} />
+    Investor Stratergy
+  </h5>
+</Card.Header>
+
       <Card.Body>
         <Form>
           {/* Investment Type */}
@@ -1119,12 +1124,13 @@ const InvestorForm = () => {
       case 3:
     return (
       <Card className="mb-4 shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="fs-4">
-            <FaChartLine className="me-2" style={{ color: "#757885" }} />
-            Investment Experience
-          </h5>
-        </Card.Header>
+       <Card.Header className="bg-white text-black">
+  <h5 className="fs-4">
+    <FaUserTie className="me-2" style={{ color: "" }} />
+    Investment Experience
+  </h5>
+</Card.Header>
+
         <Card.Body>
           <Form>
             {/* Previous Investment */}
@@ -1225,12 +1231,13 @@ const InvestorForm = () => {
       case 4:
   return (
     <Card className="mb-4 shadow-sm">
-      <Card.Header className="bg-primary text-white">
-        <h5 className="fs-4">
-          <FaChartLine className="me-2" style={{ color: "#757885" }} />
-          Startup Requirements
-        </h5>
-      </Card.Header>
+      <Card.Header className="bg-white text-black">
+  <h5 className="fs-4">
+    <FaUserTie className="me-2" style={{ color: "" }} />
+    Startup Requirements
+  </h5>
+</Card.Header>
+
       <Card.Body>
         <Form>
           {/* Key Criteria */}
@@ -1342,12 +1349,13 @@ const InvestorForm = () => {
       case 5:
         return (
           <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-primary text-white">
-              <h5 className="fs-4">
-                <FaChartLine className="me-2" style={{ color: "#757885" }} />
-                Startup Requirements
-              </h5>
-            </Card.Header>
+            <Card.Header className="bg-white text-black">
+  <h5 className="fs-4">
+    <FaUserTie className="me-2" style={{ color: "" }} />
+    Investment Goals
+  </h5>
+</Card.Header>
+
             <Card.Body>
               <Form>
                 {/* Expected Involvement */}
@@ -1390,18 +1398,20 @@ const InvestorForm = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Investor Form</h2>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Investor  Form</h2>
+
       {/* Step navigation links */}
       <div className="d-flex justify-content-center mb-4">
         {stepTitles.map((title, index) => (
           <button
-            key={index}
-            type="button"
-            className={`btn mx-2 ${step === index + 1 ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setStep(index + 1)}
-          >
-            {title}
-          </button>
+          key={index}
+          type="button"
+          className="btn mx-2"
+          style={{ backgroundColor: step === index + 1 ? '#1ea1f2' : 'transparent', borderColor: '#1ea1f2', color: step === index + 1 ? 'white' : '#1ea1f2' }}
+          onClick={() => setStep(index + 1)}
+        >
+          {title}
+        </button>
         ))}
       </div>
 
@@ -1409,31 +1419,40 @@ const InvestorForm = () => {
         {renderStep()}
 
         <div className="d-flex justify-content-between mt-4">
-          {step > 1 && (
-            <button type="button" className="btn btn-secondary" onClick={prevStep}>
-              Previous
-            </button>
-          )}
-          {step < 5 && (
-            <button type="button" className="btn btn-primary" onClick={nextStep}>
-              Next
-            </button>
-          )}
-          {step === 5 && (
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
-          )}
-          <button type="button" className="btn btn-danger" onClick={handleSkip}>
-            Skip
-          </button>
-        </div>
+  <div>
+    <button type="button" className="btn btn-danger" onClick={handleSkip}>
+      Skip
+    </button>
+  </div>
+  
+  <div>
+    {step > 1 && (
+      <button type="button" className="btn btn-secondary" onClick={prevStep}>
+        Previous
+      </button>
+    )}
+    {step < 5 && (
+      <button type="button" className="btn btn-primary" onClick={nextStep}>
+        Next
+      </button>
+    )}
+    {step === 5 && (
+      <button type="submit" className="btn btn-primary">
+        Submit
+      </button>
+    )}
+  </div>
+</div>
+
       </form>
     </div>
   );
 };
 
 export default InvestorForm;
+
+
+
 
 
 

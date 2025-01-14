@@ -23,31 +23,23 @@ import { BsImages } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 
 const AccountSettings = () => {
-  
   const [profile, setProfile] = useState({});
   const schema = yup.object({
-    fName: yup.string().required('Please enter your first name'), 
-    lName: yup.string().required('Please enter your last name'), 
-    occupation: yup.string().required('Please enter your occupation'), 
-    dob: yup.date().required('Please enter your date of birth'), 
-    phoneNo: yup.string().required('Please enter your phone number'), 
-    email: yup.string().required('Please enter your email'), 
-    bio: yup.string().max(300, 'Character limit must be less than 300'), 
-    gender: yup.string().required('Please select your gender'), 
-    preferredLanguage: yup.string().required('Please select your preferred language'), 
-    socialMediaProfile: yup.string().url('Invalid URL format'), 
-    permanentAddress: yup.object({
-        addressLine1: yup.string().required('Please enter Address Line 1'), 
-        city: yup.string().required('Please enter your city'), 
-        state: yup.string().required('Please enter your state'), 
-        pincode: yup.string().required('Please enter your pincode'),
-    }),
+    fName: yup.string(), 
+    lName: yup.string(), 
+    occupation: yup.string(),
+    dob: yup.date(), 
+    phoneNo: yup.string(), 
+    email: yup.string(), 
+    bio: yup.string(), 
+    gender: yup.string(), 
+
 });
 
 const navigate = useNavigate();
 
   const { user } = useAuthContext();
-
+  console.log('---account settings---',user);
   
 
   const { control, handleSubmit } = useForm({
@@ -105,16 +97,17 @@ const navigate = useNavigate();
           emailAddress: data.email,
           bio: data.bio,
           gender: data.gender,
-          preferredLanguage: data.preferredLanguage,
-          socialMediaProfile: data.socialMediaProfile,
+          // preferredLanguage: data.preferredLanguage,
+          // socialMediaProfile: data.socialMediaProfile,
           bodyMeasurement: "38-32-40",
-          permanentAddress: {
-            addressLine1: data.permanentAddress.addressLine1,
-            addressLine2: "Apt 4B",
-            city: data?.permanentAddress?.city || "unknown",
-            state: data?.permanentAddress?.state,
-            pincode: data?.permanentAddress?.pincode,
-          },
+
+          // permanentAddress: {
+          //   addressLine1: data.permanentAddress.addressLine1,
+          //   addressLine2: "Apt 4B",
+          //   city: data?.permanentAddress?.city || "unknown",
+          //   state: data?.permanentAddress?.state,
+          //   pincode: data?.permanentAddress?.pincode,
+          // },
           // currentAddress: {
           //   addressLine1: data?.currentAddress?.addressLine1,
           //   addressLine2: "Apt 4B",
@@ -182,7 +175,7 @@ const navigate = useNavigate();
   return (
     <Card>
       <CardHeader>
-        <h5 className="card-title">Account Settings</h5>
+        <h5 className="card-title">Basic Profile</h5>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit(onSubmit)} className="row g-3">
@@ -210,9 +203,8 @@ const navigate = useNavigate();
           </div>
           <TextFormInput name="fName" label="First Name"  control={control} containerClassName="col-6" />
           <TextFormInput name="lName" label="Last Name" control={control} containerClassName="col-6" />
-          <TextFormInput name="occupation" label="Occupation" control={control} containerClassName="col-12" />
-          <TextFormInput name="gender" label="Gender" control={control} containerClassName="col-6" />
-          <TextFormInput name="preferredLanguage" label="Preferred Language" control={control} containerClassName="col-6" />
+          <TextFormInput name="occupation" label="Role" control={control} containerClassName="col-12" />
+          <TextFormInput name="gender" label="Gender" control={control} containerClassName="col-12" />
           <Col xs={12}>
             <label className="form-label">Date of Birth</label>
             <Controller
@@ -225,15 +217,14 @@ const navigate = useNavigate();
           </Col>
           <TextFormInput name="phoneNo" label="Phone Number" control={control} containerClassName="col-6" />
           <TextFormInput name="email" label="Email" control={control} containerClassName="col-6" />
-          <TextFormInput name="socialMediaProfile" label="Social Media Profile" control={control} containerClassName="col-12" />
           <TextAreaFormInput name="bio" label="Bio" rows={3} control={control} containerClassName="col-12" />
-          <Col xs={12}>
+          {/* <Col xs={12}>
             <h6> Address</h6>
             <TextFormInput name="permanentAddress.addressLine1" label="Address " control={control} containerClassName="col-12" />
             <TextFormInput name="permanentAddress.city" label="City" control={control} containerClassName="col-12" />
             <TextFormInput name="permanentAddress.state" label="State" control={control} containerClassName="col-12" />
             <TextFormInput name="permanentAddress.pincode" label="Pincode" control={control} containerClassName="col-12" />
-          </Col>
+          </Col> */}
           {/* <Col xs={12}>
             <h6>Current Address</h6>
             <TextFormInput name="currentAddress.addressLine1" label="Address Line 1" control={control} containerClassName="col-12" />

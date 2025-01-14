@@ -6,10 +6,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Button, FormCheck } from 'react-bootstrap'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import useSignUp from './useSignUp'
 import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
+import DatePicker from "react-datepicker";
+import "./datepicker.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 const SignUpForm = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -20,6 +23,7 @@ const SignUpForm = () => {
   const [country, setCountry] = useState<string>('');
   const [role,setRole] = useState<string>("");
   const [showModal,setShowModal] = useState<boolean>(false);
+  const [dob, setDob] = useState<string>('');
 
   const { signUp } = useSignUp();
   
@@ -30,6 +34,10 @@ const SignUpForm = () => {
     password: yup.string().required('Please enter your password'),
     confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Please enter your confirm password'),
     country: yup.string().required('Please select your country'),
+    dob: yup
+    .date()
+    .max(new Date(), 'Date of birth cannot be in the future')
+    .required('Please enter your date of birth'),
   });
 
   const { control, handleSubmit, getValues, watch } = useForm({
@@ -49,7 +57,8 @@ const SignUpForm = () => {
     setFirstName(getValues().firstName);
     setLastName(getValues().lastName);
     setCountry(getValues().country);
-  }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country')]);
+    setRole(getValues().dob);
+  }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country'),watch('dob')]);
 
 
   if (showModal) {
@@ -81,7 +90,7 @@ const SignUpForm = () => {
     <form
   className="mt-4"
   onSubmit={handleSubmit(async () => {
-    if(role.trim() === '') {
+    if(role  === '') {
       setShowModal(true);
       return;
     }
@@ -92,6 +101,7 @@ const SignUpForm = () => {
       firstPassword,
       confirmPassword,
       role,
+      dob, 
       country,
     });
   })}
@@ -105,6 +115,22 @@ const SignUpForm = () => {
       <div className="mb-3">
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
       </div>
+      <div className="mb-3">
+  <Controller
+    name="dob"
+    control={control}
+    render={({ field }) => (
+      <DatePicker
+        {...field}
+        placeholderText="Enter your date of birth"
+        className="form-control input-group-lg" // Ensures consistent styling
+        selected={field.value}
+        onChange={(date) => field.onChange(date)}
+      />
+    )}
+  />
+</div>
+
       <div className="mb-3">
         <TextFormInput
           name="country"
