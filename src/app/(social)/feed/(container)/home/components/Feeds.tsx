@@ -510,6 +510,7 @@ const Feeds = (isCreated: boolean) => {
   const [tlRefresh, setTlRefresh] = useState<number>();
   const [limit,setLimit] = useState<number>(5);
   const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  const [showLoad, setShowLoad] = useState(false)
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -531,6 +532,17 @@ const Feeds = (isCreated: boolean) => {
       setFalse();
     }
   }
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 3 * window.innerHeight / 100) {
+        setShowLoad(true)
+      }
+      
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     // If the component has mounted already, only fetch posts if `isCreated` is true
@@ -564,7 +576,11 @@ const Feeds = (isCreated: boolean) => {
 
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
+    {showLoad && <Button onClick={()=>{fetchPosts()
+      setShowLoad(false)
+    }} >Load more</Button>  }
+     
+      <div >{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
         
   try {
     const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {

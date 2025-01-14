@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap'
 
 const LoadMoreButton = ({limit,setLimit,isSpinning}) => {
   return (
-    <Button
+    <Button disabled
       onClick={() => {
         setLimit(limit+5);
         console.log('-----limit-------',limit);
@@ -15,7 +15,7 @@ const LoadMoreButton = ({limit,setLimit,isSpinning}) => {
       className={clsx('btn-loader', { active: isSpinning })}
       data-bs-toggle="button"
       aria-pressed="true">
-      <span className="load-text"> Load more </span>
+      <span className="load-text"> no more post  </span>
       <div className="load-icon">
         <div className="spinner-grow spinner-grow-sm" role="status">
           <span className="visually-hidden">Loading...</span>
