@@ -576,9 +576,9 @@ const Feeds = (isCreated: boolean) => {
 
   return (
     <>
-    {showLoad && <Button onClick={()=>{fetchPosts()
+    {/* {showLoad && <Button onClick={()=>{fetchPosts()
       setShowLoad(false)
-    }} >Load more</Button>  }
+    }} >Load more</Button>  } */}
      
       <div >{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
         
