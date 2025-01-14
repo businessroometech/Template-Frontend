@@ -30,6 +30,7 @@ import LoadMoreButton from '../../connections/components/LoadMoreButton'
 import { useEffect, useRef, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 import { useAuthContext } from '@/context/useAuthContext'
+import useToggle from '@/hooks/useToggle'
 
 const ActionMenu = ({ name }: { name?: string }) => {
   return (
@@ -89,7 +90,8 @@ const Posts =  ({isCreated}) => {
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
-
+  const [limit,setLimit] = useState<number>(5);
+  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
   // onDelete= async () => {
         
   //   try {
@@ -129,7 +131,7 @@ const Posts =  ({isCreated}) => {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-userpost-byUserId',
-        data: { userId: user?.id, page : 1},
+        data: { userId: user?.id, page : 1,limit : limit},
       })
 
       console.log('Fetched Posts:', res)
@@ -221,7 +223,7 @@ const Posts =  ({isCreated}) => {
 
       {/* <Post3 /> */}
       {/* <SuggestedStories /> */}
-      <LoadMoreButton />
+      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
     </>
   )
 }
