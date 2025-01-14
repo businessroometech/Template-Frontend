@@ -134,7 +134,7 @@ const Posts =  ({isCreated}) => {
         data: { userId: user?.id, page : 1,limit : limit},
       })
 
-      console.log('Fetched Posts:', res)
+      console.log('Fetched Posts of the user:', res)
       setPosts(res.data.posts || [])
     } catch (error: any) {
       console.error(JSON.stringify(error))
@@ -175,7 +175,7 @@ const Posts =  ({isCreated}) => {
 
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
+      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} isMediaKeys={true}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
