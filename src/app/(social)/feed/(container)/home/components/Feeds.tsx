@@ -1,649 +1,82 @@
-import { getAllFeeds } from '@/helpers/data'
+import { useEffect, useState } from "react";
+import LoadMoreButton from "./LoadMoreButton";
 
-import { useContext, useEffect, useRef, useState, type ReactNode } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Dropdown,
-  DropdownDivider,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-} from 'react-bootstrap'
-import {
-  BsBookmark,
-  BsBookmarkCheck,
-  BsChatFill,
-  BsEnvelope,
-  BsFlag,
-  BsHeart,
-  BsHeartFill,
-  BsInfoCircle,
-  BsLink,
-  BsPencilSquare,
-  BsPersonX,
-  BsReplyFill,
-  BsSendFill,
-  BsShare,
-  BsSlashCircle,
-  BsThreeDots,
-  BsXCircle,
-} from 'react-icons/bs'
-import People from './People'
+const ParentComponent = () => {
+  const [limit, setLimit] = useState(10);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
 
-import avatar4 from '@/assets/images/avatar/04.jpg'
-import logo11 from '@/assets/images/logo/11.svg'
-import logo12 from '@/assets/images/logo/12.svg'
-import logo13 from '@/assets/images/logo/13.svg'
-import postImg2 from '@/assets/images/post/3by2/02.jpg'
-import postImg4 from '@/assets/images/post/3by2/03.jpg'
-import PostCard from '@/components/cards/PostCard'
-import { Link } from 'react-router-dom'
-import LoadMoreButton from './LoadMoreButton'
-import SuggestedStories from './SuggestedStories'
-import makeApiRequest from '@/utils/apiServer'
-import { LIVE_URL } from '@/utils/api'
-import { useAuthContext } from '@/context/useAuthContext'
-import useToggle from '@/hooks/useToggle'
-
-// ----------------- data type --------------------
-interface Post {
-  id: string
-  title: string
-  content: string
-}
-
-interface GetAllPostsResponse {
-  data: Post[]
-}
-// --------------------------------------------------
-
-const ActionMenu = ({ name }: { name?: string }) => {
-  return (
-    <Dropdown drop="start">
-      <DropdownToggle as="a" className="text-secondary btn btn-secondary-soft-hover py-1 px-2 content-none" id="cardFeedAction">
-        <BsThreeDots />
-      </DropdownToggle>
-
-      <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardFeedAction">
-        <li>
-          <DropdownItem>
-            <BsBookmark size={22} className="fa-fw pe-2" />
-            Save post
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownItem>
-            <BsPersonX size={22} className="fa-fw pe-2" />
-            Unfollow {name}
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownItem>
-            <BsXCircle size={22} className="fa-fw pe-2" />
-            Hide post
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownItem>
-            <BsSlashCircle size={22} className="fa-fw pe-2" />
-            Block
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownDivider />
-        </li>
-        <li>
-          <DropdownItem>
-            <BsFlag size={22} className="fa-fw pe-2" />
-            Report post
-          </DropdownItem>
-        </li>
-      </DropdownMenu>
-    </Dropdown>
-  )
-}
-
-const SponsoredCard = () => {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <div className="avatar me-2">
-              <span role="button">
-                <img className="avatar-img rounded-circle" src={logo12} alt="image" />
-              </span>
-            </div>
-
-            <div>
-              <h6 className="card-title mb-0">
-                <Link to=""> Bootstrap: Front-end framework </Link>
-              </h6>
-              <Link to="" className="mb-0 text-body">
-                Sponsored
-                <BsInfoCircle
-                  className="ps-1"
-                  data-bs-container="body"
-                  data-bs-toggle="popover"
-                  data-bs-placement="top"
-                  data-bs-content="You're seeing this ad because your activity meets the intended audience of our site."
-                />
-              </Link>
-            </div>
-          </div>
-          <ActionMenu />
-        </div>
-      </CardHeader>
-
-      <CardBody>
-        <p className="mb-0">Quickly design and customize responsive mobile-first sites with Bootstrap.</p>
-      </CardBody>
-      <img src={postImg2} alt="post-image" />
-
-      <CardFooter className="border-0 d-flex justify-content-between align-items-center">
-        <p className="mb-0">Currently v5.1.3 </p>
-        <Button variant="primary-soft" size="sm">
-          Download now
-        </Button>
-      </CardFooter>
-    </Card>
-  )
-}
-
-const Post2 = () => {
-  return (
-    <Card>
-      <CardHeader className="border-0 pb-0">
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <div className="avatar me-2">
-              <span role="button">
-                <img className="avatar-img rounded-circle" src={logo13} alt="logo" />
-              </span>
-            </div>
-
-            <div>
-              <h6 className="card-title mb-0">
-                <Link to=""> Apple Education </Link>
-              </h6>
-              <p className="mb-0 small">9 November at 23:29</p>
-            </div>
-          </div>
-          <ActionMenu />
-        </div>
-      </CardHeader>
-      <CardBody className="pb-0">
-        <p>
-          Find out how you can save time in the classroom this year. Earn recognition while you learn new skills on iPad and Mac. Start recognition
-          your first Apple Teacher badge today!
-        </p>
-
-        <ul className="nav nav-stack pb-2 small">
-          <li className="nav-item">
-            <Link className="nav-link active text-secondary" to="">
-              <span className="me-1 icon-xs bg-danger text-white rounded-circle">
-                <BsHeartFill size={10} />
-              </span>
-              Louis, Billy and 126 others
-            </Link>
-          </li>
-          <li className="nav-item ms-sm-auto">
-            <Link className="nav-link" to="">
-              <BsChatFill size={18} className="pe-1" />
-              Comments (12)
-            </Link>
-          </li>
-        </ul>
-      </CardBody>
-
-      <CardFooter className="py-3">
-        <ul className="nav nav-fill nav-stack small">
-          <li className="nav-item">
-            <Link className="nav-link mb-0 active" to="">
-              <BsHeart className="pe-1" size={18} />
-              Liked (56)
-            </Link>
-          </li>
-
-          <Dropdown className="nav-item">
-            <DropdownToggle as="a" className="nav-link mb-0 content-none cursor-pointer" id="cardShareAction6" aria-expanded="false">
-              <BsReplyFill className="flip-horizontal ps-1" size={18} />
-              Share (3)
-            </DropdownToggle>
-
-            <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction6">
-              <li>
-                <DropdownItem>
-                  <BsEnvelope size={22} className="fa-fw pe-2" />
-                  Send via Direct Message
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsBookmarkCheck size={22} className="fa-fw pe-2" />
-                  Bookmark
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsLink size={22} className="fa-fw pe-2" />
-                  Copy link to post
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsShare size={22} className="fa-fw pe-2" />
-                  Share post via …
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownDivider />
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsPencilSquare size={22} className="fa-fw pe-2" />
-                  Share to News Feed
-                </DropdownItem>
-              </li>
-            </DropdownMenu>
-          </Dropdown>
-
-          <li className="nav-item">
-            <Link className="nav-link mb-0" to="">
-              <BsSendFill className="pe-1" size={18} />
-              Send
-            </Link>
-          </li>
-        </ul>
-      </CardFooter>
-    </Card>
-  )
-}
-
-const CommonPost = ({ children }: { children: ReactNode }) => {
-  return (
-    <Card>
-      <CardHeader className="border-0 pb-0">
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <div className="avatar me-2">
-              <span role="button">
-                <img className="avatar-img rounded-circle" src={avatar4} alt="image-4" />
-              </span>
-            </div>
-
-            <div>
-              <h6 className="card-title mb-0">
-                <Link to=""> All in the Mind </Link>
-              </h6>
-              <p className="mb-0 small">9 November at 23:29</p>
-            </div>
-          </div>
-          <ActionMenu />
-        </div>
-      </CardHeader>
-
-      <CardBody className="pb-0">
-        <p>How do you protect your business against cyber-crime?</p>
-
-        {children}
-
-        <ul className="nav nav-divider mt-2 mb-0">
-          <li className="nav-item">
-            <Link className="nav-link" to="">
-              263 votes
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="">
-              2d left
-            </Link>
-          </li>
-        </ul>
-
-        <ul className="nav nav-stack pb-2 small">
-          <li className="nav-item">
-            <Link className="nav-link active text-secondary" to="">
-              <span className="me-1 icon-xs bg-danger text-white rounded-circle">
-                <BsHeartFill size={10} />
-              </span>
-              Louis, Billy and 126 others
-            </Link>
-          </li>
-          <li className="nav-item ms-sm-auto">
-            <Link className="nav-link" to="">
-              <BsChatFill size={18} className="pe-1" />
-              Comments (12)
-            </Link>
-          </li>
-        </ul>
-      </CardBody>
-
-      <div className="card-footer py-3">
-        <ul className="nav nav-fill nav-stack small">
-          <li className="nav-item">
-            <Link className="nav-link mb-0 active" to="">
-              <BsHeart className="pe-1" size={18} />
-              Liked (56)
-            </Link>
-          </li>
-
-          <Dropdown className="nav-item">
-            <DropdownToggle as="a" className="nav-link mb-0 content-none cursor-pointer" id="cardShareAction6" aria-expanded="false">
-              <BsReplyFill className="flip-horizontal ps-1" size={18} />
-              Share (3)
-            </DropdownToggle>
-
-            <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction6">
-              <li>
-                <DropdownItem>
-                  <BsEnvelope size={22} className="fa-fw pe-2" />
-                  Send via Direct Message
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsBookmarkCheck size={22} className="fa-fw pe-2" />
-                  Bookmark
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsLink size={22} className="fa-fw pe-2" />
-                  Copy link to post
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsShare size={22} className="fa-fw pe-2" />
-                  Share post via …
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownDivider />
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsPencilSquare size={22} className="fa-fw pe-2" />
-                  Share to News Feed
-                </DropdownItem>
-              </li>
-            </DropdownMenu>
-          </Dropdown>
-
-          <li className="nav-item">
-            <Link className="nav-link mb-0" to="">
-              <BsSendFill className="pe-1" size={18} />
-              Send
-            </Link>
-          </li>
-        </ul>
-      </div>
-    </Card>
-  )
-}
-
-const Post3 = () => {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <div className="avatar me-2">
-              <span role="button">
-                <img className="avatar-img rounded-circle" src={logo11} alt="logo" />
-              </span>
-            </div>
-            <div>
-              <h6 className="card-title mb-0">
-                <Link to=""> Webestica </Link>
-              </h6>
-              <p className="small mb-0">9 December at 10:00 </p>
-            </div>
-          </div>
-          <ActionMenu />
-        </div>
-      </CardHeader>
-      <CardBody>
-        <p className="mb-0">
-          The next-generation blog, news, and magazine theme for you to start sharing your content today with beautiful aesthetics! This minimal &amp;
-          clean Bootstrap 5 based theme is ideal for all types of sites that aim to provide users with content. <Link to=""> #bootstrap</Link>
-          <Link to=""> #webestica </Link> <Link to=""> #getbootstrap</Link> <Link to=""> #bootstrap5 </Link>
-        </p>
-      </CardBody>
-
-      <span role="button">
-        <img src={postImg4} alt="post-image" />
-      </span>
-
-      <CardBody className="position-relative bg-light">
-        <Link to="" className="small stretched-link">
-          https://blogzine.webestica.com
-        </Link>
-        <h6 className="mb-0 mt-1">Blogzine - Blog and Magazine Bootstrap 5 Theme</h6>
-        <p className="mb-0 small">Bootstrap based News, Magazine and Blog Theme</p>
-      </CardBody>
-
-      <CardFooter className="py-3">
-        <ul className="nav nav-fill nav-stack small">
-          <li className="nav-item">
-            <Link className="nav-link mb-0 active" to="">
-              <BsHeart size={18} className="pe-1" />
-              Liked (56)
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link mb-0" to="">
-              <BsChatFill size={18} className="pe-1" />
-              Comments (12)
-            </Link>
-          </li>
-
-          <Dropdown className="nav-item">
-            <DropdownToggle as="a" className="nav-link mb-0 content-none cursor-pointer" id="cardShareAction6" aria-expanded="false">
-              <BsReplyFill className="flip-horizontal ps-1" size={18} />
-              Share (3)
-            </DropdownToggle>
-
-            <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardShareAction6">
-              <li>
-                <DropdownItem>
-                  <BsEnvelope size={22} className="fa-fw pe-2" />
-                  Send via Direct Message
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsBookmarkCheck size={22} className="fa-fw pe-2" />
-                  Bookmark
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsLink size={22} className="fa-fw pe-2" />
-                  Copy link to post
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsShare size={22} className="fa-fw pe-2" />
-                  Share post via …
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownDivider />
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsPencilSquare size={22} className="fa-fw pe-2" />
-                  Share to News Feed
-                </DropdownItem>
-              </li>
-            </DropdownMenu>
-          </Dropdown>
-
-          <li className="nav-item">
-            <Link className="nav-link mb-0" to="">
-              <BsSendFill size={18} className="pe-1" />
-              Send
-            </Link>
-          </li>
-        </ul>
-      </CardFooter>
-    </Card>
-  )
-}
-
-// poll
-const Feeds = (isCreated: boolean) => {
- 
-   const { user } = useAuthContext();
- 
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState<boolean>(false) // Loading state
-  const [error, setError] = useState<string | null>(null) // Error state
-  const hasMounted = useRef(false) // Track whether the component has mounted
-  const [tlRefresh, setTlRefresh] = useState<number>();
-  const [limit,setLimit] = useState<number>(5);
-  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
-
-  const fetchPosts = async () => {
-    setLoading(true);
-    setError(null);
-    try {      
-      const res = await makeApiRequest<{ data: any[] }>({
-        method: 'POST',
-        url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page : 1,limit : limit},
-      })
-
-      console.log('Fetched Posts:', res)
-      setPosts(res.data || [])
-    } catch (error: any) {
-      console.error('Error fetching posts:', error.message)
-      setError(error.message || 'An unknown error occurred')
+  // Simulate an API call
+  const fetchPosts = async (newLimit) => {
+    setIsSpinning(true);
+    setError(null); // Reset any previous errors
+    try {
+      // Mock API call delay
+      const newPosts = await new Promise((resolve) =>
+        setTimeout(
+          () =>
+            resolve(
+              Array.from({ length: newLimit }, (_, i) => ({
+                id: i + 1,
+                content: `Post ${i + 1}`,
+              }))
+            ),
+          1000
+        )
+      );
+      setPosts(newPosts);
+    } catch (err) {
+      setError("Failed to load posts. Please try again.");
     } finally {
-      setLoading(false)
-      setFalse();
+      setIsSpinning(false);
     }
-  }
+  };
 
   useEffect(() => {
-    // If the component has mounted already, only fetch posts if `isCreated` is true
-    setTrue();
-    if (hasMounted.current) {
-      if (isCreated) {
-        fetchPosts()
-      }
-    } else {
-      // If it's the first mount, fetch posts
-      fetchPosts()
-      hasMounted.current = true // Set to true after the first call
+    fetchPosts(limit);
+  }, [limit]);
+
+  // Scroll event handler
+  const handleScroll = () => {
+    if (
+      window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 100 &&
+      !isSpinning
+    ) {
+      setLimit((prevLimit) => prevLimit + 5);
     }
-  }, [limit,isCreated])
+  };
 
-  const postData = [
-    { progress: 25, title: 'We have cybersecurity insurance coverage' },
-    { progress: 15, title: 'Our dedicated staff will protect us' },
-    { progress: 10, title: 'We give regular training for best practices' },
-    { progress: 55, title: 'Third-party vendor protection' },
-  ]
-
-  // Conditional rendering
-  if (loading) {
-    return <div>Loading posts...</div> // Show a loading spinner or message
-  }
-
-  if (error) {
-    return <div>Error: {error}</div> // Show an error message
-  }
+  useEffect(() => {
+    const throttledScroll = () => {
+      setTimeout(handleScroll, 200); // Throttle scroll events
+    };
+    window.addEventListener("scroll", throttledScroll);
+    return () => {
+      window.removeEventListener("scroll", throttledScroll);
+    };
+  }, [isSpinning]);
 
   return (
-    <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
-        
-  try {
-    const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
-      },
-      body: JSON.stringify({
-        userId: user?.id,
-        PostId: post.post?.Id,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(tlRefresh) // Assuming the response is JSON
-    setTlRefresh(tlRefresh+1 || 1);
-    console.log(tlRefresh)
-    console.log(data);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error('Error Deleting post:', error.message);
-  } finally {
-    console.log('call done')
-  }
-}}/>) : <p>No posts found.</p>}</div>
-
-      {/* <SponsoredCard /> */}
-      {/* <Post2 /> */}
-      {/* <People /> */}
-      {/* <CommonPost>
-        <div className="vstack gap-2">
-          {postData.map((item, idx) => (
-            <div key={idx}>
-              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
-              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
-                {item.title}
-              </label>
+    <div>
+      <div>
+        {error && <div className="error">{error}</div>}
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <div key={post.id} className="post">
+              {post.content}
             </div>
-          ))}
-        </div>
-      </CommonPost> */}
+          ))
+        ) : isSpinning ? (
+          <div className="spinner">Loading...</div>
+        ) : (
+          <div className="no-data">No posts available.</div>
+        )}
+      </div>
+      <LoadMoreButton isSpinning={isSpinning} />
+    </div>
+  );
+};
 
-      {/* <CommonPost>
-        <Card className="card-body mt-4">
-          <div className="d-sm-flex justify-content-sm-between align-items-center">
-            <span className="small">16/20 responded</span>
-            <span className="small">Results not visible to participants</span>
-          </div>
-          <div className="vstack gap-4 gap-sm-3 mt-3">
-            {postData.map((item, idx) => (
-              <div className="d-flex align-items-center justify-content-between" key={idx}>
-                <div className="overflow-hidden w-100 me-3">
-                  <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>
-                    <div
-                      className="progress-bar bg-primary bg-opacity-25"
-                      role="progressbar"
-                      style={{ width: `${item.progress}%` }}
-                      aria-valuenow={item.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.userRole}</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">{item.progress}%</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </CommonPost> */}
-
-      {/* <Post3 /> */}
-      {/* <SuggestedStories /> */}
-      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
-    </>
-  )
-}
-export default Feeds
+export default ParentComponent;
