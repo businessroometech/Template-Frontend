@@ -64,6 +64,9 @@ import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify"
 
 const Experience = () => {
+
+
+
   return (
     <Card>
       <CardHeader className="d-flex justify-content-between border-0">
@@ -305,6 +308,7 @@ if (allFollowers) {
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
   const { user } = useAuthContext();
+  console.log(user)
   const [profile, setProfile] = useState({});
   const [sent, setSent] = useState(false)
   const navigate = useNavigate();
@@ -335,6 +339,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
 
   const fetchUser = async () => {
+   
+
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
@@ -424,7 +430,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     {/* Name and Bio */}
                     <div className="ms-sm-4 mt-sm-3">
                       <h1 className="mb-0 h5">
-                        {profile?.personalDetails?.firstName} {profile?.personalDetails?.lastName}{' '}
+                        {/*profile?.personalDetails?.firstName} {profile?.personalDetails?.lastName*/}{' '}
+                        {user?.firstName + " " + user?.lastName}
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
                       <p>{profile.connectionsCount ? profile.connectionsCount : 0} connections</p>
@@ -489,15 +496,15 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   {/* Profile Details */}
                   <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
                     <li className="list-inline-item">
-                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation : "User occupation not available"}
+                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation : user.userRole}
                     </li>
                     <li className="list-inline-item">
                       <BsGeoAlt className="me-1" />{' '}
-                      {profile?.personalDetails?.permanentAddress?.city ? profile?.personalDetails?.permanentAddress?.city : "User Address not available"}{' '}
+                      {profile?.personalDetails?.permanentAddress?.city ? profile?.personalDetails?.permanentAddress?.city : user.country}{' '}
                       {profile?.personalDetails?.permanentAddress?.state}
                     </li>
                     <li className="list-inline-item">
-                      <BsCalendar2Plus className="me-1" /> Joined on{' '}
+                      <BsCalendar2Plus className="me-1" /> Joined on :  {formatDate(user.createdAt)}
                       {profile?.personalDetails?.createdAt &&
                         formatDate(profile.personalDetails?.createdAt)}
                     </li>
@@ -530,13 +537,20 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
             <Col lg={4}>
               <Row className="g-4">
                 {/* About Card */}
+
+                
                 <Col md={6} lg={12}>
                   <Card>
                     <CardHeader className="border-0 pb-0">
-                      <CardTitle>About</CardTitle>
+                      <CardTitle>Bio</CardTitle>
                     </CardHeader>
+                    
                     <CardBody className="position-relative pt-0">
-                      <p>
+
+<p>From the peaks of the Rockies to the depths of the Amazon, I’ve spent the past decade capturing the beauty of the natural world. My passion for photography began during a family camping trip when I was ten years old, and it has only grown since. I find joy in the small details—a dew-covered leaf, a bird in mid-flight—and strive to share these moments through my lens.</p>
+
+
+                     {/* <p>
                         {profile?.personalDetails?.bio}
                       </p>
                       <ul className="list-unstyled mt-3 mb-0">
@@ -552,9 +566,12 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           <strong>{profile?.personalDetails?.emailAddress}</strong>
                         </li>
                       </ul>
+                     */}
                     </CardBody>
                   </Card>
                 </Col>
+
+
                { user?.id === profile?.personalDetails?.id &&  <ConnectionRequest />}
                 {/* Additional Components */}
                 <Col md={6} lg={12}>
