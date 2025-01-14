@@ -50,7 +50,7 @@ const Home = () => {
 
   return (
     <>
-      <Col md={8} lg={6} className="vstack gap-4">
+      <Col md={8} lg={6} style={{maxHeight:"5em"}} className="vstack gap-4 ">
       <CreatePostCard setIsCreated={setIsCreated} />
         {/* <Stories /> */}
         <div className="d-flex justify-content-between gap-3 px-1 py-2">

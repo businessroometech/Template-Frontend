@@ -581,7 +581,7 @@ const Feeds = (isCreated: boolean) => {
 
   // Conditional rendering
   if (loading) {
-    return <div style={{minHeight:"90vh"}}><Loading loading={true} /></div> // Show a loading spinner or message
+    return <div style={{minHeight:"110vh"}}><Loading loading={true} /></div> // Show a loading spinner or message
   }
 
   if (error) {
