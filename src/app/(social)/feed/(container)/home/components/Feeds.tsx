@@ -48,6 +48,7 @@ import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
 import useToggle from '@/hooks/useToggle'
+import Loading from '@/components/Loading'
 
 // ----------------- data type --------------------
 interface Post {
@@ -510,7 +511,6 @@ const Feeds = (isCreated: boolean) => {
   const [tlRefresh, setTlRefresh] = useState<number>();
   const [limit,setLimit] = useState<number>(5);
   const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
-  const [showLoad, setShowLoad] = useState(false)
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -532,17 +532,6 @@ const Feeds = (isCreated: boolean) => {
       setFalse();
     }
   }
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 3 * window.innerHeight / 100) {
-        setShowLoad(true)
-      }
-      
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     // If the component has mounted already, only fetch posts if `isCreated` is true
@@ -558,16 +547,41 @@ const Feeds = (isCreated: boolean) => {
     }
   }, [limit,isCreated])
 
-  const postData = [
-    { progress: 25, title: 'We have cybersecurity insurance coverage' },
-    { progress: 15, title: 'Our dedicated staff will protect us' },
-    { progress: 10, title: 'We give regular training for best practices' },
-    { progress: 55, title: 'Third-party vendor protection' },
-  ]
+  const handleDelete = async () => {
+        
+    try {
+      const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          PostId: post.post?.Id,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log(tlRefresh) // Assuming the response is JSON
+      setTlRefresh(tlRefresh+1 || 1);
+      console.log(tlRefresh)
+      console.log(data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Error Deleting post:', error.message);
+    } finally {
+      console.log('call done')
+    }
+  }
 
   // Conditional rendering
   if (loading) {
-    return <div>Loading posts...</div> // Show a loading spinner or message
+    return <div style={{minHeight:"90vh"}}><Loading loading={true} /></div> // Show a loading spinner or message
   }
 
   if (error) {
@@ -576,41 +590,7 @@ const Feeds = (isCreated: boolean) => {
 
   return (
     <>
-    {/* {showLoad && <Button onClick={()=>{fetchPosts()
-      setShowLoad(false)
-    }} >Load more</Button>  } */}
-     
-      <div >{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
-        
-  try {
-    const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
-      },
-      body: JSON.stringify({
-        userId: user?.id,
-        PostId: post.post?.Id,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(tlRefresh) // Assuming the response is JSON
-    setTlRefresh(tlRefresh+1 || 1);
-    console.log(tlRefresh)
-    console.log(data);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error('Error Deleting post:', error.message);
-  } finally {
-    console.log('call done')
-  }
-}}/>) : <p>No posts found.</p>}</div>
+      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
