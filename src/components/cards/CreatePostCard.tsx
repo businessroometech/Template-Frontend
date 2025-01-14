@@ -231,27 +231,34 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const handleVideoSubmit = async () => {
     try {
       // Wait for handleUpload to complete before proceeding
-      const uploadSuccess = await handleUpload()
+      const uploadSuccess = await handleUpload();
+      console.log('video upload success',uploadSuccess);
 
       if (uploadSuccess) {
         // Regular expression to match hashtags
         const hashtagRegex = /#\w+/g
         const hashtags = videoQuote.match(hashtagRegex) || []
-
+        console.log('hashtags match',hashtags);
+        console.log('---videoupload----',videoQuote)
+        console.log('---upload success---',uploadSuccess)
         // Making the API request
+        const data = {
+          userId: user?.id,
+          content: videoQuote,
+          hashtags: hashtags,
+          mediaKeys: uploadSuccess || [],
+        }
+        console.log('video request data',data);
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
           url: CREATE_POST,
-          data: {
-            userId: user?.id,
-            content: videoQuote,
-            hashtags: hashtags,
-            mediaIds: uploadSuccess || [],
-          },
+          data: data
         })
 
         if (response.data) {
           setThoughts('') // Reset thoughts after successful post
+          toggleVideoModel();
+          setTimeout(() => {setIsCreated(true);}, 1000);
         }
       } else {
         console.log('Upload failed. Post not submitted.')

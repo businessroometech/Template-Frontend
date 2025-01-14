@@ -9,6 +9,7 @@ import { CircleUserRound } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
 import fallBackAvatar from '../../assets/images/avatar/01.jpg';
+import VideoPlayer from './components/VideoPlayer';
 
 const PostCard = ({ item }) => {
   const [comments, setComments] = useState([]);
@@ -21,7 +22,7 @@ const PostCard = ({ item }) => {
   const post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
-
+  const isVideo = post?.mediaUrls?.length > 0 && (post.mediaUrls[0] as string).includes('video/mp4');
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -127,7 +128,11 @@ const PostCard = ({ item }) => {
 
       <CardBody>
         {post?.content && <p className="mb-3">{post.content}</p>}
+        
         {post?.mediaUrls?.length > 0 && (
+
+          isVideo ? <VideoPlayer src={post?.mediaUrls[0]}/> : 
+          
           <div
             style={{
               width: '100%',
