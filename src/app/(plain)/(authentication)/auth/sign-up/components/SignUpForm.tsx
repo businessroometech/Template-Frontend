@@ -24,8 +24,10 @@ const SignUpForm = () => {
   const [role,setRole] = useState<string>("");
   const [showModal,setShowModal] = useState<boolean>(false);
   const [dob, setDob] = useState<string>('');
-
+  const [error, setError] = useState("");
   const { signUp } = useSignUp();
+  const today = new Date();
+  const minDate = new Date("1900-01-01");
   
   const signUpSchema = yup.object({
     firstName: yup.string().required('Please enter First Name'),
@@ -53,6 +55,13 @@ const SignUpForm = () => {
     else if(role == 'investor') return 'Investor'
     else return null;
   }
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear());
+    return `${day}/${month}/${year}`;
+  };
 
   
   useEffect(() => {
@@ -124,17 +133,39 @@ const SignUpForm = () => {
       <div className="mb-3">
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
       </div>
-      <div className="mb-3">
+      <div>
       <DatePicker
         placeholderText="Enter your date of birth"
-        className="form-control input-group-lg" // Ensures consistent styling
+        className="form-control input-group-lg"
         value={dob}
         onChange={(date) => {
-          setDob(date?.toDateString().split(" ").slice(1).join("/"));
-          console.log(dob)
+          if (date > today) {
+            setError("Date cannot be in the future.");
+          } else {
+            setError("");
+            setDob(formatDate(date));
+          }
         }}
+        onChangeRaw={(e) => {
+          const inputDate = new Date(e.target.value);
+          if (isNaN(inputDate.getTime())) {
+            setError("Invalid date format. Use dd/mm/yy.");
+          } else if (inputDate > today) {
+            setError("Date cannot be in the future.");
+          } else {
+            setError("");
+            setDob(formatDate(inputDate));
+          }
+        }}
+        dateFormat="dd/MM/yy" // Set date format to dd/mm/yy
+        maxDate={today} // Prevent future dates
+        minDate={minDate} // Allow dates from 1900 onwards
+        showYearDropdown // Enable year dropdown
+        scrollableYearDropdown // Allow scrolling for years
+        yearDropdownItemNumber={120} // Number of years in the dropdown (e.g., last 120 years)
       />
-</div>
+      {error && <p style={{ color: "red", marginTop: "5px" }}>{error}</p>}
+    </div>
 
       <div className="mb-3">
         <TextFormInput
