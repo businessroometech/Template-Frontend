@@ -119,12 +119,12 @@ const PostCard = ({ item, isMediaKeys = false }) => {
               <div className="nav nav-divider" >
                 <h6 className="nav-item card-title  mb-0" style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexDirection:"column"}}>
                   <span role="button" className="nav-item text-start mx-3 ">{userInfo?.firstName } { userInfo?.lastName}</span>
-                <span className=" small mx-3" style={{color : '#0f6fec'}}> {userInfo?.userRole?userInfo?.userRole:null}</span>
+                <span className=" small mx-3" style={{color : '#8b959b'}}> {userInfo?.userRole?userInfo?.userRole:null}</span>
                 </h6>
               </div>
             </div>
           </div>
-                <span className="nav-item small mx-2"> {userInfo?.timestamp}</span>
+                <span className="nav-item small mx-2" style={{color : '#8b959b'}}> {userInfo?.timestamp}</span>
         </Link>
       </CardHeader>
 

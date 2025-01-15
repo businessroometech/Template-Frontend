@@ -92,9 +92,9 @@ const Followers = () => {
 
   return (
     <>
-      <ConnectionRequest />
+      {/* <ConnectionRequest /> */}
       <br />
-      <Card>
+      <Card style={{marginTop : '0px'}}>
         <CardHeader className="pb-0 border-0">
           <CardTitle className="mb-0" style={{ fontSize: '17px' }}>Suggested Connections</CardTitle>
         </CardHeader>

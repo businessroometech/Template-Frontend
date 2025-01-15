@@ -346,19 +346,19 @@ return
               Video
             </a>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={toggleEvent}>
               <BsCalendar2EventFill size={20} className="text-danger pe-2" />
               Event
             </a>
-          </li>
+          </li> */}
           <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
               <SendHorizontal size={14} color="#2f09ec" style={{marginRight : '3px'}} />
               {"   Post"}
             </a>
           </li>
-          <Dropdown drop="start" className="nav-item ms-lg-auto">
+          {/* <Dropdown drop="start" className="nav-item ms-lg-auto">
             <DropdownToggle
               as="a"
               className="nav-link bg-light py-1 px-2 mb-0 content-none"
@@ -391,7 +391,7 @@ return
                 </DropdownItem>
               </li>
             </DropdownMenu>
-          </Dropdown>
+          </Dropdown> */}
         </ul>
       </Card>
 

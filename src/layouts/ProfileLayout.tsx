@@ -62,6 +62,7 @@ import axios from "axios"
 import { useAuthContext } from "@/context/useAuthContext"
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify"
+import Followers from "@/app/(social)/feed/(container)/home/components/Followers"
 
 const Experience = () => {
 
@@ -70,7 +71,7 @@ const Experience = () => {
   return (
     <Card>
       <CardHeader className="d-flex justify-content-between border-0">
-        <h5 className="card-title">Experience</h5>
+        <h5 className="card-title">Suggested Pages</h5>
         <Button variant="primary-soft" size="sm">
 
           <FaPlus />
@@ -153,11 +154,11 @@ const Friends = () => {
     <Card>
       <CardHeader className="d-sm-flex justify-content-between align-items-center border-0">
         <CardTitle>
-          Friends <span className="badge bg-danger bg-opacity-10 text-danger">230</span>
+          My Connections <span className="badge bg-danger bg-opacity-10 text-danger ml-5">230</span>
         </CardTitle>
         <Button variant="primary-soft" size="sm">
 
-          See all friends
+          View all
         </Button>
       </CardHeader>
       <CardBody className="position-relative pt-0">
@@ -445,7 +446,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           type="button"
                           onClick={() => navigate("/settings/account")}
                         >
-                          <BsPencilFill size={19} className="pe-1" /> Edit profile
+                          <BsPencilFill size={19} className="pe-1" />
                         </Button>
                       ) : (
                         <Button
@@ -503,11 +504,11 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       {profile?.personalDetails?.permanentAddress?.city ? profile?.personalDetails?.permanentAddress?.city : user.country}{' '}
                       {profile?.personalDetails?.permanentAddress?.state}
                     </li>
-                    <li className="list-inline-item">
+                    {/* <li className="list-inline-item">
                       <BsCalendar2Plus className="me-1" /> Joined on :  {formatDate(user.createdAt)}
                       {profile?.personalDetails?.createdAt &&
                         formatDate(profile.personalDetails?.createdAt)}
-                    </li>
+                    </li> */}
                   </ul>
                 </CardBody>
                 <CardFooter className="card-footer mt-3 pt-2 pb-0">
@@ -542,11 +543,25 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 <Col md={6} lg={12}>
                   <Card>
                     <CardHeader className="border-0 pb-0">
-                      <CardTitle>Bio</CardTitle>
+                      {/* <CardTitle>View My Business Profile</CardTitle> */}
                     </CardHeader>
 
                     <CardBody className="position-relative pt-0">
-                      <p>{profile?.personalDetails?.bio}</p>
+
+                        <Button
+                          className="w-100"
+                          style={{
+                            backgroundColor: "#1ea1f3",
+                            color: "white",
+                          }}
+                          onClick={() => {
+                            navigate("/feed/groups");
+                          }}
+                        >
+                          View My Business Profile
+                        </Button>
+
+                      {/* <p>{profile?.personalDetails?.bio}</p> */}
                       {/* <p>
                         {profile?.personalDetails?.bio}
                       </p>
@@ -569,16 +584,19 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 </Col>
 
 
-                {user?.id === profile?.personalDetails?.id && <ConnectionRequest />}
+                {/* {user?.id === profile?.personalDetails?.id && <ConnectionRequest />} */}
                 {/* Additional Components */}
                 <Col md={6} lg={12}>
-                  <Experience />
-                </Col>
-                <Col md={6} lg={12}>
-                  <Photos />
-                </Col>
-                <Col md={6} lg={12}>
                   <Friends />
+                </Col>
+                {/* <Col md={6} lg={12}>
+                  <Photos />
+                </Col> */}
+                <Col md={6} lg={12}>
+                  <Followers/>
+                </Col>
+                <Col md={6} lg={12}>
+                  <Experience />
                 </Col>
               </Row>
             </Col>
