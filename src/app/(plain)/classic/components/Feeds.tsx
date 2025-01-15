@@ -789,15 +789,15 @@ const Feeds =  () => {
         <PostCard {...post} key={idx} tlR/>
       ))}
 
-      <SponsoredCard />
-      <Post2 />
-      <People />
-      <CommonPost>
-        <div className="vstack gap-2">
-          <div>
-            <input type="radio" className="btn-check" name="poll" id="option" />
-            <label className="btn btn-outline-primary w-100" htmlFor="option">
-              We have cybersecurity insurance coverage
+      <SponsoredCard /> 
+      <Post2 /> 
+      <People /> 
+      <CommonPost> 
+        <div className="vstack gap-2"> 
+          <div> 
+            <input type="radio" className="btn-check" name="poll" id="option" /> 
+            <label className="btn btn-outline-primary w-100" htmlFor="option"> 
+              We have cybersecurity insurance coverage 
             </label>
           </div>
 

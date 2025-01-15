@@ -1,6 +1,6 @@
 
 
-import { Card, CardBody, CardFooter, CardHeader, Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle } from 'react-bootstrap'
+import { Button, Card, CardBody, CardFooter, CardHeader, Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle } from 'react-bootstrap'
 import {
   BsBookmark,
   BsBookmarkCheck,
@@ -172,10 +172,52 @@ const Posts =  ({isCreated}) => {
   if (error) {
     return <div>Error: {error}</div> // Show an error message
   }
+  const [showNewPostButton, setShowNewPostButton] = useState(false);
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const scrollTop = scrollContainerRef.current.scrollTop;
+
+        // Show button if scrolled up or near the top (scrollTop < 1000)
+        if (scrollTop < 1) {
+          setShowNewPostButton(true);
+        } else {
+          setShowNewPostButton(false);
+        }
+      }
+    };
+
+    const container = scrollContainerRef.current;
+
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
 
   return (
-    <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
+    <div
+      className="position-relative"
+      ref={scrollContainerRef}
+      style={{ maxHeight: '500px', overflowY: 'auto' }} 
+    >
+     
+        <Button
+          className="position-absolute top-0 start-50 translate-middle-x"
+          onClick={() => fetchPosts()}
+          style={{ zIndex: 9999 }}
+        >
+          ⬆️ New Posts
+        </Button>
+      
+        {posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}

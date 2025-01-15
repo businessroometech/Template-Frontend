@@ -511,6 +511,9 @@ const Feeds = (isCreated: boolean) => {
   const [tlRefresh, setTlRefresh] = useState<number>();
   const [limit,setLimit] = useState<number>(5);
   const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  
+ const [showNewPostButton, setShowNewPostButton] = useState(false);
+  // const scrollContainerRef = useRef(null);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -535,6 +538,7 @@ const Feeds = (isCreated: boolean) => {
 
   useEffect(() => {
     // If the component has mounted already, only fetch posts if `isCreated` is true
+    // fetchPosts()
     setTrue();
     if (hasMounted.current) {
       if (isCreated) {
@@ -588,9 +592,55 @@ const Feeds = (isCreated: boolean) => {
     return <div>Error: {error}</div> // Show an error message
   }
 
+
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       if (scrollContainerRef.current) {
+//         const scrollTop = scrollContainerRef.current.scrollTop;
+
+//         // Show button if scrolled up or near the top (scrollTop < 1000)
+//         if (scrollTop < 1) {
+//           setShowNewPostButton(true);
+//         } else {
+//           setShowNewPostButton(false);
+//         }
+//       }
+//     };
+
+//     const container = scrollContainerRef.current;
+
+//     if (container) {
+//       container.addEventListener('scroll', handleScroll);
+//     }
+
+//     return () => {
+//       if (container) {
+//         container.removeEventListener('scroll', handleScroll);
+//       }
+//     };
+//   }, []);
+
+setTimeout(() => {
+  setShowNewPostButton(true)
+}, 50000);
+
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) : <p>No posts found.</p>}</div>
+    <div
+      className="position-relative"
+      // ref={scrollContainerRef}
+      style={{ maxHeight: '500px'}} 
+    >
+     
+       {showNewPostButton&&<Link to="/feed/home#"
+         className='btn-primary'
+          // onClick={() => fetchPosts()}
+          style={{ zIndex: 99 ,top: "4em", position: "fixed",left:"47%"}}
+        >
+          ⬆️ New Posts
+        </Link>}
+      
+     {posts.length > 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}

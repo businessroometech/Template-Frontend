@@ -18,11 +18,11 @@ const ClassicHome = () => {
               <LeftSidebar />
             </Col>
             
-            <Col md={8} lg={6} xxl={4} className="vstack gap-4">
+            < Col md={8} lg={6} xxl={4} className="vstack gap-4">
               <Stories />
               <CreatePostCard />
               <Feeds/>
-            </Col>
+            </>
             <Col md={2} lg={3} xxl={4}>
           
               <ContactSidebar />
