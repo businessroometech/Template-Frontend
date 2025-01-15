@@ -24,20 +24,21 @@ import { toast } from 'react-toastify';
 
 const AccountSettings = () => {
   const [profile, setProfile] = useState({});
-  const {user} = useAuthContext();
   const schema = yup.object({
-    fName: yup.string().default(user?.firstName).required(), 
-    lName: yup.string().default(user?.lastName).required(), 
-    occupation: yup.string().default(user?.occupation).required(),
-    dob: yup.date().default(user?.dob).required(), 
-    phoneNo: yup.string().required().default(user?.mobileNumber), 
-    email: yup.string().default(user?.email), 
-    // bio: yup.string().default(user?.bio), 
-    gender: yup.string().default(user?.gender), 
+    fName: yup.string(), 
+    lName: yup.string(), 
+    occupation: yup.string(),
+    dob: yup.date(), 
+    // phoneNo: yup.string(), 
+    email: yup.string(), 
+    // bio: yup.string(), 
+    gender: yup.string(), 
 
 });
 
-  const navigate = useNavigate();
+const navigate = useNavigate();
+
+  const { user } = useAuthContext();
   console.log('---account settings---',user);
   
 
@@ -46,11 +47,9 @@ const AccountSettings = () => {
     defaultValues : {
       fName : user?.firstName,
       lName : user?.lastName,
-      occupation : user?.userRole,
-      gender : user?.gender,
-      dob : user?.dob,
-      phoneNo : user?.mobileNumber,
       email : user?.emailAddress,
+      occupation : user?.userRole,
+      gender : user?.gender
     }
   });
 
@@ -98,13 +97,13 @@ const AccountSettings = () => {
           userId: user?.id,
           profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
           bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
-          firstName: data.fName.trim(),
-          lastName: data.lName.trim(),
+          firstName: data.fName,
+          lastName: data.lName,
           dob: data.dob,
-          mobileNumber: data.phoneNo,
-          emailAddress: data.email.trim(),
-          bio: data.bio,
-          gender: data.gender.trim(),
+          // mobileNumber: data.phoneNo,
+          emailAddress: data.email,
+          // bio: data.bio,
+          gender: data.gender,
           // preferredLanguage: data.preferredLanguage,
           // socialMediaProfile: data.socialMediaProfile,
           bodyMeasurement: "38-32-40",
@@ -223,8 +222,8 @@ const AccountSettings = () => {
               )}
             />
           </Col>
-          <TextFormInput name="phoneNo" label="Phone Number" control={control} containerClassName="col-6" />
-          <TextFormInput name="email" label="Email" control={control} containerClassName="col-6" />
+          {/* <TextFormInput name="phoneNo" label="Phone Number" control={control} containerClassName="col-6" /> */}
+          <TextFormInput name="email" label="Email" control={control} containerClassName="col-12" />
           {/* <TextAreaFormInput name="bio" label="Bio" rows={3} control={control} containerClassName="col-12" /> */}
           {/* <Col xs={12}>
             <h6> Address</h6>
