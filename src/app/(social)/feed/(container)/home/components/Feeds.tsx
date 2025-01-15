@@ -634,7 +634,7 @@ setTimeout(() => {
      
        {showNewPostButton&&<Link to="/feed/home#"
          className='btn-primary'
-          // onClick={() => fetchPosts()}
+          onClick={() => setShowNewPostButton(false)}
           style={{ zIndex: 99 ,top: "4em", position: "fixed",left:"47%"}}
         >
           ⬆️ New Posts
@@ -688,7 +688,7 @@ setTimeout(() => {
 
       {/* <Post3 /> */}
       {/* <SuggestedStories /> */}
-      {/* <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/> */}
+      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
     </>
   )
 }
