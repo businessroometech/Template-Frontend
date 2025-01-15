@@ -172,52 +172,55 @@ const Posts =  ({isCreated}) => {
   if (error) {
     return <div>Error: {error}</div> // Show an error message
   }
-  const [showNewPostButton, setShowNewPostButton] = useState(false);
-  const scrollContainerRef = useRef(null);
+  // const [showNewPostButton, setShowNewPostButton] = useState(false);
+  // const scrollContainerRef = useRef(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollContainerRef.current) {
-        const scrollTop = scrollContainerRef.current.scrollTop;
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (scrollContainerRef.current) {
+  //       const scrollTop = scrollContainerRef.current.scrollTop;
 
-        // Show button if scrolled up or near the top (scrollTop < 1000)
-        if (scrollTop < 1) {
-          setShowNewPostButton(true);
-        } else {
-          setShowNewPostButton(false);
-        }
-      }
-    };
+  //       // Show button if scrolled up or near the top (scrollTop < 1000)
+  //       if (scrollTop < 1) {
+  //         setShowNewPostButton(true);
+  //       } else {
+  //         setShowNewPostButton(false);
+  //       }
+  //     }
+  //   };
 
-    const container = scrollContainerRef.current;
+  //   const container = scrollContainerRef.current;
 
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-    }
+  //   if (container) {
+  //     container.addEventListener('scroll', handleScroll);
+  //   }
 
-    return () => {
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (container) {
+  //       container.removeEventListener('scroll', handleScroll);
+  //     }
+  //   };
+  // }, []);
 
   return (
+    <>
     <div
       className="position-relative"
-      ref={scrollContainerRef}
-      style={{ maxHeight: '500px', overflowY: 'auto' }} 
+      // ref={scrollContainerRef}
+      style={{ maxHeight: '500px', overflowY: 'auto' , }} 
     >
      
-        <Button
+        {/* <Button
           className="position-absolute top-0 start-50 translate-middle-x"
           onClick={() => fetchPosts()}
           style={{ zIndex: 9999 }}
         >
           ⬆️ New Posts
-        </Button>
+        </Button> */}
       
-        {posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
+
+
+        {posts && 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
