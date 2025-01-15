@@ -201,11 +201,11 @@ export const ConnectionRequest = () => {
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
 
   useEffect(() => {
-if (allFollowers) {
-  return
-}
+    if (allFollowers) {
+      return
+    }
     fetchConnections();
-  }, [allFollowers]); 
+  }, [allFollowers]);
 
   const fetchConnections = async () => {
     try {
@@ -238,7 +238,7 @@ if (allFollowers) {
 
       if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
 
-      
+
       toast.success(`Connection request ${status} successfully.`);
       fetchConnections();
     } catch (error) {
@@ -250,17 +250,17 @@ if (allFollowers) {
     <Card>
       <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
         <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
-           Connection Requests
+          Connection Requests
         </CardTitle>
         {allFollowers.length ? <div className="bg-info p-2 rounded">
           <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
-            {allFollowers&&allFollowers.length}
+            {allFollowers && allFollowers.length}
           </p>
         </div> : null}
       </CardHeader>
 
       <CardBody>
-        {allFollowers&&allFollowers.map((follower, idx) => (
+        {allFollowers && allFollowers.map((follower, idx) => (
           <div className="d-flex row col-12 mb-3" key={idx}>
             {/* Avatar Section */}
             <div className="col-8 d-flex">
@@ -339,7 +339,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
 
   const fetchUser = async () => {
-   
+
 
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
@@ -386,7 +386,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       console.log(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
       toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
       fetchUser()
-   
+
     } catch (error) {
       console.error(`Error while trying to ${sent ? "send" : "unsend"} connection request:`, error);
     }
@@ -431,7 +431,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     <div className="ms-sm-4 mt-sm-3">
                       <h1 className="mb-0 h5">
                         {/*profile?.personalDetails?.firstName} {profile?.personalDetails?.lastName*/}{' '}
-                        {user?.firstName + " " + user?.lastName}
+                        {profile?.personalDetails?.firstName + " " + profile?.personalDetails?.lastName}
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
                       <p>{profile.connectionsCount ? profile.connectionsCount : 0} connections</p>
@@ -538,19 +538,16 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
               <Row className="g-4">
                 {/* About Card */}
 
-                
+
                 <Col md={6} lg={12}>
                   <Card>
                     <CardHeader className="border-0 pb-0">
                       <CardTitle>Bio</CardTitle>
                     </CardHeader>
-                    
+
                     <CardBody className="position-relative pt-0">
-
-<p>From the peaks of the Rockies to the depths of the Amazon, I’ve spent the past decade capturing the beauty of the natural world. My passion for photography began during a family camping trip when I was ten years old, and it has only grown since. I find joy in the small details—a dew-covered leaf, a bird in mid-flight—and strive to share these moments through my lens.</p>
-
-
-                     {/* <p>
+                      <p>{profile?.personalDetails?.bio}</p>
+                      {/* <p>
                         {profile?.personalDetails?.bio}
                       </p>
                       <ul className="list-unstyled mt-3 mb-0">
@@ -572,7 +569,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 </Col>
 
 
-               { user?.id === profile?.personalDetails?.id &&  <ConnectionRequest />}
+                {user?.id === profile?.personalDetails?.id && <ConnectionRequest />}
                 {/* Additional Components */}
                 <Col md={6} lg={12}>
                   <Experience />
