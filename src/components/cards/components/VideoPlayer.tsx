@@ -7,6 +7,9 @@ const VideoPlayer = ({src}) => {
       <Plyr
         crossOrigin="anonymous"
         controls
+        options={{
+          autoplay: false,
+        }}
         source={{
           type: 'video',
           sources: [{ src: src }],

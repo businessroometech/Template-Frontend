@@ -1,7 +1,7 @@
 
 import { currentYear, developedBy, developedByLink } from '@/context/constants'
 import type { ProfilePanelLink } from '@/types/data'
-import { Card, CardBody, CardFooter } from 'react-bootstrap'
+import { Button, Card, CardBody, CardFooter } from 'react-bootstrap'
 
 import avatar7 from '@/assets/images/avatar/07.jpg'
 import bgBannerImg from '@/assets/images/bg/01.jpg'
@@ -141,10 +141,41 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           </ul>
         </CardBody>
 
-        <CardFooter className="text-center py-2">
-          <Link  className="btn btn-sm btn-link" to= {(`/profile/feed/${user?.id}`)}>
-            View Profile
-          </Link>
+        <CardFooter className="text-center">
+          {/* <Link  className="btn btn-sm btn-link" to= {(`/profile/feed/${user?.id}`)}> */}
+            <div style={{
+              width : '100%',
+              height : '140px'
+            }}>
+              <p 
+                className='btn btn-sm btn-link'
+              style={{
+                fontSize : '17px',
+                color : 'black',
+                fontWeight:'bold'
+              }}
+              >Subscribe to Premium
+              </p>
+              <p>
+              Subscribe to unlock new features
+              </p>
+
+              <Button
+                className="w-100"
+                style={{
+                  backgroundColor: "#1ea1f3",
+                  color: "white",
+                  padding : '2px',
+                  marginBottom : '3px'
+                }}
+                onClick={() => {
+                  navigate("/feed/groups");
+                }}
+              >
+                Subscribe
+              </Button>
+            </div>
+          {/* </Link> */}
         </CardFooter>
       </Card>
       <ul className="nav small mt-4 justify-content-center lh-1">

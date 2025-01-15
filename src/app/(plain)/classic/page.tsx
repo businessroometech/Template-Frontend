@@ -22,7 +22,7 @@ const ClassicHome = () => {
               <Stories />
               <CreatePostCard />
               <Feeds/>
-            </>
+            </Col>
             <Col md={2} lg={3} xxl={4}>
           
               <ContactSidebar />

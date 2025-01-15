@@ -24,26 +24,34 @@ import { toast } from 'react-toastify';
 
 const AccountSettings = () => {
   const [profile, setProfile] = useState({});
+  const {user} = useAuthContext();
   const schema = yup.object({
-    fName: yup.string(), 
-    lName: yup.string(), 
-    occupation: yup.string(),
-    dob: yup.date(), 
-    phoneNo: yup.string(), 
-    email: yup.string(), 
-    bio: yup.string(), 
-    gender: yup.string(), 
+    fName: yup.string().default(user?.firstName).required(), 
+    lName: yup.string().default(user?.lastName).required(), 
+    occupation: yup.string().default(user?.occupation).required(),
+    dob: yup.date().default(user?.dob).required(), 
+    phoneNo: yup.string().required().default(user?.mobileNumber), 
+    email: yup.string().default(user?.email), 
+    // bio: yup.string().default(user?.bio), 
+    gender: yup.string().default(user?.gender), 
 
 });
 
-const navigate = useNavigate();
-
-  const { user } = useAuthContext();
+  const navigate = useNavigate();
   console.log('---account settings---',user);
   
 
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(schema),
+    defaultValues : {
+      fName : user?.firstName,
+      lName : user?.lastName,
+      occupation : user?.userRole,
+      gender : user?.gender,
+      dob : user?.dob,
+      phoneNo : user?.mobileNumber,
+      email : user?.emailAddress,
+    }
   });
 
 
@@ -90,13 +98,13 @@ const navigate = useNavigate();
           userId: user?.id,
           profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
           bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
-          firstName: data.fName,
-          lastName: data.lName,
+          firstName: data.fName.trim(),
+          lastName: data.lName.trim(),
           dob: data.dob,
           mobileNumber: data.phoneNo,
-          emailAddress: data.email,
+          emailAddress: data.email.trim(),
           bio: data.bio,
-          gender: data.gender,
+          gender: data.gender.trim(),
           // preferredLanguage: data.preferredLanguage,
           // socialMediaProfile: data.socialMediaProfile,
           bodyMeasurement: "38-32-40",
@@ -217,7 +225,7 @@ const navigate = useNavigate();
           </Col>
           <TextFormInput name="phoneNo" label="Phone Number" control={control} containerClassName="col-6" />
           <TextFormInput name="email" label="Email" control={control} containerClassName="col-6" />
-          <TextAreaFormInput name="bio" label="Bio" rows={3} control={control} containerClassName="col-12" />
+          {/* <TextAreaFormInput name="bio" label="Bio" rows={3} control={control} containerClassName="col-12" /> */}
           {/* <Col xs={12}>
             <h6> Address</h6>
             <TextFormInput name="permanentAddress.addressLine1" label="Address " control={control} containerClassName="col-12" />

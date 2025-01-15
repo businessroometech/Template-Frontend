@@ -105,13 +105,13 @@ const Home = () => {
         <Feeds isCreated={isCreated} />
       </Col>
 
-      <Col lg={3}>
+      <Col lg={3} style={{ marginTop : '0px'}}>
         <Row className="g-4">
           <Col sm={6} lg={12}>
             <Followers />
           </Col>
 
-          <Col sm={6} lg={12}>
+          <Col sm={6} lg={12} style={{}}>
             <Card>
               <CardHeader className="pb-0 border-0">
                 <CardTitle className="mb-0">Businessroom News</CardTitle>

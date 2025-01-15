@@ -522,7 +522,7 @@ const Feeds = (isCreated: boolean) => {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page : 1,limit : limit},
+        data: { userId: user?.id, page : 1},
       })
 
       console.log('Fetched Posts:', res)
@@ -532,7 +532,6 @@ const Feeds = (isCreated: boolean) => {
       setError(error.message || 'An unknown error occurred')
     } finally {
       setLoading(false)
-      setFalse();
     }
   }
 
@@ -549,7 +548,7 @@ const Feeds = (isCreated: boolean) => {
       fetchPosts()
       hasMounted.current = true // Set to true after the first call
     }
-  }, [limit,isCreated])
+  }, [isCreated])
 
   const handleDelete = async () => {
         
