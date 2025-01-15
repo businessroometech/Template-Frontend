@@ -31,7 +31,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
   }, [post.likeStatus]);
 
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
-  const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
+  const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4')
 
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();

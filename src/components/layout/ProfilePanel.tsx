@@ -142,8 +142,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         </CardBody>
 
         <CardFooter className="text-center py-2">
-          <Link  className="btn btn-sm btn-link" to= {(`/profile/feed/${user?.id}`)}>
-            View Profile
+          <Link  className="btn btn-sm btn-link" style={{fontSize : '15px', height : '150px',flex:1,paddingTop : '47px'}} to= {(`/profile/feed/${user?.id}`)}>
+            Subscribe to Premium
           </Link>
         </CardFooter>
       </Card>

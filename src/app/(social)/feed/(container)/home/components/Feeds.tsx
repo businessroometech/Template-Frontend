@@ -47,7 +47,6 @@ import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
-import useToggle from '@/hooks/useToggle'
 
 // ----------------- data type --------------------
 interface Post {
@@ -508,8 +507,38 @@ const Feeds = (isCreated: boolean) => {
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
   const [tlRefresh, setTlRefresh] = useState<number>();
-  const [limit,setLimit] = useState<number>(5);
-  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+
+  // onDelete= async () => {
+        
+  //   try {
+  //     const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
+  //       },
+  //       body: JSON.stringify({
+  //         userId: user?.id,
+  //         PostId: post.post?.Id,
+  //       }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log(tlRefresh) // Assuming the response is JSON
+  //     setTlRefresh(tlRefresh+1 || 1);
+  //     console.log(tlRefresh)
+  //     console.log(data);
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   } catch (error: any) {
+  //     console.error('Error Deleting post:', error.message);
+  //   } finally {
+  //     console.log('call done')
+  //   }
+  // }
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -518,7 +547,7 @@ const Feeds = (isCreated: boolean) => {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page : 1,limit : limit},
+        data: { userId: user?.id, page : 1},
       })
 
       console.log('Fetched Posts:', res)
@@ -528,13 +557,11 @@ const Feeds = (isCreated: boolean) => {
       setError(error.message || 'An unknown error occurred')
     } finally {
       setLoading(false)
-      setFalse();
     }
   }
 
   useEffect(() => {
     // If the component has mounted already, only fetch posts if `isCreated` is true
-    setTrue();
     if (hasMounted.current) {
       if (isCreated) {
         fetchPosts()
@@ -544,7 +571,7 @@ const Feeds = (isCreated: boolean) => {
       fetchPosts()
       hasMounted.current = true // Set to true after the first call
     }
-  }, [limit,isCreated])
+  }, [isCreated])
 
   const postData = [
     { progress: 25, title: 'We have cybersecurity insurance coverage' },
@@ -564,37 +591,7 @@ const Feeds = (isCreated: boolean) => {
 
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={async () => {
-        
-  try {
-    const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
-      },
-      body: JSON.stringify({
-        userId: user?.id,
-        PostId: post.post?.Id,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(tlRefresh) // Assuming the response is JSON
-    setTlRefresh(tlRefresh+1 || 1);
-    console.log(tlRefresh)
-    console.log(data);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error('Error Deleting post:', error.message);
-  } finally {
-    console.log('call done')
-  }
-}}/>) : <p>No posts found.</p>}</div>
+      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
@@ -642,7 +639,7 @@ const Feeds = (isCreated: boolean) => {
 
       {/* <Post3 /> */}
       {/* <SuggestedStories /> */}
-      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
+      <LoadMoreButton />
     </>
   )
 }

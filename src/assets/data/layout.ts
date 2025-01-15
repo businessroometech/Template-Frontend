@@ -30,41 +30,41 @@ type ExperienceType = {
 
 
 export const profilePanelLinksData1: ProfilePanelLink[] = [
-  {
-    image: homeImg,
-    name: 'Feed',
-    link: '/profile/feed',
-  },
+  // {
+  //   image: homeImg,
+  //   name: 'Feed',
+  //   link: '/profile/feed',
+  // },
   {
     image: personImg,
-    name: 'Connections',
+    name: 'Who viewed my profile',
     link: '/profile/connections',
   },
-  {
-    image: earthImg,
-    name: 'Latest News',
-    link: '/blogs',
-  },
-  {
-    image: calendarImg,
-    name: 'Events',
-    link: '/profile/events',
-  },
-  {
-    image: chatImg,
-    name: 'Who viewed your profile',
-    link: '/feed/groups',
-  },
-  {
-    image: notificationImg,
-    name: 'Notifications',
-    link: '/notifications',
-  },
-  {
-    image: cogImg,
-    name: 'Settings',
-    link: '/settings/account',
-  },
+  // {
+  //   image: earthImg,
+  //   name: 'Latest News',
+  //   link: '/blogs',
+  // },
+  // {
+  //   image: calendarImg,
+  //   name: 'Events',
+  //   link: '/profile/events',
+  // },
+  // {
+  //   image: chatImg,
+  //   name: 'Who viewed your profile',
+  //   link: '/feed/groups',
+  // },
+  // {
+  //   image: notificationImg,
+  //   name: 'Notifications',
+  //   link: '/notifications',
+  // },
+  // {
+  //   image: cogImg,
+  //   name: 'Settings',
+  //   link: '/settings/account',
+  // },
 ]
 
 export const profilePanelLinksData2: ProfilePanelLink[] = [

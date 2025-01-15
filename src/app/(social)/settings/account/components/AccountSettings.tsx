@@ -90,13 +90,13 @@ const navigate = useNavigate();
           userId: user?.id,
           profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
           bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
-          firstName: data.fName,
-          lastName: data.lName,
+          firstName: data.fName.trim(),
+          lastName: data.lName.trim(),
           dob: data.dob,
           mobileNumber: data.phoneNo,
-          emailAddress: data.email,
+          emailAddress: data.email.trim(),
           bio: data.bio,
-          gender: data.gender,
+          gender: data.gender.trim(),
           // preferredLanguage: data.preferredLanguage,
           // socialMediaProfile: data.socialMediaProfile,
           bodyMeasurement: "38-32-40",
