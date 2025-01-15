@@ -24,18 +24,18 @@ const RoleSelectionModal = ({ show, onHide, onSelectRole }) => {
       icon: <FaPiggyBank size={30} />,
       description: "Empowering growth through startup investments.",
     },
-    {
-      id: "seller",
-      title: "Business Seller",
-      icon: <FaStore size={30} />,
-      description: "List and sell your startup with ease.",
-    },
-    {
-      id: "acquirer",
-      title: "Business Acquirer",
-      icon: <FaHandshake size={30} />,
-      description: "Discover and Acquire promising startups.",
-    },
+    // {
+    //   id: "seller",
+    //   title: "Business Seller",
+    //   icon: <FaStore size={30} />,
+    //   description: "List and sell your startup with ease.",
+    // },
+    // {
+    //   id: "acquirer",
+    //   title: "Business Acquirer",
+    //   icon: <FaHandshake size={30} />,
+    //   description: "Discover and Acquire promising startups.",
+    // },
   ];
 
   const handleRoleSelect = (roleId) => {

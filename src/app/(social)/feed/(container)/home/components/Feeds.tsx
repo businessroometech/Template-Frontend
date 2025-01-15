@@ -47,6 +47,8 @@ import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import useToggle from '@/hooks/useToggle'
+import Loading from '@/components/Loading'
 
 // ----------------- data type --------------------
 interface Post {
@@ -507,38 +509,11 @@ const Feeds = (isCreated: boolean) => {
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
   const [tlRefresh, setTlRefresh] = useState<number>();
-
-  // onDelete= async () => {
-        
-  //   try {
-  //     const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
-  //       },
-  //       body: JSON.stringify({
-  //         userId: user?.id,
-  //         PostId: post.post?.Id,
-  //       }),
-  //     });
+  const [limit,setLimit] = useState<number>(5);
+  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
   
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-  
-  //     const data = await response.json();
-  //     console.log(tlRefresh) // Assuming the response is JSON
-  //     setTlRefresh(tlRefresh+1 || 1);
-  //     console.log(tlRefresh)
-  //     console.log(data);
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   } catch (error: any) {
-  //     console.error('Error Deleting post:', error.message);
-  //   } finally {
-  //     console.log('call done')
-  //   }
-  // }
+ const [showNewPostButton, setShowNewPostButton] = useState(false);
+  // const scrollContainerRef = useRef(null);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -562,6 +537,8 @@ const Feeds = (isCreated: boolean) => {
 
   useEffect(() => {
     // If the component has mounted already, only fetch posts if `isCreated` is true
+    // fetchPosts()
+    setTrue();
     if (hasMounted.current) {
       if (isCreated) {
         fetchPosts()
@@ -573,25 +550,96 @@ const Feeds = (isCreated: boolean) => {
     }
   }, [isCreated])
 
-  const postData = [
-    { progress: 25, title: 'We have cybersecurity insurance coverage' },
-    { progress: 15, title: 'Our dedicated staff will protect us' },
-    { progress: 10, title: 'We give regular training for best practices' },
-    { progress: 55, title: 'Third-party vendor protection' },
-  ]
+  const handleDelete = async () => {
+        
+    try {
+      const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          PostId: post.post?.Id,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log(tlRefresh) // Assuming the response is JSON
+      setTlRefresh(tlRefresh+1 || 1);
+      console.log(tlRefresh)
+      console.log(data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Error Deleting post:', error.message);
+    } finally {
+      console.log('call done')
+    }
+  }
 
   // Conditional rendering
   if (loading) {
-    return <div>Loading posts...</div> // Show a loading spinner or message
+    return <div style={{minHeight:"110vh"}}><Loading loading={true} /></div> // Show a loading spinner or message
   }
 
   if (error) {
     return <div>Error: {error}</div> // Show an error message
   }
 
+
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       if (scrollContainerRef.current) {
+//         const scrollTop = scrollContainerRef.current.scrollTop;
+
+//         // Show button if scrolled up or near the top (scrollTop < 1000)
+//         if (scrollTop < 1) {
+//           setShowNewPostButton(true);
+//         } else {
+//           setShowNewPostButton(false);
+//         }
+//       }
+//     };
+
+//     const container = scrollContainerRef.current;
+
+//     if (container) {
+//       container.addEventListener('scroll', handleScroll);
+//     }
+
+//     return () => {
+//       if (container) {
+//         container.removeEventListener('scroll', handleScroll);
+//       }
+//     };
+//   }, []);
+
+setTimeout(() => {
+  setShowNewPostButton(true)
+}, 50000);
+
   return (
     <>
-      <div>{posts.length !== 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
+    <div
+      className="position-relative"
+      // ref={scrollContainerRef}
+      style={{ maxHeight: '500px'}} 
+    >
+     
+       {showNewPostButton&&<Link to="/feed/home#"
+         className='btn-primary'
+          onClick={() => setShowNewPostButton(false)}
+          style={{ zIndex: 99 ,top: "4em", position: "fixed",left:"47%"}}
+        >
+          ⬆️ New Posts
+        </Link>}
+      
+     {posts.length > 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
