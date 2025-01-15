@@ -34,10 +34,6 @@ const SignUpForm = () => {
     password: yup.string().required('Please enter your password'),
     confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Please enter your confirm password'),
     country: yup.string().required('Please select your country'),
-    dob: yup
-    .date()
-    .max(new Date(), 'Date of birth cannot be in the future')
-    .required('Please enter your date of birth'),
   });
 
   const { control, handleSubmit, getValues, watch } = useForm({
@@ -49,6 +45,15 @@ const SignUpForm = () => {
     setRole(roleId);
   };
 
+  function PrintRole(role : string) {
+    if(role == undefined || role == '') {
+      return null
+    }
+    else if(role == 'entrepreneur') return 'Entreprenuer'
+    else if(role == 'investor') return 'Investor'
+    else return null;
+  }
+
   
   useEffect(() => {
     setFirstPassword(getValues().password);
@@ -57,8 +62,7 @@ const SignUpForm = () => {
     setFirstName(getValues().firstName);
     setLastName(getValues().lastName);
     setCountry(getValues().country);
-    setRole(getValues().dob);
-  }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country'),watch('dob')]);
+  }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country')]);
 
 
   if (showModal) {
@@ -94,6 +98,11 @@ const SignUpForm = () => {
       setShowModal(true);
       return;
     }
+    if(dob === '') {
+      alert('Enter your Dob');
+      return;
+    }
+    // console.log(firstName,lastName,email,firstPassword,confirmPassword,dob,country,role);
     await signUp({
       email,
       firstName,
@@ -116,19 +125,15 @@ const SignUpForm = () => {
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
       </div>
       <div className="mb-3">
-  <Controller
-    name="dob"
-    control={control}
-    render={({ field }) => (
       <DatePicker
-        {...field}
         placeholderText="Enter your date of birth"
         className="form-control input-group-lg" // Ensures consistent styling
-        selected={field.value}
-        onChange={(date) => field.onChange(date)}
+        value={dob}
+        onChange={(date) => {
+          setDob(date?.toDateString().split(" ").slice(1).join("/"));
+          console.log(dob)
+        }}
       />
-    )}
-  />
 </div>
 
       <div className="mb-3">
@@ -371,7 +376,7 @@ const SignUpForm = () => {
         <FormCheck label="Keep me signed in" id="termAndCondition" />
       </div>
 <div className="d-grid">
-  <Button
+<Button
     variant="success"
     className="bg-success mb-3" // Add margin-bottom for spacing
     type="submit"
@@ -380,7 +385,7 @@ const SignUpForm = () => {
       setShowModal(true);
     }}
   >
-    Select your Role
+    Select your Role{PrintRole(role) && <span style={{paddingLeft : '2px'}}>-({PrintRole(role)})</span>}
   </Button>
   <Button variant="primary" type="submit" size="lg">
     Sign me up
