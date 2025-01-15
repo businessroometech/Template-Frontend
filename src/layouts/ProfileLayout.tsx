@@ -62,6 +62,7 @@ import axios from "axios"
 import { useAuthContext } from "@/context/useAuthContext"
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify"
+import Loading from "@/components/Loading"
 
 const Experience = () => {
 
@@ -199,11 +200,10 @@ const Friends = () => {
 export const ConnectionRequest = () => {
   const { user } = useAuthContext();
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<string | null>(null); // Tracks loading by user ID
 
   useEffect(() => {
-    if (allFollowers) {
-      return
-    }
+
     fetchConnections();
   }, [allFollowers]);
 
@@ -224,27 +224,38 @@ export const ConnectionRequest = () => {
     }
   };
 
-  const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
+
+  const handleStatusUpdate = async (
+    userId: string,
+    status: 'accepted' | 'rejected'
+  ) => {
+    setLoading(userId); // Set loading state for the current user
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user?.id,
-          connectionId: userId,
-          status,
-        }),
-      });
-
-      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
-
-
+      const response = await fetch(
+        'https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user?.id,
+            connectionId: userId,
+            status,
+          }),
+        }
+      );
+  
+      if (!response.ok)
+        throw new Error(`Failed to ${status} the connection request.`);
+      fetchConnections()
       toast.success(`Connection request ${status} successfully.`);
-      fetchConnections();
     } catch (error) {
       console.error(`Error while updating connection status:`, error);
+      toast.error(`Error while trying to ${status} the connection request.`);
+    } finally {
+      setLoading(null); // Clear loading state
     }
   };
+  
 
   return (
     <Card>
@@ -287,17 +298,28 @@ export const ConnectionRequest = () => {
                 onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
                 variant="danger-soft"
                 className="rounded-circle mx-1 flex-centered"
+                disabled={loading === follower?.requesterDetails?.id} // Disable while loading
               >
-                <RiUserUnfollowFill />
+                {loading === follower?.requesterDetails?.id ? (
+                  <Loading size={15} loading={true} /> // Show loading spinner
+                ) : (
+                  <RiUserUnfollowFill />
+                )}
               </Button>
               <Button
                 onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
                 variant="success-soft"
                 className="rounded-circle mx-1 flex-centered"
+                disabled={loading === follower?.requesterDetails?.id} // Disable while loading
               >
-                <FaUserCheck size={19} className="pe-1" />
+                {loading === follower?.requesterDetails?.id ? (
+                  <Loading size={15} loading={true} /> // Show loading spinner
+                ) : (
+                  <FaUserCheck size={19} className="pe-1" />
+                )}
               </Button>
             </div>
+
           </div>
         ))}
       </CardBody>
@@ -312,7 +334,6 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const [profile, setProfile] = useState({});
   const [sent, setSent] = useState(false)
   const navigate = useNavigate();
-
   const { id } = useParams();
 
 
@@ -339,8 +360,6 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
 
   const fetchUser = async () => {
-
-
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
@@ -445,7 +464,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           type="button"
                           onClick={() => navigate("/settings/account")}
                         >
-                          <BsPencilFill size={19} className="pe-1" /> Edit profile
+                          <BsPencilFill size={19} className="pe-1" />
                         </Button>
                       ) : (
                         <Button

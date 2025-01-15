@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import { useAuthContext } from '@/context/useAuthContext'
 import { ConnectionRequest } from '@/layouts/ProfileLayout'
+import Loading from '@/components/Loading'
 
 const Followers = () => {
 
@@ -21,6 +22,7 @@ const Followers = () => {
   const [limit, setLimit] = useState(5);
   const [totalUsers, SetTotalUsers] = useState(0)
   const [sentStatus, setSentStatus] = useState<{ [key: string]: boolean }>({});
+  const [loading, setLoading] = useState<string | null>(null); // Track loading state by user ID
 
   useEffect(() => {
     if (allFollowers.length >= 1) {
@@ -56,12 +58,15 @@ const Followers = () => {
     }
   };
 
+
   const UserRequest = async (userId: string) => {
     const newSentStatus = { ...sentStatus };
-    newSentStatus[userId] = !sentStatus[userId]; // Toggle the sent status for the clicked user
+    const isSending = !sentStatus[userId]; // Determine if sending or unsending
+    newSentStatus[userId] = isSending; // Tentatively toggle the status
     setSentStatus(newSentStatus);
+    setLoading(userId); // Set loading state for this user
 
-    const apiUrl = newSentStatus[userId]
+    const apiUrl = isSending
       ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
       : "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
 
@@ -78,18 +83,36 @@ const Followers = () => {
       });
 
       if (!res.ok) {
-        throw new Error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
+        throw new Error(
+          `Failed to ${isSending ? "send" : "unsend"} connection request.`
+        );
       }
-      const data = await res.json();
-      fetchConnectionSuggestions()
-      console.log(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
-      toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
 
+      const data = await res.json();
+      fetchConnectionSuggestions();
+      console.log(
+        `Connection request ${isSending ? "sent" : "unsent"} successfully:`,
+        data
+      );
+      toast.success(
+        `Connection request ${isSending ? "sent" : "unsent"} successfully.`
+      );
     } catch (error) {
-      console.error(`Error while trying to ${sent ? "send" : "unsend"} connection request:`, error);
+      console.error(
+        `Error while trying to ${isSending ? "send" : "unsend"} connection request:`,
+        error
+      );
+      // Revert status change on failure
+      const revertedStatus = { ...newSentStatus, [userId]: !isSending };
+      setSentStatus(revertedStatus);
+      toast.error(`Failed to ${isSending ? "send" : "unsend"} connection request.`);
+    } finally {
+      setLoading(null); // Clear loading state
     }
   };
 
+
+  const filteredFollowers = allFollowers?.filter(follower => user?.id !== follower.id);
   return (
     <>
       <ConnectionRequest />
@@ -100,7 +123,8 @@ const Followers = () => {
         </CardHeader>
 
         {(allFollowers.length > 0) && (<CardBody>
-          {allFollowers?.map((follower, idx) => (
+          
+{filteredFollowers?.slice(0, 3).map((follower, idx) => (
             <div className="hstack gap-2 mb-3" key={idx}>
               {/* Avatar Section */}
               <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
@@ -129,15 +153,19 @@ const Followers = () => {
                 </Link>
                 <p className="mb-0 small text-truncate">{follower.userRole}</p>
               </div>
-
-
               <Button
-                variant={sentStatus[follower.id] ? 'primary' : 'primary-soft'}
+                variant={sentStatus[follower.id] ? "primary" : "primary-soft"}
                 className="rounded-circle icon-md ms-auto flex-centered"
                 onClick={() => UserRequest(follower.id)}
+                disabled={loading === follower.id} // Disable button if loading
               >
-                <span>{sentStatus[follower.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
+                {loading === follower.id ? (
+                  <Loading size={15} loading={true} /> // Show loading spinner
+                ) : (
+                  <span>{sentStatus[follower.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
+                )}
               </Button>
+
             </div>
           ))}
           <div className="d-grid mt-3">
@@ -145,7 +173,7 @@ const Followers = () => {
               <Button
                 variant="primary-soft"
                 size="sm"
-                onClick={() => {        
+                onClick={() => {
                   setLimit(limit + 3);
                   fetchConnectionSuggestions();
                 }}

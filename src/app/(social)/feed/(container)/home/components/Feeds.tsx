@@ -622,7 +622,7 @@ const Feeds = (isCreated: boolean) => {
 
 setTimeout(() => {
   setShowNewPostButton(true)
-}, 50000);
+}, 500000);
 
   return (
     <>
@@ -688,7 +688,7 @@ setTimeout(() => {
 
       {/* <Post3 /> */}
       {/* <SuggestedStories /> */}
-      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
+      {/* <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/> */}
     </>
   )
 }

@@ -7,14 +7,15 @@ interface LoadingProps {
   size?: number;
 }
 
-const Loading: React.FC<LoadingProps> = ({ loading, color = "#4A90E2", size = 50 }) => {
+const Loading: React.FC<LoadingProps> = ({ loading, color = "#4A90E2", size = 50, }) => {
   return (
     <div
       style={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100px",
+      
+
       }}
     >
       <ClipLoader color={color} loading={loading} size={size} />

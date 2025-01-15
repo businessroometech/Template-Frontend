@@ -63,7 +63,6 @@ const ActionMenu = ({ name }: { name?: string }) => {
         </li>
         <li>
           <DropdownItem>
-            
             <BsSlashCircle size={22} className="fa-fw pe-2" />
             Block
           </DropdownItem>
@@ -157,13 +156,6 @@ const Posts =  ({isCreated}) => {
     }
   }, [isCreated])
 
-  const postData = [
-    { progress: 25, title: 'We have cybersecurity insurance coverage' },
-    { progress: 15, title: 'Our dedicated staff will protect us' },
-    { progress: 10, title: 'We give regular training for best practices' },
-    { progress: 55, title: 'Third-party vendor protection' },
-  ]
-
   // Conditional rendering
   if (loading) {
     return <div>Loading posts... </div> // Show a loading spinner or message
@@ -217,9 +209,6 @@ const Posts =  ({isCreated}) => {
         >
           ⬆️ New Posts
         </Button> */}
-      
-
-
         {posts && 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
 
       {/* <SponsoredCard /> */}
