@@ -69,20 +69,21 @@ const Tags = () => {
 
 const Followers =  () => {
   const allFollowers =useFetchData(getAllUsers) 
+  const filteredFollowers = allFollowers?.filter(follower => user?.id !== follower.id);
   return (
     <Card>
       <CardHeader className="pb-0 border-0">
         <CardTitle className="mb-0">Suggested Connections</CardTitle>
       </CardHeader>
       <CardBody>
-        {allFollowers?.slice(0, 3).map((follower, idx) => (
-          <div className={clsx('hstack gap-2', { 'mb-3': allFollowers.slice(0, 3).length - 1 != idx })} key={idx}>
+
+{filteredFollowers?.slice(0, 3).map((follower, idx) => (
+          <div className={clsx('hstack gap-2', { 'mb-3': filteredFollowers.slice(0, 3).length - 1 != idx })} key={idx}>
             <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
               <span role="button">
                 <img className="avatar-img rounded-circle" src={follower.avatar} alt="image" />
               </span>
             </div>
-
             <div className="overflow-hidden">
               <Link className="h6 mb-0" to="">
                 {follower.name}
