@@ -43,6 +43,9 @@ const DropzoneFormInput = ({
   const handleAcceptedFiles = async (files: File[]) => {
     let allFiles: FileUpload[] = []
 
+    console.log('---all files in handleAcceptedFiles---',allFiles);
+    console.log('--files in handleAcceptedFiles',files);
+
     for (let file of files) {
       // Read file as base64
       const reader = new FileReader()
@@ -68,6 +71,8 @@ const DropzoneFormInput = ({
         setSelectedFiles((prevFiles) => [...prevFiles, file])
 
         if (onFileUpload) onFileUpload(allFiles) // Pass the formatted files to parent component
+        console.log('---Files in input---allFiles',allFiles);
+        console.log('Files in input selectedFiles',selectedFiles);
       }
 
       reader.readAsDataURL(file)
@@ -75,6 +80,9 @@ const DropzoneFormInput = ({
   }
 
   const removeFile = (file: FileType) => {
+    console.log('remove-file called');
+    console.log(file);
+    console.log('selected files',selectedFiles)
     const newFiles = [...selectedFiles]
     newFiles.splice(newFiles.indexOf(file), 1)
     setSelectedFiles(newFiles)

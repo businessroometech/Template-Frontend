@@ -2,7 +2,7 @@ import { toast } from 'react-toastify'
 import makeApiRequest from './apiServer'
 import { useAuthContext } from '@/context/useAuthContext'
 
-interface FileUpload {
+export interface FileUpload {
   key: string
   fileType: string
   fileObject: string // Base64 encoded file content
@@ -71,7 +71,7 @@ function base64ToBlob(base64, contentType) {
 // }
 
 // Upload function to handle file uploads to S3
-export const uploadDoc = async (file: FileUpload, userId: string): Promise<string[] | null> => {
+export const uploadDoc = async (file: FileUpload[], userId: string): Promise<string[] | null> => {
   const doc = file[0];
 
   console.log('---- doc -------', doc)
@@ -145,4 +145,21 @@ export const GetImageWithUrl = async (id: string): Promise<string | null> => {
     console.error('Error fetching image:', error)
     return null
   }
+}
+
+
+export const uploadMulti = async (files : FileUpload[],userId : string) => {
+    try {
+      const urls = files.map((file) => (
+        uploadDoc([file],userId)
+      ))
+  
+      const response = await Promise.all(urls);
+      console.log('---response after promise.all---',response);
+      return response
+    }
+    catch (error) {
+      console.error('Error in mutiUpload', error);
+      return null
+    }
 }

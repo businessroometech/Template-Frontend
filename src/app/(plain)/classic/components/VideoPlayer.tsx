@@ -1,4 +1,3 @@
-
 import Plyr from 'plyr-react'
 import 'plyr-react/plyr.css'
 
@@ -8,6 +7,9 @@ const VideoPlayer = () => {
       <Plyr
         crossOrigin="anonymous"
         controls
+        autoPlay
+        muted
+        playsInline  // Ensure the video plays inline, avoiding fullscreen auto-play restrictions
         source={{
           type: 'video',
           poster: '/videos/poster.jpg',

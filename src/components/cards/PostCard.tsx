@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader } from 'react-bootstrap';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
 import { CircleUserRound } from 'lucide-react';
@@ -10,6 +10,9 @@ import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
 import fallBackAvatar from '../../assets/images/avatar/01.jpg';
 import VideoPlayer from './components/VideoPlayer';
+import GlightBox from '../GlightBox';
+import { mixed } from 'yup';
+import ResponsiveGallery from './components/MediaGallery';
 
 const PostCard = ({ item, isMediaKeys = false }) => {
   const [comments, setComments] = useState([]);
@@ -133,7 +136,9 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         {media.length > 0 && (
 
-          isVideo ? <VideoPlayer src={media[0]}/> : 
+          isVideo ? <div style={{position : 'relative'}}><VideoPlayer src={media[0]}/></div> :
+          
+          (media.length == 1) ? 
           
           <div
             style={{
@@ -155,6 +160,34 @@ const PostCard = ({ item, isMediaKeys = false }) => {
               alt="post media" 
             />
           </div>
+
+              :
+              <ResponsiveGallery media={media}/>
+          // <div className="d-flex justify-content-between">
+          //   <Row className="g-3">
+          //     <Col xs={6}>
+          //       <GlightBox className="h-100" href={"postImg3"} data-gallery="image-popup">
+          //         <img className="rounded img-fluid" src={media[0]} alt="Image" />
+          //       </GlightBox>
+          //     </Col>
+          //     <Col xs={6}>
+          //       <GlightBox href={"/"} data-glightbox data-gallery="image-popup">
+          //         <img className="rounded img-fluid" src={media[1]} alt="Image" />
+          //       </GlightBox>
+          //       <div className="position-relative bg-dark mt-3 rounded">
+          //         <div className="hover-actions-item position-absolute top-50 start-50 translate-middle z-index-9">
+          //           <Link className="btn btn-link text-white" to="">
+                      
+          //             View all
+          //           </Link>
+          //         </div>
+          //         <GlightBox href={"/"} data-glightbox data-gallery="image-popup">
+          //           <img className="img-fluid opacity-50 rounded" src={media[2]} alt="image" />
+          //         </GlightBox>
+          //       </div>
+          //     </Col>
+          //   </Row>
+          // </div>
         )}
 
 <ButtonGroup className="w-100 border-top border-bottom mb-3">

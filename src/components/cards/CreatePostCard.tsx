@@ -52,14 +52,14 @@ import { SendHorizontal } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 import { CREATE_POST } from '@/utils/api'
-import { uploadDoc } from '@/utils/CustomS3ImageUpload'
+import { FileUpload, uploadDoc, uploadMulti } from '@/utils/CustomS3ImageUpload'
 import { FileType } from '@/hooks/useFileUploader'
 
 interface CreatePostCardProps {
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
-import UserModel from './UserModel'
+import UserModel from './UserModel';
 
 interface ApiResponse<T> {
   status: number
@@ -171,18 +171,21 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     }
   }
 
-  const [uploadedFiles, setUploadedFiles] = useState<FileType[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([])
 
   // This function will be triggered when files are uploaded
-  const handleFileUpload = (files: FileType[]) => {
-    setUploadedFiles(files)
+  const handleFileUpload = (files: FileUpload[]) => {
+    console.log('---In handleFileUpload---uploadedFiles----',uploadedFiles);
+    console.log('-----files in params----',files);
+    setUploadedFiles([...uploadedFiles,...files]);
+    console.log('---setted files---in my function',files);
   }
 
   // console.log('---- photo uploading -----', uploadedFiles)
 
   const handleUpload = async () => {
     try {
-      const response = await uploadDoc(uploadedFiles, user?.id) // Await the uploadDoc promise
+      const response = await uploadMulti(uploadedFiles, user?.id) // Await the uploadDoc promise
       console.log('---- response in the upload doc function ----', response);
       return response
     } catch (err) {
@@ -273,7 +276,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const [show, setShow] = useState(true);
   const handleClose = () => {
     setShow(false) 
-    setModelTime(false)}
+    setModelTime(false)
+  }
 
   const handleShow = () => setShow(true);
 
@@ -283,8 +287,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       setModelTime(true)
     }, 3000);
          }
-return
-}, 3000);
+    return
+    }, 3000);
 
   return (
     <>
@@ -427,7 +431,8 @@ return
           </div>
           <div>
             <label className="form-label">Upload attachment</label>
-            <DropzoneFormInput icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
+            <DropzoneFormInput
+             icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
           </div>
         </ModalBody>
         <ModalFooter>
