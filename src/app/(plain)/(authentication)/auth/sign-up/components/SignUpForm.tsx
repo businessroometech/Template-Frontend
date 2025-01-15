@@ -24,8 +24,10 @@ const SignUpForm = () => {
   const [role,setRole] = useState<string>("");
   const [showModal,setShowModal] = useState<boolean>(false);
   const [dob, setDob] = useState<string>('');
-
+  const [error, setError] = useState("");
   const { signUp } = useSignUp();
+  const today = new Date();
+  const minDate = new Date("1900-01-01");
   
   const signUpSchema = yup.object({
     firstName: yup.string().required('Please enter First Name'),
@@ -34,10 +36,6 @@ const SignUpForm = () => {
     password: yup.string().required('Please enter your password'),
     confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Please enter your confirm password'),
     country: yup.string().required('Please select your country'),
-    dob: yup
-    .date()
-    .max(new Date(), 'Date of birth cannot be in the future')
-    .required('Please enter your date of birth'),
   });
 
   const { control, handleSubmit, getValues, watch } = useForm({
@@ -49,6 +47,22 @@ const SignUpForm = () => {
     setRole(roleId);
   };
 
+  function PrintRole(role : string) {
+    if(role == undefined || role == '') {
+      return null
+    }
+    else if(role == 'entrepreneur') return 'Entreprenuer'
+    else if(role == 'investor') return 'Investor'
+    else return null;
+  }
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear());
+    return `${day}/${month}/${year}`;
+  };
+
   
   useEffect(() => {
     setFirstPassword(getValues().password);
@@ -57,8 +71,7 @@ const SignUpForm = () => {
     setFirstName(getValues().firstName);
     setLastName(getValues().lastName);
     setCountry(getValues().country);
-    setRole(getValues().dob);
-  }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country'),watch('dob')]);
+  }, [watch('email'), watch('password'), watch('firstName'), watch('lastName'), watch('confirmPassword'), watch('country')]);
 
 
   if (showModal) {
@@ -94,6 +107,11 @@ const SignUpForm = () => {
       setShowModal(true);
       return;
     }
+    if(dob === '') {
+      alert('Enter your Dob');
+      return;
+    }
+    // console.log(firstName,lastName,email,firstPassword,confirmPassword,dob,country,role);
     await signUp({
       email,
       firstName,
@@ -115,21 +133,39 @@ const SignUpForm = () => {
       <div className="mb-3">
         <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
       </div>
-      <div className="mb-3">
-  <Controller
-    name="dob"
-    control={control}
-    render={({ field }) => (
+      <div>
       <DatePicker
-        {...field}
         placeholderText="Enter your date of birth"
-        className="form-control input-group-lg" // Ensures consistent styling
-        selected={field.value}
-        onChange={(date) => field.onChange(date)}
+        className="form-control input-group-lg"
+        value={dob}
+        onChange={(date) => {
+          if (date > today) {
+            setError("Date cannot be in the future.");
+          } else {
+            setError("");
+            setDob(formatDate(date));
+          }
+        }}
+        onChangeRaw={(e) => {
+          const inputDate = new Date(e.target.value);
+          if (isNaN(inputDate.getTime())) {
+            setError("Invalid date format. Use dd/mm/yy.");
+          } else if (inputDate > today) {
+            setError("Date cannot be in the future.");
+          } else {
+            setError("");
+            setDob(formatDate(inputDate));
+          }
+        }}
+        dateFormat="dd/MM/yy" // Set date format to dd/mm/yy
+        maxDate={today} // Prevent future dates
+        minDate={minDate} // Allow dates from 1900 onwards
+        showYearDropdown // Enable year dropdown
+        scrollableYearDropdown // Allow scrolling for years
+        yearDropdownItemNumber={120} // Number of years in the dropdown (e.g., last 120 years)
       />
-    )}
-  />
-</div>
+      {error && <p style={{ color: "red", marginTop: "5px" }}>{error}</p>}
+    </div>
 
       <div className="mb-3">
         <TextFormInput
@@ -371,7 +407,7 @@ const SignUpForm = () => {
         <FormCheck label="Keep me signed in" id="termAndCondition" />
       </div>
 <div className="d-grid">
-  <Button
+<Button
     variant="success"
     className="bg-success mb-3" // Add margin-bottom for spacing
     type="submit"
@@ -380,7 +416,7 @@ const SignUpForm = () => {
       setShowModal(true);
     }}
   >
-    Select your Role
+    Select your Role{PrintRole(role) && <span style={{paddingLeft : '2px'}}>-({PrintRole(role)})</span>}
   </Button>
   <Button variant="primary" type="submit" size="lg">
     Sign me up
