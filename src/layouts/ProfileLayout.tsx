@@ -244,7 +244,7 @@ export const ConnectionRequest = () => {
           }),
         }
       );
-  
+
       if (!response.ok)
         throw new Error(`Failed to ${status} the connection request.`);
       fetchConnections()
@@ -256,7 +256,7 @@ export const ConnectionRequest = () => {
       setLoading(null); // Clear loading state
     }
   };
-  
+
 
   return (
     <Card>
@@ -382,8 +382,10 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
     }
   };
 
+  const [loading, setLoading] = useState(false); // Tracks loading state
+
   const UserRequest = async (userId: string) => {
-    setSent(!sent);
+    setLoading(true); // Set loading to true when request starts
     const apiUrl = sent
       ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
       : "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
@@ -398,19 +400,25 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           receiverId: userId,
         }),
       });
-
+  
       if (!res.ok) {
         throw new Error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
       }
       const data = await res.json();
-      console.log(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
-      toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully:`, data);
-      fetchUser()
-
+      setSent(!sent); // Toggle sent status
+      toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully.`);
+      fetchUser(); // Refresh user data
     } catch (error) {
-      console.error(`Error while trying to ${sent ? "send" : "unsend"} connection request:`, error);
+      console.error(
+        `Error while trying to ${sent ? "send" : "unsend"} connection request:`,
+        error
+      );
+      toast.error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
+  
 
   return (
     <>
@@ -473,17 +481,21 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           className="me-2"
                           type="button"
                           onClick={() => UserRequest(profile?.personalDetails?.id)}
+                          disabled={loading} // Disable button while loading
                         >
-                          {!sent ? (
-                            <>
-                              <FaUserPlus size={19} className="pe-1" /> Send connection request
-                            </>
-                          ) : (
+                          {loading ? (
+                            <Loading size={15} loading={true} /> // Show loading spinner
+                          ) : sent ? (
                             <>
                               <FaUserCheck size={19} className="pe-1" /> Request sent
                             </>
+                          ) : (
+                            <>
+                              <FaUserPlus size={19} className="pe-1" /> Send connection request
+                            </>
                           )}
                         </Button>
+
                       )}
                       <Dropdown>
                         <DropdownToggle
@@ -567,18 +579,18 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
                     <CardBody className="position-relative pt-0">
 
-                        <Button
-                          className="w-100"
-                          style={{
-                            backgroundColor: "#1ea1f3",
-                            color: "white",
-                          }}
-                          onClick={() => {
-                            navigate("/feed/groups");
-                          }}
-                        >
-                          View My Business Profile
-                        </Button>
+                      <Button
+                        className="w-100"
+                        style={{
+                          backgroundColor: "#1ea1f3",
+                          color: "white",
+                        }}
+                        onClick={() => {
+                          navigate("/feed/groups");
+                        }}
+                      >
+                        View My Business Profile
+                      </Button>
 
                       {/* <p>{profile?.personalDetails?.bio}</p> */}
                       {/* <p>
@@ -612,7 +624,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   <Photos />
                 </Col> */}
                 <Col md={6} lg={12}>
-                  <Followers/>
+                  <Followers />
                 </Col>
                 <Col md={6} lg={12}>
                   <Experience />
