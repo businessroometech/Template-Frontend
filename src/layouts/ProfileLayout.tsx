@@ -198,7 +198,7 @@ const Friends = () => {
   )
 }
 
- const ConnectionRequest = () => {
+const ConnectionRequest = () => {
   const { user } = useAuthContext();
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
   const [loading, setLoading] = useState<string | null>(null); // Tracks loading by user ID
@@ -206,7 +206,7 @@ const Friends = () => {
   useEffect(() => {
 
     fetchConnections();
-  }, [allFollowers]);
+  }, []);
 
   const fetchConnections = async () => {
     try {
@@ -475,7 +475,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         >
                           <BsPencilFill size={19} className="pe-1" />
                         </Button>
-                      ) : (
+                      ) : profile.connectionsStatus === null ? (
                         <Button
                           variant={sent ? "success-soft" : "primary-soft"}
                           className="me-2"
@@ -484,7 +484,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           disabled={loading} // Disable button while loading
                         >
                           {loading ? (
-                            <Loading size={15} loading={true} /> // Show loading spinner
+                            <Loading size={15} loading={true} />
                           ) : sent ? (
                             <>
                               <FaUserCheck size={19} className="pe-1" /> Request sent
@@ -495,8 +495,25 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             </>
                           )}
                         </Button>
-
+                      ) : (
+                        <Button
+                          variant={
+                            profile.connectionsStatus === "pending"
+                              ? "warning-soft"
+                              : profile.connectionsStatus === "accepted"
+                                ? "success-soft"
+                                : profile.connectionsStatus === "rejected"
+                                  ? "danger-soft"
+                                  : "secondary-soft" // Default case, if needed
+                          }
+                          className="me-2"
+                          type="button"
+                          
+                        >
+                          {profile.connectionsStatus} {/* Display the status */}
+                        </Button>
                       )}
+
                       <Dropdown>
                         <DropdownToggle
                           as="a"
@@ -613,7 +630,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     </CardBody>
                   </Card>
                 </Col>
-                
+
                 <ConnectionRequest />
                 {/* Additional Components */}
                 <Col md={6} lg={12}>

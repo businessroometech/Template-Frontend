@@ -25,7 +25,7 @@ const Followers = () => {
   const [loading, setLoading] = useState<string | null>(null); // Track loading state by user ID
 
   useEffect(() => {
-    if (allFollowers.length >= 1) {
+    if(allFollowers.length>0){
       return
     }
     fetchConnectionSuggestions();
@@ -61,10 +61,10 @@ const Followers = () => {
 
   const UserRequest = async (userId: string) => {
     const newSentStatus = { ...sentStatus };
-    const isSending = !sentStatus[userId]; // Determine if sending or unsending
-    newSentStatus[userId] = isSending; // Tentatively toggle the status
+    const isSending = !sentStatus[userId]; 
+    newSentStatus[userId] = isSending; 
     setSentStatus(newSentStatus);
-    setLoading(userId); // Set loading state for this user
+    setLoading(userId); 
 
     const apiUrl = isSending
       ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
@@ -110,7 +110,12 @@ const Followers = () => {
       setLoading(null); // Clear loading state
     }
   };
+  const handleViewMore = ()=>{
+    console.log("limit", limit);
+      setLimit(limit + 3);
+      fetchConnectionSuggestions();
 
+  }
 
   const filteredFollowers = allFollowers?.filter(follower => user?.id !== follower.id);
   return (
@@ -124,9 +129,8 @@ const Followers = () => {
 
         {(allFollowers.length > 0) && (<CardBody>
           
-{filteredFollowers?.slice(0, 3).map((follower, idx) => (
+{filteredFollowers?.map((follower, idx) => (
             <div className="hstack gap-2 mb-3" key={idx}>
-              {/* Avatar Section */}
               <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
                 {follower.profilePictureUrl ? (
                   <span role="button">
@@ -145,8 +149,6 @@ const Followers = () => {
                   </span>
                 )}
               </div>
-
-              {/* Follower Details */}
               <div className="overflow-hidden">
                 <Link className="h6 mb-0" to={`/profile/feed/${follower.id}`} >
                   {follower.firstName} {follower.lastName}
@@ -157,10 +159,10 @@ const Followers = () => {
                 variant={sentStatus[follower.id] ? "primary" : "primary-soft"}
                 className="rounded-circle icon-md ms-auto flex-centered"
                 onClick={() => UserRequest(follower.id)}
-                disabled={loading === follower.id} // Disable button if loading
+                disabled={loading === follower.id} 
               >
                 {loading === follower.id ? (
-                  <Loading size={15} loading={true} /> // Show loading spinner
+                  <Loading size={15} loading={true} /> 
                 ) : (
                   <span>{sentStatus[follower.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
                 )}
@@ -173,10 +175,7 @@ const Followers = () => {
               <Button
                 variant="primary-soft"
                 size="sm"
-                onClick={() => {
-                  setLimit(limit + 3);
-                  fetchConnectionSuggestions();
-                }}
+                onClick={handleViewMore}
               >
                 View more
               </Button>
