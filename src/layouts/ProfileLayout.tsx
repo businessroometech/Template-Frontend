@@ -368,7 +368,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: id
+          userId: id,
+          profileId:user.id
         })
       });
 
@@ -384,7 +385,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const [loading, setLoading] = useState(false); // Tracks loading state
 
-  const UserRequest = async (userId: string) => {
+  const UserRequest = async () => {
     setLoading(true); // Set loading to true when request starts
     const apiUrl = sent
       ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
@@ -397,7 +398,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         },
         body: JSON.stringify({
           requesterId: user?.id,
-          receiverId: userId,
+          receiverId: id,
         }),
       });
 
@@ -466,7 +467,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     </div>
                     {/* Action Buttons */}
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
-                      {user?.id === profile?.personalDetails?.id ? (
+                      {user?.id === id ? (
                         <Button
                           variant="danger-soft"
                           className="me-2"
@@ -475,13 +476,30 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         >
                           <BsPencilFill size={19} className="pe-1" />
                         </Button>
-                      ) : profile.connectionsStatus === null ? (
+                      ) : (profile.connectionsStatus === "pending" || profile.connectionsStatus === "accepted" || profile.connectionsStatus === "rejected")  ? (
+                        <Button
+                          variant={
+                            profile.connectionsStatus === "pending"
+                              ? "warning-soft"
+                              : profile.connectionsStatus === "accepted"
+                                ? "success-soft"
+                                : profile.connectionsStatus === "rejected"
+                                  ? "danger-soft"
+                                  : "secondary-soft" 
+                          }
+                          className="me-2"
+                          type="button"
+                          
+                        >
+                          {profile.connectionsStatus} 
+                        </Button>
+                      ): (
                         <Button
                           variant={sent ? "success-soft" : "primary-soft"}
                           className="me-2"
                           type="button"
                           onClick={() => UserRequest(profile?.personalDetails?.id)}
-                          disabled={loading} // Disable button while loading
+                          disabled={loading} 
                         >
                           {loading ? (
                             <Loading size={15} loading={true} />
@@ -495,24 +513,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             </>
                           )}
                         </Button>
-                      ) : (
-                        <Button
-                          variant={
-                            profile.connectionsStatus === "pending"
-                              ? "warning-soft"
-                              : profile.connectionsStatus === "accepted"
-                                ? "success-soft"
-                                : profile.connectionsStatus === "rejected"
-                                  ? "danger-soft"
-                                  : "secondary-soft" // Default case, if needed
-                          }
-                          className="me-2"
-                          type="button"
-                          
-                        >
-                          {profile.connectionsStatus} {/* Display the status */}
-                        </Button>
-                      )}
+                      ) }
 
                       <Dropdown>
                         <DropdownToggle
