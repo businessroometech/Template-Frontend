@@ -524,8 +524,15 @@ const Feeds = (isCreated: boolean) => {
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
+      if(res.message == "No posts found for this user.") {
+        setHasMore(false);
+        console.log('went in');
+        return;
+      }
       if(res.data.length === 0){
         setHasMore(false);
+        console.log('went in');
+        return;
       }
       console.log('Fetched Posts:', res)
       setPosts(previousPosts => [...previousPosts, ...res.data])
