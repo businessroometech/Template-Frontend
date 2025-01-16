@@ -198,7 +198,7 @@ const Friends = () => {
   )
 }
 
-export const ConnectionRequest = () => {
+ const ConnectionRequest = () => {
   const { user } = useAuthContext();
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
   const [loading, setLoading] = useState<string | null>(null); // Tracks loading by user ID
@@ -400,7 +400,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           receiverId: userId,
         }),
       });
-  
+
       if (!res.ok) {
         throw new Error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
       }
@@ -418,7 +418,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       setLoading(false); // Reset loading state
     }
   };
-  
+
 
   return (
     <>
@@ -613,9 +613,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     </CardBody>
                   </Card>
                 </Col>
-
-
-                {/* {user?.id === profile?.personalDetails?.id && <ConnectionRequest />} */}
+                
+                <ConnectionRequest />
                 {/* Additional Components */}
                 <Col md={6} lg={12}>
                   <Friends />
