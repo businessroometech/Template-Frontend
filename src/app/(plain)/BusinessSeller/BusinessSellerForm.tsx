@@ -385,10 +385,9 @@ import 'react-toastify/dist/ReactToastify.css';
 const BusinessSellerForm = () => {
 
   const { user} = useAuthContext();
-  console.log(user?.id)
+  //console.log(user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    sellerName: '',
     businessName: '',
     businessType: '',
     businessStage: '',
@@ -411,7 +410,9 @@ const BusinessSellerForm = () => {
     legalIssues: '',
     expectedTimeline: '',
     additionalInformation: '',
+   // businessLogo: '',
   });
+  const [ UserId , setUserId] = useState('')
 
   const [step, setStep] = useState(0);
   const sections = [
@@ -424,29 +425,54 @@ const BusinessSellerForm = () => {
   ];
 
   const handleInputChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toast.success("Form submitted successfully!")
-    try {
-      fetch('https://app-backend-8r74.onrender.com/businessselle/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData , user?.id),
-      }).then(() => navigate('/'));
-      console.log(formData)
-    } catch (error) {
-      console.log(error);
+    if (name === 'businessLogo') {
+      const file = value.target.files[0];
+      setFormData((prev) => ({
+        ...prev,
+        [name]: file,
+      }));
+      // Create a preview URL for the image
+      const imagePreviewUrl = URL.createObjectURL(file);
+      setFormData((prev) => ({
+        ...prev,
+        [`${name}Preview`]: imagePreviewUrl,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
-
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUserId(user?.id)
+   // console.log(UserId)
+    toast.success("Form submitted successfully!");
+  
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+      formDataToSend.append('UserId', UserId);
+      console.log(key, formData[key]);
+    });
+  console.log(formDataToSend)
+    try {
+     const postdata =  await axios.post('http://localhost:5000/businessseller/create', formDataToSend,  {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'UserId' : UserId
+        },
+      });
+      console.log("postdata", postdata)
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      toast.error("There was an error submitting the form.");
+    }
+  };
+  
 
 
 
@@ -462,21 +488,34 @@ const BusinessSellerForm = () => {
   const renderStep = () => {
     const renderFormFields = (fields) => (
       <Card className="mb-4 shadow-sm">
- <Card.Header className="bg-transparent text-white">
-  <h5 className="fs-4">
-    {sections[step].icon} {sections[step].title}
-  </h5>
-</Card.Header>
-
+        <Card.Header className="bg-transparent text-white">
+          <h5 className="fs-4">
+            {sections[step].icon} {sections[step].title}
+          </h5>
+        </Card.Header>
         <Card.Body>
- <ToastContainer></ToastContainer>
-
+          <ToastContainer />
           {fields.map((field, index) => (
             <div className="mb-3" key={index}>
               <label htmlFor={field.id} className="form-label">
                 {field.icon} {field.label}
               </label>
-              {field.type === 'textarea' ? (
+              {field.name === 'businessLogo' ? (
+                <>
+                  <input
+                    id={field.id}
+                    type="file"
+                    onChange={(e) => handleInputChange(field.name, e)}
+                    className="form-control"
+                    required={field.required}
+                  />
+                  {formData.businessLogoPreview && (
+                    <div className="mt-3">
+                      <img src={formData.businessLogoPreview} alt="Business Logo Preview" className="img-thumbnail" />
+                    </div>
+                  )}
+                </>
+              ) : field.type === 'textarea' ? (
                 <textarea
                   id={field.id}
                   value={formData[field.name]}
@@ -501,25 +540,21 @@ const BusinessSellerForm = () => {
         </Card.Body>
       </Card>
     );
-
+  
     switch (step) {
       case 0:
         return renderFormFields([
           { id: 'sellerName', label: 'Your Name', name: 'sellerName', icon: <FaUser />, required: true },
           { id: 'businessName', label: 'Business Name', name: 'businessName', icon: <FaBuilding />, required: true },
-          {
-            id: 'businessType', label: 'Business Type', name: 'businessType', icon: <FaIndustry />, inputType: 'select', required: true,
-            options: ['Sole Proprietorship', 'Partnership', 'LLC', 'Corporation', 'Other']
-          }
+          { id: 'businessType', label: 'Business Type', name: 'businessType', icon: <FaIndustry />, inputType: 'select', required: true, options: ['Sole Proprietorship', 'Partnership', 'LLC', 'Corporation', 'Other'] }
         ]);
       case 1:
         return renderFormFields([
-          {
-            id: 'businessStage', label: 'Business Stage', name: 'businessStage', icon: <FaBriefcase />, inputType: 'select', required: true,
-            options: ['Startup', 'Growth', 'Mature', 'Declining']
-          },
+          { id: 'businessStage', label: 'Business Stage', name: 'businessStage', icon: <FaBriefcase />, inputType: 'select', required: true, options: ['Startup', 'Growth', 'Mature', 'Declining'] },
           { id: 'industry', label: 'Industry', name: 'industry', icon: <FaIndustry />, required: true },
-          { id: 'location', label: 'Location of Business', name: 'location', icon: <FaMapMarkerAlt />, required: true }
+          { id: 'location', label: 'Location of Business', name: 'location', icon: <FaMapMarkerAlt />, required: true },
+          { id: 'businessLogo', label: 'Upload Business Logo', name: 'businessLogo', icon: <FaBuilding />, inputType: 'file' }
+        
         ]);
       case 2:
         return renderFormFields([

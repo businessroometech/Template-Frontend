@@ -1,0 +1,1 @@
+export const MIN_ALLOWED_AGE = 16

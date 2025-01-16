@@ -13,6 +13,10 @@ import Live from '@/components/live/Live'
 import BusinessBuyerForm from '@/app/(plain)/BusinessBuyer/BusinessBuyer'
 import Entrepreneurform from '@/app/(plain)/Entrepreneur/Entrepreneurform'
 import InvestorForm from '@/app/(plain)/Investor/InvestorForm'
+import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
+import Founderforms from '@/app/(plain)/Founderform/Founderform'
+
+
 const AppRouter = (props: RouteProps) => {
   const { isAuthenticated } = useAuthContext()
 
@@ -94,6 +98,8 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/investor' element={<InvestorForm/>}></Route>
       <Route path='/join-live' element={<JoinRoom/>} />
       <Route path='/live' element={<Live/>} />
+      <Route path='/marketplace' element={<MarketPlace></MarketPlace>} />
+      <Route path='/founder' element={<Founderforms></Founderforms>} />
     </Routes>
   )
 }

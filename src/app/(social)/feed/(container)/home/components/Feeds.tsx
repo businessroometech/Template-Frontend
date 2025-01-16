@@ -1,6 +1,6 @@
 import { getAllFeeds } from '@/helpers/data'
-
-import { useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Button,
   Card,
@@ -509,46 +509,90 @@ const Feeds = (isCreated: boolean) => {
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
   const [tlRefresh, setTlRefresh] = useState<number>();
-  const [limit,setLimit] = useState<number>(5);
-  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  const [page, setPage] = useState(1);
+ const [hasMore, setHasMore] = useState(true);
+  const [showNewPostButton, setShowNewPostButton] = useState(false);
+  // const [limit,setLimit] = useState<number>(5);
+//  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
   
- const [showNewPostButton, setShowNewPostButton] = useState(false);
-  // const scrollContainerRef = useRef(null);
 
   const fetchPosts = async () => {
-    setLoading(true);
     setError(null);
     try {      
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page : 1},
+        data: { userId: user?.id, page: page },
       })
-
+      if(res.message == "No posts found for this user.") {
+        setHasMore(false);
+        console.log('went in');
+        return;
+      }
+      if(res.data.length === 0){
+        setHasMore(false);
+        console.log('went in');
+        return;
+      }
       console.log('Fetched Posts:', res)
-      setPosts(res.data || [])
+      setPosts(previousPosts => [...previousPosts, ...res.data])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
       setError(error.message || 'An unknown error occurred')
-    } finally {
-      setLoading(false)
+     } //finally {
+    //   setLoading(false)
+    // }
+  }
+
+  // useEffect(() => {
+  //   // If the component has mounted already, only fetch posts if `isCreated` is true
+  //   // fetchPosts()
+  //   setTrue();
+  //   if (hasMounted.current) {
+  //     if (isCreated) {
+  //       fetchPosts()
+  //     }
+  //   } else {
+  //     // If it's the first mount, fetch posts
+  //     fetchPosts()
+  //     hasMounted.current = true // Set to true after the first call
+  //   }
+  // }, [isCreated])
+
+  useEffect(() =>{
+    fetchPosts();
+  },[page])
+
+  const fetchNextPage = () => {
+    if(!loading){
+      setPage(page+1);
     }
   }
 
-  useEffect(() => {
-    // If the component has mounted already, only fetch posts if `isCreated` is true
-    // fetchPosts()
-    setTrue();
-    if (hasMounted.current) {
-      if (isCreated) {
-        fetchPosts()
-      }
-    } else {
-      // If it's the first mount, fetch posts
-      fetchPosts()
-      hasMounted.current = true // Set to true after the first call
-    }
-  }, [isCreated])
+  // const handleScroll = useCallback(() => {
+  //   const scrollHeight = scrollContainerRef.current.scrollHeight;
+  //   const scrollTop = scrollContainerRef.current.scrollTop;
+  //   const clientHeight = scrollContainerRef.current.clientHeight;
+  //   if (scrollTop + clientHeight >= scrollHeight) {
+  //     setPage((prev) => prev + 1);
+  //   }
+  // },[loading,page]);
+
+  // useEffect(()=>{
+  //   const currentRef = scrollContainerRef.current;
+  //   if (currentRef) {
+  //     currentRef.addEventListener('scroll', handleScroll);
+  //   }
+
+  //   return () => {
+  //     if (currentRef) {
+  //       currentRef.removeEventListener('scroll', handleScroll);
+  //     }
+  //   };
+  // },[handleScroll])
+  
+
+  
 
   const handleDelete = async () => {
         
@@ -592,54 +636,63 @@ const Feeds = (isCreated: boolean) => {
   }
 
 
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       if (scrollContainerRef.current) {
-//         const scrollTop = scrollContainerRef.current.scrollTop;
+  // Infinte Scroll
 
-//         // Show button if scrolled up or near the top (scrollTop < 1000)
-//         if (scrollTop < 1) {
-//           setShowNewPostButton(true);
-//         } else {
-//           setShowNewPostButton(false);
-//         }
-//       }
-//     };
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (scrollContainerRef.current) {
+  //       const scrollTop = scrollContainerRef.current.scrollTop;
 
-//     const container = scrollContainerRef.current;
+  //       // Show button if scrolled up or near the top (scrollTop < 1000)
+  //       if (scrollTop < 1) {
+  //         setShowNewPostButton(true);
+  //       } else {
+  //         setShowNewPostButton(false);
+  //       }
+  //     }
+  //   };
 
-//     if (container) {
-//       container.addEventListener('scroll', handleScroll);
-//     }
+  //   const container = scrollContainerRef.current;
 
-//     return () => {
-//       if (container) {
-//         container.removeEventListener('scroll', handleScroll);
-//       }
-//     };
-//   }, []);
+  //   if (container) {
+  //     container.addEventListener('scroll', handleScroll);
+  //   }
 
-setTimeout(() => {
-  setShowNewPostButton(true)
-}, 500000);
+  //   return () => {
+  //     if (container) {
+  //       container.removeEventListener('scroll', handleScroll);
+  //     }
+  //   };
+  // }, []);
+
+// setTimeout(() => {
+//   setShowNewPostButton(true)
+// }, 500000);
 
   return (
     <>
-    <div
+    <div 
       className="position-relative"
-      // ref={scrollContainerRef}
+     // ref={scrollContainerRef}
       style={{ maxHeight: '500px'}} 
     >
+      <InfiniteScroll
+      dataLength={posts.length}
+      next={fetchNextPage}
+      hasMore={hasMore}
+      loader={<h4>Loading...</h4>}
+    endMessage={<p style={{ textAlign: 'center' }}>No more posts to show.</p>}
+    >
      
-       {showNewPostButton&&<Link to="/feed/home#"
+       {/* {showNewPostButton&&<Link to="/feed/home#"
          className='btn-primary'
           onClick={() => setShowNewPostButton(false)}
           style={{ zIndex: 99 ,top: "4em", position: "fixed",left:"47%"}}
         >
           ⬆️ New Posts
-        </Link>}
+        </Link>} */}
       
-     {posts.length > 0 ? posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) : <p>No posts found.</p>}</div>
+     {posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) }</InfiniteScroll></div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}

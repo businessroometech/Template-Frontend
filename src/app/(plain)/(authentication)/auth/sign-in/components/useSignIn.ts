@@ -18,8 +18,8 @@ const useSignIn = () => {
   const [searchParams] = useSearchParams();
   const { showNotification } = useNotificationContext();
   const loginFormSchema = yup.object({
-    email: yup.string().email('Please enter a valid email').required('Please enter your email'),
-    password: yup.string().required('Please enter your password'),
+    email: yup.string().email('Please Enter a Valid Email').required('Please Enter Your Email'),
+    password: yup.string().required('Please Enter Your Password'),
   });
 
   const { control, handleSubmit,getValues,watch} = useForm({

@@ -127,6 +127,7 @@ const AllGroups = () => {
               <Col xs={12} lg={6}>
                 <h1 className="h3 card-title mb-0">Acquireroom Marketplace</h1>
               </Col>
+              <Button>Register Your 2nd year</Button>
               <Col xs={12} lg={4} className="ms-lg-auto">
                 <div className="d-flex flex-column">
                   <label className="form-label mb-2">Sort by Categories</label>
@@ -153,11 +154,12 @@ const AllGroups = () => {
                   
                   <NavLink eventKey="tab-1"> Market Place </NavLink>
                 </NavItem>
-                   {/*
+              {/*
                 <NavItem>
                
-                  <NavLink eventKey="tab-2"> Suggested for you </NavLink>
+                  <NavLink eventKey="tab-2"> Register Your 2nd business </NavLink>
                 </NavItem>
+                     
                 <NavItem>
                   
                   <NavLink eventKey="tab-3"> Popular near you </NavLink>

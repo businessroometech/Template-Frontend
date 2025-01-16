@@ -21,6 +21,8 @@ import { uploadDoc } from '@/utils/CustomS3ImageUpload';
 import DropzoneFormInput from '@/components/form/DropzoneFormInput';
 import { BsImages } from 'react-icons/bs';
 import { toast } from 'react-toastify';
+import { UserType } from '@/types/data';
+import DropdownFormInput from '@/components/form/DropdownForm';
 
 const AccountSettings = () => {
   const [profile, setProfile] = useState({});
@@ -38,7 +40,7 @@ const AccountSettings = () => {
 
 const navigate = useNavigate();
 
-  const { user } = useAuthContext();
+  const { user,saveSession} = useAuthContext();
   console.log('---account settings---',user);
   
 
@@ -92,7 +94,7 @@ const navigate = useNavigate();
       const profilePhoto = await handleUploadprofile()
       const coverPhoto = await handleUploadprofileBg()
       if (profilePhoto && coverPhoto) {
-        const requestBody = {
+        const requestBody : UserType = {
           occupation: data.occupation,
           userId: user?.id,
           profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
@@ -127,6 +129,8 @@ const navigate = useNavigate();
         };
 
         console.log("Request body:", requestBody);
+
+       
      
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/update-or-create-Profile', {
         method: 'POST',
@@ -142,6 +146,14 @@ const navigate = useNavigate();
 
       const result = await response.json();
       console.log(result); // Handle response accordingly
+
+      for(const key in result) {
+        if(user[key]) {
+          user[key] = result[key];
+        }
+      }
+
+      saveSession(user);
       navigate("/");
 
     }
@@ -211,7 +223,17 @@ const navigate = useNavigate();
           <TextFormInput name="fName" label="First Name"  control={control} containerClassName="col-6" />
           <TextFormInput name="lName" label="Last Name" control={control} containerClassName="col-6" />
           <TextFormInput name="occupation" label="Role" control={control} containerClassName="col-12" />
-          <TextFormInput name="gender" label="Gender" control={control} containerClassName="col-12" />
+          <DropdownFormInput
+            name="gender"
+            label="Gender"
+            control={control}
+            containerClassName="col-12"
+            options={[
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "prefer_not_to_say", label: "Prefer not to say" },
+            ]}
+          />
           <Col xs={12}>
             <label className="form-label">Date of Birth</label>
             <Controller
