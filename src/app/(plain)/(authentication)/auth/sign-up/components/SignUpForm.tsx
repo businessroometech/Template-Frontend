@@ -13,6 +13,9 @@ import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
 import DatePicker from "react-datepicker";
 import "./datepicker.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { MIN_ALLOWED_AGE } from '@/utils/constants'
+import { addYears } from 'date-fns';
+import { log } from 'console'
 
 const SignUpForm = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -28,14 +31,15 @@ const SignUpForm = () => {
   const { signUp } = useSignUp();
   const today = new Date();
   const minDate = new Date("1900-01-01");
+  const maxAllowedDate = addYears(today, -MIN_ALLOWED_AGE);
   
   const signUpSchema = yup.object({
-    firstName: yup.string().required('Please enter First Name'),
-    lastName: yup.string().required('Please enter Last Name'),
-    email: yup.string().email('Please enter a valid email').required('Please enter your email'),
-    password: yup.string().required('Please enter your password'),
-    confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Please enter your confirm password'),
-    country: yup.string().required('Please select your country'),
+    firstName: yup.string().required('Please Enter First Name').required('Please Enter Your First Name'),
+    lastName: yup.string().required('Please Enter Last Name').required('Please Enter Your Last Name'),
+    email: yup.string().email('Please Enter a Valid Email').required('Please Enter Your Email'),
+    password: yup.string().required('Please Enter Your Password'),
+    confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords Must Match').required('Please Enter Your Confirm Password'),
+    country: yup.string().required('Please Select Your Country'),
   });
 
   const { control, handleSubmit, getValues, watch } = useForm({
@@ -108,7 +112,7 @@ const SignUpForm = () => {
       return;
     }
     if(dob === '') {
-      alert('Enter your Dob');
+      alert('Enter Your Dob');
       return;
     }
     // console.log(firstName,lastName,email,firstPassword,confirmPassword,dob,country,role);
@@ -125,44 +129,54 @@ const SignUpForm = () => {
   })}
 >
       <div className="mb-3">
-        <TextFormInput name="firstName" control={control} containerClassName="input-group-lg" placeholder="Enter your First Name" />
+        <TextFormInput name="firstName" control={control} containerClassName="input-group-lg" placeholder="Enter Your First Name" />
       </div>
       <div className="mb-3">
-        <TextFormInput name="lastName" control={control} containerClassName="input-group-lg" placeholder="Enter your Last Name" />
+        <TextFormInput name="lastName" control={control} containerClassName="input-group-lg" placeholder="Enter Your Last Name" />
       </div>
       <div className="mb-3">
-        <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter your email" />
+        <TextFormInput name="email" control={control} containerClassName="input-group-lg" placeholder="Enter Your Email" />
       </div>
       <div>
       <DatePicker
-        placeholderText="Enter your date of birth"
-        className="form-control input-group-lg"
+        placeholderText="Enter Your Date Of Birth"
+        className="form-control input-group-lg mb-3"
         value={dob}
         onChange={(date) => {
           if (date > today) {
+            console.log('> today')
             setError("Date cannot be in the future.");
+          } else if (date > maxAllowedDate) {
+            console.log('> max allowed')
+            setError(`You Must be at Least ${MIN_ALLOWED_AGE} Years Old.`);
           } else {
+            console.log('fine')
             setError("");
             setDob(formatDate(date));
           }
         }}
-        onChangeRaw={(e) => {
-          const inputDate = new Date(e.target.value);
-          if (isNaN(inputDate.getTime())) {
-            setError("Invalid date format. Use dd/mm/yy.");
-          } else if (inputDate > today) {
-            setError("Date cannot be in the future.");
-          } else {
-            setError("");
-            setDob(formatDate(inputDate));
-          }
-        }}
-        dateFormat="dd/MM/yy" // Set date format to dd/mm/yy
-        maxDate={today} // Prevent future dates
+        // onChangeRaw={(e) => {
+        //   setError("");
+        //   const inputDate = e.target.value
+        //   if (isNaN(inputDate.getTime())) {
+        //     setError("Invalid Date Format. Use DD/MM/YY.");
+        //   } else if (inputDate > today) {
+        //     setError("Date cannot be in the future.");
+        //   } else if (inputDate > maxAllowedDate) {
+        //     setError("You must be at least 16 years old.");
+        //   } else {
+        //     setError("");
+        //     setDob(formatDate(inputDate));
+        //   }
+        // }}
+        dateFormat="DD/MM/YY" // Set date format to dd/mm/yy
+        maxDate={maxAllowedDate} // Prevent future dates
         minDate={minDate} // Allow dates from 1900 onwards
         showYearDropdown // Enable year dropdown
         scrollableYearDropdown // Allow scrolling for years
         yearDropdownItemNumber={120} // Number of years in the dropdown (e.g., last 120 years)
+        showMonthDropdown // Enable month dropdown
+        scrollableMonthYearDropdown // Make the dropdown scrollable (optional)
       />
       {error && <p style={{ color: "red", marginTop: "5px" }}>{error}</p>}
     </div>
@@ -173,9 +187,9 @@ const SignUpForm = () => {
           control={control}
           containerClassName="input-group-lg"
           as="select"
-          placeholder="Select your country"
+          placeholder="Select Your Country"
         >
-          <option value="">Select your country</option>
+          <option value="">Select your Country</option>
           <option value="Afghanistan">Afghanistan</option>
           <option value="Albania">Albania</option>
           <option value="Algeria">Algeria</option>
@@ -397,12 +411,12 @@ const SignUpForm = () => {
         </TextFormInput>
       </div>
       <div className="mb-3 position-relative">
-        <PasswordFormInput name="password" control={control} size="lg" placeholder="Enter new password" />
+        <PasswordFormInput name="password" control={control} size="lg" placeholder="Enter New Password" />
         <div className="mt-2">
           <PasswordStrengthMeter password={firstPassword} />
         </div>
       </div>
-      <PasswordFormInput name="confirmPassword" control={control} size="lg" containerClassName="mb-3" placeholder="Confirm password" />
+      <PasswordFormInput name="confirmPassword" control={control} size="lg" containerClassName="mb-3" placeholder="Confirm Password" />
       <div className="mb-3 text-start">
         <FormCheck label="Keep me signed in" id="termAndCondition" />
       </div>
@@ -424,8 +438,8 @@ const SignUpForm = () => {
 </div>
       <p className="mb-0 mt-3 text-center">
         ©{currentYear}
-        <Link target="_blank" to={developedByLink}>
-          {developedBy}.
+        <Link target="_blank" to={developedByLink} style={{marginRight : '5px'}}>
+          {developedBy}
         </Link>
         All rights reserved
       </p>

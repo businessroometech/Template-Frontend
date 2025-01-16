@@ -11,9 +11,9 @@ const LoginForm = () => {
 
   return (
     <form className="mt-sm-4" onSubmit={login}>
-      <TextFormInput name="email" type="email" placeholder="Enter email" control={control} containerClassName="mb-3 input-group-lg" />
+      <TextFormInput name="email" type="email" placeholder="Enter Your Email" control={control} containerClassName="mb-3 input-group-lg" />
       <div className="mb-3 position-relative">
-        <PasswordFormInput name="password" placeholder="Enter password" control={control} size="lg" containerClassName="w-100" />
+        <PasswordFormInput name="password" placeholder="Enter Your Password" control={control} size="lg" containerClassName="w-100" />
       </div>
       <div className="mb-3 d-sm-flex justify-content-between">
         <div>
@@ -28,8 +28,8 @@ const LoginForm = () => {
       </div>
       <p className="mb-0 mt-3">
         ©{currentYear}
-        <Link target="_blank" to={developedByLink}>
-          {developedBy}.
+        <Link target="_blank" to={developedByLink} style={{marginRight : '5px'}}>
+          {developedBy}
         </Link>
         All rights reserved
       </p>
