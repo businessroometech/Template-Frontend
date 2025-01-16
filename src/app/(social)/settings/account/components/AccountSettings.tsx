@@ -18,10 +18,11 @@ import avatar7 from '@/assets/images/avatar/07.jpg';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
 import { useAuthContext } from '@/context/useAuthContext';
 import { uploadDoc } from '@/utils/CustomS3ImageUpload';
+import DropzoneFormInput from '@/components/form/DropzoneFormInput';
 import { BsImages } from 'react-icons/bs';
 import { toast } from 'react-toastify';
+import { UserType } from '@/types/data';
 import DropdownFormInput from '@/components/form/DropdownForm';
-import DropzoneFormInput from '@/components/form/DropzoneFormInput';
 
 const AccountSettings = () => {
   const [profile, setProfile] = useState({});
@@ -39,7 +40,7 @@ const AccountSettings = () => {
 
 const navigate = useNavigate();
 
-  const { user } = useAuthContext();
+  const { user,saveSession} = useAuthContext();
   console.log('---account settings---',user);
   
 
@@ -93,7 +94,7 @@ const navigate = useNavigate();
       const profilePhoto = await handleUploadprofile()
       const coverPhoto = await handleUploadprofileBg()
       if (profilePhoto && coverPhoto) {
-        const requestBody = {
+        const requestBody : UserType = {
           occupation: data.occupation,
           userId: user?.id,
           profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
@@ -128,6 +129,8 @@ const navigate = useNavigate();
         };
 
         console.log("Request body:", requestBody);
+
+       
      
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/update-or-create-Profile', {
         method: 'POST',
@@ -143,6 +146,14 @@ const navigate = useNavigate();
 
       const result = await response.json();
       console.log(result); // Handle response accordingly
+
+      for(const key in result) {
+        if(user[key]) {
+          user[key] = result[key];
+        }
+      }
+
+      saveSession(user);
       navigate("/");
 
     }

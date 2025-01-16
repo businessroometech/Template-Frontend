@@ -13,7 +13,7 @@ If you are developing a production application, we recommend updating the config
 
 - Configure the top-level `parserOptions` property like this:
 asfda
-```js
+```jssadfads
 export default {
   // other rules...
   parserOptions: {
