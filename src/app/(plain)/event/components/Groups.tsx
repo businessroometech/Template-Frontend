@@ -77,6 +77,7 @@ const GroupCard = ({ image, logo, memberCount, members, name, ppd, type }: Group
             </div>
           </li>
         </ul>
+        
       </CardBody>
     </Card>
   )
