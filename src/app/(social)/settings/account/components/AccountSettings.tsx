@@ -18,9 +18,10 @@ import avatar7 from '@/assets/images/avatar/07.jpg';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
 import { useAuthContext } from '@/context/useAuthContext';
 import { uploadDoc } from '@/utils/CustomS3ImageUpload';
-import DropzoneFormInput from '@/components/form/DropzoneFormInput';
 import { BsImages } from 'react-icons/bs';
 import { toast } from 'react-toastify';
+import DropdownFormInput from '@/components/form/DropdownForm';
+import DropzoneFormInput from '@/components/form/DropzoneFormInput';
 
 const AccountSettings = () => {
   const [profile, setProfile] = useState({});
@@ -211,7 +212,17 @@ const navigate = useNavigate();
           <TextFormInput name="fName" label="First Name"  control={control} containerClassName="col-6" />
           <TextFormInput name="lName" label="Last Name" control={control} containerClassName="col-6" />
           <TextFormInput name="occupation" label="Role" control={control} containerClassName="col-12" />
-          <TextFormInput name="gender" label="Gender" control={control} containerClassName="col-12" />
+          <DropdownFormInput
+            name="gender"
+            label="Gender"
+            control={control}
+            containerClassName="col-12"
+            options={[
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "prefer_not_to_say", label: "Prefer not to say" },
+            ]}
+          />
           <Col xs={12}>
             <label className="form-label">Date of Birth</label>
             <Controller

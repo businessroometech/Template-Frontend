@@ -11,7 +11,6 @@ import * as yup from 'yup'
 import useSignUp from './useSignUp'
 import RoleSelectionModal from '@/components/cards/RoleSelectionModal'
 import DatePicker from "react-datepicker";
-import "./datepicker.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { MIN_ALLOWED_AGE } from '@/utils/constants'
 import { addYears } from 'date-fns';

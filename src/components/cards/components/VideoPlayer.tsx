@@ -12,10 +12,10 @@ const VideoPlayer = ({ src }) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               setAutoPlay(true);
-              console.log('in viewport');
+              // console.log('in viewport');
             } else {
               setAutoPlay(false);
-              console.log('out of viewport');
+              // console.log('out of viewport');
             }
           });
         },
