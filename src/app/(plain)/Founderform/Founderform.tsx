@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import {ToastContainer , toast} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
-const Founderform = () => {
+const Founderforms = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
@@ -921,7 +921,7 @@ const Founderform = () => {
     
 };
 
-export default Founderform;
+export default Founderforms;
 
 
 // import React from 'react';
