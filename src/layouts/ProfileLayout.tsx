@@ -360,7 +360,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       })
 
       if (!response.ok) {
-         navigate('/not-found')
+        //  navigate('/not-found')
         throw new Error('Network response was not ok')
        
       }
