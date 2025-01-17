@@ -14,7 +14,7 @@ import BusinessBuyerForm from '@/app/(plain)/BusinessBuyer/BusinessBuyer'
 import Entrepreneurform from '@/app/(plain)/Entrepreneur/Entrepreneurform'
 import InvestorForm from '@/app/(plain)/Investor/InvestorForm'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
-import Founderforms from '@/app/(plain)/Founderform/FOunderform'
+import Founderforms from '@/app/(plain)/Founderform/Founderform'
 
 
 const AppRouter = (props: RouteProps) => {

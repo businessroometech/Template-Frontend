@@ -293,37 +293,37 @@ export  const socialWithTopbarRoutes: RoutesProps[] = [
 
 export const profilePagesRoutes: RoutesProps[] = [
   {
-    path: '/profile/feed/:id', // Define the dynamic parameter in the path
+    path: '/profile/feed/:id', 
     name: 'Feed',
     element: <ProfileFeed />,
   },
   {
-    path: '/profile/about',
+    path: '/profile/about/:id',
     name: 'About',
     element: <ProfileAbout />,
   },
   {
-    path: '/profile/connections',
+    path: '/profile/connections/:id',
     name: 'Connections',
     element: <ProfileConnections />,
   },
   {
-    path: '/profile/media',
+    path: '/profile/media/:id',
     name: 'Media',
     element: <ProfileMedia />,
   },
   {
-    path: '/profile/videos',
+    path: '/profile/videos/:id',
     name: 'Video',
     element: <ProfileVideos />,
   },
   {
-    path: '/profile/events',
+    path: '/profile/events/:id',
     name: 'Events',
     element: <ProfileEvents />,
   },
   {
-    path: '/profile/activity',
+    path: '/profile/activity/:id',
     name: 'Activity',
     element: <ProfileActivity />,
   },
