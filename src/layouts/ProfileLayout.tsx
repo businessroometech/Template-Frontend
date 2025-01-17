@@ -365,7 +365,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
        
       }
       if (response.status === 404) {
-        navigate('/not-found')
+        // navigate('/not-found')
       }
       const data = await response.json()
       setSkeletonLoading(false)
