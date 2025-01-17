@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
-import { BsSendFill } from 'react-icons/bs';
+import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
 import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
 import axios from 'axios';
 
-const CommentItem = ({ comment, level }: CommentItemProps) => {
+const CommentItem = ({post, comment, level }: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [reply, setReply] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [commentLike,setCommentLike] = useState<boolean>(false);
+
+  console.log('---comment---',comment);
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +20,23 @@ const CommentItem = ({ comment, level }: CommentItemProps) => {
       const data = axios.post('')
       setCommentText('');
       setReply(false);
+    }
+  };
+
+  const toggleLike = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/create-like', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user?.id, postId: post.Id, commentId : comment.id,status: !commentLike }),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      setCommentLike((prev) => !prev);
+    } catch (error) {
+      console.error('Error toggling like:', error);
     }
   };
 
@@ -61,8 +81,11 @@ const CommentItem = ({ comment, level }: CommentItemProps) => {
 
           {/* Actions */}
           <div className="d-flex align-items-center gap-3 small">
-            <span role="button" className="text-primary d-flex align-items-center">
-              <ThumbsUp size={16} className="me-1" /> Like
+            <span role="button" className="text-primary d-flex align-items-center" onClick={() => {
+              console.log('clicked')
+              toggleLike();
+            }}>
+              {commentLike ? <BsFillHandThumbsUpFill size={16} className='me-1'/> : <ThumbsUp size={16} className="me-1" />} Like
             </span>
             <span
               role="button"

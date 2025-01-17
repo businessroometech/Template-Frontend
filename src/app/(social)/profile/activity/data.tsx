@@ -2,7 +2,7 @@ import type { BootstrapVariantType } from '@/types/component'
 import { addOrSubtractMinutesFromDate } from '@/utils/date'
 import type { ReactNode } from 'react'
 
-import avatar7 from '@/assets/images/avatar/07.jpg'
+import avatar7 from '@/assets/images/avatar/06.jpg'
 import avatar1 from '@/assets/images/avatar/01.jpg'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'

@@ -3,7 +3,6 @@ import { lazy } from 'react'
 import { Navigate, type RouteProps } from 'react-router-dom'
 
 
-
 // profiles for seller //
 //const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
 

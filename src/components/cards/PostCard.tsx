@@ -300,7 +300,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
         ) : (
           <ul className="comment-wrap list-unstyled px-3">
             {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-              <CommentItem key={index} comment={comment} level={0} />
+              <CommentItem key={index} post={post} comment={comment} level={0} />
             ))}
           </ul>
         )}
