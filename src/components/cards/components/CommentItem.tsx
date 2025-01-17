@@ -4,12 +4,14 @@ import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
 import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
 import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
 import axios from 'axios';
+import { useAuthContext } from '@/context/useAuthContext';
 
 const CommentItem = ({post, comment, level }: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [reply, setReply] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [commentLike,setCommentLike] = useState<boolean>(false);
+  const [commentLike,setCommentLike] = useState<boolean>(comment.likeStatus || false);
+  const {user} = useAuthContext();
 
   console.log('---comment---',comment);
 
