@@ -123,13 +123,13 @@ const Connections = () => {
   return (
     <>
       <PageMetaData title='Connections' />
-<ToastContainer />
+{/* <ToastContainer /> */}
       <Card>
         <CardHeader className="border-0 pb-0">
           <CardTitle> Connections</CardTitle>
         </CardHeader>
         <CardBody>
-          {allConnections?.map((connection, idx) => (
+          {allConnections.filter((id)=>id.userId!==user?.id).map((connection, idx) => (
             <div className="d-md-flex align-items-center mb-4" key={idx}>
               <div className="avatar me-3 mb-3 mb-md-0">
                 {connection.profilePictureUrl ? (

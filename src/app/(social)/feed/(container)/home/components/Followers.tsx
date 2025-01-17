@@ -129,7 +129,7 @@ const Followers = () => {
 
         {(allFollowers.length > 0) && (<CardBody>
           
-{filteredFollowers?.map((follower, idx) => (
+{filteredFollowers.map((follower, idx) => (
             <div className="hstack gap-2 mb-3" key={idx}>
               <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
                 {follower.profilePictureUrl ? (

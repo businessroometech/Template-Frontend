@@ -201,7 +201,7 @@ const otherRoutes: RoutesProps[] = [
 export const settingPagesRoutes:RoutesProps[]=[
   {
     path: '/settings/account',
-    name: 'Account Settings',
+    name: 'Account Settings', 
     element: <AccountSetting />,
   },
   {
