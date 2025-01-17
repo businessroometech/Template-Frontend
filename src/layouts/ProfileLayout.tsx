@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
+import { MessageCircleMore } from 'lucide-react'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 const TopHeader = lazy(() => import('@/components/layout/TopHeader'))
@@ -47,9 +48,8 @@ import { FaPlus } from 'react-icons/fa6'
 // import { PROFILE_MENU_ITEMS } from '@/assets/data/menu-items'
 import { getAllUsers } from '@/helpers/data'
 
-import avatar7 from '@/assets/images/avatar/07.jpg'
-import background5 from '@/assets/images/bg/05.jpg'
-
+import avatar7 from '@/assets/images/avatar/default avatar.png'
+import background5 from '@/assets/images/bg/Profile-Bg.jpg'
 import album1 from '@/assets/images/albums/01.jpg'
 import album2 from '@/assets/images/albums/02.jpg'
 import album3 from '@/assets/images/albums/03.jpg'
@@ -65,6 +65,7 @@ import { FaTimes, FaUserCheck, FaUserPlus } from 'react-icons/fa'
 import { toast, ToastContainer } from 'react-toastify'
 import Loading from '@/components/Loading'
 import Followers from '@/app/(social)/feed/(container)/home/components/Followers'
+import { set } from 'react-hook-form'
 
 const Experience = () => {
   return (
@@ -195,8 +196,8 @@ const ConnectionRequest = () => {
   const [loading, setLoading] = useState<string | null>(null) // Tracks loading by user ID
 
   useEffect(() => {
-    fetchConnections();
-  }, [Followers]);
+    fetchConnections()
+  }, [Followers])
 
   const fetchConnections = async () => {
     try {
@@ -215,11 +216,8 @@ const ConnectionRequest = () => {
     }
   }
 
-  const handleStatusUpdate = async (
-    userId: string,
-    status: 'accepted' | 'rejected'
-  ) => {
-    setLoading(userId);
+  const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
+    setLoading(userId)
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
         method: 'POST',
@@ -318,12 +316,13 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
   const { user } = useAuthContext()
   const [loading, setLoading] = useState(false)
+  const [skeletonLoading, setSkeletonLoading] = useState(true)
   const [profile, setProfile] = useState({})
   const [sent, setSent] = useState(false)
-  const navigate = useNavigate()
   const { id } = useParams()
   const skeletonBaseColor = '#b0b0b0'
   const skeletonHighlightColor = '#d6d6d6'
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -348,6 +347,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const fetchUser = async () => {
     try {
+      setSkeletonLoading(true)
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
@@ -355,14 +355,20 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         },
         body: JSON.stringify({
           userId: id,
-          profileId: user?.id
-        })
-      });
+          profileId: user?.id,
+        }),
+      })
 
       if (!response.ok) {
+         navigate('/not-found')
         throw new Error('Network response was not ok')
+       
+      }
+      if (response.status === 404) {
+        navigate('/not-found')
       }
       const data = await response.json()
+      setSkeletonLoading(false)
       setProfile(data?.data)
     } catch (error) {
       console.error('Error fetching user profile:', error)
@@ -420,16 +426,16 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         throw new Error(`Failed to unsend connection request.`)
       }
 
-      setSent(false); 
-      toast.info(`Connection request unsent successfully.`);
-      fetchUser(); 
+      setSent(false)
+      toast.info(`Connection request unsent successfully.`)
+      fetchUser()
     } catch (error) {
       console.error(`Error while unsending connection request:`, error)
       toast.error(`Failed to unsend connection request.`)
     } finally {
       setLoading(false)
     }
-  };
+  }
 
   const PROFILE_MENU_ITEMS = [
     {
@@ -478,8 +484,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       url: `/profile/activity/${id}`,
       parentKey: 'pages-profile',
     },
-  ];
-  
+  ]
 
   return (
     <>
@@ -494,26 +499,36 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
             <Col lg={8} className="vstack gap-4">
               <Card>
                 {/* Profile Cover Image */}
-                <div
-                  className="h-200px rounded-top"
-                  style={{
-                    backgroundImage: `url(${profile?.coverImgUrl ? profile?.coverImgUrl : background5})`,
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                  }}
-                />
+                <div className="h-200px rounded-top">
+                  {skeletonLoading ? (
+                    <Skeleton width="100%" height="200px" baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                  ) : (
+                    <div
+                      className="h-200px rounded-top"
+                      style={{
+                        backgroundImage: `url(${profile?.coverImgUrl ? profile?.coverImgUrl : background5})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    />
+                  )}
+                </div>
                 <CardBody className="py-0">
                   {/* Profile Info Section */}
                   <div className="d-sm-flex align-items-start text-center text-sm-start">
                     {/* Profile Picture */}
                     <div>
                       <div className="avatar avatar-xxl mt-n5 mb-3">
-                        <img
-                          className="avatar-img rounded-circle border border-white border-3"
-                          src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-                          alt="avatar"
-                        />
+                        {skeletonLoading ? (
+                          <Skeleton circle width={120} height={120} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                        ) : (
+                          <img
+                            className="avatar-img rounded-circle border border-white border-3"
+                            src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+                            alt="avatar"
+                          />
+                        )}
                       </div>
                     </div>
                     {/* Name and Bio */}
@@ -533,7 +548,13 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         &nbsp;
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
-                      <p>{profile.connectionsCount ? profile.connectionsCount : 0} connections</p>
+                      <p>
+                        {!skeletonLoading ? (
+                          `${profile.connectionsCount} connections`
+                        ) : (
+                          <Skeleton width={80} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                        )}
+                      </p>
                     </div>
 
                     {/* Action Buttons */}
@@ -590,7 +611,13 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           }
                           className="me-2"
                           type="button">
-                          {profile.connectionsStatus}
+                          {profile.connectionsStatus === 'accepted' ? (
+                            <>
+                              <MessageCircleMore className="me-2 text-success" /> Send Message
+                            </>
+                          ) : (
+                            profile.connectionsStatus
+                          )}
                         </Button>
                       )}
 

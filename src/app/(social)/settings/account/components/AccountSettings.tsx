@@ -14,7 +14,7 @@ import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import DateFormInput from '@/components/form/DateFormInput';
 import { Link, useNavigate } from 'react-router-dom';
 
-import avatar7 from '@/assets/images/avatar/07.jpg';
+import avatar7 from '@/assets/images/avatar/default avatar.png';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
 import { useAuthContext } from '@/context/useAuthContext';
 import { uploadDoc } from '@/utils/CustomS3ImageUpload';
