@@ -524,12 +524,7 @@ const Feeds = (isCreated: boolean) => {
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
-      if(res.message == "No posts found for this user.") {
-        setHasMore(false);
-        console.log('went in');
-        return;
-      }
-      if(res.data.length === 0){
+      if(res.data.length < 5){
         setHasMore(false);
         console.log('went in');
         return;
@@ -564,8 +559,8 @@ const Feeds = (isCreated: boolean) => {
   },[page])
 
   const fetchNextPage = () => {
-    if(!loading){
-      setPage(page+1);
+    if(!loading && hasMore){
+      setPage(page => page + 1);
     }
   }
 
@@ -671,28 +666,48 @@ const Feeds = (isCreated: boolean) => {
 
   return (
     <>
-    <div 
-      className="position-relative"
-     // ref={scrollContainerRef}
-      style={{ maxHeight: '500px'}} 
-    >
-      <InfiniteScroll
-      dataLength={posts.length}
-      next={fetchNextPage}
-      hasMore={hasMore}
-      loader={<h4>Loading...</h4>}
-    endMessage={<p style={{ textAlign: 'center' }}>No more posts to show.</p>}
-    >
-     
-       {/* {showNewPostButton&&<Link to="/feed/home#"
-         className='btn-primary'
-          onClick={() => setShowNewPostButton(false)}
-          style={{ zIndex: 99 ,top: "4em", position: "fixed",left:"47%"}}
-        >
-          ⬆️ New Posts
-        </Link>} */}
-      
-     {posts.map((post, index) => <PostCard item={post} key={index} onDelete={handleDelete}/>) }</InfiniteScroll></div>
+   <div 
+  className="position-relative"
+  style={{
+    position: 'sticky',
+    maxHeight: '500px',
+    WebkitOverflowScrolling: 'touch',
+    // Example to shrink the space taken by the sidebar (if sidebar is hidden)
+    marginLeft: '0', // Adjust margin or padding if the sidebar is removed
+  }} 
+>
+  <InfiniteScroll
+    dataLength={posts.length}
+    next={fetchNextPage}
+    hasMore={hasMore}
+    loader={<div style={{minHeight: "110vh"}}><Loading loading={true} /></div>}
+    endMessage={
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <strong>No more posts are available.</strong>
+      </div>
+    }
+  >
+    {showNewPostButton && (
+      <Link 
+        to="/feed/home#"
+        className="btn-primary"
+        onClick={() => setShowNewPostButton(false)}
+        style={{ zIndex: 99, top: "4em", position: "fixed", left: "47%" }}
+      >
+        ⬆️ New Posts
+      </Link>
+    )}
+    
+    {posts.map((post, index) => (
+      <PostCard 
+        item={post} 
+        key={post.Id || index} 
+        onDelete={handleDelete} 
+      />
+    ))}
+  </InfiniteScroll>
+</div>
+
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
