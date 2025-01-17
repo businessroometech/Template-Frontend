@@ -102,7 +102,7 @@ const Founderforms = () => {
               <Form>
                 <Row className="mb-3">
                   <Form.Group as={Col} controlId="businessName">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6" > {/* Increased font size */}
                       What is the name of your business?
                     </Form.Label>
                     <Form.Control
@@ -111,16 +111,18 @@ const Founderforms = () => {
                       value={formData.businessName}
                       onChange={(e) => handleInputChange("businessName", e.target.value)}
                       required
+                      style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                     />
                   </Form.Group>
                 </Row>
                 <Row className="mb-3">
                   <Form.Group as={Col} controlId="businessLocationCountry">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       <FaGlobe className="me-2" />
                       Where is your business located?
                     </Form.Label>
                     <Form.Select
+                    style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                       value={formData.businessLocationCountry}
                       onChange={(e) => handleInputChange("businessLocationCountry", e.target.value)}
                       required
@@ -134,7 +136,7 @@ const Founderforms = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group as={Col} controlId="businessLocationCity">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       <FaCity className="me-2" />
                       City
                     </Form.Label>
@@ -148,7 +150,7 @@ const Founderforms = () => {
                 </Row>
                 <Row className="mb-3">
                   <Form.Group controlId="businessIdea">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       <FaRegLightbulb className="me-2" />
                       What is your business idea about?
                     </Form.Label>
@@ -164,10 +166,11 @@ const Founderforms = () => {
                 </Row>
                 <Row className="mb-3">
                   <Form.Group as={Col} controlId="businessStage">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       What stage is your business currently at?
                     </Form.Label>
                     <Form.Select
+                    style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                       value={formData.businessStage}
                       onChange={(e) => handleInputChange("businessStage", e.target.value)}
                       required
@@ -182,11 +185,12 @@ const Founderforms = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group as={Col} controlId="industrySector">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       <FaIndustry className="me-2" />
                       What is the industry/sector of your business?
                     </Form.Label>
                     <Form.Select
+                    style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                       value={formData.industrySector}
                       onChange={(e) => handleInputChange("industrySector", e.target.value)}
                       required
@@ -206,11 +210,12 @@ const Founderforms = () => {
                 </Row>
                 <Row className="mb-3">
                   <Form.Group as={Col} controlId="businessDuration">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       <FaClock className="me-2" />
                       How long has your business been operating?
                     </Form.Label>
                     <Form.Select
+                    style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                       value={formData.businessDuration}
                       onChange={(e) => handleInputChange("businessDuration", e.target.value)}
                       required
@@ -225,7 +230,7 @@ const Founderforms = () => {
                 </Row>
                 <Row className="mb-3">
                   <Form.Group controlId="problemSolving">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       What problem does your business solve, and who is your target audience?
                     </Form.Label>
                     <Form.Control
@@ -240,10 +245,11 @@ const Founderforms = () => {
                 </Row>
                 <Row className="mb-3">
                   <Form.Group controlId="traction">
-                    <Form.Label className="fs-5"> {/* Increased font size */}
+                    <Form.Label className="fs-6"> {/* Increased font size */}
                       Do you have any traction?
                     </Form.Label>
                     <Form.Select
+                    style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                       value={formData.traction}
                       onChange={(e) => handleInputChange("traction", e.target.value)}
                       required
@@ -271,11 +277,12 @@ const Founderforms = () => {
           <Form>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="investorType">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaRegLightbulb className="me-2" />
                   What type of investor are you looking for?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.investorType}
                   onChange={(e) => handleInputChange("investorType", e.target.value)}
                   required
@@ -291,11 +298,12 @@ const Founderforms = () => {
             </Row>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="fundingAmount">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaGlobe className="me-2" />
                   What is the amount of funding you are seeking?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.fundingAmount}
                   onChange={(e) => handleInputChange("fundingAmount", e.target.value)}
                   required
@@ -311,11 +319,12 @@ const Founderforms = () => {
             </Row>
             <Row className="mb-3">
               <Form.Group controlId="useOfFunds">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaCity className="me-2" />
                   What is the intended use of the investment funds?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.useOfFunds}
                   onChange={(e) => handleInputChange("useOfFunds", e.target.value)}
                   required
@@ -332,11 +341,12 @@ const Founderforms = () => {
             </Row>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="investmentType">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaClock className="me-2" />
                   What type of investment are you open to?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.investmentType}
                   onChange={(e) => handleInputChange("investmentType", e.target.value)}
                   required
@@ -352,7 +362,7 @@ const Founderforms = () => {
             </Row>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="businessValuation">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaIndustry className="me-2" />
                   What is the current valuation of your business (if applicable)?
                 </Form.Label>
@@ -371,11 +381,12 @@ const Founderforms = () => {
             </Row>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="equityInExchange">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaRegLightbulb className="me-2" />
                   Are you open to giving equity in exchange for investment?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.equityInExchange}
                   onChange={(e) =>
                     handleInputChange("equityInExchange", e.target.value)
@@ -391,7 +402,7 @@ const Founderforms = () => {
             </Row>
             <Row className="mb-3">
               <Form.Group controlId="exitPlans">
-                <Form.Label className="fs-5"> {/* Increased font size */}
+                <Form.Label className="fs-6"> {/* Increased font size */}
                   <FaClock className="me-2" />
                   What are your exit plans or expected timeline for exit?
                 </Form.Label>
@@ -427,11 +438,12 @@ const Founderforms = () => {
             {/* Partner Type */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="partnerType">
-                <Form.Label className="fs-5"> {/* Consistent font size */}
+                <Form.Label className="fs-6"> {/* Consistent font size */}
                   <FaUserTie className="me-2" />
                   What type of business partners are you looking for?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.partnerType}
                   onChange={(e) => handleInputChange("partnerType", e.target.value)}
                   required
@@ -451,7 +463,7 @@ const Founderforms = () => {
             {/* Partner Skills */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="partnerSkills">
-                <Form.Label className="fs-5"> {/* Consistent font size */}
+                <Form.Label className="fs-6"> {/* Consistent font size */}
                   <FaPeopleArrows className="me-2" />
                   What specific expertise or skills are you seeking in a business partner?
                 </Form.Label>
@@ -469,11 +481,12 @@ const Founderforms = () => {
             {/* Partner Involvement */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="partnerInvolvement">
-                <Form.Label className="fs-5"> {/* Consistent font size */}
+                <Form.Label className="fs-6"> {/* Consistent font size */}
                   <FaBalanceScale className="me-2" />
                   What is the desired level of involvement from a business partner?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.partnerInvolvement}
                   onChange={(e) => handleInputChange("partnerInvolvement", e.target.value)}
                   required
@@ -490,11 +503,12 @@ const Founderforms = () => {
             {/* Equity/Compensation */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="partnerEquityCompensation">
-                <Form.Label className="fs-5"> {/* Consistent font size */}
+                <Form.Label className="fs-6"> {/* Consistent font size */}
                   <FaExchangeAlt className="me-2" />
                   Are you open to partners who are willing to work in exchange for equity or other non-cash compensation?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.partnerEquityCompensation}
                   onChange={(e) => handleInputChange("partnerEquityCompensation", e.target.value)}
                   required
@@ -510,11 +524,12 @@ const Founderforms = () => {
             {/* Partnership Structure */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="partnershipStructure">
-                <Form.Label className="fs-5"> {/* Consistent font size */}
+                <Form.Label className="fs-6"> {/* Consistent font size */}
                   <FaHandshake className="me-2" />
                   What type of partnership structure are you looking for?
                 </Form.Label>
                 <Form.Select
+                style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                   value={formData.partnershipStructure}
                   onChange={(e) => handleInputChange("partnershipStructure", e.target.value)}
                   required
@@ -548,7 +563,7 @@ const Founderforms = () => {
               {/* Business Challenges */}
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="businessChallenges">
-                  <Form.Label className="fs-5">
+                  <Form.Label className="fs-6">
                     <FaExclamationTriangle className="me-2" style={{ color: "#757885" }} />
                     What are the biggest challenges your business is currently facing?
                   </Form.Label>
@@ -566,7 +581,7 @@ const Founderforms = () => {
               {/* Key Priorities */}
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="keyPriorities">
-                  <Form.Label className="fs-5">
+                  <Form.Label className="fs-6">
                     <FaTasks className="me-2" style={{ color: "#0398fc" }} />
                     What are your key priorities over the next 6-12 months?
                   </Form.Label>
@@ -584,7 +599,7 @@ const Founderforms = () => {
               {/* Support Needed */}
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="supportNeeded">
-                  <Form.Label className="fs-5">
+                  <Form.Label className="fs-6">
                     <FaHandsHelping className="me-2" style={{ color: "#0398fc" }} />
                     What specific support are you looking for from an investor or business partner?
                   </Form.Label>
@@ -602,11 +617,12 @@ const Founderforms = () => {
               {/* Business Plan */}
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="businessPlanStatus">
-                  <Form.Label className="fs-5">
+                  <Form.Label className="fs-6">
                     <FaRoad className="me-2" style={{ color: "#0398fc" }} />
                     Do you have a clear business plan or roadmap for growth?
                   </Form.Label>
                   <Form.Select
+                  style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
                     value={formData.businessPlanStatus}
                     onChange={(e) => handleInputChange("businessPlanStatus", e.target.value)}
                     required
@@ -622,7 +638,7 @@ const Founderforms = () => {
               {/* Milestones */}
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="milestones">
-                  <Form.Label className="fs-5">
+                  <Form.Label className="fs-6">
                     <FaFlagCheckered className="me-2" style={{ color: "#0398fc" }} />
                     What milestones do you plan to achieve in the next 6 months?
                   </Form.Label>
@@ -760,7 +776,7 @@ const Founderforms = () => {
             {/* Long-Term Goals */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="longTermGoals">
-                <Form.Label className="fs-5">
+                <Form.Label className="fs-6">
                   <FaBullseye className="me-2" style={{ color: "" }} />
                   What are your long-term goals for the business?
                 </Form.Label>
@@ -778,7 +794,7 @@ const Founderforms = () => {
             {/* Additional Information */}
             <Row className="mb-3">
               <Form.Group as={Col} controlId="additionalInfo">
-                <Form.Label className="fs-5">
+                <Form.Label className="">
                   <FaInfoCircle className="me-2" style={{ color: "" }} />
                   Is there anything else a potential investor or partner should know about you or your business?
                 </Form.Label>
@@ -853,7 +869,7 @@ const Founderforms = () => {
   return (
     <div>
       {/* Styled Tabs */}
-      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Founder Form</h2>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Founder Profile</h2>
 
       <div className="d-flex justify-content-center mb-4">
         {sections.map((title, index) => (
