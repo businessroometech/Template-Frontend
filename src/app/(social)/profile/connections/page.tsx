@@ -30,7 +30,7 @@ const Connections = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/v1/connection/get-connection-list", {
+      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-list", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -202,7 +202,7 @@ const Connections = () => {
                   <li className={clsx('small', { 'ms-3': connection.sharedConnectionAvatars })}>{connection.meeted}</li>
                 </ul>
               </div>
-              <div className="ms-md-auto d-flex">
+              {connection?.userId !== user?.id ? (<div className="ms-md-auto d-flex">
                 {(user?.id===id || connection.mutual)?(
                   <> 
                 { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" size="sm" className="mb-0 me-2">
@@ -255,7 +255,9 @@ const Connections = () => {
                     )}
                   </>
                   )}
-              </div>
+              </div>):(
+                <p className='w-25 text-warning'>your profile</p>
+              )}
             </div>
           ))}
           <div className="d-grid">
