@@ -524,7 +524,8 @@ const Feeds = (isCreated: boolean) => {
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
-      if(res.data.length < 5){
+
+      if(res.message === "No posts found for this user."){
         setHasMore(false);
         console.log('went in');
         return;

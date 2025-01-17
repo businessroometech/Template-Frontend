@@ -85,7 +85,9 @@ const PostCard = ({ item, isMediaKeys = false }) => {
         body: JSON.stringify({ postId: post.Id, userId: user?.id, text: commentText }),
       });
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       setRefresh((prev) => prev + 1);
       setCommentText('');
       setCommentCount(() => commentCount+1);
