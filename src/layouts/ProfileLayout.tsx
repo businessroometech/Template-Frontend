@@ -464,7 +464,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       label: 'Connections',
       url: `/profile/connections/${id}`,
       badge: {
-        text: '300',
+        text: profile.connectionsCount ,
         variant: 'success',
       },
       parentKey: 'pages-profile',
