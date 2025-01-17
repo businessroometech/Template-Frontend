@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
@@ -61,6 +61,14 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
     if (post?.Id) fetchComments();
   }, [refresh, post?.Id]);
+
+
+  const videoPlayer = useMemo(() => {
+    if (isVideo) {
+      return <VideoPlayer src={media[0]} />;
+    }
+    return null;
+  }, [media]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -136,7 +144,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         {media.length > 0 && (
 
-          isVideo ? <div style={{position : 'relative'}}><VideoPlayer src={media[0]}/></div> :
+          isVideo ? <div style={{position : 'relative'}}>{videoPlayer}</div> :
           
           (media.length == 1) ? 
           
