@@ -25,6 +25,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
   const post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
+  const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -87,6 +88,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       setRefresh((prev) => prev + 1);
       setCommentText('');
+      setCommentCount(() => commentCount+1);
     } catch (error) {
       console.error('Error posting comment:', error);
     }
@@ -144,7 +146,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         {media.length > 0 && (
 
-          isVideo ? <div style={{position : 'relative'}}>{videoPlayer}</div> :
+          isVideo ? <div style={{position : 'relative',marginBottom : '10px'}}>{videoPlayer}</div> :
           
           (media.length == 1) ? 
           
@@ -215,7 +217,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
     style={{ fontSize: "0.8rem" }} // Slightly smaller font size
   >
     <MessageSquare size={16} />
-    <span>Comment ({post.commentCount || 0})</span>
+    <span>Comment ({commentCount})</span>
   </Button>
 
   <Button
