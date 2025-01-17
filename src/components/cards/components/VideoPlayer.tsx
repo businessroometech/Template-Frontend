@@ -5,32 +5,32 @@ import { useEffect, useRef, useState } from 'react';
 const VideoPlayer = ({ src }) => {
   const videoRef = useRef(null);
   const [autoplay,setAutoPlay] = useState<boolean>(false);
-  useEffect(() => {
-    if (videoRef.current) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setAutoPlay(true);
-              // console.log('in viewport');
-            } else {
-              setAutoPlay(false);
-              // console.log('out of viewport');
-            }
-          });
-        },
-        { threshold: 0.1 }
-      );
+  // useEffect(() => {
+  //   if (videoRef.current) {
+  //     const observer = new IntersectionObserver(
+  //       (entries) => {
+  //         entries.forEach((entry) => {
+  //           if (entry.isIntersecting) {
+  //             setAutoPlay(true);
+  //             // console.log('in viewport');
+  //           } else {
+  //             setAutoPlay(false);
+  //             // console.log('out of viewport');
+  //           }
+  //         });
+  //       },
+  //       { threshold: 0.1 }
+  //     );
 
-      observer.observe(videoRef.current);
+  //     observer.observe(videoRef.current);
 
-      return () => {
-        if (videoRef.current) {
-          observer.disconnect();
-        }
-      };
-    }
-  }, []);
+  //     return () => {
+  //       if (videoRef.current) {
+  //         observer.disconnect();
+  //       }
+  //     };
+  //   }
+  // }, []);
 
   return (
     <div className="overflow-hidden fullscreen-video w-100 mb-3" ref={videoRef}>
