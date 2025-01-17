@@ -459,7 +459,7 @@ const BusinessSellerForm = () => {
     });
   console.log(formDataToSend)
     try {
-     const postdata =  await axios.post('http://localhost:5000/businessseller/create', formDataToSend,  {
+     const postdata =  await axios.post('https://app-backend-8r74.onrender.com/businessseller/create', formDataToSend,  {
         headers: {
           'Content-Type': 'multipart/form-data',
           'UserId' : UserId

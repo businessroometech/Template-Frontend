@@ -60,7 +60,7 @@ import FallbackLoading from "@/components/FallbackLoading"
 import Preloader from "@/components/Preloader"
 import axios from "axios"
 import { useAuthContext } from "@/context/useAuthContext"
-import { FaUserCheck, FaUserPlus } from "react-icons/fa";
+import { FaTimes, FaUserCheck, FaUserPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify"
 import Loading from "@/components/Loading"
 import Followers from "@/app/(social)/feed/(container)/home/components/Followers"
@@ -204,7 +204,6 @@ const ConnectionRequest = () => {
   const [loading, setLoading] = useState<string | null>(null); // Tracks loading by user ID
 
   useEffect(() => {
-
     fetchConnections();
   }, []);
 
@@ -253,10 +252,9 @@ const ConnectionRequest = () => {
       console.error(`Error while updating connection status:`, error);
       toast.error(`Error while trying to ${status} the connection request.`);
     } finally {
-      setLoading(null); // Clear loading state
+      setLoading(null); 
     }
   };
-
 
   return (
     <Card>
@@ -331,7 +329,7 @@ const ConnectionRequest = () => {
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
   const { user } = useAuthContext();
-  console.log(user)
+  const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({});
   const [sent, setSent] = useState(false)
   const navigate = useNavigate();
@@ -369,7 +367,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         },
         body: JSON.stringify({
           userId: id,
-          profileId:user.id
+          profileId: user.id
         })
       });
 
@@ -383,13 +381,12 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
     }
   };
 
-  const [loading, setLoading] = useState(false); // Tracks loading state
+
 
   const UserRequest = async () => {
-    setLoading(true); // Set loading to true when request starts
-    const apiUrl = sent
-      ? "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request"
-      : "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
+    setLoading(true);
+    const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request";
+
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -403,23 +400,51 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       });
 
       if (!res.ok) {
-        throw new Error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
+        throw new Error(`Failed to send connection request.`);
       }
-      const data = await res.json();
-      setSent(!sent); // Toggle sent status
-      toast.success(`Connection request ${sent ? "sent" : "unsent"} successfully.`);
+
+      setSent(true); // Toggle sent status
+      toast.success(`Connection request sent successfully.`);
       fetchUser(); // Refresh user data
     } catch (error) {
-      console.error(
-        `Error while trying to ${sent ? "send" : "unsend"} connection request:`,
-        error
-      );
-      toast.error(`Failed to ${sent ? "send" : "unsend"} connection request.`);
+      console.error(`Error while sending connection request:`, error);
+      setSent(false);
+      toast.error(`Failed to send connection request.`);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
+  const handleCancel = async () => {
+    setLoading(true);
+    const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          requesterId: user?.id,
+          receiverId: id,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to unsend connection request.`);
+      }
+
+      setSent(false); // Toggle sent status
+      toast.info(`Connection request unsent successfully.`);
+      fetchUser(); // Refresh user data
+    } catch (error) {
+      console.error(`Error while unsending connection request:`, error);
+      toast.error(`Failed to unsend connection request.`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -476,7 +501,50 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         >
                           <BsPencilFill size={19} className="pe-1" />
                         </Button>
-                      ) : (profile.connectionsStatus === "pending" || profile.connectionsStatus === "accepted" || profile.connectionsStatus === "rejected")  ? (
+                      ) : (!profile.connectionsStatus ? (
+                        <>
+                          {sent && (
+                            <Button
+                              variant="danger-soft"
+                              className="me-2"
+                              type="button"
+                              onClick={handleCancel}
+                              disabled={loading}
+                            >
+                              {loading ? (
+                                <Loading size={15} loading={true} />
+                              ) : (
+                                <>
+                                  <FaTimes size={19} className="pe-1" /> Cancel Send Request
+                                </>
+                              )}
+                            </Button>
+                          )}
+
+                          {!sent && (
+                            <Button
+                              variant={sent ? "success-soft" : "primary-soft"}
+                              className="me-2"
+                              type="button"
+                              onClick={() => UserRequest(profile?.personalDetails?.id)}
+                              disabled={loading || sent}
+                            >
+                              {loading ? (
+                                <Loading size={15} loading={true} />
+                              ) : sent ? (
+                                <>
+                                  <FaUserCheck size={19} className="pe-1" /> Request Sent
+                                </>
+                              ) : (
+                                <>
+                                  <FaUserPlus size={19} className="pe-1" /> Send Connection Request
+                                </>
+                              )}
+                            </Button>
+                          )}
+                        </>
+
+                      ) : (
                         <Button
                           variant={
                             profile.connectionsStatus === "pending"
@@ -485,35 +553,14 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                                 ? "success-soft"
                                 : profile.connectionsStatus === "rejected"
                                   ? "danger-soft"
-                                  : "secondary-soft" 
+                                  : "secondary-soft"
                           }
                           className="me-2"
                           type="button"
-                          
                         >
-                          {profile.connectionsStatus} 
+                          {profile.connectionsStatus}
                         </Button>
-                      ): (
-                        <Button
-                          variant={sent ? "success-soft" : "primary-soft"}
-                          className="me-2"
-                          type="button"
-                          onClick={() => UserRequest(profile?.personalDetails?.id)}
-                          disabled={loading} 
-                        >
-                          {loading ? (
-                            <Loading size={15} loading={true} />
-                          ) : sent ? (
-                            <>
-                              <FaUserCheck size={19} className="pe-1" /> Request sent
-                            </>
-                          ) : (
-                            <>
-                              <FaUserPlus size={19} className="pe-1" /> Send connection request
-                            </>
-                          )}
-                        </Button>
-                      ) }
+                      ))}
 
                       <Dropdown>
                         <DropdownToggle
