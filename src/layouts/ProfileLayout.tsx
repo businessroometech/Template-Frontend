@@ -590,7 +590,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           }
                           className="me-2"
                           type="button">
-                          {profile.connectionsStatus}
+                          {profile.connectionsStatus==="accepted"?"message":profile.connectionsStatus}
                         </Button>
                       )}
 
