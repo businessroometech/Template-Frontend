@@ -6,7 +6,7 @@ import { BsCardText, BsCircleHalf, BsGear, BsLifePreserver, BsMoonStars, BsPower
 
 import type { ThemeType } from '@/types/context'
 
-import avatar7 from '@/assets/images/avatar/07.jpg'
+import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { developedByLink } from '@/context/constants'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useLayoutContext } from '@/context/useLayoutContext'
