@@ -192,12 +192,12 @@ const Friends = () => {
 
 const ConnectionRequest = () => {
   const { user } = useAuthContext()
-  const [allFollowers, setAllFollowers] = useState<any[]>([])
-  const [loading, setLoading] = useState<string | null>(null) // Tracks loading by user ID
+  const [allFollowers, setAllFollowers] = useState([])
+  const [loading, setLoading] = useState<string | null>(null) 
 
   useEffect(() => {
     fetchConnections()
-  }, [Followers])
+  }, [])
 
   const fetchConnections = async () => {
     try {
