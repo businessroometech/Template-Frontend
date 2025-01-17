@@ -1141,7 +1141,7 @@ import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Button, Card,
 import { useState } from 'react';
 import BusinessSellerForm from '../BusinessSeller/BusinessSellerForm';
 import BusinessBuyerForm from '../BusinessBuyer/BusinessBuyer';
-import Founderforms from '../Founderform/FOunderform';
+import Founderforms from '../Founderform/Founderform';
 
 const EntrepreneurForm = () => {
   const [selectedRole, setSelectedRole] = useState('');
