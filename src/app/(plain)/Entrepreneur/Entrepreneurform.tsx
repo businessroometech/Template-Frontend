@@ -1196,6 +1196,20 @@ const EntrepreneurForm = () => {
                 <div className="mb-0 h6">Select Your Role</div>
               </AccordionHeader>
               <AccordionBody>
+              <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="radio" 
+                    name="ComRadio" 
+                    id="ComRadio3"
+                    value="founder"
+                    onChange={handleRoleChange}
+                    checked={selectedRole === 'founder'}
+                  />
+                  <label className="form-check-label" htmlFor="ComRadio3">
+                    Founder (Exploring Business Ideas, Seeking Co-Founder or Investor)
+                  </label>
+                </div>
                 <div className="form-check">
                   <input 
                     className="form-check-input" 
@@ -1224,20 +1238,7 @@ const EntrepreneurForm = () => {
                     Founder (Willing to acquire a startup)
                   </label>
                 </div>
-                <div className="form-check">
-                  <input 
-                    className="form-check-input" 
-                    type="radio" 
-                    name="ComRadio" 
-                    id="ComRadio3"
-                    value="founder"
-                    onChange={handleRoleChange}
-                    checked={selectedRole === 'founder'}
-                  />
-                  <label className="form-check-label" htmlFor="ComRadio3">
-                    Founder (Exploring Business Ideas, Seeking Co-Founder or Investor)
-                  </label>
-                </div>
+               
               </AccordionBody>
             </AccordionItem>
           </Accordion>
