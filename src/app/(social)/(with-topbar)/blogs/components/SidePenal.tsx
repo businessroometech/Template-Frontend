@@ -7,6 +7,7 @@ import { Button, Card, CardBody, CardHeader, CardTitle, Col } from 'react-bootst
 import { BsPersonCheckFill } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa'
 import { useFetchData } from '@/hooks/useFetchData'
+import { ConnectionRequest } from '@/layouts/ProfileLayout'
 
 const RecentPost = () => {
   return (
@@ -112,6 +113,7 @@ const SidePenal = () => {
       </Col>
       <Col sm={6} lg={12}>
         <Followers />
+        <ConnectionRequest/>
       </Col>
     </>
   )

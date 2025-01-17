@@ -190,7 +190,7 @@ const Friends = () => {
   )
 }
 
-const ConnectionRequest = () => {
+export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
   const [loading, setLoading] = useState<string | null>(null) 
@@ -246,6 +246,8 @@ const ConnectionRequest = () => {
 
   return (
     <Card>
+    { allFollowers.length >= 0 &&  (
+      <>
       <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
         <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
           Connection Requests
@@ -312,6 +314,8 @@ const ConnectionRequest = () => {
             </div>
           ))}
       </CardBody>
+      </>
+    )}
     </Card>
   )
 }
