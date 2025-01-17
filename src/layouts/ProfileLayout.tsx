@@ -44,7 +44,7 @@ import {
 } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa6'
 
-import { PROFILE_MENU_ITEMS } from '@/assets/data/menu-items'
+// import { PROFILE_MENU_ITEMS } from '@/assets/data/menu-items'
 import { getAllUsers } from '@/helpers/data'
 
 import avatar7 from '@/assets/images/avatar/07.jpg'
@@ -195,8 +195,8 @@ const ConnectionRequest = () => {
   const [loading, setLoading] = useState<string | null>(null) // Tracks loading by user ID
 
   useEffect(() => {
-    fetchConnections()
-  }, [])
+    fetchConnections();
+  }, [Followers]);
 
   const fetchConnections = async () => {
     try {
@@ -215,8 +215,11 @@ const ConnectionRequest = () => {
     }
   }
 
-  const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
-    setLoading(userId) // Set loading state for the current user
+  const handleStatusUpdate = async (
+    userId: string,
+    status: 'accepted' | 'rejected'
+  ) => {
+    setLoading(userId);
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
         method: 'POST',
@@ -352,9 +355,10 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         },
         body: JSON.stringify({
           userId: id,
-          profileId: user.id,
-        }),
-      })
+          profileId: user?.id
+        })
+      });
+
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
@@ -416,16 +420,66 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         throw new Error(`Failed to unsend connection request.`)
       }
 
-      setSent(false) // Toggle sent status
-      toast.info(`Connection request unsent successfully.`)
-      fetchUser() // Refresh user data
+      setSent(false); 
+      toast.info(`Connection request unsent successfully.`);
+      fetchUser(); 
     } catch (error) {
       console.error(`Error while unsending connection request:`, error)
       toast.error(`Failed to unsend connection request.`)
     } finally {
       setLoading(false)
     }
-  }
+  };
+
+  const PROFILE_MENU_ITEMS = [
+    {
+      key: 'profile-feed',
+      label: 'Feed',
+      url: `/profile/feed/${id}`,
+      parentKey: 'pages-profile',
+    },
+    {
+      key: 'profile-about',
+      label: 'About',
+      url: `/profile/about/${id}`,
+      parentKey: 'pages-profile',
+    },
+    {
+      key: 'profile-connections',
+      label: 'Connections',
+      url: `/profile/connections/${id}`,
+      badge: {
+        text: '300',
+        variant: 'success',
+      },
+      parentKey: 'pages-profile',
+    },
+    {
+      key: 'profile-media',
+      label: 'Media',
+      url: `/profile/media/${id}`,
+      parentKey: 'pages-profile',
+    },
+    {
+      key: 'profile-videos',
+      label: 'Videos',
+      url: `/profile/videos/${id}`,
+      parentKey: 'pages-profile',
+    },
+    {
+      key: 'profile-events',
+      label: 'Events',
+      url: `/profile/events/${id}`,
+      parentKey: 'pages-profile',
+    },
+    {
+      key: 'profile-activity',
+      label: 'Activity',
+      url: `/profile/activity/${id}`,
+      parentKey: 'pages-profile',
+    },
+  ];
+  
 
   return (
     <>

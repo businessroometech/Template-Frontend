@@ -1019,7 +1019,7 @@
 
 // export default EntrepreneurForm;
 
-
+/*
 import PageMetaData from '@/components/PageMetaData'
 import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Button, Card, CardBody, CardFooter, CardHeader, CardTitle } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
@@ -1080,7 +1080,7 @@ const EntrepreneurForm = () => {
                     checked={selectedRole === 'business-seller'}
                   />
                   <label className="form-check-label" htmlFor="ComRadio5">
-                  Founder (Willing to sell your startup) {/* this is business seller */}
+                  Founder (Willing to sell your startup) {/* this is business seller }
                   </label>
                 </div>
                 <div className="form-check">
@@ -1132,3 +1132,130 @@ const EntrepreneurForm = () => {
 }
 
 export default EntrepreneurForm
+
+*/
+
+
+import PageMetaData from '@/components/PageMetaData';
+import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Button, Card, CardBody, CardFooter, CardHeader, CardTitle } from 'react-bootstrap';
+import { useState } from 'react';
+import BusinessSellerForm from '../BusinessSeller/BusinessSellerForm';
+import BusinessBuyerForm from '../BusinessBuyer/BusinessBuyer';
+import Founderforms from '../Founderform/Founderform';
+
+const EntrepreneurForm = () => {
+  const [selectedRole, setSelectedRole] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const handleRoleChange = (event) => {
+    setSelectedRole(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    if (selectedRole) {
+      setFormSubmitted(true);
+    }
+  };
+
+  const renderForm = () => {
+    switch (selectedRole) {
+      case 'business-seller':
+        return <BusinessSellerForm></BusinessSellerForm>; // Replace with the actual form component
+      case 'business-acquirer':
+        return <BusinessBuyerForm></BusinessBuyerForm>; // Replace with the actual form component
+      case 'founder':
+        return <Founderforms></Founderforms>; // Replace with the actual form component
+      default:
+        return null;
+    }
+  };
+
+  if (formSubmitted) {
+    return (
+      <>
+        <PageMetaData title="Business Profile" />
+        {renderForm()}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <PageMetaData title="Business Profile" />
+      <Card>
+        <CardHeader className="border-0 pb-0">
+          <CardTitle>Entrepreneur Form</CardTitle>
+          <p className="mb-0">
+            Select any sub-role for yourself and you will be redirected to the Forms according to your choice
+          </p>
+        </CardHeader>
+        <CardBody>
+          <Accordion defaultActiveKey="0" id="communications">
+            <AccordionItem eventKey="0" className="bg-transparent">
+              <AccordionHeader id="communicationOne">
+                <div className="mb-0 h6">Select Your Role</div>
+              </AccordionHeader>
+              <AccordionBody>
+                <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="radio" 
+                    name="ComRadio" 
+                    id="ComRadio5"
+                    value="business-seller"
+                    onChange={handleRoleChange}
+                    checked={selectedRole === 'business-seller'}
+                  />
+                  <label className="form-check-label" htmlFor="ComRadio5">
+                    Founder (Willing to sell your startup)
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="radio" 
+                    name="ComRadio" 
+                    id="ComRadio2"
+                    value="business-acquirer"
+                    onChange={handleRoleChange}
+                    checked={selectedRole === 'business-acquirer'}
+                  />
+                  <label className="form-check-label" htmlFor="ComRadio2">
+                    Founder (Willing to acquire a startup)
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="radio" 
+                    name="ComRadio" 
+                    id="ComRadio3"
+                    value="founder"
+                    onChange={handleRoleChange}
+                    checked={selectedRole === 'founder'}
+                  />
+                  <label className="form-check-label" htmlFor="ComRadio3">
+                    Founder (Exploring Business Ideas, Seeking Co-Founder or Investor)
+                  </label>
+                </div>
+              </AccordionBody>
+            </AccordionItem>
+          </Accordion>
+        </CardBody>
+        <CardFooter className="pt-0 text-end border-0">
+          <Button 
+            variant="primary" 
+            size="sm" 
+            onClick={handleSubmit}
+            className="mb-0"
+            disabled={!selectedRole}
+          >
+            Next
+          </Button>
+        </CardFooter>
+      </Card>
+    </>
+  );
+}
+
+export default EntrepreneurForm;
