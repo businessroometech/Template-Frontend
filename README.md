@@ -12,7 +12,7 @@ fasdf
 If you are developing a production application, we recommend updating the configuration to enableasmdf type aware lint rules:
 
 - Configure the top-level `parserOptions` property like this:
-asfda
+asfdaasf
 ```jssadfads
 export default {
   // other rules...
