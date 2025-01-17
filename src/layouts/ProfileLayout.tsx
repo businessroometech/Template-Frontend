@@ -470,7 +470,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         ) : (
                           <Skeleton width={90} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         )}
-                        &nbsp;{/* Add space between first and last name */}
+                        &nbsp;
                         {profile?.personalDetails?.lastName ? (
                           profile.personalDetails.lastName
                         ) : (
