@@ -544,7 +544,7 @@ const BusinessSellerForm = () => {
     switch (step) {
       case 0:
         return renderFormFields([
-          { id: 'sellerName', label: 'Your Name', name: 'sellerName', icon: <FaUser />, required: true },
+       //   { id: 'sellerName', label: 'Your Name', name: 'sellerName', icon: <FaUser />, required: true },
           { id: 'businessName', label: 'Business Name', name: 'businessName', icon: <FaBuilding />, required: true },
           { id: 'businessType', label: 'Business Type', name: 'businessType', icon: <FaIndustry />, inputType: 'select', required: true, options: ['Sole Proprietorship', 'Partnership', 'LLC', 'Corporation', 'Other'] }
         ]);
