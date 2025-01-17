@@ -22,7 +22,7 @@ const VideoPlayer = ({ src }) => {
             }
           });
         },
-        { threshold: 0.7 }
+        { threshold: 0.4 }
       );
 
       observer.observe(containerRef.current);

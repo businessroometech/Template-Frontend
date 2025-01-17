@@ -40,7 +40,7 @@ import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'
 import avatar5 from '@/assets/images/avatar/05.jpg'
 import avatar6 from '@/assets/images/avatar/06.jpg'
-import avatar7 from '@/assets/images/avatar/07.jpg'
+import avatar7 from '@/assets/images/avatar/06.jpg'
 
 const AllEvents = () => {
   const eventCategories = ['all', 'local', 'this-week', 'online', 'friends', 'following']

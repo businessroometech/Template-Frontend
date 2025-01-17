@@ -7,7 +7,7 @@ import avatar1 from '@/assets/images/avatar/01.jpg'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'
-import avatar7 from '@/assets/images/avatar/07.jpg'
+import avatar7 from '@/assets/images/avatar/default avatar.png'
 import logo8 from '@/assets/images/logo/08.svg'
 
 export const notificationData: NotificationType[] = [
