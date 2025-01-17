@@ -197,7 +197,8 @@ const ConnectionRequest = () => {
 
   useEffect(() => {
     fetchConnections()
-  }, [])
+
+  }, [allFollowers])
 
   const fetchConnections = async () => {
     try {
@@ -208,7 +209,6 @@ const ConnectionRequest = () => {
       })
 
       if (!response.ok) throw new Error('Failed to fetch connection requests.')
-
       const data = await response.json()
       setAllFollowers(data)
     } catch (error) {
@@ -228,14 +228,18 @@ const ConnectionRequest = () => {
           status,
         }),
       })
-
+      await fetchConnections();
       if (!response.ok) throw new Error(`Failed to ${status} the connection request.`)
-      fetchConnections()
+       
       toast.success(`Connection request ${status} successfully.`)
     } catch (error) {
+      await fetchConnections();
       console.error(`Error while updating connection status:`, error)
       toast.error(`Error while trying to ${status} the connection request.`)
     } finally {
+      await fetchConnections();
+      // setAllFollowers([])
+      window.location.reload()
       setLoading(null)
     }
   }
@@ -396,7 +400,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
       setSent(true) // Toggle sent status
       toast.success(`Connection request sent successfully.`)
-      fetchUser() // Refresh user data
+      // fetchUser() 
     } catch (error) {
       console.error(`Error while sending connection request:`, error)
       setSent(false)
