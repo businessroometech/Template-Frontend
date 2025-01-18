@@ -126,7 +126,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
             </p> */}
 
-            {profile.postsCount && profile.connectionsCount && profile.likeCount ? (
+            {/* {profile.postsCount && profile.connectionsCount && profile.likeCount ? (
               <div className="hstack gap-2 gap-xl-3 justify-content-center">
                 <div>
                   <h6 className="mb-0">{profile.postsCount}</h6>
@@ -143,7 +143,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                   <small>Likes</small>
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
 
           <hr />
