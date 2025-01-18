@@ -39,7 +39,7 @@ const AccountSettings = () => {
 });
 
 const navigate = useNavigate();
-
+const [loading, setLoading] = useState(false);
   const { user,saveSession} = useAuthContext();
   // console.log('---account settings---',user);
   console.log('profile in account settings',profile?.personalDetails?.gender);
@@ -65,14 +65,9 @@ const navigate = useNavigate();
   console.log('---upbgf---',uploadedFilesProfileBg);
   // This function will be triggered when files are uploaded
   const handleFileUploadProfile = (files: FileType[]) => {
-    if(!uploadedFilesProfile || uploadedFilesProfile.length === 0) {
-      console.log('went in');
-      return
-    }
     setUploadedFilesProfile(files)
   }
   const handleCoverPhotoChange = (files: FileType[]) => {
-    if(!uploadedFilesProfileBg || uploadedFilesProfileBg.length === 0) return;
     setUploadedFilesProfileBg(files)
   }
 
@@ -102,6 +97,7 @@ const navigate = useNavigate();
     }
   }
   const onSubmit = async (data) => {
+    setLoading(true);
     console.log('----data----',data)
     try {
       const profilePhoto = await handleUploadprofile()
@@ -174,6 +170,9 @@ const navigate = useNavigate();
     // }
     } catch (error) {
       console.error('Error updating profile:', error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -279,7 +278,13 @@ const navigate = useNavigate();
               <DropzoneFormInput  icon={BsImages}  onFileUpload={handleFileUploadProfile} showPreview={true} text="Drag here or click to upload profile photo." />
           
           <Col xs={12} className="mt-3">
-            <Button type="submit">Update Profile</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            ) : (
+              'Update Profile'
+            )}
+          </Button>
           </Col>
         </form>
       </CardBody>
