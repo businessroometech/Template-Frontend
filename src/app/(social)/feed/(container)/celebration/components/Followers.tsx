@@ -9,6 +9,7 @@ import { useFetchData } from '@/hooks/useFetchData'
 
 const Followers =  () => {
   const allFollowers = useFetchData(getAllUsers)
+  
   return (
     <Card>
       <CardHeader className="pb-0 border-0">
@@ -17,6 +18,7 @@ const Followers =  () => {
 
       <CardBody>
         {allFollowers?.slice(0, 5).map((follower, idx) => (
+          // console.log('Follower',follower),
           <div className="hstack gap-2 mb-3" key={idx}>
             <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
               <span role="button">

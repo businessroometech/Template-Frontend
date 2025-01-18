@@ -190,10 +190,10 @@ const Friends = () => {
   )
 }
 
-const ConnectionRequest = () => {
+export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
-  const [loading, setLoading] = useState<string | null>(null) 
+  const [loading, setLoading] = useState<string | null>(null)
 
   useEffect(() => {
     fetchConnections()
@@ -215,9 +215,12 @@ const ConnectionRequest = () => {
       console.error('Error fetching connection requests:', error)
     }
   }
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
-    setLoading(userId)
+    // Set the loading state to track the userId and status
+    setLoadingStates((prev) => ({ ...prev, [userId]: status }));
+  
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
         method: 'POST',
@@ -227,91 +230,94 @@ const ConnectionRequest = () => {
           connectionId: userId,
           status,
         }),
-      })
+      });
+  
+      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
+  
+      toast.success(`Connection request ${status} successfully.`);
       await fetchConnections();
-      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`)
-       
-      toast.success(`Connection request ${status} successfully.`)
     } catch (error) {
+      console.error(`Error while updating connection status:`, error);
+      toast.error(`Error while trying to ${status} the connection request.`);
       await fetchConnections();
-      console.error(`Error while updating connection status:`, error)
-      toast.error(`Error while trying to ${status} the connection request.`)
     } finally {
-      await fetchConnections();
-      // setAllFollowers([])
-      window.location.reload()
-      setLoading(null)
+      setLoadingStates((prev) => ({ ...prev, [userId]: null }));
+      window.location.reload();
     }
-  }
+  };
 
   return (
     <Card>
-      <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
-        <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
-          Connection Requests
-        </CardTitle>
-        {allFollowers.length ? (
-          <div className="bg-info p-2 rounded">
-            <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
-              {allFollowers && allFollowers.length}
-            </p>
-          </div>
-        ) : null}
-      </CardHeader>
-
-      <CardBody>
-        {allFollowers &&
-          allFollowers.map((follower, idx) => (
-            <div className="d-flex row col-12 mb-3" key={idx}>
-              {/* Avatar Section */}
-              <div className="col-8 d-flex">
-                <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                  <span role="button">
-                    <img
-                      className="avatar-img rounded-circle"
-                      src={follower.profilePictureUploadUrl || avatar7}
-                      alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-                    />
-                  </span>
-                </div>
-                <div className="overflow-hidden px-2">
-                  <Link className="h6 mb-0" to="">
-                    {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                  </Link>
-                  <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                </div>
+      {allFollowers.length > 0 && (
+        <>
+          <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
+            <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
+              Connection Requests
+            </CardTitle>
+            {allFollowers.length ? (
+              <div className="bg-info p-2 rounded">
+                <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
+                  {allFollowers && allFollowers.length}
+                </p>
               </div>
+            ) : null}
+          </CardHeader>
 
-              {/* Action Buttons */}
-              <div className="col-3 d-flex">
-                <Button
-                  onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
-                  variant="danger-soft"
-                  className="rounded-circle mx-1 flex-centered"
-                  disabled={loading === follower?.requesterDetails?.id} // Disable while loading
-                >
-                  {loading === follower?.requesterDetails?.id ? (
-                    <Loading size={15} loading={true} /> // Show loading spinner
-                  ) : (
-                    <RiUserUnfollowFill />
-                  )}
-                </Button>
-                <Button
-                  onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
-                  variant="success-soft"
-                  className="rounded-circle mx-1 flex-centered"
-                  disabled={loading === follower?.requesterDetails?.id} // Disable while loading
-                >
-                  {loading === follower?.requesterDetails?.id ? (
-                    <Loading size={15} loading={true} /> // Show loading spinner
-                  ) : (
-                    <FaUserCheck size={19} className="pe-1" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          ))}
-      </CardBody>
+          <CardBody>
+            {allFollowers &&
+              allFollowers.map((follower, idx) => (
+                <div className="d-flex row col-12 mb-3" key={idx}>
+                  {/* Avatar Section */}
+                  <div className="col-8 d-flex">
+                    <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                      <span role="button">
+                        <img
+                          className="avatar-img rounded-circle"
+                          src={follower.profilePictureUploadUrl || avatar7}
+                          alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                        />
+                      </span>
+                    </div>
+                    <div className="overflow-hidden px-2">
+                      <Link className="h6 mb-0" to="">
+                        {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                      </Link>
+                      <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="col-3 d-flex">
+                    <Button
+                      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                      variant="danger-soft"
+                      className="rounded-circle mx-1 flex-centered"
+                      disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'} // Disable while loading for 'rejected'
+                    >
+                      {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
+                        <Loading size={15} loading={true} /> // Show loading spinner for 'rejected'
+                      ) : (
+                        <RiUserUnfollowFill />
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                      variant="success-soft"
+                      className="rounded-circle mx-1 flex-centered"
+                      disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'} // Disable while loading for 'accepted'
+                    >
+                      {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
+                        <Loading size={15} loading={true} /> // Show loading spinner for 'accepted'
+                      ) : (
+                        <FaUserCheck size={19} className="pe-1" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+          </CardBody>
+        </>
+      )}
     </Card>
   )
 }
@@ -366,7 +372,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       if (!response.ok) {
         //  navigate('/not-found')
         throw new Error('Network response was not ok')
-       
+
       }
       if (response.status === 404) {
         // navigate('/not-found')
@@ -376,6 +382,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       setProfile(data?.data)
     } catch (error) {
       console.error('Error fetching user profile:', error)
+    }finally{
+      setSkeletonLoading(false)
     }
   }
 
@@ -459,7 +467,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       label: 'Connections',
       url: `/profile/connections/${id}`,
       badge: {
-        text: profile.connectionsCount ,
+        text: profile.connectionsCount,
         variant: 'success',
       },
       parentKey: 'pages-profile',

@@ -1,9 +1,9 @@
-
 import { Button, Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import type { IconType } from 'react-icons'
 import { BsCardText, BsCircleHalf, BsGear, BsLifePreserver, BsMoonStars, BsPower, BsSun } from 'react-icons/bs'
-
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import type { ThemeType } from '@/types/context'
 
 import avatar7 from '@/assets/images/avatar/default avatar.png'
@@ -21,6 +21,8 @@ type ThemeModeType = {
 }
 
 const ProfileDropdown = () => {
+  const skeletonBaseColor = '#b0b0b0'
+  const skeletonHighlightColor = '#d6d6d6'
   const themeModes: ThemeModeType[] = [
     {
       icon: BsSun,
@@ -38,53 +40,57 @@ const ProfileDropdown = () => {
 
   const { theme: themeMode, updateTheme } = useLayoutContext()
   const { removeSession } = useAuthContext()
+  const [skeletonLoading, setSkeletonLoading] = useState(true)
 
-  const {user} = useAuthContext();
-    const [profile, setProfile] = useState({});
-  
-  
-    useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId: user?.id
-            })
-          });
-  
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-  
-          const data = await response.json(); 
-          setProfile(data.data); 
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
+  const { user } = useAuthContext()
+  const [profile, setProfile] = useState({})
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setSkeletonLoading(true)
+        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
         }
-      };
-      if (profile.personalDetails){
-        return;
+        
+        const data = await response.json()
+        setProfile(data.data)
+        setSkeletonLoading(false)
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      } finally {
+        setSkeletonLoading(false)
       }
-      fetchUser();
-    }, [profile.personalDetails]); 
-    
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-      };
-      return date.toLocaleString('en-GB', options).replace(',', ' at');
-    };
+    }
+    if (profile.personalDetails) {
+      return
+    }
+    fetchUser()
+  }, [profile.personalDetails])
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    }
+    return date.toLocaleString('en-GB', options).replace(',', ' at')
+  }
 
   return (
     <Dropdown as="li" className="nav-item ms-2" drop="down" align="end">
@@ -95,17 +101,21 @@ const ProfileDropdown = () => {
         data-bs-display="static"
         data-bs-toggle="dropdown"
         aria-expanded="false">
-        <img className="avatar-img rounded-2" src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" />
+        {skeletonLoading ? (
+          <Skeleton height={40} width={40} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+        ) : (
+          <img className="avatar-img rounded-2" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar" />
+        )}
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end pt-3 small me-md-n3" aria-labelledby="profileDropdown">
         <li className="px-3">
           <div className="d-flex align-items-center position-relative">
             <div className="avatar me-3">
-              <img className="avatar-img rounded-circle" src={profile.profileImgUrl?profile.profileImgUrl:avatar7} alt="avatar" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar" />
             </div>
             <div>
               <Link className="h6 stretched-link" to="">
-                {profile.personalDetails?.firstName}  {profile.personalDetails?.lastName}
+                {profile.personalDetails?.firstName} {profile.personalDetails?.lastName}
               </Link>
               <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>
@@ -114,8 +124,8 @@ const ProfileDropdown = () => {
             View profile
           </DropdownItem> */}
 
-          <Link className="btn btn-primary-soft btn-sm my-2 text-center mx-5" to= {(`/profile/feed/${user?.id}`)} >
-          View profile
+          <Link className="btn btn-primary-soft btn-sm my-2 text-center mx-5" to={`/profile/feed/${user?.id}`}>
+            View profile
           </Link>
         </li>
 
@@ -139,13 +149,12 @@ const ProfileDropdown = () => {
         </li>
         <DropdownDivider />
         <li>
-          <DropdownItem  className="bg-danger-soft-hover" onClick={removeSession}>
+          <DropdownItem className="bg-danger-soft-hover" onClick={removeSession}>
             <BsPower className="fa-fw me-2" />
             Sign Out
           </DropdownItem>
         </li>
         <li>
-          
           <DropdownDivider />
         </li>
 

@@ -36,12 +36,12 @@ const AccountSettings = () => {
     // bio: yup.string(), 
     gender: yup.string(), 
 
-});
+  });
 
-const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const { user,saveSession} = useAuthContext();
   console.log('---account settings---',user);
+  console.log('kya scene')
   
 
   const { control, handleSubmit } = useForm({
@@ -183,6 +183,7 @@ const navigate = useNavigate();
 
         const data = await response.json();
         setProfile(data.data);
+        console.log('---profile in account settings---',profile);
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
@@ -191,6 +192,7 @@ const navigate = useNavigate();
     fetchUser();
   }, [user?.id]);
 
+  console.log('kya scene')
   return (
     <Card>
       <CardHeader>
