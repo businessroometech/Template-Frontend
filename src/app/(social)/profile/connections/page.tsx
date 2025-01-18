@@ -47,19 +47,17 @@ const Connections = () => {
 
       const data = await res.json();
       setAllConnections(data.connections);
-      toast.info(`Connection list get successfully.`);
+      // toast.info(`Connection list get successfully.`);
     } catch (error) {
       console.error(`Error while fetching connection list:`, error);
-      toast.error(`Failed to fetch connection list.`);
+      // toast.error(`Failed to fetch connection list.`);
     } finally {
       setLoading(false);
     }
   };
   
   const UserRequest = async (profileId:string) => {
-    console.log("profileId", profileId);
-    console.log("userId", user.id);
-    
+       
  setLoading(true);
     const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request";
 
@@ -120,16 +118,47 @@ const Connections = () => {
     }
   };
 
+  const handleRemove = async (connectionId:string) =>{
+    
+    const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/remove-connection";
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          connectionId : connectionId
+        }),
+      });
+
+      fetchConnections()
+
+      if (!res.ok) {
+        throw new Error(`Failed to remove connection request.`);
+      }
+      setSent(false); 
+      toast.info(`Connection request remove successfully.`);
+    
+    } catch (error) {
+      console.error(`Error while remove connection request:`, error);
+      toast.error(`Failed to remove connection request.`);
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
+  }
+
   return (
     <>
       <PageMetaData title='Connections' />
-<ToastContainer />
+{/* <ToastContainer /> */}
       <Card>
         <CardHeader className="border-0 pb-0">
           <CardTitle> Connections</CardTitle>
         </CardHeader>
         <CardBody>
-          {allConnections?.map((connection, idx) => (
+        {allConnections && allConnections.map((connection, idx) => (
             <div className="d-md-flex align-items-center mb-4" key={idx}>
               <div className="avatar me-3 mb-3 mb-md-0">
                 {connection.profilePictureUrl ? (
@@ -173,11 +202,12 @@ const Connections = () => {
                   <li className={clsx('small', { 'ms-3': connection.sharedConnectionAvatars })}>{connection.meeted}</li>
                 </ul>
               </div>
-              <div className="ms-md-auto d-flex">
+              {connection?.userId !== user?.id ? (<div className="ms-md-auto d-flex">
                 {(user?.id===id || connection.mutual)?(
-                  <> <Button variant="danger-soft" size="sm" className="mb-0 me-2">
+                  <> 
+                { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" size="sm" className="mb-0 me-2">
                     Remove
-                  </Button>
+                  </Button>}
                     <Button variant="primary-soft" size="sm" className="mb-0">
 
                       Message
@@ -225,7 +255,9 @@ const Connections = () => {
                     )}
                   </>
                   )}
-              </div>
+              </div>):(
+                <p className='w-25 text-warning'>your profile</p>
+              )}
             </div>
           ))}
           <div className="d-grid">

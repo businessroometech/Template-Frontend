@@ -385,7 +385,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const BusinessSellerForm = () => {
 
   const { user} = useAuthContext();
-  //console.log(user?.id)
+  console.log("userid",user?.id)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: '',
@@ -447,28 +447,35 @@ const BusinessSellerForm = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUserId(user?.id)
-   // console.log(UserId)
-    toast.success("Form submitted successfully!");
   
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
-      formDataToSend.append('UserId', UserId);
-      console.log(key, formData[key]);
-    });
-  console.log(formDataToSend)
+    // Convert formData to a regular object
+    const dataToSend = {
+      ...formData,
+      UserId: user?.id
+    };
+  
     try {
-     const postdata =  await axios.post('https://app-backend-8r74.onrender.com/businessseller/create', formDataToSend,  {
+      const response = await fetch('http://localhost:5000/businessseller/create', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'UserId' : UserId
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'UserId': user?.id
         },
+        body: JSON.stringify(dataToSend), // Convert data to JSON string
+      
       });
-      console.log("postdata", postdata)
+      console.log("data to send" ,dataToSend)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    
+      const responseData = await response.json(); // Parse JSON response
+      console.log("Response:", responseData);
+      toast.success("Form submitted successfully!");
       navigate('/');
     } catch (error) {
-      console.error(error);
+      console.error("Error details:", error.response || error);
       toast.error("There was an error submitting the form.");
     }
   };

@@ -11,7 +11,7 @@ import type { IconType } from 'react-icons'
 import { BsCardText, BsCircleHalf, BsGear, BsLifePreserver, BsMoonStars, BsPower, BsSun } from 'react-icons/bs'
 import { Link, useNavigation } from 'react-router-dom'
 
-import avatar7 from '@/assets/images/avatar/07.jpg'
+import avatar7 from '@/assets/images/avatar/06.jpg'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 

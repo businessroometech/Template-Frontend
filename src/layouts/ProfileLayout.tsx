@@ -190,14 +190,15 @@ const Friends = () => {
   )
 }
 
-const ConnectionRequest = () => {
+export const ConnectionRequest = () => {
   const { user } = useAuthContext()
-  const [allFollowers, setAllFollowers] = useState<any[]>([])
-  const [loading, setLoading] = useState<string | null>(null) // Tracks loading by user ID
+  const [allFollowers, setAllFollowers] = useState([])
+  const [loading, setLoading] = useState<string | null>(null) 
 
   useEffect(() => {
     fetchConnections()
-  }, [Followers])
+
+  }, [allFollowers])
 
   const fetchConnections = async () => {
     try {
@@ -208,7 +209,6 @@ const ConnectionRequest = () => {
       })
 
       if (!response.ok) throw new Error('Failed to fetch connection requests.')
-
       const data = await response.json()
       setAllFollowers(data)
     } catch (error) {
@@ -228,20 +228,26 @@ const ConnectionRequest = () => {
           status,
         }),
       })
-
+      await fetchConnections();
       if (!response.ok) throw new Error(`Failed to ${status} the connection request.`)
-      fetchConnections()
+       
       toast.success(`Connection request ${status} successfully.`)
     } catch (error) {
+      await fetchConnections();
       console.error(`Error while updating connection status:`, error)
       toast.error(`Error while trying to ${status} the connection request.`)
     } finally {
+      await fetchConnections();
+      // setAllFollowers([])
+      window.location.reload()
       setLoading(null)
     }
   }
 
   return (
     <Card>
+    { allFollowers.length >= 0 &&  (
+      <>
       <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
         <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
           Connection Requests
@@ -308,6 +314,8 @@ const ConnectionRequest = () => {
             </div>
           ))}
       </CardBody>
+      </>
+    )}
     </Card>
   )
 }
@@ -360,12 +368,12 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       })
 
       if (!response.ok) {
-         navigate('/not-found')
+        //  navigate('/not-found')
         throw new Error('Network response was not ok')
        
       }
       if (response.status === 404) {
-        navigate('/not-found')
+        // navigate('/not-found')
       }
       const data = await response.json()
       setSkeletonLoading(false)
@@ -398,7 +406,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
       setSent(true) // Toggle sent status
       toast.success(`Connection request sent successfully.`)
-      fetchUser() // Refresh user data
+      // fetchUser() 
     } catch (error) {
       console.error(`Error while sending connection request:`, error)
       setSent(false)

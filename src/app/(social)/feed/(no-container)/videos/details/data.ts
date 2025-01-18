@@ -1,7 +1,7 @@
 
 import avatar5 from '@/assets/images/avatar/05.jpg'
 import avatar6 from '@/assets/images/avatar/06.jpg'
-import avatar7 from '@/assets/images/avatar/07.jpg'
+import avatar7 from '@/assets/images/avatar/06.jpg'
 import avatar10 from '@/assets/images/avatar/10.jpg'
 import avatar11 from '@/assets/images/avatar/11.jpg'
 import avatar12 from '@/assets/images/avatar/12.jpg'

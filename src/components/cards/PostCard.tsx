@@ -26,6 +26,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
   const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
+  const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -52,6 +53,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         if (!response.ok) throw new Error('Failed to fetch comments');
         const data = await response.json();
+        console.log('comments that are fetched : ',data);
         setComments(data.data.comments || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -62,7 +64,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
     if (post?.Id) fetchComments();
   }, [refresh, post?.Id]);
-
+  // console.log('---item---',item);
 
   const videoPlayer = useMemo(() => {
     if (isVideo) {
@@ -108,6 +110,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       setLikeStatus((prev) => !prev);
+      likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
       setRefresh((prev) => prev + 1);
     } catch (error) {
       console.error('Error toggling like:', error);
@@ -210,7 +213,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
     style={{ fontSize: "0.8rem" }} // Slightly smaller font size
   >
     {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-    <span>Like</span>
+    <span>Like {likeCount}</span>
   </Button>
 
   <Button
@@ -219,7 +222,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
     style={{ fontSize: "0.8rem" }} // Slightly smaller font size
   >
     <MessageSquare size={16} />
-    <span>Comment ({commentCount})</span>
+    <span>Comment {commentCount}</span>
   </Button>
 
   <Button
@@ -300,7 +303,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
         ) : (
           <ul className="comment-wrap list-unstyled px-3">
             {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-              <CommentItem key={index} comment={comment} level={0} />
+              <CommentItem key={index} post={post} comment={comment} level={0} />
             ))}
           </ul>
         )}

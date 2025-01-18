@@ -3,7 +3,6 @@ import { lazy } from 'react'
 import { Navigate, type RouteProps } from 'react-router-dom'
 
 
-
 // profiles for seller //
 //const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
 
@@ -202,7 +201,7 @@ const otherRoutes: RoutesProps[] = [
 export const settingPagesRoutes:RoutesProps[]=[
   {
     path: '/settings/account',
-    name: 'Account Settings',
+    name: 'Account Settings', 
     element: <AccountSetting />,
   },
   {

@@ -10,7 +10,7 @@ import DateFormInput from '../form/DateFormInput';
 import DropzoneFormInput from '../form/DropzoneFormInput';
 import { uploadDoc } from '@/utils/CustomS3ImageUpload';
 import { Button, CardBody, Col } from 'react-bootstrap';
-import avatar7 from '@/assets/images/avatar/07.jpg';
+import avatar7 from '@/assets/images/avatar/06.jpg';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
 
 const UserModel = () => {
