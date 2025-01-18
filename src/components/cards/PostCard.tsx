@@ -110,7 +110,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       setLikeStatus((prev) => !prev);
-      setLikeCount(() => likeCount + 1);
+      likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
       setRefresh((prev) => prev + 1);
     } catch (error) {
       console.error('Error toggling like:', error);
