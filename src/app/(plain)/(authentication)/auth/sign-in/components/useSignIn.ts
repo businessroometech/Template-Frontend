@@ -44,7 +44,7 @@ const useSignIn = () => {
   }
 
   const login = handleSubmit(async () => {
-
+    setLoading(true);
     const body : LoginFormFields = {
       email : email,
       password : password,

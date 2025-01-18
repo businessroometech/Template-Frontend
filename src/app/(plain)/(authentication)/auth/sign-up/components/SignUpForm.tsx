@@ -28,7 +28,7 @@ const SignUpForm = () => {
   const [showModal,setShowModal] = useState<boolean>(false);
   const [dob, setDob] = useState<string>('');
   const [error, setError] = useState("");
-  const { signUp } = useSignUp();
+  const { signUp,loading } = useSignUp();
   const today = new Date();
   const minDate = new Date("1900-01-01");
   const maxAllowedDate = addYears(today, -MIN_ALLOWED_AGE);
@@ -115,6 +115,7 @@ const SignUpForm = () => {
       alert('Enter Your Dob');
       return;
     }
+    setLoading(true);
     // console.log(firstName,lastName,email,firstPassword,confirmPassword,dob,country,role);
     await signUp({
       email,
@@ -432,9 +433,20 @@ const SignUpForm = () => {
   >
     Select your Role{PrintRole(role) && <span style={{paddingLeft : '2px'}}>-({PrintRole(role)})</span>}
   </Button>
-  <Button variant="primary" type="submit" size="lg">
-    Sign me up
-  </Button>
+  <Button variant="primary" type="submit" size="lg" disabled={loading}>
+  {loading ? (
+    <>
+      <span
+        className="spinner-border spinner-border-sm me-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      Processing...
+    </>
+  ) : (
+    'Sign me up'
+  )}
+</Button>
 </div>
       <p className="mb-0 mt-3 text-center">
         ©{currentYear}
