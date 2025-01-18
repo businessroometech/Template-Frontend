@@ -382,6 +382,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       setProfile(data?.data)
     } catch (error) {
       console.error('Error fetching user profile:', error)
+    }finally{
+      setSkeletonLoading(false)
     }
   }
 

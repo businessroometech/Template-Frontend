@@ -15,6 +15,8 @@ import {
   Row,
   Tooltip,
 } from 'react-bootstrap'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import {
   BsBookmarkCheck,
   BsCalendar2EventFill,
@@ -54,12 +56,14 @@ import makeApiRequest from '@/utils/apiServer'
 import { CREATE_POST } from '@/utils/api'
 import { FileUpload, uploadDoc, uploadMulti } from '@/utils/CustomS3ImageUpload'
 import { FileType } from '@/hooks/useFileUploader'
+const skeletonBaseColor = '#e3e3e3'
+const skeletonHighlightColor = '#f2f2f2'
 
 interface CreatePostCardProps {
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
-import UserModel from './UserModel';
+import UserModel from './UserModel'
 
 interface ApiResponse<T> {
   status: number
@@ -72,7 +76,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
   const [modelTime, setModelTime] = useState(false)
-  const { user } = useAuthContext();
+  const { user } = useAuthContext()
 
   const eventFormSchema = yup.object({
     title: yup.string().required('Please enter event title'),
@@ -90,44 +94,46 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const [photoQuote, setPhotoQuote] = useState('')
   const [videoQuote, setVideoQuote] = useState('')
   const [awsIds, setAwsIds] = useState<any>([])
-
-
+  const [skeletonLoading, setSkeletonLoading] = useState(true)
 
   // const {user} = useAuthContext();
-  const [profile, setProfile] = useState({});
-
+  const [profile, setProfile] = useState({})
 
   useEffect(() => {
     if (modelTime) {
-      return;
+      return
     }
-    fetchUser();
-  }, []);
+    fetchUser()
+  }, [])
 
   const fetchUser = async () => {
     try {
+      setSkeletonLoading(true)
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user?.id
-        })
-      });
+          userId: user?.id,
+        }),
+      })
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok')
       }
-      const data = await response.json();
-      setProfile(data.data);
+      const data = await response.json()
+      setSkeletonLoading(false)
+      setProfile(data.data)
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      console.error('Error fetching user profile:', error)
+    } finally {
+      setSkeletonLoading(false)
     }
-  };
+  }
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    const date = new Date(dateString)
     const options = {
       year: 'numeric',
       month: 'short',
@@ -136,9 +142,9 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       minute: '2-digit',
       second: '2-digit',
       hour12: true,
-    };
-    return date.toLocaleString('en-GB', options).replace(',', ' at');
-  };
+    }
+    return date.toLocaleString('en-GB', options).replace(',', ' at')
+  }
 
   const handlePostClick = async (values: string) => {
     // Check if thoughts is empty
@@ -175,10 +181,10 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
-    console.log('---In handleFileUpload---uploadedFiles----',uploadedFiles);
-    console.log('-----files in params----',files);
-    setUploadedFiles([...uploadedFiles,...files]);
-    console.log('---setted files---in my function',files);
+    console.log('---In handleFileUpload---uploadedFiles----', uploadedFiles)
+    console.log('-----files in params----', files)
+    setUploadedFiles([...uploadedFiles, ...files])
+    console.log('---setted files---in my function', files)
   }
 
   // console.log('---- photo uploading -----', uploadedFiles)
@@ -186,7 +192,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const handleUpload = async () => {
     try {
       const response = await uploadMulti(uploadedFiles, user?.id) // Await the uploadDoc promise
-      console.log('---- response in the upload doc function ----', response);
+      console.log('---- response in the upload doc function ----', response)
       return response
     } catch (err) {
       console.error('Error in the createpostcard:', err)
@@ -195,7 +201,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
-    const uploadSuccess = await handleUpload();
+    const uploadSuccess = await handleUpload()
 
     try {
       // Wait for handleUpload to complete before proceeding
@@ -205,7 +211,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         const hashtagRegex = /#\w+/g
         const hashtags = photoQuote.match(hashtagRegex) || []
 
-        console.log("-------------awsIds----------------------------- :", awsIds);
+        console.log('-------------awsIds----------------------------- :', awsIds)
         // Making the API request
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
@@ -220,8 +226,10 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         if (response.data) {
           console.log('went inside')
           setThoughts('') // Reset thoughts after successful post
-          togglePhotoModel();
-          setTimeout(() => {setIsCreated(true);}, 1000);
+          togglePhotoModel()
+          setTimeout(() => {
+            setIsCreated(true)
+          }, 1000)
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -234,16 +242,16 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const handleVideoSubmit = async () => {
     try {
       // Wait for handleUpload to complete before proceeding
-      const uploadSuccess = await handleUpload();
-      console.log('video upload success',uploadSuccess);
+      const uploadSuccess = await handleUpload()
+      console.log('video upload success', uploadSuccess)
 
       if (uploadSuccess) {
         // Regular expression to match hashtags
         const hashtagRegex = /#\w+/g
         const hashtags = videoQuote.match(hashtagRegex) || []
-        console.log('hashtags match',hashtags);
-        console.log('---videoupload----',videoQuote)
-        console.log('---upload success---',uploadSuccess)
+        console.log('hashtags match', hashtags)
+        console.log('---videoupload----', videoQuote)
+        console.log('---upload success---', uploadSuccess)
         // Making the API request
         const data = {
           userId: user?.id,
@@ -251,17 +259,19 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           hashtags: hashtags,
           mediaKeys: uploadSuccess || [],
         }
-        console.log('video request data',data);
+        console.log('video request data', data)
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
           url: CREATE_POST,
-          data: data
+          data: data,
         })
 
         if (response.data) {
           setThoughts('') // Reset thoughts after successful post
-          toggleVideoModel();
-          setTimeout(() => {setIsCreated(true);}, 1000);
+          toggleVideoModel()
+          setTimeout(() => {
+            setIsCreated(true)
+          }, 1000)
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -272,23 +282,22 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   }
   // console.log("profile", profile);
 
-
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(true)
   const handleClose = () => {
-    setShow(false) 
+    setShow(false)
     setModelTime(false)
   }
 
-  const handleShow = () => setShow(true);
+  const handleShow = () => setShow(true)
 
   setTimeout(() => {
-  if( profile?.personalDetails?.profilePictureUploadId===null){
-    setTimeout(() => {
-      setModelTime(true)
-    }, 3000);
-         }
+    if (profile?.personalDetails?.profilePictureUploadId === null) {
+      setTimeout(() => {
+        setModelTime(true)
+      }, 3000)
+    }
     return
-    }, 3000);
+  }, 3000)
 
   return (
     <>
@@ -312,10 +321,14 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
       <Card className="card-body">
         <div className="d-flex mb-3">
-          <Link to={(`/profile/feed/${user?.id}`)}>
+          <Link to={`/profile/feed/${user?.id}`}>
             <div className="avatar avatar-xs me-2">
               <span role="button">
-                <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
+                {skeletonLoading ? (
+                  <Skeleton height={40} width={40}  className='rounded-circle' baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor}/>
+                ) : (
+                  <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
+                )}
               </span>
             </div>
           </Link>
@@ -358,8 +371,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </li> */}
           <li className="nav-item">
             <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
-              <SendHorizontal size={14} color="#2f09ec" style={{marginRight : '3px'}} />
-              {"   Post"}
+              <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
+              {'   Post'}
             </a>
           </li>
           {/* <Dropdown drop="start" className="nav-item ms-lg-auto">
@@ -431,8 +444,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </div>
           <div>
             <label className="form-label">Upload attachment</label>
-            <DropzoneFormInput
-             icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
+            <DropzoneFormInput icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
           </div>
         </ModalBody>
         <ModalFooter>
@@ -566,7 +578,5 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     </>
   )
 }
-
-
 
 export default CreatePostCard

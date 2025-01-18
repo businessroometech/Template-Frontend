@@ -25,8 +25,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const [skeletonLoading, setSkeletonLoading] = useState(true)
   const isDarkMode = theme === 'dark'
   console.log('----theme----', theme)
-  const skeletonBaseColor = '#b0b0b0'
-  const skeletonHighlightColor = '#d6d6d6'
+  const skeletonBaseColor = '#e3e3e3'; 
+  const skeletonHighlightColor = '#f2f2f2';
 
   // console.log("user", user);
   useEffect(() => {
@@ -53,6 +53,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         setProfile(data.data)
       } catch (error) {
         console.error('Error fetching user profile:', error)
+      }finally{
+        setSkeletonLoading(false)
       }
     }
     if (profile.profileImgUrl) {
@@ -126,7 +128,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
             </p> */}
 
-            {profile.postsCount && profile.connectionsCount && profile.likeCount ? (
+            {/* {profile.postsCount && profile.connectionsCount && profile.likeCount ? (
               <div className="hstack gap-2 gap-xl-3 justify-content-center">
                 <div>
                   <h6 className="mb-0">{profile.postsCount}</h6>
@@ -143,7 +145,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                   <small>Likes</small>
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
 
           <hr />

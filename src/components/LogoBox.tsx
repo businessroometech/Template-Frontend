@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom'
-import logo from '@/assets/images/logo/businessroom-logo.jpg'
+import logo from '@/assets/images/logo/businessroom-logo.png'
 
 const LogoBox = () => {
   return (
