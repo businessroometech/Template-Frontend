@@ -1,6 +1,7 @@
 
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, OverlayTrigger, Tooltip } from 'react-bootstrap'
-
+import InfiniteScroll from 'react-infinite-scroll-component';
+import Skeleton from 'react-loading-skeleton'
 import { developedByLink } from '@/context/constants'
 import { useLayoutContext } from '@/context/useLayoutContext'
 import type { ThemeType } from '@/types/context'
@@ -39,7 +40,8 @@ const ProfileDropdown = () => {
 
   const { theme: themeMode, updateTheme } = useLayoutContext()
   const { removeSession } = useAuthContext()
-
+  const skeletonBaseColor = '#e3e3e3'; 
+  const skeletonHighlightColor = '#f2f2f2';
 
   
     const [profile, setProfile] = useState({});

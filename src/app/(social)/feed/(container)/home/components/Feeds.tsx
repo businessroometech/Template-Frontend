@@ -1,5 +1,7 @@
 import { getAllFeeds } from '@/helpers/data'
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Button,
@@ -505,7 +507,7 @@ const Feeds = (isCreated: boolean) => {
    const { user } = useAuthContext();
  
   const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState<boolean>(false) // Loading state
+  const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
   const [tlRefresh, setTlRefresh] = useState<number>();
@@ -518,6 +520,7 @@ const Feeds = (isCreated: boolean) => {
 
   const fetchPosts = async () => {
     setError(null);
+    setHasMore(true);
     try {      
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
@@ -530,14 +533,15 @@ const Feeds = (isCreated: boolean) => {
         console.log('went in');
         return;
       }
-      console.log('Fetched Posts:', res)
+      setLoading(false)
+      //console.log('Fetched Posts:', res)
       setPosts(previousPosts => [...previousPosts, ...res.data])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
       setError(error.message || 'An unknown error occurred')
-     } //finally {
-    //   setLoading(false)
-    // }
+     } finally {
+      setLoading(false)
+     }
   }
 
   // useEffect(() => {
@@ -622,9 +626,35 @@ const Feeds = (isCreated: boolean) => {
     }
   }
 
+const PostSkeleton = () => {
+  return (
+    <div style={{ padding: '16px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #e0e0e0', backgroundColor: '#ffffff' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+        <Skeleton circle width={50} height={50} />
+        <div style={{ marginLeft: '16px', flex: 1 }}>
+          <Skeleton width="60%" height={20} />
+          <Skeleton width="40%" height={16} style={{ marginTop: '8px' }} />
+        </div>
+      </div>
+      <Skeleton width="100%" height={200} />
+      <div style={{ marginTop: '16px' }}>
+        <Skeleton width="80%" height={16} />
+        <Skeleton width="95%" height={16} style={{ marginTop: '8px' }} />
+        <Skeleton width="60%" height={16} style={{ marginTop: '8px' }} />
+      </div>
+    </div>
+  );
+};
+
+
+
   // Conditional rendering
   if (loading) {
-    return <div style={{minHeight:"110vh"}}><Loading loading={true} /></div> // Show a loading spinner or message
+    return <div style={{ minHeight: '110vh', padding: '16px' }}>
+    {[...Array(5)].map((_, index) => (
+      <PostSkeleton key={index} />
+    ))}
+  </div> 
   }
 
   if (error) {
@@ -681,7 +711,11 @@ const Feeds = (isCreated: boolean) => {
     dataLength={posts.length}
     next={fetchNextPage}
     hasMore={hasMore}
-    loader={<div style={{minHeight: "110vh"}}><Loading loading={true} /></div>}
+    loader={<div>
+      {[...Array(5)].map((_, index) => (
+        <PostSkeleton key={index} />
+      ))}
+    </div>}
     endMessage={
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         <strong>No more posts are available.</strong>
