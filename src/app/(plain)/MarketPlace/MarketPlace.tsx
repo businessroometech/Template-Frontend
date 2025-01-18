@@ -350,7 +350,9 @@ const MarketPlace = () => {
       </div>
     </div>
   );
-
+  console.log('My Business Data:', myBusinessData);
+  console.log('All Business Data:', allBusinessData);
+  
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       <div className="container-fluid">
@@ -488,7 +490,7 @@ const MarketPlace = () => {
                 {getCurrentData().map((business) => {
                   const data = isMyBusiness ? business.data[0] : business;
                   return (
-                    <div key={data.id} className="col-md-6">
+                    <div key={business.id} className="col-md-6">
                       <div style={{
                         backgroundColor: 'white',
                         borderRadius: '12px',
@@ -511,7 +513,7 @@ const MarketPlace = () => {
                                 fontWeight: '600',
                                 marginBottom: '0.5rem'
                               }}>
-                                {data.businessName || "Unnamed"}
+                                {business.businessName || "Unnamed"}
                               </h5>
                               <div style={{ 
                                 display: 'flex', 
@@ -520,7 +522,7 @@ const MarketPlace = () => {
                                 color: '#6c757d'
                               }}>
                                 <MapPin size={16} />
-                                <span style={{ fontSize: '0.875rem' }}>{data.location}</span>
+                                <span style={{ fontSize: '0.875rem' }}>{business.location}</span>
                               </div>
                             </div>
                             <div style={{ 
@@ -530,7 +532,7 @@ const MarketPlace = () => {
                               fontSize: '0.75rem',
                               fontWeight: '500'
                             }}>
-                              {data.industry || "undefined"}
+                              {business.industry || "undefined"}
                             </div>
                           </div>
 
@@ -542,17 +544,17 @@ const MarketPlace = () => {
                             <MetricBox 
                               icon={DollarSign}
                               label="Asking Price"
-                              value={formatCurrency(data.askingPrice)}
+                              value={formatCurrency(business.askingPrice)}
                             />
                             <MetricBox 
                               icon={TrendingUp}
                               label="Revenue"
-                              value={formatCurrency(data.revenue)}
+                              value={formatCurrency(business.revenue)}
                             />
                             <MetricBox 
                               icon={PiggyBank}
                               label="Profit"
-                              value={formatCurrency(data.profit)}
+                              value={formatCurrency(business.profit)}
                             />
                           </div>
 
@@ -573,12 +575,12 @@ const MarketPlace = () => {
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden'
                             }}>
-                              {data.additionalInformation}
+                              {business.additionalInformation}
                             </p>
                           </div>
 
                           <Link 
-                            to={`/marketplacedetails/${data.id}`}
+                            to={`/marketplacedetails/${business.id}`}
                             style={{ textDecoration: 'none' }}
                           >
                             <button style={{
