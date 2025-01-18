@@ -15,7 +15,7 @@ import Entrepreneurform from '@/app/(plain)/Entrepreneur/Entrepreneurform'
 import InvestorForm from '@/app/(plain)/Investor/InvestorForm'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import Founderforms from '@/app/(plain)/Founderform/Founderform'
-
+import Marketplacedetails from '@/app/(plain)/Marketplacedetails/Marketplacedetails'
 
 const AppRouter = (props: RouteProps) => {
   const { isAuthenticated } = useAuthContext()
@@ -100,6 +100,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/live' element={<Live/>} />
       <Route path='/marketplace' element={<MarketPlace></MarketPlace>} />
       <Route path='/founder' element={<Founderforms></Founderforms>} />
+      <Route path='/marketplacedetails/:id' element={<Marketplacedetails></Marketplacedetails>}></Route>
     </Routes>
   )
 }
