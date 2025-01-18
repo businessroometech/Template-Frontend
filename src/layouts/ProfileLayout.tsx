@@ -250,7 +250,7 @@ export const ConnectionRequest = () => {
       <>
       <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
         <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
-          Connection Requests
+          Connection Requests 
         </CardTitle>
         {allFollowers.length ? (
           <div className="bg-info p-2 rounded">
