@@ -252,7 +252,7 @@ export const ConnectionRequest = () => {
         <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
           Connection Requests 
         </CardTitle>
-        {allFollowers.length ? (
+        {allFollowers.length ? (  
           <div className="bg-info p-2 rounded">
             <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
               {allFollowers && allFollowers.length}
