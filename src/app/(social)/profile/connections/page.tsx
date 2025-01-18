@@ -10,7 +10,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import Loading from '@/components/Loading'
-import { FaTimes, FaUserCheck, FaUserPlus, FaUserTimes } from 'react-icons/fa'
+import { FaTimes, FaUser, FaUserCheck, FaUserPlus, FaUserTimes } from 'react-icons/fa'
 
 const Connections = () => {
   // const allConnections = useFetchData(getAllUserConnections)
@@ -18,6 +18,8 @@ const Connections = () => {
   const [allConnections, setAllConnections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false)
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
+  const [sentStates, setSentStates] = useState<{ [key: string]: boolean }>({})
 
     const { id } = useParams();
   useEffect(() => {
@@ -55,12 +57,14 @@ const Connections = () => {
       setLoading(false);
     }
   };
+  ;
   
-  const UserRequest = async (profileId:string) => {
-       
- setLoading(true);
+  const UserRequest = async (profileId: string) => {
+    // Set loading to true only for the specific profileId
+    setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
+  
     const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request";
-
+  
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -72,20 +76,19 @@ const Connections = () => {
           receiverId: profileId,
         }),
       });
-
-
+  
       if (!res.ok) {
         throw new Error(`Failed to send connection request.`);
       }
-
-      setSent(true); 
+      setSentStates((prev) => ({ ...prev, [profileId]: true }));
       toast.success(`Connection request sent successfully.`);
     } catch (error) {
       console.error(`Error while sending connection request:`, error);
-      setSent(false);
+  
+      setSentStates((prev) => ({ ...prev, [profileId]: true }));
       toast.info(`Already sent connection request.`);
     } finally {
-      setLoading(false);
+      setLoadingStates((prev) => ({ ...prev, [profileId]: false }));
     }
   };
 
@@ -106,10 +109,9 @@ const Connections = () => {
 
       if (!res.ok) {
         throw new Error(`Failed to unsend connection request.`);
-      }
-      setSent(false); 
+      }     
+      setSent(false)
       toast.info(`Connection request unsent successfully.`);
-    
     } catch (error) {
       console.error(`Error while unsending connection request:`, error);
       toast.error(`Failed to unsend connection request.`);
@@ -119,7 +121,6 @@ const Connections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-    
     const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/remove-connection";
     try {
       const res = await fetch(apiUrl, {
@@ -131,9 +132,7 @@ const Connections = () => {
           connectionId : connectionId
         }),
       });
-
       fetchConnections()
-
       if (!res.ok) {
         throw new Error(`Failed to remove connection request.`);
       }
@@ -144,9 +143,9 @@ const Connections = () => {
       console.error(`Error while remove connection request:`, error);
       toast.error(`Failed to remove connection request.`);
     } 
-    // finally {
-    //   setLoading(false);
-    // }
+    finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -177,7 +176,7 @@ const Connections = () => {
               <div className="w-100">
                 <div className="d-sm-flex align-items-start">
                   <h6 className="mb-0">
-                    <Link to={`/profile/feed/${connection.userId}`}>{`${connection.firstName} ${connection.lastName}`}</Link>
+                    <a href={`/profile/feed/${connection.userId}#${connection.userId}`}>{`${connection.firstName} ${connection.lastName}`}</a>
                   </h6>
                   <p className="small ms-sm-2 mb-0">{connection.userRole}</p>
                   {user?.id !== id && <p style={{fontSize:"10px"}} className="small text-info ms-sm-2  mb-0">{connection.mutual && "mutual connection"}</p>}
@@ -233,18 +232,18 @@ const Connections = () => {
                     )}
 
                     {!sent && (
-                      <Button
-                        variant={sent ? "success-soft" : "primary-soft"}
-                        className="me-2"
-                        type="button"
-                        onClick={()=>UserRequest(connection?.userId)}
-                        disabled={loading || sent}
+                     <Button
+                     variant={sentStates[connection?.userId] ? "success-soft" : "primary-soft"}
+                     className="me-2"
+                     type="button"
+                     onClick={() => UserRequest(connection?.userId)}
+                     disabled={loadingStates[connection?.userId]}
                       >
-                        {loading ? (
+                        {loadingStates[connection?.userId] ? (
                           <Loading size={15} loading={true} />
-                        ) : sent ? (
+                        ) : sentStates[connection?.userId]  ? (
                           <>
-                            <FaUserCheck size={19} className="pe-1" /> Sent
+                            <FaUserCheck size={19} className="pe-1" /> 
                           </>
                         ) : (
                           <>
@@ -256,7 +255,14 @@ const Connections = () => {
                   </>
                   )}
               </div>):(
-                <p className='w-25 text-warning'>your profile</p>
+                 <Link
+                to={"/feed/home"}
+                 className="mx-4 text-primary"
+                 type="button"
+               
+               >
+                 <FaUser size={19} className="pe-1" /> 
+                 </Link>
               )}
             </div>
           ))}
