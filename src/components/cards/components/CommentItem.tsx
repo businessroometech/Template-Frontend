@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
 import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
@@ -6,22 +6,57 @@ import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
 import axios from 'axios';
 import { useAuthContext } from '@/context/useAuthContext';
 
-const CommentItem = ({post, comment, level }: CommentItemProps) => {
+const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount}: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [reply, setReply] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commentLike,setCommentLike] = useState<boolean>(comment.likeStatus || false);
   const {user} = useAuthContext();
+  const [replies,setReplies] = useState([]);
+  const [commentRefresh,setCommentRefresh] = useState(0);
 
   console.log('---comment---',comment);
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (commentText.trim()) {
-      console.log('New reply:', commentText);
-      const data = axios.post('')
-      setCommentText('');
-      setReply(false);
+  function formatText(text : string,name : string) : string {
+      return  `@${name} ${text}`
+  }
+
+  const handleCommentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log(post);
+    const userId = user?.id; 
+    const postId = post.Id; 
+    const commentId = level < 1 ? comment.id : parentId; 
+    const text = level < 1 ? commentText : formatText(commentText,comment.commenterName);   
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/create-nested-comment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          postId,
+          commentId, // Include only if it is a reply to another comment
+          text,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        console.log('Comment created successfully:', result.data.comment);
+        // Add additional logic here, such as updating the UI or clearing the form
+        
+        setCommentCount(() => commentCount + 1);
+        setRefresh(() => refresh+1);
+      } else {
+        console.error('Error creating comment:', result.message);
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('An unexpected error occurred. Please try again later.');
     }
   };
 
@@ -42,6 +77,49 @@ const CommentItem = ({post, comment, level }: CommentItemProps) => {
     }
   };
 
+  const fetchReplies = async (commentId: string) => {
+    // console.log('---commentId in fetchReplies---', commentId);
+    if (!commentId) {
+      throw new Error('commentId is required.');
+    }
+  
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/get-nested-comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commentId }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch replies.');
+      }
+      const result = await response.json();
+      // console.log('---nested replies---', result);
+      return result.data?.nestedComments || [];
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+      throw error;
+    }
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetchReplies(comment.id);
+        console.log('this is the res', res);
+        setReplies(res);
+      } catch (error) {
+        console.error('Error in useEffect:', error);
+      }
+    };
+  
+    if(level < 1) fetchData();
+  }, [comment.id]);
+  
+  console.log('this is replies',replies);
   return (
     <li className="comment-item">
       <div className="d-flex align-items-start mb-3">
@@ -96,7 +174,7 @@ const CommentItem = ({post, comment, level }: CommentItemProps) => {
             >
               <MessageSquare size={16} className="me-1" /> Reply
             </span>
-            {comment.replies && comment.replies.length > 0 && level < 1 && (
+            {replies && replies.length > 0 && level < 1 && (
               <span
                 role="button"
                 className="text-secondary d-flex align-items-center"
@@ -108,7 +186,7 @@ const CommentItem = ({post, comment, level }: CommentItemProps) => {
                   </>
                 ) : (
                   <>
-                    <ChevronDown size={16} className="me-1" /> View Replies ({comment.replies.length})
+                    <ChevronDown size={16} className="me-1" /> View Replies ({replies.length})
                   </>
                 )}
               </span>
@@ -177,10 +255,20 @@ const CommentItem = ({post, comment, level }: CommentItemProps) => {
       )}
 
       {/* Nested Replies */}
-      {showReplies && comment.replies && comment.replies.length > 0 && (
+      {showReplies && replies && replies.length > 0 && (
         <ul className="list-unstyled ms-5">
-          {comment.replies.map((reply, idx) => (
-            <CommentItem key={idx} comment={reply} level={level + 1} />
+          {replies.map((reply, idx) => (
+            <CommentItem 
+              key={idx} 
+              comment={reply} 
+              level={level + 1} 
+              post={post} 
+              setRefresh={setRefresh} 
+              refresh={refresh} 
+              parentId={comment.id}
+              commentCount = {commentCount}
+              setCommentCount = {setCommentCount}
+            />
           ))}
         </ul>
       )}

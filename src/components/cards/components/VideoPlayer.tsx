@@ -59,15 +59,18 @@ const VideoPlayer = ({ src }) => {
       style={{
         position: 'relative',
         width: '100%',
-        maxHeight: '80vh', // Limits the maximum height of the container
+        height : '200px',
         overflow: 'hidden',
-        ...containerStyle,
+        // backgroundColor : 'black',
+        // ...containerStyle,
       }}
     >
       <video
         ref={videoElement}
         muted
         playsInline
+        height={500}
+        width={100}
         controls
         preload="auto"
         src={src}
@@ -75,9 +78,8 @@ const VideoPlayer = ({ src }) => {
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
+          height: '200px',
+          objectFit: 'contain',
         }}
       />
     </div>

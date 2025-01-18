@@ -18,7 +18,7 @@ const Followers =  () => {
 
       <CardBody>
         {allFollowers?.slice(0, 5).map((follower, idx) => (
-          console.log('Follower',follower),
+          // console.log('Follower',follower),
           <div className="hstack gap-2 mb-3" key={idx}>
             <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
               <span role="button">

@@ -24,7 +24,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const navigate = useNavigate()
   const [skeletonLoading, setSkeletonLoading] = useState(true)
   const isDarkMode = theme === 'dark'
-  console.log('----theme----', theme)
+  // console.log('----theme----', theme)
   const skeletonBaseColor = '#e3e3e3'; 
   const skeletonHighlightColor = '#f2f2f2';
 
@@ -48,7 +48,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         }
 
         const data = await response.json()
-        console.log('data', data)
+        // console.log('data', data)
         setSkeletonLoading(false)
         setProfile(data.data)
       } catch (error) {
