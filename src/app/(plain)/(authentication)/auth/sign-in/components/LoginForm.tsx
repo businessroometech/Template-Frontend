@@ -22,9 +22,20 @@ const LoginForm = () => {
         <Link to="/auth/forgot-pass">Forgot password?</Link>
       </div>
       <div className="d-grid">
-        <Button variant="primary" size="lg" type="submit" disabled={loading}>
-          Login
-        </Button>
+      <Button variant="primary" size="lg" type="submit" disabled={loading}>
+  {loading ? (
+    <>
+      <span
+        className="spinner-border spinner-border-sm me-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      Logging in...
+    </>
+  ) : (
+    'Login'
+  )}
+</Button>
       </div>
       <p className="mb-0 mt-3">
         ©{currentYear}

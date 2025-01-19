@@ -90,11 +90,11 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     resolver: yupResolver(eventFormSchema),
   })
 
-  const [thoughts, setThoughts] = useState('')
-  const [photoQuote, setPhotoQuote] = useState('')
-  const [videoQuote, setVideoQuote] = useState('')
-  const [awsIds, setAwsIds] = useState<any>([])
-  const [skeletonLoading, setSkeletonLoading] = useState(true)
+  const [thoughts, setThoughts] = useState('');
+  const [photoQuote, setPhotoQuote] = useState('');
+  const [videoQuote, setVideoQuote] = useState('');
+  const [awsIds, setAwsIds] = useState<any>([]);
+  const [skeletonLoading, setSkeletonLoading] = useState(true);
 
   // const {user} = useAuthContext();
   const [profile, setProfile] = useState({})
@@ -340,12 +340,14 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               // console.log('Post button clicked')
             })}>
             <textarea
+            
               className="form-control pe-4 border-0"
               rows={2}
               data-autoresize
               placeholder="Share your thoughts..."
               value={thoughts}
               onChange={(e) => setThoughts(e.target.value)} // Update state with input value
+              
             />
           </form>
         </div>
@@ -428,7 +430,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </h5>
         </ModalHeader>
         <ModalBody>
-          <div className="d-flex mb-3">
+          <div className="d-flex mb-3 ">
             <div className="avatar avatar-xs me-2">
               <img className="avatar-img rounded-circle" src={avatar3} alt="" />
             </div>
@@ -439,6 +441,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
                 onChange={(e) => setPhotoQuote(e.target.value)}
                 placeholder="Share your thoughts..."
                 value={photoQuote} // Only use value for controlled input
+                
               />
             </form>
           </div>

@@ -15,6 +15,7 @@ import Entrepreneurform from '@/app/(plain)/Entrepreneur/Entrepreneurform'
 import InvestorForm from '@/app/(plain)/Investor/InvestorForm'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import Founderforms from '@/app/(plain)/Founderform/Founderform'
+import AccountSettings from '@/assets/data/clone/accountClone'
 
 
 const AppRouter = (props: RouteProps) => {
@@ -98,8 +99,10 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/investor' element={<InvestorForm/>}></Route>
       <Route path='/join-live' element={<JoinRoom/>} />
       <Route path='/live' element={<Live/>} />
+      <Route path='/AccountClone' element={<AccountSettings/>} />
       <Route path='/marketplace' element={<MarketPlace></MarketPlace>} />
       <Route path='/founder' element={<Founderforms></Founderforms>} />
+      <Route path='/marketplacedetails/:id' element={<Marketplacedetails></Marketplacedetails>}></Route>
     </Routes>
   )
 }

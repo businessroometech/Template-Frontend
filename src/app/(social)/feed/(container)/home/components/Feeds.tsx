@@ -737,6 +737,7 @@ const PostSkeleton = () => {
       <PostCard 
         item={post} 
         key={post.Id || index} 
+        isMediaKeys={false}
         onDelete={handleDelete} 
       />
     ))}

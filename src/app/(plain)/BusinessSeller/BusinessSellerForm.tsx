@@ -455,7 +455,7 @@ const BusinessSellerForm = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:5000/businessseller/create', {
+      const response = await fetch('https://app-backend-8r74.onrender.com/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

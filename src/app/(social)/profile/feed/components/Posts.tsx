@@ -1,6 +1,15 @@
-
-
-import { Button, Card, CardBody, CardFooter, CardHeader, Dropdown, DropdownDivider, DropdownItem, DropdownMenu, DropdownToggle } from 'react-bootstrap'
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Dropdown,
+  DropdownDivider,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+} from 'react-bootstrap'
 import {
   BsBookmark,
   BsBookmarkCheck,
@@ -19,9 +28,10 @@ import {
   BsThreeDots,
   BsXCircle,
 } from 'react-icons/bs'
-
+import InfiniteScroll from 'react-infinite-scroll-component'
 import logo13 from '@/assets/images/logo/13.svg'
-
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import PostCard from '@/components/cards/PostCard'
 import { getAllFeeds } from '@/helpers/data'
 import { Link } from 'react-router-dom'
@@ -42,21 +52,18 @@ const ActionMenu = ({ name }: { name?: string }) => {
       <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardFeedAction">
         <li>
           <DropdownItem>
-            
             <BsBookmark size={22} className="fa-fw pe-2" />
             Save post
           </DropdownItem>
         </li>
         <li>
           <DropdownItem>
-            
             <BsPersonX size={22} className="fa-fw pe-2" />
             Unfollow {name}
           </DropdownItem>
         </li>
         <li>
           <DropdownItem>
-            
             <BsXCircle size={22} className="fa-fw pe-2" />
             Hide post
           </DropdownItem>
@@ -72,7 +79,6 @@ const ActionMenu = ({ name }: { name?: string }) => {
         </li>
         <li>
           <DropdownItem>
-            
             <BsFlag size={22} className="fa-fw pe-2" />
             Report post
           </DropdownItem>
@@ -82,17 +88,19 @@ const ActionMenu = ({ name }: { name?: string }) => {
   )
 }
 
-const Posts =  ({isCreated}) => {
-  const { user } = useAuthContext();
- 
+const Posts = ({ isCreated }) => {
+  const { user } = useAuthContext()
+
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(false) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
-  const [limit,setLimit] = useState<number>(5);
-  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  const [page, setPage] = useState(1);
+ const [hasMore, setHasMore] = useState(true);
+  const [limit, setLimit] = useState<number>(2)
+  const { setTrue, setFalse, isTrue: isSpinning } = useToggle()
   // onDelete= async () => {
-        
+
   //   try {
   //     const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
   //       method: 'POST',
@@ -105,11 +113,11 @@ const Posts =  ({isCreated}) => {
   //         PostId: post.post?.Id,
   //       }),
   //     });
-  
+
   //     if (!response.ok) {
   //       throw new Error(`HTTP error! status: ${response.status}`);
   //     }
-  
+
   //     const data = await response.json();
   //     console.log(tlRefresh) // Assuming the response is JSON
   //     setTlRefresh(tlRefresh+1 || 1);
@@ -124,22 +132,24 @@ const Posts =  ({isCreated}) => {
   // }
 
   const fetchPosts = async () => {
-    setLoading(true);
-    setError(null);
-    try {      
+    setLoading(false)
+    setHasMore(false)
+    setError(null)
+    try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-userpost-byUserId',
-        data: { userId: user?.id, page : 1,limit : limit},
+        data: { userId: user?.id, page: 1, limit: limit },
       })
-
-      console.log('Fetched Posts:', res)
-      setPosts(res.data.posts || [])
+      if(res.message === "No posts found for this user."){
+        setHasMore(false);
+        return;
+      }
+      setPosts(previousData => [...previousData,...res.data.posts])
     } catch (error: any) {
       console.error(JSON.stringify(error))
-      setError("This User have no Posts")
+      setError('This User have no Posts');
     } finally {
-      setLoading(false)
     }
   }
 
@@ -154,16 +164,45 @@ const Posts =  ({isCreated}) => {
       fetchPosts()
       hasMounted.current = true // Set to true after the first call
     }
-  }, [isCreated])
+  }, [page,isCreated])
 
   // Conditional rendering
   if (loading) {
-    return <div>Loading posts... </div> // Show a loading spinner or message
+    return  <div style={{ minHeight: '110vh', padding: '16px' }}>
+    {[...Array(2)].map((_, index) => (
+      <PostSkeleton key={index} />
+    ))}
+  </div> // Show a loading spinner or message
   }
 
   if (error) {
     return <div>Error: {error}</div> // Show an error message
   }
+  const fetchNextPage = () => {
+    if(!loading && hasMore){
+      setPage(page => page + 1);
+    }
+  }
+
+  const PostSkeleton = () => {
+    return (
+      <div style={{ padding: '16px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #e0e0e0', backgroundColor: '#ffffff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+          <Skeleton circle width={50} height={50} />
+          <div style={{ marginLeft: '16px', flex: 1 }}>
+            <Skeleton width="60%" height={20} />
+            <Skeleton width="40%" height={16} style={{ marginTop: '8px' }} />
+          </div>
+        </div>
+        <Skeleton width="100%" height={200} />
+        <div style={{ marginTop: '16px' }}>
+          <Skeleton width="80%" height={16} />
+          <Skeleton width="95%" height={16} style={{ marginTop: '8px' }} />
+          <Skeleton width="60%" height={16} style={{ marginTop: '8px' }} />
+        </div>
+      </div>
+    );
+  };
   // const [showNewPostButton, setShowNewPostButton] = useState(false);
   // const scrollContainerRef = useRef(null);
 
@@ -196,12 +235,25 @@ const Posts =  ({isCreated}) => {
 
   return (
     <>
-    <div
-      className="position-relative"
-      // ref={scrollContainerRef}
-      style={{ maxHeight: '500px', overflowY: 'auto' , }} 
-    >
-     
+      <div
+        className="position-relative"
+        // ref={scrollContainerRef}
+        style={{ maxHeight: '500px', overflowY: 'auto' }}><InfiniteScroll
+            dataLength={posts.length}
+            next={fetchNextPage}
+            hasMore={hasMore}
+            loader={<div>
+              {[...Array(5)].map((_, index) => (
+                <PostSkeleton key={index} />
+              ))}
+            </div>}
+            endMessage={
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <strong>No more posts are available.</strong>
+              </div>
+            }
+          >
+
         {/* <Button
           className="position-absolute top-0 start-50 translate-middle-x"
           onClick={() => fetchPosts()}
@@ -209,7 +261,10 @@ const Posts =  ({isCreated}) => {
         >
           ⬆️ New Posts
         </Button> */}
-        {posts && 0 ? posts.map((post, index) => <PostCard item={post} key={index}/>) : <p>No posts found.</p>}</div>
+        {/* {posts.map((post, index) => (
+          <PostCard item={post} key={post.Id || index} isMediaKeys={true} />))} */}
+          </InfiniteScroll>
+      </div>
 
       {/* <SponsoredCard /> */}
       {/* <Post2 /> */}
@@ -257,7 +312,7 @@ const Posts =  ({isCreated}) => {
 
       {/* <Post3 /> */}
       {/* <SuggestedStories /> */}
-      <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/>
+      {/* <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/> */}
     </>
   )
 }

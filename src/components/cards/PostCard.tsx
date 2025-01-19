@@ -14,7 +14,7 @@ import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 
-const PostCard = ({ item, isMediaKeys = false }) => {
+const PostCard = ({ item, isMediaKeys }) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +27,9 @@ const PostCard = ({ item, isMediaKeys = false }) => {
   const { setTrue, setFalse } = useToggle();
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
+  // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
+  // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
+
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -34,7 +37,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
-
+  console.log(post.mediaKeys)
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4')
 
@@ -53,7 +56,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         if (!response.ok) throw new Error('Failed to fetch comments');
         const data = await response.json();
-        console.log('comments that are fetched : ', data);
+        // console.log('comments that are fetched : ',data);
         setComments(data.data.comments || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -303,7 +306,16 @@ const PostCard = ({ item, isMediaKeys = false }) => {
         ) : (
           <ul className="comment-wrap list-unstyled px-3">
             {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-              <CommentItem key={index} post={post} comment={comment} level={0} />
+              <CommentItem 
+                key={index} 
+                post={post} 
+                comment={comment} 
+                level={0} 
+                refresh={refresh} 
+                setRefresh={setRefresh}
+                commentCount = {commentCount}
+                setCommentCount = {setCommentCount}
+              />
             ))}
           </ul>
         )}

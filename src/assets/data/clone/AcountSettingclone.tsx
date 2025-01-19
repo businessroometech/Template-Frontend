@@ -14,7 +14,7 @@ import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import DateFormInput from '@/components/form/DateFormInput';
 import { Link, useNavigate } from 'react-router-dom';
 
-import avatar7 from '@/assets/images/avatar/default avatar.png';
+import avatar7 from '@/assets/images/avatar/07.jpg';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
 import { useAuthContext } from '@/context/useAuthContext';
 import { uploadDoc } from '@/utils/CustomS3ImageUpload';
@@ -39,10 +39,9 @@ const AccountSettings = () => {
 });
 
 const navigate = useNavigate();
-const [loading, setLoading] = useState(false);
+
   const { user,saveSession} = useAuthContext();
-  // console.log('---account settings---',user);
-  console.log('profile in account settings',profile?.personalDetails?.gender);
+  console.log('---account settings---',user);
   
 
   const { control, handleSubmit } = useForm({
@@ -52,8 +51,7 @@ const [loading, setLoading] = useState(false);
       lName : user?.lastName,
       email : user?.emailAddress,
       occupation : user?.userRole,
-      gender : profile?.personalDetails?.gender,
-      dob  : user?.dob
+      gender : user?.gender
     }
   });
 
@@ -61,8 +59,7 @@ const [loading, setLoading] = useState(false);
   const [uploadedFilesProfile, setUploadedFilesProfile] = useState<FileType[]>([])
   const [uploadedFilesProfileBg, setUploadedFilesProfileBg] = useState<FileType[]>([])
 
-  console.log('---upf---',uploadedFilesProfile);
-  console.log('---upbgf---',uploadedFilesProfileBg);
+
   // This function will be triggered when files are uploaded
   const handleFileUploadProfile = (files: FileType[]) => {
     setUploadedFilesProfile(files)
@@ -72,10 +69,6 @@ const [loading, setLoading] = useState(false);
   }
 
   const handleUploadprofile = async () => {
-    if(!uploadedFilesProfile || uploadedFilesProfile.length === 0) {
-      console.log('went in');
-      return "";
-    }
     try {
       const response = await uploadDoc(uploadedFilesProfile, user?.id) // Await the uploadDoc promise
       console.log('---- response in the upload doc function ----', response);
@@ -86,7 +79,6 @@ const [loading, setLoading] = useState(false);
     }
   }
   const handleUploadprofileBg = async () => {
-    if(!uploadedFilesProfileBg || uploadedFilesProfileBg.length === 0) return "";
     try {
       const response = await uploadDoc(uploadedFilesProfileBg, user?.id) 
       console.log('---- response in the upload doc function ----', response);
@@ -97,11 +89,11 @@ const [loading, setLoading] = useState(false);
     }
   }
   const onSubmit = async (data) => {
-    setLoading(true);
     console.log('----data----',data)
     try {
       const profilePhoto = await handleUploadprofile()
       const coverPhoto = await handleUploadprofileBg()
+      if (profilePhoto && coverPhoto) {
         const requestBody : UserType = {
           occupation: data.occupation,
           userId: user?.id,
@@ -164,15 +156,12 @@ const [loading, setLoading] = useState(false);
       saveSession(user);
       navigate("/");
 
-    
-    // else{
-    //   toast.error(' uploading photo required');
-    // }
+    }
+    else{
+      toast.error(' uploading photo required');
+    }
     } catch (error) {
       console.error('Error updating profile:', error);
-    }
-    finally {
-      setLoading(false);
     }
   };
 
@@ -212,8 +201,7 @@ const [loading, setLoading] = useState(false);
           <div
             className="h-50px"
             style={{
-              backgroundImage: `url(${profile.coverImgUrl || 
-                bgBannerImg})`,
+              backgroundImage: `url(${ bgBannerImg})`,
               backgroundPosition: 'center',
               backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',
@@ -225,8 +213,7 @@ const [loading, setLoading] = useState(false);
               <img
                 height={64}
                 width={64}
-                src={
-                  profile.profileImgUrl || avatar7}
+                src={avatar7}
                 alt="avatar"
                 className="avatar-img rounded border border-white border-3"
               />
@@ -278,13 +265,7 @@ const [loading, setLoading] = useState(false);
               <DropzoneFormInput  icon={BsImages}  onFileUpload={handleFileUploadProfile} showPreview={true} text="Drag here or click to upload profile photo." />
           
           <Col xs={12} className="mt-3">
-          <Button type="submit" disabled={loading}>
-            {loading ? (
-              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            ) : (
-              'Update Profile'
-            )}
-          </Button>
+            <Button type="submit">Update Profile</Button>
           </Col>
         </form>
       </CardBody>
