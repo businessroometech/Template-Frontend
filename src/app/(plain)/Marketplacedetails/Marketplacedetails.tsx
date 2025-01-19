@@ -53,14 +53,65 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useAuthContext } from '@/context/useAuthContext';
 import { 
   Building2, BadgeDollarSign, Users, Briefcase, MapPin, TrendingUp,
   PiggyBank, Calendar, Shield, Target, BarChart, FileText,
-  Globe, Mail, Phone, Clock, DollarSign, Award, ChevronRight
+  Globe, Mail, Phone, Clock, DollarSign, Award, ChevronRight, User
 } from 'lucide-react';
 
 const MarketplaceDetails = () => {
+
+
+
+const [profile , setProfile] = useState({})
+
+
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          //profileId: user?.id,
+        }),
+      })
+
+      if (!response.ok) {
+        //  navigate('/not-found')
+        throw new Error('Network response was not ok')
+      }
+      if (response.status === 404) {
+        // navigate('/not-found')
+      }
+      const data = await response.json()
+      
+      setProfile(data?.data)
+      console.log(profile.data)
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+    } 
+  }
+
+  useEffect(() => {
+
+    fetchUser()
+  })
+
+
+
+
+
+
+
+
+
   const { id } = useParams();
+  const { user } = useAuthContext();
+  console.log("user" , user)
   const [businessDetails, setBusinessDetails] = useState(null);
   
   useEffect(() => {
@@ -70,6 +121,12 @@ const MarketplaceDetails = () => {
       .catch(error => console.error('Error:', error));
   }, [id]);
 
+
+
+
+
+
+console.log("BusinessDetails" , businessDetails)
   if (!businessDetails) {
     return (
       <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%)' }}>
@@ -98,7 +155,7 @@ const MarketplaceDetails = () => {
   );
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', backgroundColor: '#f9fafb' }}>
+    <div style={{ height: '100vh' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' }}>
         <div className="container">
@@ -136,9 +193,9 @@ const MarketplaceDetails = () => {
           <div className="col-8" style={{ paddingRight: '1.5rem', overflowY: 'auto' }}>
             {/* Key Metrics */}
             <div className="row g-3 mb-4">
+              <div className="col-3"><KeyMetric icon={TrendingUp} label="TTM Revenue" value={`$${businessDetails.data.revenue}`} /></div>
               <div className="col-3"><KeyMetric icon={BadgeDollarSign} label="Asking Price" value={`$${businessDetails.data.askingPrice}`} /></div>
-              <div className="col-3"><KeyMetric icon={TrendingUp} label="Annual Revenue" value={`$${businessDetails.data.revenue}`} /></div>
-              <div className="col-3"><KeyMetric icon={PiggyBank} label="Net Profit" value={`$${businessDetails.data.profit}`} /></div>
+              <div className="col-3"><KeyMetric icon={PiggyBank} label="TTM Profit" value={`$${businessDetails.data.profit}`} /></div>
               <div className="col-3"><KeyMetric icon={Award} label="Ownership" value={`${businessDetails.data.ownershipPercentage}%`} /></div>
             </div>
 
@@ -154,6 +211,12 @@ const MarketplaceDetails = () => {
               <div className="row g-3">
                 <div className="col-6">
                   <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                    <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Ownership</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.ownershipPercentage}%</div>
+                  </div>
+                </div>
+                <div className="col-6">
+                  <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
                     <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Industry</div>
                     <div style={{ color: '#111827' }}>{businessDetails.data.industry}</div>
                   </div>
@@ -164,11 +227,17 @@ const MarketplaceDetails = () => {
                     <div style={{ color: '#111827' }}>{businessDetails.data.businessStage}</div>
                   </div>
                 </div>
+                <div className="col-6">
+                  <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                    <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Employees</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.numberOfEmployees}</div>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Financial Overview */}
-            <div className="card" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+            <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
                 <div style={{ backgroundColor: '#e6f0ff', padding: '0.75rem', borderRadius: '8px' }}>
                   <BarChart style={{ width: '1.5rem', height: '1.5rem', color: '#2563eb' }} />
@@ -199,9 +268,7 @@ const MarketplaceDetails = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="col-4">
             {/* Sale Details */}
             <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -210,18 +277,79 @@ const MarketplaceDetails = () => {
                 </div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Sale Details</h2>
               </div>
+              <div className="row g-3">
+                <div className="col-6">
+                  <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                    <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Reason for Selling</h3>
+                    <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.reasonForSelling}</p>
+                  </div>
+                </div>
+                <div className="col-6">
+                  <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                    <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Expected Timeline</h3>
+                    <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.expectedTimeline}</p>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                    <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Financing</h3>
+                    <p style={{ color: '#6b7280', margin: 0 }}>Bootstrapped</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-4">
+            {/* Owner Details */}
+            <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', marginTop: 30 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ backgroundColor: '#e6f0ff', padding: '0.75rem', borderRadius: '8px' }}>
+                  <User style={{ width: '1.5rem', height: '1.5rem', color: '#2563eb' }} />
+                </div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Owner Details</h2>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                <img 
+                  src={profile.profileImgUrl || 'https://via.placeholder.com/60'} 
+                  alt="Profile" 
+                  style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '2px solid #e6f0ff'
+                  }} 
+                />
+                <div>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: '500', margin: '0 0 0.25rem 0' }}>{user?.firstName +" "+ user?.lastName}</h3>
+                  <span style={{ 
+                    backgroundColor: '#e6f0ff', 
+                    color: '#2563eb',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '1rem',
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}>{user.occupation}</span>
+                  
+                </div>
+              </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Reason for Selling</h3>
-                  <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.reasonForSelling}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Globe style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
+                  <div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Location</div>
+                    <div style={{ color: '#111827' }}>{user.country}, {user.location}</div>
+                  </div>
                 </div>
-                <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Expected Timeline</h3>
-                  <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.expectedTimeline}</p>
-                </div>
-                <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Financing</h3>
-                  <p style={{ color: '#6b7280', margin: 0 }}>Bootstrapped</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Mail style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
+                  <div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Email</div>
+                    <div style={{ color: '#111827' }}>{user.emailAddress}</div>
+                  </div>
                 </div>
               </div>
             </div>
