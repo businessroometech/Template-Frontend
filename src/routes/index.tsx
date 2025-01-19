@@ -1,7 +1,7 @@
 import RolePage from '@/components/RolePage'
 import { lazy } from 'react'
 import { Navigate, type RouteProps } from 'react-router-dom'
-
+import AcountSttingClone from '@/assets/data/clone/accountClone'
 
 // profiles for seller //
 //const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
@@ -203,6 +203,11 @@ export const settingPagesRoutes:RoutesProps[]=[
     path: '/settings/account',
     name: 'Account Settings', 
     element: <AccountSetting />,
+  },
+  {
+    path: '/AccountClone',
+    name: 'Account Clone',
+    element: <AcountSttingClone />,
   },
   {
     path : '/settings/role',

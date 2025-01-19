@@ -127,7 +127,6 @@ const Followers = () => {
           <CardBody>
             {filteredFollowers?.map(
               (follower, idx) => (
-                console.log('Follower', follower),
                 (
                   <div className="hstack gap-2 mb-3" key={idx}>
                     <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>

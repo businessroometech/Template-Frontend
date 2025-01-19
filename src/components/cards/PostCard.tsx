@@ -14,7 +14,7 @@ import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 
-const PostCard = ({ item, isMediaKeys = false }) => {
+const PostCard = ({ item, isMediaKeys }) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
-
+  console.log(post.mediaKeys)
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4')
 
