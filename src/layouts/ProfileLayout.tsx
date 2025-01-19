@@ -195,7 +195,8 @@ export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
   const [loading, setLoading] = useState<string | null>(null)
-  const [loading, setLoading] = useState<string | null>(null)
+  // const [loading, setLoading] = useState<string | null>(null)
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
     fetchConnections()
@@ -216,7 +217,6 @@ export const ConnectionRequest = () => {
       console.error('Error fetching connection requests:', error)
     }
   }
-  const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
     // Set the loading state to track the userId and status
@@ -259,91 +259,69 @@ export const ConnectionRequest = () => {
             {allFollowers.length ? (
               <div className="bg-info p-2 rounded">
                 <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
-                  {allFollowers && allFollowers.length}
+                  {allFollowers.length}
                 </p>
               </div>
             ) : null}
           </CardHeader>
-
+  
           <CardBody>
-            {allFollowers &&
-              allFollowers.map((follower, idx) => (
-                <div className="d-flex row col-12 mb-3" key={idx}>
-                  {/* Avatar Section */}
-                  <div className="col-8 d-flex">
-                    <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                      <span role="button">
-                        <img
-                          className="avatar-img rounded-circle"
-                          src={follower.profilePictureUploadUrl || avatar7}
-                          alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-                        />
-                      </span>
-                    </div>
-                    <div className="overflow-hidden px-2">
-                      <Link className="h6 mb-0" to="">
-                        {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                      </Link>
-                      <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                    </div>
+            {allFollowers.map((follower, idx) => (
+              <div className="d-flex row col-12 mb-3" key={idx}>
+                {/* Avatar Section */}
+                <div className="col-8 d-flex">
+                  <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                    <span role="button">
+                      <img
+                        className="avatar-img rounded-circle"
+                        src={follower.profilePictureUploadUrl || avatar7}
+                        alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                      />
+                    </span>
                   </div>
-          <CardBody>
-            {allFollowers &&
-              allFollowers.map((follower, idx) => (
-                <div className="d-flex row col-12 mb-3" key={idx}>
-                  {/* Avatar Section */}
-                  <div className="col-8 d-flex">
-                    <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                      <span role="button">
-                        <img
-                          className="avatar-img rounded-circle"
-                          src={follower.profilePictureUploadUrl || avatar7}
-                          alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-                        />
-                      </span>
-                    </div>
-                    <div className="overflow-hidden px-2">
-                      <Link className="h6 mb-0" to="">
-                        {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                      </Link>
-                      <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="col-3 d-flex">
-                    <Button
-                      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
-                      variant="danger-soft"
-                      className="rounded-circle mx-1 flex-centered"
-                      disabled={loading === follower?.requesterDetails?.id} // Disable while loading
-                    >
-                      {loading === follower?.requesterDetails?.id ? (
-                        <Loading size={15} loading={true} /> // Show loading spinner
-                      ) : (
-                        <RiUserUnfollowFill />
-                      )}
-                    </Button>
-                    <Button
-                      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
-                      variant="success-soft"
-                      className="rounded-circle mx-1 flex-centered"
-                      disabled={loading === follower?.requesterDetails?.id} // Disable while loading
-                    >
-                      {loading === follower?.requesterDetails?.id ? (
-                        <Loading size={15} loading={true} /> // Show loading spinner
-                      ) : (
-                        <FaUserCheck size={19} className="pe-1" />
-                      )}
-                    </Button>
+                  <div className="overflow-hidden px-2">
+                    <Link className="h6 mb-0" to="">
+                      {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                    </Link>
+                    <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
                   </div>
                 </div>
-              ))}
+  
+                {/* Action Buttons */}
+                <div className="col-3 d-flex">
+                  <Button
+                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                    variant="danger-soft"
+                    className="rounded-circle mx-1 flex-centered"
+                    disabled={loading === follower?.requesterDetails?.id}
+                  >
+                    {loading === follower?.requesterDetails?.id ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      <RiUserUnfollowFill />
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                    variant="success-soft"
+                    className="rounded-circle mx-1 flex-centered"
+                    disabled={loading === follower?.requesterDetails?.id}
+                  >
+                    {loading === follower?.requesterDetails?.id ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      <FaUserCheck size={19} className="pe-1" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardBody>
         </>
       )}
     </Card>
-  )
+  );
+  
 }
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
@@ -491,7 +469,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       url: `/profile/connections/${id}`,
       badge: {
         text: profile.connectionsCount,
-        text: profile.connectionsCount,
+        // text: profile.connectionsCount,
         variant: 'success',
       },
       parentKey: 'pages-profile',
