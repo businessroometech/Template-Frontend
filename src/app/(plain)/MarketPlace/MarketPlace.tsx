@@ -488,6 +488,7 @@ const MarketPlace = () => {
             ) : (
               <div className="row g-4">
                 {getCurrentData().map((business) => {
+                  console.log("business" ,business)
                   const data = isMyBusiness ? business.data[0] : business;
                   return (
                     <div key={business.id} className="col-md-6">
@@ -513,7 +514,7 @@ const MarketPlace = () => {
                                 fontWeight: '600',
                                 marginBottom: '0.5rem'
                               }}>
-                                {business.businessName || "Unnamed"}
+                                {isMyBusiness ? business.data[0].businessName : business.businessName || "Unnamed"}
                               </h5>
                               <div style={{ 
                                 display: 'flex', 
@@ -522,7 +523,7 @@ const MarketPlace = () => {
                                 color: '#6c757d'
                               }}>
                                 <MapPin size={16} />
-                                <span style={{ fontSize: '0.875rem' }}>{business.location}</span>
+                                <span style={{ fontSize: '0.875rem' }}>{isMyBusiness ? business.data[0].location : business.location}</span>
                               </div>
                             </div>
                             <div style={{ 
@@ -532,7 +533,7 @@ const MarketPlace = () => {
                               fontSize: '0.75rem',
                               fontWeight: '500'
                             }}>
-                              {business.industry || "undefined"}
+                              {isMyBusiness ? business.data[0].industry : business.industry || "undefined"}
                             </div>
                           </div>
 
@@ -544,17 +545,18 @@ const MarketPlace = () => {
                             <MetricBox 
                               icon={DollarSign}
                               label="Asking Price"
-                              value={formatCurrency(business.askingPrice)}
+                              value={formatCurrency(isMyBusiness ? business.data[0].askingPrice : business.askingPrice)}
+                              
                             />
                             <MetricBox 
                               icon={TrendingUp}
-                              label="Revenue"
-                              value={formatCurrency(business.revenue)}
+                              label="TTM Revenue"
+                              value={formatCurrency(isMyBusiness ? business.data[0].revenue : business.revenue)}
                             />
                             <MetricBox 
                               icon={PiggyBank}
-                              label="Profit"
-                              value={formatCurrency(business.profit)}
+                              label="TTM Profit"
+                              value={formatCurrency(isMyBusiness ? business.data[0].profit : business.profit)}
                             />
                           </div>
 
@@ -575,12 +577,12 @@ const MarketPlace = () => {
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden'
                             }}>
-                              {business.additionalInformation}
+                              {isMyBusiness ? business.data[0].additionalInformation : business.additionalInformation}
                             </p>
                           </div>
 
                           <Link 
-                            to={`/marketplacedetails/${business.id}`}
+                            to={`/marketplacedetails/${isMyBusiness ? business.data[0].id : business.id}`}
                             style={{ textDecoration: 'none' }}
                           >
                             <button style={{
