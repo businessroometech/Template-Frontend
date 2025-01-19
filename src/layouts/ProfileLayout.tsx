@@ -327,9 +327,7 @@ export const ConnectionRequest = () => {
   }
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
-    // Set the loading state to track the userId and status
-    setLoadingStates((prev) => ({ ...prev, [userId]: status }));
-  
+    setLoading(userId)
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
         method: 'POST',
@@ -354,7 +352,7 @@ export const ConnectionRequest = () => {
       window.location.reload()
       setLoading(null)
     }
-  };
+  }
 
   return (
     <Card>
