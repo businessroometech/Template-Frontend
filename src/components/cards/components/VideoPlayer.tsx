@@ -36,6 +36,7 @@ const VideoPlayer = ({ src }) => {
   useEffect(() => {
     if (videoElement.current) {
       videoElement.current.onloadedmetadata = () => {
+        console.log('---video element---',videoElement.current);
         const { videoWidth, videoHeight } = videoElement.current;
         const aspectRatio = videoHeight / videoWidth;
 

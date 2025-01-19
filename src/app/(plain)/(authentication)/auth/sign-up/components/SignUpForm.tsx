@@ -115,7 +115,6 @@ const SignUpForm = () => {
       alert('Enter Your Dob');
       return;
     }
-    setLoading(true);
     // console.log(firstName,lastName,email,firstPassword,confirmPassword,dob,country,role);
     await signUp({
       email,

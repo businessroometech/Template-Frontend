@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
+import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
@@ -13,6 +13,7 @@ import VideoPlayer from './components/VideoPlayer';
 import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
+import axios from 'axios';
 
 const PostCard = ({ item, isMediaKeys }) => {
   const [comments, setComments] = useState([]);
@@ -27,6 +28,7 @@ const PostCard = ({ item, isMediaKeys }) => {
   const { setTrue, setFalse } = useToggle();
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
+  const [menuVisible,setMenuVisible] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
 
@@ -37,9 +39,58 @@ const PostCard = ({ item, isMediaKeys }) => {
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
-  console.log(post.mediaKeys)
+  // console.log(post.mediaKeys)
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
-  const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4')
+  const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
+
+  console.log('---postId---',post.userId);
+  console.log('-----testing-----')
+  const deletePost = async (postId: string): Promise<void> => {
+    try {
+      // Validate PostId
+      if (!postId) {
+        throw new Error('PostId is required.');
+      }
+  
+      // Send a DELETE request to the backend
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/delete-userpost-byPostId', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ PostId: post.Id,userId : user?.id }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete post.');
+      }
+  
+      const data = await response.json();
+      setRefresh(() => refresh+1);
+      console.log('Post deleted successfully:', data.message);
+    } catch (error: any) {
+      console.error('Error deleting post:', error.message);
+    }
+  };
+
+  const handleDelete = async (postId: string) => {
+    try {
+      await deletePost(postId);
+      alert('Post deleted successfully!');
+      // Optionally, refresh the post list here
+    } catch (error) {
+      alert('Failed to delete the post. Please try again.');
+    }
+  };
+
+  const handleDeletePost = (postId : string) => {
+    if(post.userId === user?.id) {
+        handleDelete(postId)
+    }
+  }
+
+
 
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
@@ -123,7 +174,7 @@ const PostCard = ({ item, isMediaKeys }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
-        <Link to={(`/profile/feed/${post?.userId}`)} className="d-flex align-items-center justify-content-between">
+        <Link to={`/profile/feed/${post?.userId}`} className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               {userInfo?.avatar ? (
@@ -132,20 +183,67 @@ const PostCard = ({ item, isMediaKeys }) => {
                 </span>
               ) : (
                 <span role="button">
-                  <img className="avatar-img rounded-circle" src={fallBackAvatar} alt={'avatar'} />
+                  <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                 </span>
               )}
             </div>
             <div>
-              <div className="nav nav-divider" >
-                <h6 className="nav-item card-title  mb-0" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexDirection: "column" }}>
-                  <span role="button" className="nav-item text-start mx-3 ">{userInfo?.firstName} {userInfo?.lastName}</span>
-                  <span className=" small mx-3" style={{ color: '#8b959b' }}> {userInfo?.userRole ? userInfo?.userRole : null}</span>
+              <div className="nav nav-divider">
+                <h6
+                  className="nav-item card-title mb-0"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span role="button" className="nav-item text-start mx-3">
+                    {userInfo?.firstName} {userInfo?.lastName}
+                  </span>
+                  <span className="small mx-3" style={{ color: "#8b959b" }}>
+                    {userInfo?.userRole ? userInfo?.userRole : null}
+                  </span>
                 </h6>
               </div>
             </div>
           </div>
-          <span className="nav-item small mx-2" style={{ color: '#8b959b' }}> {userInfo?.timestamp}</span>
+          <span className="nav-item small mx-2" style={{ color: "#8b959b" }}>
+            {userInfo?.timestamp}
+          </span>
+          <div style={{ position: "relative" }}>
+            <button
+              className="btn btn-link p-0 text-dark"
+              style={{ fontSize: "1.5rem", lineHeight: "1" }}
+              onClick={() => console.log('clicked')}
+            >
+              <BsThreeDots />
+            </button>
+            {menuVisible && (
+              <div
+                className="dropdown-menu show"
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  right: 0,
+                  zIndex: 1000,
+                  display: "block",
+                  backgroundColor: "white",
+                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "0.25rem",
+                  overflow: "hidden",
+                }}
+              >
+                <button
+                  className="dropdown-item text-danger d-flex align-items-center"
+                  onClick={() => handleDeletePost(post?.id)}
+                  style={{ gap: "0.5rem" }}
+                >
+                  <BsTrash /> Delete Post
+                </button>
+              </div>
+            )}
+          </div>
         </Link>
       </CardHeader>
 
