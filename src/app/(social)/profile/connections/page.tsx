@@ -267,7 +267,7 @@ const Connections = () => {
             </div>
           ))}
           <div className="d-grid">
-            <LoadMoreButton />
+            {/* <LoadMoreButton /> */}
           </div>
         </CardBody>
       </Card>

@@ -25,8 +25,8 @@ const PostCard = ({ item, isMediaKeys = false }) => {
   const post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
-  const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
-  const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
+  const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
+  const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -53,7 +53,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         if (!response.ok) throw new Error('Failed to fetch comments');
         const data = await response.json();
-        console.log('comments that are fetched : ',data);
+        console.log('comments that are fetched : ', data);
         setComments(data.data.comments || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -92,7 +92,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
       }
       setRefresh((prev) => prev + 1);
       setCommentText('');
-      setCommentCount(() => commentCount+1);
+      setCommentCount(() => commentCount + 1);
     } catch (error) {
       console.error('Error posting comment:', error);
     }
@@ -120,7 +120,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
-        <Link  to= {(`/profile/feed/${post?.userId}`)} className="d-flex align-items-center justify-content-between">
+        <Link to={(`/profile/feed/${post?.userId}`)} className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
               {userInfo?.avatar ? (
@@ -135,14 +135,14 @@ const PostCard = ({ item, isMediaKeys = false }) => {
             </div>
             <div>
               <div className="nav nav-divider" >
-                <h6 className="nav-item card-title  mb-0" style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexDirection:"column"}}>
-                  <span role="button" className="nav-item text-start mx-3 ">{userInfo?.firstName } { userInfo?.lastName}</span>
-                <span className=" small mx-3" style={{color : '#8b959b'}}> {userInfo?.userRole?userInfo?.userRole:null}</span>
+                <h6 className="nav-item card-title  mb-0" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexDirection: "column" }}>
+                  <span role="button" className="nav-item text-start mx-3 ">{userInfo?.firstName} {userInfo?.lastName}</span>
+                  <span className=" small mx-3" style={{ color: '#8b959b' }}> {userInfo?.userRole ? userInfo?.userRole : null}</span>
                 </h6>
               </div>
             </div>
           </div>
-                <span className="nav-item small mx-2" style={{color : '#8b959b'}}> {userInfo?.timestamp}</span>
+          <span className="nav-item small mx-2" style={{ color: '#8b959b' }}> {userInfo?.timestamp}</span>
         </Link>
       </CardHeader>
 
@@ -151,33 +151,33 @@ const PostCard = ({ item, isMediaKeys = false }) => {
 
         {media.length > 0 && (
 
-          isVideo ? <div style={{position : 'relative',marginBottom : '10px'}}>{videoPlayer}</div> :
-          
-          (media.length == 1) ? 
-          
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: '1rem'
-            }}
-          >
-            <img 
-              src={media[0]} 
-              style={{ 
-                maxWidth: '100%',
-                height: 'auto',
-                maxHeight: '500px',
-                objectFit: 'contain'
-              }} 
-              alt="post media" 
-            />
-          </div>
+          isVideo ? <div style={{ position: 'relative', marginBottom: '10px' }}>{videoPlayer}</div> :
+
+            (media.length == 1) ?
+
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: '1rem'
+                }}
+              >
+                <img
+                  src={media[0]}
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    maxHeight: '500px',
+                    objectFit: 'contain'
+                  }}
+                  alt="post media"
+                />
+              </div>
 
               :
-              <ResponsiveGallery media={media}/>
+              <ResponsiveGallery media={media} />
           // <div className="d-flex justify-content-between">
           //   <Row className="g-3">
           //     <Col xs={6}>
@@ -192,7 +192,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
           //       <div className="position-relative bg-dark mt-3 rounded">
           //         <div className="hover-actions-item position-absolute top-50 start-50 translate-middle z-index-9">
           //           <Link className="btn btn-link text-white" to="">
-                      
+
           //             View all
           //           </Link>
           //         </div>
@@ -205,44 +205,44 @@ const PostCard = ({ item, isMediaKeys = false }) => {
           // </div>
         )}
 
-<ButtonGroup className="w-100 border-top border-bottom mb-3">
-  <Button
-    variant={likeStatus ? "primary" : "light"}
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    onClick={toggleLike}
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-    <span>Like {likeCount}</span>
-  </Button>
+        <ButtonGroup className="w-100 border-top border-bottom mb-3">
+          <Button
+            variant={likeStatus ? "primary" : "light"}
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            onClick={toggleLike}
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+            <span>Like {likeCount}</span>
+          </Button>
 
-  <Button
-    variant="light"
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    <MessageSquare size={16} />
-    <span>Comment {commentCount}</span>
-  </Button>
+          <Button
+            variant="light"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            <MessageSquare size={16} />
+            <span>Comment {commentCount}</span>
+          </Button>
 
-  <Button
-    variant="light"
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    <Repeat size={16} />
-    <span>Repost</span>
-  </Button>
+          <Button
+            variant="light"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            <Repeat size={16} />
+            <span>Repost</span>
+          </Button>
 
-  <Button
-    variant="light"
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    <Share size={16} />
-    <span>Share</span>
-  </Button>
-</ButtonGroup>
+          <Button
+            variant="light"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            <Share size={16} />
+            <span>Share</span>
+          </Button>
+        </ButtonGroup>
 
 
         <div className="d-flex mb-4 px-3">
@@ -251,7 +251,7 @@ const PostCard = ({ item, isMediaKeys = false }) => {
               <span role="button">
                 <img
                   className="avatar-img rounded-circle"
-                  style={{ width: '52px', height: '35px', objectFit: 'cover'}}
+                  style={{ width: '52px', height: '35px', objectFit: 'cover' }}
                   src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
                   alt="avatar"
                 />
@@ -259,43 +259,43 @@ const PostCard = ({ item, isMediaKeys = false }) => {
             </Link>
           </div>
           <form
-  className="nav nav-item w-100 d-flex align-items-center"
-  onSubmit={handleCommentSubmit}
-  style={{ gap: '10px' }} // Add spacing between the textarea and button
->
-  <textarea
-    data-autoresize
-    className="form-control bg-light"
-    style={{
-      whiteSpace: 'nowrap',      // Keep text on a single line
-      overflow: 'hidden',        // Hide overflowing content
-      textOverflow: 'ellipsis',  // Optional: show ellipsis for overflow
-      textAlign: 'left',         // Start text and cursor from the left
-      resize: 'none',            // Disable resizing
-      height: '38px',            // Fixed height for a single line
-      flex: 1,                   // Allow textarea to take available space
-    }}
-    rows={1}
-    placeholder="Add a comment..."
-    value={commentText}
-    onChange={(e) => setCommentText(e.target.value)}
-  />
-  <button
-    className="btn border-0 d-flex align-items-center justify-content-center"
-    type="submit"
-    style={{
-      width: '38px',
-      height: '38px',
-      paddingRight : '10px',
-      paddingLeft : '10px',
-      backgroundColor: '#007bff', // Blue background
-      borderRadius: '20%',        // Circular button
-      cursor: 'pointer',
-    }}
-  >
-    <BsSendFill style={{ color: '#fff', fontSize: '18px' }} /> {/* White icon */}
-  </button>
-</form>
+            className="nav nav-item w-100 d-flex align-items-center"
+            onSubmit={handleCommentSubmit}
+            style={{ gap: '10px' }} // Add spacing between the textarea and button
+          >
+            <textarea
+              data-autoresize
+              className="form-control bg-light"
+              style={{
+                whiteSpace: 'nowrap',      // Keep text on a single line
+                overflow: 'hidden',        // Hide overflowing content
+                textOverflow: 'ellipsis',  // Optional: show ellipsis for overflow
+                textAlign: 'left',         // Start text and cursor from the left
+                resize: 'none',            // Disable resizing
+                height: '38px',            // Fixed height for a single line
+                flex: 1,                   // Allow textarea to take available space
+              }}
+              rows={1}
+              placeholder="Add a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+            <button
+              className="btn border-0 d-flex align-items-center justify-content-center"
+              type="submit"
+              style={{
+                width: '38px',
+                height: '38px',
+                paddingRight: '10px',
+                paddingLeft: '10px',
+                backgroundColor: '#007bff', // Blue background
+                borderRadius: '20%',        // Circular button
+                cursor: 'pointer',
+              }}
+            >
+              <BsSendFill style={{ color: '#fff', fontSize: '18px' }} /> {/* White icon */}
+            </button>
+          </form>
         </div>
 
         {isLoading ? (
