@@ -559,7 +559,6 @@ const MarketPlace = () => {
                               value={formatCurrency(isMyBusiness ? business.data[0].profit : business.profit)}
                             />
                           </div>
-
                           <div style={{ marginBottom: '1.5rem' }}>
                             <h6 style={{ 
                               fontSize: '0.875rem', 
