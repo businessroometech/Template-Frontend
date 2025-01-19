@@ -3,7 +3,7 @@ import clsx from 'clsx'
 
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
 import LoadMoreButton from './components/LoadMoreButton'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import PageMetaData from '@/components/PageMetaData'
 import { useFetchData } from '@/hooks/useFetchData'
 import { toast, ToastContainer } from 'react-toastify'
@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react'
 import Loading from '@/components/Loading'
 import { FaTimes, FaUser, FaUserCheck, FaUserPlus, FaUserTimes } from 'react-icons/fa'
 
-const Connections = () => {
+const MyConnections = () => {
   // const allConnections = useFetchData(getAllUserConnections)
   const { user } = useAuthContext();
   const [allConnections, setAllConnections] = useState([]);
@@ -20,8 +20,9 @@ const Connections = () => {
   const [sent, setSent] = useState(false)
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [sentStates, setSentStates] = useState<{ [key: string]: boolean }>({})
-
-    const { id } = useParams();
+    const [id, setId] = useState(user?.id)
+  const navigate = useNavigate();
+    
   useEffect(() => {
     if (allConnections.length ) {
       return
@@ -154,7 +155,7 @@ const Connections = () => {
 {/* <ToastContainer /> */}
       <Card>
         <CardHeader className="border-0 pb-0">
-          <CardTitle> Connections</CardTitle>
+          <CardTitle>My Connections</CardTitle>
         </CardHeader>
         <CardBody>
         {allConnections && allConnections.map((connection, idx) => (
@@ -207,8 +208,7 @@ const Connections = () => {
                 { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" size="sm" className="mb-0 me-2">
                     Remove
                   </Button>}
-                    <Button variant="primary-soft" size="sm" className="mb-0">
-
+                    <Button  onClick={() => navigate('/messaging')} variant="primary-soft" size="sm" className="mb-0">
                       Message
                     </Button>
                   </>):(
@@ -274,4 +274,4 @@ const Connections = () => {
     </>
   )
 }
-export default Connections
+export default MyConnections

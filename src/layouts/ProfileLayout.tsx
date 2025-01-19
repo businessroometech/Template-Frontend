@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
+import avatar from '@/assets/images/avatar/default avatar.png'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { MessageCircleMore } from 'lucide-react'
 import Skeleton from 'react-loading-skeleton'
@@ -40,6 +41,7 @@ import {
   BsLock,
   BsPatchCheckFill,
   BsPencilFill,
+  BsPersonAdd,
   BsPersonCheckFill,
   BsPersonX,
   BsThreeDots,
@@ -146,40 +148,146 @@ const Photos = () => {
 }
 
 const Friends = () => {
-  const allFriends = useFetchData(getAllUsers)
+  const { pathname } = useLocation()
+  const { user } = useAuthContext()
+  const [profile, setProfile] = useState({})
+  const [sent, setSent] = useState(false)
+  const [allFollowers, setAllFollowers] = useState<any[]>([])
+  const [limit, setLimit] = useState(6)
+  const [skeletonLoading, setSkeletonLoading] = useState(true)
+  const [totalUsers, SetTotalUsers] = useState(0)
+  const [sentStatus, setSentStatus] = useState<{ [key: string]: boolean }>({})
+  const [loading, setLoading] = useState<string | null>(null) // Track loading state by user ID
+  const skeletonBaseColor = '#e3e3e3'
+  const skeletonHighlightColor = '#f2f2f2'
+  useEffect(() => {
+    if (allFollowers.length > 0) {
+      return
+    }
+    fetchConnectionSuggestions()
+  }, [allFollowers])
+
+  const fetchConnectionSuggestions = async () => {
+    try {
+      setSkeletonLoading(true)
+      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-suggest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          page: 1,
+          limit: limit,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch connection suggestions')
+      }
+      setSkeletonLoading(false)
+      const data = await response.json()
+      setAllFollowers(data.data)
+      SetTotalUsers(data?.total)
+    } catch (error) {
+      console.error('Error fetching connection suggestions:', error)
+    } finally {
+      setSkeletonLoading(false)
+    }
+  }
+
+  const UserRequest = async (userId: string) => {
+    const newSentStatus = { ...sentStatus }
+    const isSending = !sentStatus[userId]
+    newSentStatus[userId] = isSending
+    setSentStatus(newSentStatus)
+    setLoading(userId)
+
+    const apiUrl = isSending
+      ? 'https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request'
+      : 'https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request'
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requesterId: user?.id,
+          receiverId: userId,
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`)
+      }
+
+      const data = await res.json()
+      fetchConnectionSuggestions()
+      console.log(`Connection request ${isSending ? 'sent' : 'unsent'} successfully:`, data)
+      toast.success(`Connection request ${isSending ? 'sent' : 'unsent'} successfully.`)
+    } catch (error) {
+      console.error(`Error while trying to ${isSending ? 'send' : 'unsend'} connection request:`, error)
+      // Revert status change on failure
+      const revertedStatus = { ...newSentStatus, [userId]: !isSending }
+      setSentStatus(revertedStatus)
+      toast.error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`)
+    } finally {
+      setLoading(null) // Clear loading state
+    }
+  }
+  const handleViewMore = () => {
+    console.log('limit', limit)
+    setLimit(limit + 3)
+    fetchConnectionSuggestions()
+  }
+
+  const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
 
   return (
     <Card>
-      <CardHeader className="d-sm-flex justify-content-between align-items-center border-0">
+      <CardHeader  className="d-sm-flex justify-content-between align-items-center border-0">
         <CardTitle>
-          My Connections <span className="badge bg-danger bg-opacity-10 text-danger ml-5">230</span>
+          Suggested Connections 
         </CardTitle>
-        <Button variant="primary-soft" size="sm">
-          View all
+        <Button  variant="primary-soft" size="sm" onClick={handleViewMore}>
+          View more
         </Button>
       </CardHeader>
       <CardBody className="position-relative pt-0">
         <Row className="g-3">
-          {allFriends?.slice(0, 4).map((friend, idx) => (
-            <Col xs={6} key={idx}>
+          {filteredFollowers.map((friend, idx) => (
+            <Col id={`#${friend.id}`} xs={6} key={idx}>
               <Card className="shadow-none text-center h-100">
                 <CardBody className="p-2 pb-0">
                   <div className={clsx('avatar avatar-xl', { 'avatar-story': friend.isStory })}>
-                    <span role="button">
-                      <img className="avatar-img rounded-circle" src={friend.avatar} alt="" />
-                    </span>
+                  {skeletonLoading ? (
+                        <span role="button">
+                          <Skeleton height={40} width={40} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                        </span>
+                      ) : (
+                        <span role="button">
+                          <img
+                            className="avatar-img rounded-circle"
+                            src={friend?.profilePictureUrl ? friend.profilePictureUrl : avatar}
+                            alt={`${friend.firstName}'s profile`}
+                          />
+                        </span>
+                      )}
                   </div>
                   <h6 className="card-title mb-1 mt-3">
                     <Link to=""> {friend.name} </Link>
                   </h6>
-                  <p className="mb-0 small lh-sm">{friend.mutualCount} mutual connections</p>
+                  <p className="mb-0 small lh-sm">{friend.firstName} {friend.lastName}</p>
                 </CardBody>
                 <div className="card-footer p-2 border-0">
-                  <button className="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Send message">
+                  {/* <button className="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Send message"    >
                     <BsChatLeftText />
-                  </button>
-                  <button className="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove friend">
-                    <BsPersonX />
+                  </button> */}
+                  <button className="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="add friend"onClick={() => UserRequest(friend.id)}
+                      disabled={loading === friend.id}>
+                        {sentStatus[friend.id] ?  <BsPersonAdd /> :  <BsPersonAdd />}
                   </button>
                 </div>
               </Card>
@@ -195,6 +303,8 @@ export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
   const [loading, setLoading] = useState<string | null>(null)
+  // const [loading, setLoading] = useState<string | null>(null)
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
     fetchConnections()
@@ -255,69 +365,69 @@ export const ConnectionRequest = () => {
             {allFollowers.length ? (
               <div className="bg-info p-2 rounded">
                 <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
-                  {allFollowers && allFollowers.length}
+                  {allFollowers.length}
                 </p>
               </div>
             ) : null}
           </CardHeader>
-
+  
           <CardBody>
-            {allFollowers &&
-              allFollowers.map((follower, idx) => (
-                <div className="d-flex row col-12 mb-3" key={idx}>
-                  {/* Avatar Section */}
-                  <div className="col-8 d-flex">
-                    <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                      <span role="button">
-                        <img
-                          className="avatar-img rounded-circle"
-                          src={follower.profilePictureUploadUrl || avatar7}
-                          alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-                        />
-                      </span>
-                    </div>
-                    <div className="overflow-hidden px-2">
-                      <Link className="h6 mb-0" to="">
-                        {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                      </Link>
-                      <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                    </div>
+            {allFollowers.map((follower, idx) => (
+              <div className="d-flex row col-12 mb-3" key={idx}>
+                {/* Avatar Section */}
+                <div className="col-8 d-flex">
+                  <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                    <span role="button">
+                      <img
+                        className="avatar-img rounded-circle"
+                        src={follower.profilePictureUploadUrl || avatar7}
+                        alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                      />
+                    </span>
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="col-3 d-flex">
-                    <Button
-                      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
-                      variant="danger-soft"
-                      className="rounded-circle mx-1 flex-centered"
-                      disabled={loading === follower?.requesterDetails?.id} // Disable while loading
-                    >
-                      {loading === follower?.requesterDetails?.id ? (
-                        <Loading size={15} loading={true} /> // Show loading spinner
-                      ) : (
-                        <RiUserUnfollowFill />
-                      )}
-                    </Button>
-                    <Button
-                      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
-                      variant="success-soft"
-                      className="rounded-circle mx-1 flex-centered"
-                      disabled={loading === follower?.requesterDetails?.id} // Disable while loading
-                    >
-                      {loading === follower?.requesterDetails?.id ? (
-                        <Loading size={15} loading={true} /> // Show loading spinner
-                      ) : (
-                        <FaUserCheck size={19} className="pe-1" />
-                      )}
-                    </Button>
+                  <div className="overflow-hidden px-2">
+                    <Link className="h6 mb-0" to="">
+                      {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                    </Link>
+                    <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
                   </div>
                 </div>
-              ))}
+  
+                {/* Action Buttons */}
+                <div className="col-3 d-flex">
+                  <Button
+                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                    variant="danger-soft"
+                    className="rounded-circle mx-1 flex-centered"
+                    disabled={loading === follower?.requesterDetails?.id}
+                  >
+                    {loading === follower?.requesterDetails?.id ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      <RiUserUnfollowFill />
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                    variant="success-soft"
+                    className="rounded-circle mx-1 flex-centered"
+                    disabled={loading === follower?.requesterDetails?.id}
+                  >
+                    {loading === follower?.requesterDetails?.id ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      <FaUserCheck size={19} className="pe-1" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardBody>
         </>
       )}
     </Card>
-  )
+  );
+  
 }
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
@@ -465,6 +575,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       url: `/profile/connections/${id}`,
       badge: {
         text: profile.connectionsCount,
+        // text: profile.connectionsCount,
         variant: 'success',
       },
       parentKey: 'pages-profile',

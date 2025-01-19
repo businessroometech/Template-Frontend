@@ -15,7 +15,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const [replies,setReplies] = useState([]);
   const [commentRefresh,setCommentRefresh] = useState(0);
 
-  console.log('---comment---',comment);
+  // console.log('---comment---',comment);
 
   function formatText(text : string,name : string) : string {
       return  `@${name} ${text}`
@@ -45,7 +45,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       const result = await response.json();
   
       if (response.ok) {
-        console.log('Comment created successfully:', result.data.comment);
+        // console.log('Comment created successfully:', result.data.comment);
         // Add additional logic here, such as updating the UI or clearing the form
         
         setCommentCount(() => commentCount + 1);
