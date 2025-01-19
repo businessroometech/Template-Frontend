@@ -118,7 +118,7 @@ const SuggestedConnections = () => {
           scrollableTarget="scrollableDiv">
           <Row className="g-3">
             {filteredFollowers.map((friend, idx) => (
-              <Col xs={4} key={idx}>
+              <Col xs={3} key={idx}>
                 <Card className="shadow-none text-center h-100">
                   <CardBody className="p-2 pb-0">
                     <div className={clsx('avatar avatar-xl', { 'avatar-story': friend.isStory })}>
