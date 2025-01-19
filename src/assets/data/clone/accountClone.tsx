@@ -1,14 +1,16 @@
-import AccountSettings from "./AcountSettingclone"
-import PageMetaData from "@/components/PageMetaData"
+import { ConnectionRequest } from "@/layouts/ProfileLayout";
+import { useAuthContext } from "@/context/useAuthContext";
+import MyConnections from "./MyConnections";
+import ConnectionsStatus from "./ConnectionsStatus";
+import Followers from "@/app/(social)/feed/(container)/home/components/Followers";
 
 const accountClone = () => {
   return (
     <>
-     <AccountSettings/>
-     { /* <EntrepreneurForm/> */}
-  {/* <BusinessBuyerForm></BusinessBuyerForm> */}
-       {/*<InvestorForm/>*/} 
-      {/* <InvestorPreferences/> */}
+     <MyConnections/>
+   <ConnectionsStatus/>
+     <ConnectionRequest/>
+     <Followers/>
     </>
   )
 }
