@@ -7,7 +7,6 @@ export default defineConfig({
   plugins: [
     react({
       // React plugin options
-      jsxImportSource: "@emotion/react", // Example: Add Emotion for styling (optional)
     }),
   ],
   resolve: {
