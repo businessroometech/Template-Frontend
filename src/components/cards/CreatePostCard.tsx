@@ -319,7 +319,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </div>
         </div>} */}
 
-      <Card className="card-body">
+      <Card className="card-body" style={{maxHeight:"10em"}}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
             <div className="avatar avatar-xs me-2">
