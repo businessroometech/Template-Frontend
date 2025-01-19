@@ -39,9 +39,10 @@ const AccountSettings = () => {
 });
 
 const navigate = useNavigate();
-
+const [loading, setLoading] = useState(false);
   const { user,saveSession} = useAuthContext();
-  console.log('---account settings---',user);
+  // console.log('---account settings---',user);
+  console.log('profile in account settings',profile?.personalDetails?.gender);
   
 
   const { control, handleSubmit } = useForm({
@@ -51,7 +52,8 @@ const navigate = useNavigate();
       lName : user?.lastName,
       email : user?.emailAddress,
       occupation : user?.userRole,
-      gender : user?.gender
+      gender : profile?.personalDetails?.gender,
+      dob  : user?.dob
     }
   });
 
@@ -59,7 +61,8 @@ const navigate = useNavigate();
   const [uploadedFilesProfile, setUploadedFilesProfile] = useState<FileType[]>([])
   const [uploadedFilesProfileBg, setUploadedFilesProfileBg] = useState<FileType[]>([])
 
-
+  console.log('---upf---',uploadedFilesProfile);
+  console.log('---upbgf---',uploadedFilesProfileBg);
   // This function will be triggered when files are uploaded
   const handleFileUploadProfile = (files: FileType[]) => {
     setUploadedFilesProfile(files)
@@ -69,6 +72,10 @@ const navigate = useNavigate();
   }
 
   const handleUploadprofile = async () => {
+    if(!uploadedFilesProfile || uploadedFilesProfile.length === 0) {
+      console.log('went in');
+      return "";
+    }
     try {
       const response = await uploadDoc(uploadedFilesProfile, user?.id) // Await the uploadDoc promise
       console.log('---- response in the upload doc function ----', response);
@@ -79,6 +86,7 @@ const navigate = useNavigate();
     }
   }
   const handleUploadprofileBg = async () => {
+    if(!uploadedFilesProfileBg || uploadedFilesProfileBg.length === 0) return "";
     try {
       const response = await uploadDoc(uploadedFilesProfileBg, user?.id) 
       console.log('---- response in the upload doc function ----', response);
@@ -89,11 +97,11 @@ const navigate = useNavigate();
     }
   }
   const onSubmit = async (data) => {
+    setLoading(true);
     console.log('----data----',data)
     try {
       const profilePhoto = await handleUploadprofile()
       const coverPhoto = await handleUploadprofileBg()
-      if (profilePhoto && coverPhoto) {
         const requestBody : UserType = {
           occupation: data.occupation,
           userId: user?.id,
@@ -156,12 +164,15 @@ const navigate = useNavigate();
       saveSession(user);
       navigate("/");
 
-    }
-    else{
-      toast.error(' uploading photo required');
-    }
+    
+    // else{
+    //   toast.error(' uploading photo required');
+    // }
     } catch (error) {
       console.error('Error updating profile:', error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -201,7 +212,8 @@ const navigate = useNavigate();
           <div
             className="h-50px"
             style={{
-              backgroundImage: `url(${ bgBannerImg})`,
+              backgroundImage: `url(${profile.coverImgUrl || 
+                bgBannerImg})`,
               backgroundPosition: 'center',
               backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',
@@ -213,7 +225,8 @@ const navigate = useNavigate();
               <img
                 height={64}
                 width={64}
-                src={avatar7}
+                src={
+                  profile.profileImgUrl || avatar7}
                 alt="avatar"
                 className="avatar-img rounded border border-white border-3"
               />
@@ -265,7 +278,13 @@ const navigate = useNavigate();
               <DropzoneFormInput  icon={BsImages}  onFileUpload={handleFileUploadProfile} showPreview={true} text="Drag here or click to upload profile photo." />
           
           <Col xs={12} className="mt-3">
-            <Button type="submit">Update Profile</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            ) : (
+              'Update Profile'
+            )}
+          </Button>
           </Col>
         </form>
       </CardBody>

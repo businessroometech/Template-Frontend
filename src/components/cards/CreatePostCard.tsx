@@ -90,11 +90,11 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     resolver: yupResolver(eventFormSchema),
   })
 
-  const [thoughts, setThoughts] = useState('')
-  const [photoQuote, setPhotoQuote] = useState('')
-  const [videoQuote, setVideoQuote] = useState('')
-  const [awsIds, setAwsIds] = useState<any>([])
-  const [skeletonLoading, setSkeletonLoading] = useState(true)
+  const [thoughts, setThoughts] = useState('');
+  const [photoQuote, setPhotoQuote] = useState('');
+  const [videoQuote, setVideoQuote] = useState('');
+  const [awsIds, setAwsIds] = useState<any>([]);
+  const [skeletonLoading, setSkeletonLoading] = useState(true);
 
   // const {user} = useAuthContext();
   const [profile, setProfile] = useState({})

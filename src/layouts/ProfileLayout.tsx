@@ -195,6 +195,7 @@ export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
   const [loading, setLoading] = useState<string | null>(null)
+  const [loading, setLoading] = useState<string | null>(null)
 
   useEffect(() => {
     fetchConnections()
@@ -215,9 +216,12 @@ export const ConnectionRequest = () => {
       console.error('Error fetching connection requests:', error)
     }
   }
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
-    setLoading(userId)
+    // Set the loading state to track the userId and status
+    setLoadingStates((prev) => ({ ...prev, [userId]: status }));
+  
     try {
       const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
         method: 'POST',
@@ -242,7 +246,7 @@ export const ConnectionRequest = () => {
       window.location.reload()
       setLoading(null)
     }
-  }
+  };
 
   return (
     <Card>
@@ -261,6 +265,28 @@ export const ConnectionRequest = () => {
             ) : null}
           </CardHeader>
 
+          <CardBody>
+            {allFollowers &&
+              allFollowers.map((follower, idx) => (
+                <div className="d-flex row col-12 mb-3" key={idx}>
+                  {/* Avatar Section */}
+                  <div className="col-8 d-flex">
+                    <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                      <span role="button">
+                        <img
+                          className="avatar-img rounded-circle"
+                          src={follower.profilePictureUploadUrl || avatar7}
+                          alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                        />
+                      </span>
+                    </div>
+                    <div className="overflow-hidden px-2">
+                      <Link className="h6 mb-0" to="">
+                        {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                      </Link>
+                      <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
+                    </div>
+                  </div>
           <CardBody>
             {allFollowers &&
               allFollowers.map((follower, idx) => (
@@ -464,6 +490,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       label: 'Connections',
       url: `/profile/connections/${id}`,
       badge: {
+        text: profile.connectionsCount,
         text: profile.connectionsCount,
         variant: 'success',
       },

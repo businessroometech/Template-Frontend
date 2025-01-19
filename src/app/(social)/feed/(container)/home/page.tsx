@@ -90,7 +90,7 @@ const Home = () => {
               color: "white",
             }}
             onClick={() => {
-              navigate("/feed/groups");
+              navigate("/marketplace");
             }}
           >
             Acquireroom

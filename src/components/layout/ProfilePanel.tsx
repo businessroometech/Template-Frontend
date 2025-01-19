@@ -24,7 +24,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const navigate = useNavigate()
   const [skeletonLoading, setSkeletonLoading] = useState(true)
   const isDarkMode = theme === 'dark'
-  console.log('----theme----', theme)
+  // console.log('----theme----', theme)
   const skeletonBaseColor = '#e3e3e3'; 
   const skeletonHighlightColor = '#f2f2f2';
 
@@ -48,7 +48,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         }
 
         const data = await response.json()
-        console.log('data', data)
+        // console.log('data', data)
         setSkeletonLoading(false)
         setProfile(data.data)
       } catch (error) {
@@ -128,7 +128,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               {profile.personalDetails?.bio ? profile.personalDetails?.bio : "Software Developer"}
             </p> */}
 
-            {profile.postsCount && profile.connectionsCount && profile.likeCount ? (
+            {/* {profile.postsCount && profile.connectionsCount && profile.likeCount ? (
               <div className="hstack gap-2 gap-xl-3 justify-content-center">
                 <div>
                   <h6 className="mb-0">{profile.postsCount}</h6>
@@ -145,7 +145,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                   <small>Likes</small>
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
 
           <hr />
