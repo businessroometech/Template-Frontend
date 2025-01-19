@@ -17,8 +17,6 @@ const useSignIn = () => {
   const { saveSession } = useAuthContext();
   const [searchParams] = useSearchParams();
   const { showNotification } = useNotificationContext();
-  const token = searchParams.get('token');
-
   const loginFormSchema = yup.object({
     email: yup.string().email('Please Enter a Valid Email').required('Please Enter Your Email'),
     password: yup.string().required('Please Enter Your Password'),
@@ -53,11 +51,7 @@ const useSignIn = () => {
     }
     console.log(body);
     try {
-      const endpoint = token
-      ? `${LIVE_URL}api/v1/auth/login?token=${token}`
-      : `${LIVE_URL}api/v1/auth/login`;
-      const res = await fetch(endpoint, // if !token  dont add token=${token}
-        {
+      const res = await fetch(`${LIVE_URL}api/v1/auth/login?token=${token}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,22 +60,17 @@ const useSignIn = () => {
       });
       const json = await res.json();
       console.log(json);
-      if (json?.data?.accessToken && json?.data?.userStatus === 0) {
-        showNotification({ message: 'please verify email, Redirecting....', variant: 'info' })
-        navigate('/auth/verify-email')
-      }
-      else if (json?.data?.accessToken && json?.data?.userStatus === 1) {
+      if (json?.data?.accessToken) {
         saveSession(json?.data?.user);
         redirectUser()
-        showNotification({ message: 'Successfully logged in. Redirecting....', variant: 'info' })
+        showNotification({ message: 'Successfully logged in. Redirecting....', variant: 'success' })
       }
       else if(json?.status === 'error') {
         showNotification({ message: json.message, variant: 'danger' })
       }
       else {
-        showNotification({ message: json.message || 'Login Failed...', variant: 'success' })
+        showNotification({ message: json.message || 'Login Failed...', variant: 'danger' })
       }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.response?.data?.error) {
