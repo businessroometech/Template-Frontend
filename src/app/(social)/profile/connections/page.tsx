@@ -63,7 +63,7 @@ const Connections = () => {
     // Set loading to true only for the specific profileId
     setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
   
-    const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request";
+    const apiUrl = " http://3.101.12.130:5000/api/v1/connection/send-connection-request";
   
     try {
       const res = await fetch(apiUrl, {
@@ -94,7 +94,7 @@ const Connections = () => {
 
   const handleCancel = async () => {
     setLoading(true);
-    const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
+    const apiUrl = " http://3.101.12.130:5000/api/v1/connection/unsend-connection-request";
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -121,7 +121,7 @@ const Connections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-    const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/remove-connection";
+    const apiUrl = " http://3.101.12.130:5000/api/v1/connection/remove-connection";
     try {
       const res = await fetch(apiUrl, {
         method: "POST",

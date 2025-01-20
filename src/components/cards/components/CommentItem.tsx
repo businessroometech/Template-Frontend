@@ -29,7 +29,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     const commentId = level < 1 ? comment.id : parentId; 
     const text = level < 1 ? commentText : formatText(commentText,comment.commenterName);   
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/create-nested-comment', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/create-nested-comment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
   const toggleLike = async () => {
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/create-like', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/create-like', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     }
   
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/get-nested-comments', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/get-nested-comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

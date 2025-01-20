@@ -31,7 +31,7 @@ const ConnectionsStatus = () => {
     const fetchConnections = async () => {
         setLoading(true);
         try {
-            const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-status", {
+            const res = await fetch(" http://3.101.12.130:5000/api/v1/connection/get-connection-status", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +62,7 @@ const ConnectionsStatus = () => {
         // Set loading to true only for the specific profileId
         setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
 
-        const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request";
+        const apiUrl = " http://3.101.12.130:5000/api/v1/connection/send-connection-request";
 
         try {
             const res = await fetch(apiUrl, {
@@ -93,7 +93,7 @@ const ConnectionsStatus = () => {
 
     const handleCancel = async (req:string) => {
         setLoading(true);
-        const apiUrl = "https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request";
+        const apiUrl = " http://3.101.12.130:5000/api/v1/connection/unsend-connection-request";
         try {
             const res = await fetch(apiUrl, {
                 method: "POST",

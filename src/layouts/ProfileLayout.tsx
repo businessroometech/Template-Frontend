@@ -204,7 +204,7 @@ export const ConnectionRequest = () => {
 
   const fetchConnections = async () => {
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-request', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/get-connection-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),
@@ -223,7 +223,7 @@ export const ConnectionRequest = () => {
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
   
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/update-connection-status', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/update-connection-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
