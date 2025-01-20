@@ -85,9 +85,11 @@ const PostCard = ({ item, isMediaKeys }) => {
   };
 
   const handleDeletePost = (postId : string) => {
+    console.log(`This is the postId's userID ${post.userId},This is the userId ${user?.id}`)
     if(post.userId === user?.id) {
         handleDelete(postId)
     }
+    else console.log("id did not match")
   }
 
 
@@ -173,79 +175,77 @@ const PostCard = ({ item, isMediaKeys }) => {
 
   return (
     <Card className="mb-4">
-      <CardHeader className="border-0 pb-0">
-        <Link to={`/profile/feed/${post?.userId}`} className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center">
-            <div className="avatar me-2">
-              {userInfo?.avatar ? (
-                <span role="button">
-                  <img className="avatar-img rounded-circle" src={userInfo.avatar} alt={userInfo.firstName} />
-                </span>
-              ) : (
-                <span role="button">
-                  <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
-                </span>
-              )}
-            </div>
-            <div>
-              <div className="nav nav-divider">
-                <h6
-                  className="nav-item card-title mb-0"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    flexDirection: "column",
-                  }}
-                >
-                  <span role="button" className="nav-item text-start mx-3">
-                    {userInfo?.firstName} {userInfo?.lastName}
-                  </span>
-                  <span className="small mx-3" style={{ color: "#8b959b" }}>
-                    {userInfo?.userRole ? userInfo?.userRole : null}
-                  </span>
-                </h6>
-              </div>
-            </div>
-          </div>
-          <span className="nav-item small mx-2" style={{ color: "#8b959b" }}>
-            {userInfo?.timestamp}
-          </span>
-          <div style={{ position: "relative" }}>
-            <button
-              className="btn btn-link p-0 text-dark"
-              style={{ fontSize: "1.5rem", lineHeight: "1" }}
-              onClick={() => console.log('clicked')}
-            >
-              <BsThreeDots />
-            </button>
-            {menuVisible && (
-              <div
-                className="dropdown-menu show"
-                style={{
-                  position: "absolute",
-                  top: "100%",
-                  right: 0,
-                  zIndex: 1000,
-                  display: "block",
-                  backgroundColor: "white",
-                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "0.25rem",
-                  overflow: "hidden",
-                }}
-              >
-                <button
-                  className="dropdown-item text-danger d-flex align-items-center"
-                  onClick={() => handleDeletePost(post?.id)}
-                  style={{ gap: "0.5rem" }}
-                >
-                  <BsTrash /> Delete Post
-                </button>
-              </div>
-            )}
-          </div>
+<CardHeader className="border-0 pb-0">
+  <div className="d-flex align-items-center justify-content-between">
+    <div className="d-flex align-items-center">
+      <div className="avatar me-2">
+        <Link to={`/profile/feed/${post?.userId}`} role="button">
+          {userInfo?.avatar ? (
+            <img className="avatar-img rounded-circle" src={userInfo.avatar} alt={userInfo.firstName} />
+          ) : (
+            <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
+          )}
         </Link>
-      </CardHeader>
+      </div>
+      <div>
+        <div className="nav nav-divider">
+          <h6
+            className="nav-item card-title mb-0"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              flexDirection: "column",
+            }}
+          >
+            <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
+              {userInfo?.firstName} {userInfo?.lastName}
+            </Link>
+            <span className="small mx-3" style={{ color: "#8b959b" }}>
+              {userInfo?.userRole ? userInfo?.userRole : null}
+            </span>
+          </h6>
+        </div>
+      </div>
+    </div>
+    <span className="nav-item small mx-2" style={{ color: "#8b959b" }}>
+      {userInfo?.timestamp}
+    </span>
+    <div style={{ position: "relative" }}>
+      <button
+        className="btn btn-link p-0 text-dark"
+        style={{ fontSize: "1.5rem", lineHeight: "1" }}
+        onClick={() => setMenuVisible(!menuVisible)}
+      >
+        <BsThreeDots />
+      </button>
+      {menuVisible && (
+        <div
+          className="dropdown-menu show"
+          style={{
+            position: "absolute",
+            top: "100%",
+            right: 0,
+            zIndex: 1000,
+            display: "block",
+            backgroundColor: "white",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            borderRadius: "0.25rem",
+            overflow: "hidden",
+          }}
+        >
+          <button
+            className="dropdown-item text-danger d-flex align-items-center"
+            onClick={() => handleDeletePost(post?.Id)}
+            style={{ gap: "0.5rem" }}
+          >
+            <BsTrash /> Delete Post
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+</CardHeader>
 
       <CardBody>
         {post?.content && <p className="mb-3">{post.content}</p>}
