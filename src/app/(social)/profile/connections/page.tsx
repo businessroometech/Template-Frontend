@@ -32,7 +32,7 @@ const Connections = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-list", {
+      const res = await fetch("http://3.101.12.130:5000/api/v1/connection/get-connection-list", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

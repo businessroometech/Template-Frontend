@@ -15,9 +15,11 @@ const useSignIn = () => {
   const [password,setPassword] = useState<string>("");
   const navigate = useNavigate();
   const { saveSession } = useAuthContext();
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
   const { showNotification } = useNotificationContext();
-  const token = searchParams.get('token');
+  // const token = searchParams.get('token');
+  const [message, setMessage] = useState('');
+  const [searchParams] = useSearchParams();
 
   const loginFormSchema = yup.object({
     email: yup.string().email('Please Enter a Valid Email').required('Please Enter Your Email'),
@@ -45,6 +47,43 @@ const useSignIn = () => {
     else navigate('/')
   }
 
+  useEffect(() => {
+    const token = searchParams.get('token');
+
+    if (!token) {
+      setMessage('Verification token is missing.');
+      return;
+    }
+    console.log("token*********", token);
+    
+
+    const verifyEmail = async () => {
+      try {
+        const res = await fetch(`http://3.101.12.130:5000/api/v1/auth/verify-email?token=${token}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const json = await res.json();
+
+        if (json.status === 'success') {
+          setMessage('Email successfully verified! Redirecting to login...');
+          showNotification({ message: "Email successfully verified!", variant: 'success' })
+          setTimeout(() => navigate('/auth/login'), 3000);
+        } else {
+          setMessage(json.message || 'Verification failed.');
+        }
+      } catch (error) {
+        setMessage('An error occurred during email verification.');
+      }
+    };
+
+    verifyEmail();
+  }, [navigate, searchParams]);
+
   const login = handleSubmit(async () => {
     setLoading(true);
     const body : LoginFormFields = {
@@ -53,9 +92,9 @@ const useSignIn = () => {
     }
     console.log(body);
     try {
-      const endpoint = token
-      ? `${LIVE_URL}api/v1/auth/login?token=${token}`
-      : `${LIVE_URL}api/v1/auth/login`;
+      const endpoint = 
+      // token ? `${LIVE_URL}api/v1/auth/login?token=${token}`: 
+      `${LIVE_URL}api/v1/auth/login`;
       const res = await fetch(endpoint, // if !token  dont add token=${token}
         {
         method: "POST",

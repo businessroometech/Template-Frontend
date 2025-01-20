@@ -153,7 +153,7 @@ const PostCard = ({ item, isMediaKeys }) => {
 
   const toggleLike = async () => {
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/create-like', {
+      const response = await fetch('http://3.101.12.130:5000/api/v1/post/create-like', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

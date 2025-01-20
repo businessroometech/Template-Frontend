@@ -50,7 +50,7 @@ const BusinessSellerForm = () => {
     console.log(formData);
 
     try {
-      fetch('https://app-backend-8r74.onrender.com/businessseller/create', {
+      fetch('http://3.101.12.130:5000/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -459,7 +459,6 @@ const BusinessSellerForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
           'UserId': user?.id
         },
         body: JSON.stringify(dataToSend), // Convert data to JSON string
