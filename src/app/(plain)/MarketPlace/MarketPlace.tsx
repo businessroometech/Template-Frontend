@@ -251,14 +251,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank } from 'lucide-react';
 
 const categories = [
-  'Technology', 'Software Development', 'Consulting', 'Manufacturing',
-  'Retail', 'Healthcare', 'E-commerce', 'Others'
+   'Agency', 'SaaS', 'Mobile App',
+  'Retail', 'Healthcare', 'E-commerce' , "Shopify app", "Content","Main Street", 'Others'
 ];
 
 const MarketPlace = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  console.log(user)
+  console.log("user" , user)
   const [myBusinessData, setMyBusinessData] = useState([]);
   const [allBusinessData, setAllBusinessData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -271,8 +271,13 @@ const MarketPlace = () => {
       console.log(user?.id)
       if (user?.id) {
         try {
+<<<<<<< HEAD
           const response = await fetch(`http://3.101.12.130:5000/businessseller/detail/${user.id}`);
+=======
+          const response = await fetch(` http://3.101.12.130:5000/businessseller/detail/${user.id}`);
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
           const data = await response.json();
+          
           setMyBusinessData(Array.isArray(data) ? data : [data]);
         } catch (error) {
           console.error("Error fetching my business data:", error);
@@ -283,7 +288,11 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
+<<<<<<< HEAD
         const response = await fetch('http://3.101.12.130:5000/businessseller/getall');
+=======
+        const response = await fetch(' http://3.101.12.130:5000/businessseller/getall');
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 

@@ -312,7 +312,11 @@ export const ConnectionRequest = () => {
 
   const fetchConnections = async () => {
     try {
+<<<<<<< HEAD
       const response = await fetch('http://3.101.12.130:5000/api/v1/connection/get-connection-request', {
+=======
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/get-connection-request', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),
@@ -329,7 +333,11 @@ export const ConnectionRequest = () => {
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
     setLoading(userId)
     try {
+<<<<<<< HEAD
       const response = await fetch('http://3.101.12.130:5000/api/v1/connection/update-connection-status', {
+=======
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/update-connection-status', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

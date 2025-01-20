@@ -28,12 +28,16 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const skeletonBaseColor = '#e3e3e3'; 
   const skeletonHighlightColor = '#f2f2f2';
 
-  // console.log("user", user);
+  //console.log("user", user);
   useEffect(() => {
     const fetchUser = async () => {
       setSkeletonLoading(true)
       try {
+<<<<<<< HEAD
         const response = await fetch('http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
+=======
+        const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

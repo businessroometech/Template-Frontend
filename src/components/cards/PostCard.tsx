@@ -52,7 +52,11 @@ const PostCard = ({ item, isMediaKeys }) => {
       }
   
       // Send a DELETE request to the backend
+<<<<<<< HEAD
       const response = await fetch('http://3.101.12.130:5000/api/v1/post/delete-userpost-byPostId', {
+=======
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/delete-userpost-byPostId', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +100,11 @@ const PostCard = ({ item, isMediaKeys }) => {
     const fetchComments = async () => {
       setIsLoading(true);
       try {
+<<<<<<< HEAD
         const response = await fetch('http://3.101.12.130:5000/api/v1/post/get-comments', {
+=======
+        const response = await fetch(' http://3.101.12.130:5000/api/v1/post/get-comments', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -131,7 +139,11 @@ const PostCard = ({ item, isMediaKeys }) => {
     if (!commentText.trim()) return;
 
     try {
+<<<<<<< HEAD
       const response = await fetch('http://3.101.12.130:5000/api/v1/post/create-comment', {
+=======
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/create-comment', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

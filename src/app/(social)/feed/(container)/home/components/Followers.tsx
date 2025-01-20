@@ -34,7 +34,11 @@ const Followers = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
+<<<<<<< HEAD
       const response = await fetch('http://3.101.12.130:5000/api/v1/connection/get-connection-suggest', {
+=======
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/get-connection-suggest', {
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,8 +72,13 @@ const Followers = () => {
     setLoading(userId)
 
     const apiUrl = isSending
+<<<<<<< HEAD
       ? 'http://3.101.12.130:5000/api/v1/connection/send-connection-request'
       : 'http://3.101.12.130:5000/api/v1/connection/unsend-connection-request'
+=======
+      ? ' http://3.101.12.130:5000/api/v1/connection/send-connection-request'
+      : ' http://3.101.12.130:5000/api/v1/connection/unsend-connection-request'
+>>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
 
     try {
       const res = await fetch(apiUrl, {
