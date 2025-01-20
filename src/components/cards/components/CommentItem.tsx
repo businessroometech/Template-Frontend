@@ -29,11 +29,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     const commentId = level < 1 ? comment.id : parentId; 
     const text = level < 1 ? commentText : formatText(commentText,comment.commenterName);   
     try {
-<<<<<<< HEAD
-      const response = await fetch('http://3.101.12.130:5000/api/v1/post/create-nested-comment', {
-=======
       const response = await fetch(' http://3.101.12.130:5000/api/v1/post/create-nested-comment', {
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,11 +62,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
   const toggleLike = async () => {
     try {
-<<<<<<< HEAD
-      const response = await fetch('http://3.101.12.130:5000/api/v1/post/create-like', {
-=======
       const response = await fetch(' http://3.101.12.130:5000/api/v1/post/create-like', {
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,11 +84,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     }
   
     try {
-<<<<<<< HEAD
-      const response = await fetch('http://3.101.12.130:5000/api/v1/post/get-nested-comments', {
-=======
       const response = await fetch(' http://3.101.12.130:5000/api/v1/post/get-nested-comments', {
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

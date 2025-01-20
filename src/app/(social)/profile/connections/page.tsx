@@ -63,11 +63,7 @@ const Connections = () => {
     // Set loading to true only for the specific profileId
     setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
   
-<<<<<<< HEAD
-    const apiUrl = "http://3.101.12.130:5000/api/v1/connection/send-connection-request";
-=======
     const apiUrl = " http://3.101.12.130:5000/api/v1/connection/send-connection-request";
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
   
     try {
       const res = await fetch(apiUrl, {
@@ -98,11 +94,7 @@ const Connections = () => {
 
   const handleCancel = async () => {
     setLoading(true);
-<<<<<<< HEAD
-    const apiUrl = "http://3.101.12.130:5000/api/v1/connection/unsend-connection-request";
-=======
     const apiUrl = " http://3.101.12.130:5000/api/v1/connection/unsend-connection-request";
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -129,11 +121,7 @@ const Connections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-<<<<<<< HEAD
-    const apiUrl = "http://3.101.12.130:5000/api/v1/connection/remove-connection";
-=======
     const apiUrl = " http://3.101.12.130:5000/api/v1/connection/remove-connection";
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
     try {
       const res = await fetch(apiUrl, {
         method: "POST",

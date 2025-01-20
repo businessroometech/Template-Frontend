@@ -29,11 +29,7 @@ const NotificationDropdown = () => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-<<<<<<< HEAD
-        'http://3.101.12.130:5000/api/v1/notifications/fetch',
-=======
         ' http://3.101.12.130:5000/api/v1/notifications/fetch',
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         {
           method: 'POST',
           headers: {
@@ -55,11 +51,7 @@ const NotificationDropdown = () => {
   const handleOnRead = async (notificationId) => {
     try {
       const response = await fetch(
-<<<<<<< HEAD
-        'http://3.101.12.130:5000/api/v1/notifications/mark-as-read',
-=======
         ' http://3.101.12.130:5000/api/v1/notifications/mark-as-read',
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         {
           method: 'POST',
           headers: {
@@ -81,11 +73,7 @@ const NotificationDropdown = () => {
       const notificationIds = allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-<<<<<<< HEAD
-        'http://3.101.12.130:5000/api/v1/notifications/mark-all-as-read',
-=======
         ' http://3.101.12.130:5000/api/v1/notifications/mark-all-as-read',
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         {
           method: 'POST',
           headers: {

@@ -108,11 +108,7 @@ const AccountSettings = () => {
         console.log('Request body:', requestBody);
 
         const response = await fetch(
-<<<<<<< HEAD
-          'http://3.101.12.130:5000/api/v1/auth/update-or-create-Profile',
-=======
           ' http://3.101.12.130:5000/api/v1/auth/update-or-create-Profile',
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
           {
             method: 'POST',
             headers: {
@@ -151,11 +147,7 @@ const AccountSettings = () => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-<<<<<<< HEAD
-          'http://3.101.12.130:5000/api/v1/auth/get-user-Profile',
-=======
           ' http://3.101.12.130:5000/api/v1/auth/get-user-Profile',
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
           {
             method: 'POST',
             headers: {

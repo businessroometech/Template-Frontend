@@ -769,6 +769,7 @@ import { FaBullhorn, FaBullseye, FaCertificate, FaChartLine, FaDollarSign, FaHan
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
 import {ToastContainer , Toast} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const InvestorForm = () => {
 
@@ -811,11 +812,7 @@ const InvestorForm = () => {
     e.preventDefault();
      toast.success("Form submitted successfully!");
     try {
-<<<<<<< HEAD
-      fetch('http://3.101.12.130:5000/investor/create', {
-=======
       fetch(' http://3.101.12.130:5000/investor/create', {
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

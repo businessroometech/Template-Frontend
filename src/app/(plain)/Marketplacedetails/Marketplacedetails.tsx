@@ -69,11 +69,7 @@ const [profile , setProfile] = useState({})
 
   const fetchUser = async () => {
     try {
-<<<<<<< HEAD
-      const response = await fetch('http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
-=======
       const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,11 +115,7 @@ const [profile , setProfile] = useState({})
   const [businessDetails, setBusinessDetails] = useState(null);
   
   useEffect(() => {
-<<<<<<< HEAD
-    fetch(`http://3.101.12.130:5000/businessseller/detailuuid/${id}`)
-=======
     fetch(` http://3.101.12.130:5000/businessseller/detailuuid/${id}`)
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));

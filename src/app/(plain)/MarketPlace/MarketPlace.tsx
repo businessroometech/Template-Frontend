@@ -271,11 +271,7 @@ const MarketPlace = () => {
       console.log(user?.id)
       if (user?.id) {
         try {
-<<<<<<< HEAD
-          const response = await fetch(`http://3.101.12.130:5000/businessseller/detail/${user.id}`);
-=======
           const response = await fetch(` http://3.101.12.130:5000/businessseller/detail/${user.id}`);
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
           const data = await response.json();
           
           setMyBusinessData(Array.isArray(data) ? data : [data]);
@@ -288,11 +284,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-<<<<<<< HEAD
-        const response = await fetch('http://3.101.12.130:5000/businessseller/getall');
-=======
         const response = await fetch(' http://3.101.12.130:5000/businessseller/getall');
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 

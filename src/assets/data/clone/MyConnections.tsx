@@ -134,11 +134,7 @@ const MyConnections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-<<<<<<< HEAD
-    const apiUrl = "http://3.101.12.130:5000/api/v1/connection/remove-connection";
-=======
     const apiUrl = " http://3.101.12.130:5000/api/v1/connection/remove-connection";
->>>>>>> 7d9ec97401d26272f87bfe23684872e8d5978c8a
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
