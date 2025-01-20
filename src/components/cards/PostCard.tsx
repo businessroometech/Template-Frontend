@@ -39,7 +39,6 @@ const PostCard = ({ item, isMediaKeys }) => {
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
-  // console.log(post.mediaKeys)
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 

@@ -97,8 +97,8 @@ const Posts = ({ isCreated }) => {
   const hasMounted = useRef(false) // Track whether the component has mounted
   const [page, setPage] = useState(1);
  const [hasMore, setHasMore] = useState(true);
-  const [limit, setLimit] = useState<number>(2)
-  const { setTrue, setFalse, isTrue: isSpinning } = useToggle()
+  const [limit, setLimit] = useState<number>(3)
+  // const { setTrue, setFalse, isTrue: isSpinning } = useToggle()
   // onDelete= async () => {
 
   //   try {
@@ -132,57 +132,33 @@ const Posts = ({ isCreated }) => {
   // }
 
   const fetchPosts = async () => {
-    setLoading(false)
-    setHasMore(false)
+    setHasMore(true)
     setError(null)
     try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-userpost-byUserId',
-        data: { userId: user?.id, page: 1, limit: limit },
+        data: { userId: user?.id, page: page, limit: limit },
       })
-      if(res.message === "No posts found for this user."){
+      if(res.message == "No posts found for this user."){
         setHasMore(false);
         return;
       }
+      setLoading(false)
+      console.log('res', res.data.posts)
       setPosts(previousData => [...previousData,...res.data.posts])
     } catch (error: any) {
       console.error(JSON.stringify(error))
       setError('This User have no Posts');
     } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    // If the component has mounted already, only fetch posts if `isCreated` is true
-    if (hasMounted.current) {
-      if (isCreated) {
-        fetchPosts()
-      }
-    } else {
-      // If it's the first mount, fetch posts
-      fetchPosts()
-      hasMounted.current = true // Set to true after the first call
-    }
-  }, [page,isCreated])
+    fetchPosts()
+  }, [page])
 
-  // Conditional rendering
-  if (loading) {
-    return  <div style={{ minHeight: '110vh', padding: '16px' }}>
-    {[...Array(2)].map((_, index) => (
-      <PostSkeleton key={index} />
-    ))}
-  </div> // Show a loading spinner or message
-  }
-
-  if (error) {
-    return <div>Error: {error}</div> // Show an error message
-  }
-  const fetchNextPage = () => {
-    if(!loading && hasMore){
-      setPage(page => page + 1);
-    }
-  }
 
   const PostSkeleton = () => {
     return (
@@ -203,6 +179,25 @@ const Posts = ({ isCreated }) => {
       </div>
     );
   };
+  // Conditional rendering
+  if (loading) {
+    return  <div style={{ minHeight: '110vh', padding: '16px' }}>
+    {[...Array(3)].map((_, index) => (
+      <PostSkeleton key={index} />
+    ))}
+  </div> // Show a loading spinner or message
+  }
+
+  if (error) {
+    return <div>Error: {error}</div> // Show an error message
+  }
+  const fetchNextPage = () => {
+    if(!loading && hasMore){
+      setPage(page => page + 1);
+    }
+  }
+
+
   // const [showNewPostButton, setShowNewPostButton] = useState(false);
   // const scrollContainerRef = useRef(null);
 
@@ -238,12 +233,12 @@ const Posts = ({ isCreated }) => {
       <div
         className="position-relative"
         // ref={scrollContainerRef}
-        style={{ maxHeight: '500px', overflowY: 'auto' }}><InfiniteScroll
+        style={{ maxHeight: '500px' }}><InfiniteScroll
             dataLength={posts.length}
             next={fetchNextPage}
             hasMore={hasMore}
             loader={<div>
-              {[...Array(5)].map((_, index) => (
+              {[...Array(3)].map((_, index) => (
                 <PostSkeleton key={index} />
               ))}
             </div>}
@@ -261,8 +256,8 @@ const Posts = ({ isCreated }) => {
         >
           ⬆️ New Posts
         </Button> */}
-        {/* {posts.map((post, index) => (
-          <PostCard item={post} key={post.Id || index} isMediaKeys={true} />))} */}
+        {posts.map((post, index) => (
+          <PostCard item={post} key={post.Id || index} isMediaKeys={true} />))}
           </InfiniteScroll>
       </div>
 

@@ -63,6 +63,7 @@ const NotificationPage = lazy(() => import('@/app/(social)/(with-topbar)/notific
 
 //auth routes
 const SignIn = lazy(() => import('@/app/(plain)/(authentication)/auth/sign-in/page'))
+const EmailVerification = lazy(() => import('@/app/(plain)/(authentication)/auth/verify/components/EmailVerification'))
 const SignUp = lazy(() => import('@/app/(plain)/(authentication)/auth/sign-up/page'))
 const ForgotPass = lazy(() => import('@/app/(plain)/(authentication)/auth/forgot-pass/page'))
 const SignInAdvance = lazy(() => import('@/app/(plain)/(authentication)/auth-advance/sign-in/page'))
@@ -335,9 +336,14 @@ export const profilePagesRoutes: RoutesProps[] = [
 
 export const authRoutes: RoutesProps[] = [
   {
-    path: '/auth/sign-in',
+    path: '/auth/sign-in', // change according to  auth/verify-email/verify?token=${verificationToken}
     name: 'Sign In',
     element: <SignIn />,
+  },
+  {
+    path: '/auth/verify-email',
+    name: 'Email Verification',
+    element: <EmailVerification />,
   },
   {
     path: '/auth/sign-up',

@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 
 const Followers = () => {
   const { pathname } = useLocation()
-  const { user } = useAuthContext()
+  const { user } = useAuthContext() 
   const [profile, setProfile] = useState({})
   const [sent, setSent] = useState(false)
   const [allFollowers, setAllFollowers] = useState<any[]>([])
