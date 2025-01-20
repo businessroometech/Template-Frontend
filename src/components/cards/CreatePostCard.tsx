@@ -109,7 +109,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const fetchUser = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -319,7 +319,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </div>
         </div>} */}
 
-      <Card className="card-body">
+      <Card className="card-body" style={{maxHeight:"10em"}}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
             <div className="avatar avatar-xs me-2">

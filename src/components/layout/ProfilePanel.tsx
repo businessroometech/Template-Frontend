@@ -33,7 +33,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
     const fetchUser = async () => {
       setSkeletonLoading(true)
       try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+        const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -101,14 +101,14 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             <Link to={`/profile/feed/${user?.id}`}>
               <div className="avatar avatar-lg mt-n5 mb-3">
                 {skeletonLoading ? (
-                  <Skeleton height={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                  <Skeleton height={50} width={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} style={{ borderRadius: '50%' }}/>
                 ) : (
                   <img
                     height={64}
                     width={64}
                     src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
                     alt="avatar"
-                    className="avatar-img rounded border border-white border-3"
+                    className="avatar-img rounded-circle border border-white border-3"
                   />
                 )}
               </div>

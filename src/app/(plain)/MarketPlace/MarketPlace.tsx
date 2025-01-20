@@ -251,14 +251,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank } from 'lucide-react';
 
 const categories = [
-  'Technology', 'Software Development', 'Consulting', 'Manufacturing',
-  'Retail', 'Healthcare', 'E-commerce', 'Others'
+   'Agency', 'SaaS', 'Mobile App',
+  'Retail', 'Healthcare', 'E-commerce' , "Shopify app", "Content","Main Street", 'Others'
 ];
 
 const MarketPlace = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  console.log(user)
+  console.log("user" , user)
   const [myBusinessData, setMyBusinessData] = useState([]);
   const [allBusinessData, setAllBusinessData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -271,8 +271,9 @@ const MarketPlace = () => {
       console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(`https://app-backend-8r74.onrender.com/businessseller/detail/${user.id}`);
+          const response = await fetch(` http://3.101.12.130:5000/businessseller/detail/${user.id}`);
           const data = await response.json();
+          
           setMyBusinessData(Array.isArray(data) ? data : [data]);
         } catch (error) {
           console.error("Error fetching my business data:", error);
@@ -283,7 +284,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/businessseller/getall');
+        const response = await fetch(' http://3.101.12.130:5000/businessseller/getall');
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 
@@ -559,7 +560,6 @@ const MarketPlace = () => {
                               value={formatCurrency(isMyBusiness ? business.data[0].profit : business.profit)}
                             />
                           </div>
-
                           <div style={{ marginBottom: '1.5rem' }}>
                             <h6 style={{ 
                               fontSize: '0.875rem', 

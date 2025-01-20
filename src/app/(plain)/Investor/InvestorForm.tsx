@@ -811,7 +811,7 @@ const InvestorForm = () => {
     e.preventDefault();
      toast.success("Form submitted successfully!");
     try {
-      fetch('https://app-backend-8r74.onrender.com/investor/create', {
+      fetch(' http://3.101.12.130:5000/investor/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

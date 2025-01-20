@@ -5,7 +5,7 @@ import PageMetaData from '@/components/PageMetaData'
 import AuthLayout from '../components/AuthLayout'
 
 
-const SignIn = () => { 
+const SignIn = () => {
   return (
     <>
       <PageMetaData title='Sign In' />

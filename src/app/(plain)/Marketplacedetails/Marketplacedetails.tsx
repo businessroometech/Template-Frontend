@@ -69,7 +69,7 @@ const [profile , setProfile] = useState({})
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const [profile , setProfile] = useState({})
   const [businessDetails, setBusinessDetails] = useState(null);
   
   useEffect(() => {
-    fetch(`https://app-backend-8r74.onrender.com/businessseller/detailuuid/${id}`)
+    fetch(` http://3.101.12.130:5000/businessseller/detailuuid/${id}`)
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));

@@ -39,7 +39,6 @@ const PostCard = ({ item, isMediaKeys }) => {
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
-  // console.log(post.mediaKeys)
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 
@@ -53,7 +52,7 @@ const PostCard = ({ item, isMediaKeys }) => {
       }
   
       // Send a DELETE request to the backend
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/delete-userpost-byPostId', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/delete-userpost-byPostId', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +98,7 @@ const PostCard = ({ item, isMediaKeys }) => {
     const fetchComments = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/get-comments', {
+        const response = await fetch(' http://3.101.12.130:5000/api/v1/post/get-comments', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -134,7 +133,7 @@ const PostCard = ({ item, isMediaKeys }) => {
     if (!commentText.trim()) return;
 
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/post/create-comment', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/post/create-comment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

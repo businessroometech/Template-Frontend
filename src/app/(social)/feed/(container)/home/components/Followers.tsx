@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 
 const Followers = () => {
   const { pathname } = useLocation()
-  const { user } = useAuthContext()
+  const { user } = useAuthContext() 
   const [profile, setProfile] = useState({})
   const [sent, setSent] = useState(false)
   const [allFollowers, setAllFollowers] = useState<any[]>([])
@@ -34,7 +34,7 @@ const Followers = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-suggest', {
+      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/get-connection-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,8 +68,8 @@ const Followers = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request'
-      : 'https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request'
+      ? ' http://3.101.12.130:5000/api/v1/connection/send-connection-request'
+      : ' http://3.101.12.130:5000/api/v1/connection/unsend-connection-request'
 
     try {
       const res = await fetch(apiUrl, {
