@@ -271,7 +271,7 @@ const MarketPlace = () => {
       console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(`https://app-backend-8r74.onrender.com/businessseller/detail/${user.id}`);
+          const response = await fetch(`http://3.101.12.130:5000/businessseller/detail/${user.id}`);
           const data = await response.json();
           setMyBusinessData(Array.isArray(data) ? data : [data]);
         } catch (error) {
@@ -283,7 +283,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-        const response = await fetch('https://app-backend-8r74.onrender.com/businessseller/getall');
+        const response = await fetch('http://3.101.12.130:5000/businessseller/getall');
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 

@@ -29,7 +29,7 @@ const NotificationDropdown = () => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        'https://app-backend-8r74.onrender.com/api/v1/notifications/fetch',
+        'http://3.101.12.130:5000/api/v1/notifications/fetch',
         {
           method: 'POST',
           headers: {
@@ -51,7 +51,7 @@ const NotificationDropdown = () => {
   const handleOnRead = async (notificationId) => {
     try {
       const response = await fetch(
-        'https://app-backend-8r74.onrender.com/api/v1/notifications/mark-as-read',
+        'http://3.101.12.130:5000/api/v1/notifications/mark-as-read',
         {
           method: 'POST',
           headers: {
@@ -73,7 +73,7 @@ const NotificationDropdown = () => {
       const notificationIds = allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        'https://app-backend-8r74.onrender.com/api/v1/notifications/mark-all-as-read',
+        'http://3.101.12.130:5000/api/v1/notifications/mark-all-as-read',
         {
           method: 'POST',
           headers: {

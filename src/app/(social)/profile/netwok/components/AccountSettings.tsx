@@ -108,7 +108,7 @@ const AccountSettings = () => {
         console.log('Request body:', requestBody);
 
         const response = await fetch(
-          'https://app-backend-8r74.onrender.com/api/v1/auth/update-or-create-Profile',
+          'http://3.101.12.130:5000/api/v1/auth/update-or-create-Profile',
           {
             method: 'POST',
             headers: {
@@ -147,7 +147,7 @@ const AccountSettings = () => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          'https://app-backend-8r74.onrender.com/api/v1/auth/get-user-Profile',
+          'http://3.101.12.130:5000/api/v1/auth/get-user-Profile',
           {
             method: 'POST',
             headers: {
