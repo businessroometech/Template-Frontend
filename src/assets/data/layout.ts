@@ -113,6 +113,11 @@ export const profilePanelLinksData2: ProfilePanelLink[] = [
     name: 'Logout',
     link: '/auth/sign-in',
   },
+  {
+    image: arrowBoxedImg,
+    name: 'Logout',
+    link: '/auth/verify-email',
+  },
 ]
 
 export const settingPanelLinksData: ProfilePanelLink[] = [
