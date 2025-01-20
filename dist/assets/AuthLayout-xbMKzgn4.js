@@ -1,1 +1,0 @@
-import{j as s,X as e,R as n,C as r}from"./index-Cw_JW-sQ.js";const i=({children:t})=>s.jsx("main",{children:s.jsx(e,{children:s.jsx(n,{className:"justify-content-center align-items-center vh-100 py-5",children:s.jsx(r,{sm:10,md:8,lg:7,xl:6,xxl:5,children:t})})})});export{i as A};

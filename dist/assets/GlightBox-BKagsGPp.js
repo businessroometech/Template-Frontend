@@ -1,1 +1,0 @@
-import{r,d8 as a,j as l}from"./index-Cw_JW-sQ.js";const u=({children:f,href:o,...t})=>{const s=r.useRef(null);return r.useEffect(()=>{let e=null;return s.current&&(e=a({openEffect:"fade",closeEffect:"fade"})),()=>e==null?void 0:e.destroy()},[s]),l.jsx("a",{ref:s,href:o,...t,className:`glightbox ${t.className}`,children:f})};export{u as G};
