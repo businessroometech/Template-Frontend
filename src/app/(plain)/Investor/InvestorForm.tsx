@@ -1966,8 +1966,8 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
-import {ToastContainer , Toast} from 'react-bootstrap';
-import { toast } from 'react-toastify';
+//import {ToastContainer , Toast} from 'react-bootstrap';
+//import { toast } from 'react-toastify';
 
 const InvestorForm = () => {
   const { user } = useAuthContext();
@@ -2008,8 +2008,8 @@ const InvestorForm = () => {
   });
 
   const [step, setStep] = useState(1);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  //const [showToast, setShowToast] = useState(false);
+  //const [toastMessage, setToastMessage] = useState('');
 
   const handleInputChange = (name, value) => {
     setFormData(prev => ({
@@ -2033,13 +2033,13 @@ const InvestorForm = () => {
         throw new Error('Failed to submit form');
       }
 
-      setToastMessage('Profile created successfully!');
-      setShowToast(true);
+      //setToastMessage('Profile created successfully!');
+      //setShowToast(true);
       setTimeout(() => navigate('/'), 2000);
     } catch (error) {
       console.error(error);
-      setToastMessage('Error creating profile. Please try again.');
-      setShowToast(true);
+     // setToastMessage('Error creating profile. Please try again.');
+     // setShowToast(true);
     }
   };
 
