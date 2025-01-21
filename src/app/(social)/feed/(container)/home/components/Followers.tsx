@@ -68,8 +68,8 @@ const Followers = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? ' http://3.101.12.130:5000/api/v1/connection/send-connection-request'
-      : ' http://3.101.12.130:5000/api/v1/connection/unsend-connection-request'
+      ? ' https://strengthholdings.com/api/v1/connection/send-connection-request'
+      : ' https://strengthholdings.com/api/v1/connection/unsend-connection-request'
 
     try {
       const res = await fetch(apiUrl, {

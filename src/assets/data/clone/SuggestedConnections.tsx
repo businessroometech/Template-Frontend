@@ -31,7 +31,7 @@ const SuggestedConnections = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true);
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/connection/get-connection-suggest', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,8 +69,8 @@ const SuggestedConnections = () => {
     setLoading(userId);
 
     const apiUrl = isSending
-      ? 'https://app-backend-8r74.onrender.com/api/v1/connection/send-connection-request'
-      : 'https://app-backend-8r74.onrender.com/api/v1/connection/unsend-connection-request';
+      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
+      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
 
     try {
       const res = await fetch(apiUrl, {

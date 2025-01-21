@@ -671,33 +671,22 @@ bUSINESS sELLER ENDS HERE
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ButtonGroup, Card } from 'react-bootstrap';
-import { FaMoneyCheckAlt, FaChartPie, FaTools, FaBullseye, FaClipboardCheck, FaLightbulb, FaBriefcase, FaDollarSign, FaHandshake, FaCalendarAlt, FaQuestionCircle, FaBuilding, FaUsers, FaClipboardList } from 'react-icons/fa';
-import { useContext } from 'react';
+import { FaMapMarkerAlt, FaBuilding, FaMoneyBillWave, FaToolbox, FaClock, FaBalanceScale, FaHandsHelping, FaFileSignature, FaInfoCircle } from 'react-icons/fa';
 import { useAuthContext } from '@/context/useAuthContext';
-import {ToastContainer , toast} from "react-toastify"
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const BusinessBuyerForm = () => {
-
-
-const {user } = useAuthContext()
-  console.log(user?.id)
+const BusinessPreferencesForm = () => {
+  const { user } = useAuthContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    businessType: '',
+    location: '',
+    businessModel: '',
     budget: '',
-    financing: '',
-    paymentMethod: '',
     renovationInvestment: '',
-    ownershipExperience: '',
-    professionalBackground: '',
-    skills: '',
-    involvementLevel: '',
-    goals: [],
-    purchaseTimeline: '',
-    longTermGoals: '',
+    timeline: '',
     growthPreference: '',
-    dealBreakers: '',
-    teamPreferences: '',
     supportTraining: '',
     ndaAgreement: '',
     additionalInfo: '',
@@ -705,11 +694,11 @@ const {user } = useAuthContext()
 
   const [step, setStep] = useState(0);
   const sections = [
-    { title: "Financial Information", icon: <FaMoneyCheckAlt /> },
-    { title: "Experience and Skills", icon: <FaTools /> },
-    { title: "Business Goals and Vision", icon: <FaBullseye /> },
-    { title: "Due Diligence and Preferences", icon: <FaClipboardCheck /> },
-    { title: "Additional Information", icon: <FaLightbulb /> },
+    { title: "Business Type & Location", icon: <FaBuilding /> },
+    { title: "Financial & Investment Details", icon: <FaMoneyBillWave /> },
+    { title: "Timeline & Growth Preferences", icon: <FaClock /> },
+    { title: "Support & Confidentiality", icon: <FaHandsHelping /> },
+    { title: "Additional Information", icon: <FaInfoCircle /> },
   ];
 
   const handleInputChange = (name, value) => {
@@ -721,14 +710,14 @@ const {user } = useAuthContext()
 
   const handleSubmit = (e) => {
     e.preventDefault();
-   toast.success("Form submitted successfully!");
+    toast.success("Form submitted successfully!");
     try {
-      fetch(' http://3.101.12.130:5000/business-buyer/create', {
+      fetch('https://strengthholdings.com/business-buyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData , user?.id),
+        body: JSON.stringify({ ...formData, userId: user?.id }),
       }).then(() => navigate('/'));
     } catch (error) {
       console.log(error);
@@ -746,29 +735,19 @@ const {user } = useAuthContext()
   const renderStep = () => {
     const renderFormFields = (fields) => (
       <Card className="mb-4 shadow-sm">
-       <Card.Header className="bg-transparent text-white">
-  <h5 className="fs-4">
-    {sections[step].icon} {sections[step].title}
-  </h5>
-</Card.Header>
-
+        <Card.Header className="bg-transparent text-white">
+          <h5 className="fs-4">
+            {sections[step].icon} {sections[step].title}
+          </h5>
+        </Card.Header>
         <Card.Body>
-          <ToastContainer></ToastContainer>
+          <ToastContainer />
           {fields.map((field, index) => (
             <div className="mb-3" key={index}>
               <label htmlFor={field.id} className="form-label">
                 {field.icon} {field.label}
               </label>
-              {field.type === 'textarea' ? (
-                <textarea
-                  id={field.id}
-                  value={formData[field.name]}
-                  onChange={(e) => handleInputChange(field.name, e.target.value)}
-                  className="form-control"
-                  rows={field.rows || 3}
-                  required={field.required}
-                />
-              ) : field.type === 'select' ? (
+              {field.type === 'select' ? (
                 <select
                   id={field.id}
                   value={formData[field.name]}
@@ -782,45 +761,6 @@ const {user } = useAuthContext()
                     </option>
                   ))}
                 </select>
-              ) : field.type === 'radio' ? (
-                field.options.map((option, idx) => (
-                  <div className="form-check" key={idx}>
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      id={`${field.id}-${idx}`}
-                      name={field.name}
-                      value={option}
-                      checked={formData[field.name] === option}
-                      onChange={(e) => handleInputChange(field.name, e.target.value)}
-                      required={field.required}
-                    />
-                    <label className="form-check-label" htmlFor={`${field.id}-${idx}`}>
-                      {option}
-                    </label>
-                  </div>
-                ))
-              ) : field.type === 'checkbox' ? (
-                field.options.map((option, idx) => (
-                  <div className="form-check" key={idx}>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id={`${field.id}-${idx}`}
-                      value={option}
-                      checked={formData[field.name].includes(option)}
-                      onChange={(e) => {
-                        const updatedOptions = formData[field.name].includes(option)
-                          ? formData[field.name].filter((o) => o !== option)
-                          : [...formData[field.name], option];
-                        handleInputChange(field.name, updatedOptions);
-                      }}
-                    />
-                    <label className="form-check-label" htmlFor={`${field.id}-${idx}`}>
-                      {option}
-                    </label>
-                  </div>
-                ))
               ) : (
                 <input
                   id={field.id}
@@ -828,7 +768,6 @@ const {user } = useAuthContext()
                   value={formData[field.name]}
                   onChange={(e) => handleInputChange(field.name, e.target.value)}
                   className="form-control"
-                  placeholder={field.placeholder || ''}
                   required={field.required}
                 />
               )}
@@ -841,35 +780,28 @@ const {user } = useAuthContext()
     switch (step) {
       case 0:
         return renderFormFields([
-          { id: 'budget', label: 'What is your budget for purchasing a business?', name: 'budget', icon: <FaDollarSign />, type: 'select', options: ['Under $50k', '$50k - $100k', '$100k - $500k', '$500k - $1M', 'Over $1M'], required: true },
-          { id: 'financing', label: 'Do you have financing in place for purchasing a business?', name: 'financing', icon: <FaHandshake />, type: 'radio', options: ['Yes', 'No', 'Exploring Options'], required: true },
-          { id: 'paymentMethod', label: 'What is your preferred method of payment?', name: 'paymentMethod', icon: <FaBuilding />, type: 'select', options: ['Cash', 'Loan', 'Seller Financing', 'Partnership', 'Other'], required: true },
-          { id: 'renovationInvestment', label: 'Are you open to investing in a business that requires renovation or additional investment?', name: 'renovationInvestment', icon: <FaTools />, type: 'radio', options: ['Yes', 'No', 'Maybe'], required: true },
+          { id: 'businessType', label: 'What type of business are you interested in buying?', name: 'businessType', icon: <FaBuilding />, type: 'select', options: ['SaaS', 'Content', 'Marketplace', 'Agency', 'Mobile App', 'Shopify App', 'Main Street', 'Ecommerce', 'Other'], required: true },
+          { id: 'location', label: 'Preferred business location or region:', name: 'location', icon: <FaMapMarkerAlt />, type: 'text', required: true },
+          { id: 'businessModel', label: 'What is your preferred business model?', name: 'businessModel', icon: <FaToolbox />, type: 'select', options: ['Independent', 'Franchise', 'Online', 'Hybrid'], required: true },
         ]);
       case 1:
         return renderFormFields([
-          { id: 'ownershipExperience', label: 'Do you have previous business ownership experience?', name: 'ownershipExperience', icon: <FaBriefcase />, type: 'radio', options: ['Yes', 'No'], required: true },
-          { id: 'professionalBackground', label: 'What is your professional background or expertise?', name: 'professionalBackground', icon: <FaUsers />, type: 'textarea', required: false },
-          { id: 'skills', label: 'Do you have any specific skills or qualifications that would support the business you are looking to buy?', name: 'skills', icon: <FaClipboardList />, type: 'textarea', required: true },
-          { id: 'involvementLevel', label: 'What is your involvement level in running the business?', name: 'involvementLevel', icon: <FaBuilding />, type: 'select', options: ['Full-time', 'Part-time', 'Investor/Passive Role', 'Other'], required: true },
+          { id: 'budget', label: 'What is your budget for purchasing a business?', name: 'budget', icon: <FaMoneyBillWave />, type: 'select', options: ['Under $50k', '$50k - $100k', '$100k - $500k', '$500k - $1M', 'Over $1M'], required: true },
+          { id: 'renovationInvestment', label: 'Are you open to investing in a business that requires renovation or additional investment?', name: 'renovationInvestment', icon: <FaBalanceScale />, type: 'select', options: ['Yes', 'No', 'Maybe'], required: true },
         ]);
       case 2:
         return renderFormFields([
-          { id: 'goals', label: 'What are your main goals in purchasing a business?', name: 'goals', icon: <FaBullseye />, type: 'checkbox', options: ['Financial Growth', 'Lifestyle Change', 'Build a Legacy', 'Exit Strategy', 'Other'], required: true },
-          { id: 'purchaseTimeline', label: 'What is your timeline for purchasing a business?', name: 'purchaseTimeline', icon: <FaCalendarAlt />, type: 'select', options: ['Immediately', '1-3 months', '6 months', '1 year', 'Flexible'], required: true },
-          { id: 'longTermGoals', label: 'What are your long-term business goals for the company once acquired?', name: 'longTermGoals', icon: <FaLightbulb />, type: 'textarea', required: true },
-          { id: 'growthPreference', label: 'Are you interested in a business that has potential for growth or one with stable cash flow?', name: 'growthPreference', icon: <FaChartPie />, type: 'radio', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
+          { id: 'timeline', label: 'What is your timeline for purchasing a business?', name: 'timeline', icon: <FaClock />, type: 'select', options: ['Immediately', '1-3 months', '6 months', '1 year', 'Flexible'], required: true },
+          { id: 'growthPreference', label: 'Are you interested in a business with potential for growth or stable cash flow?', name: 'growthPreference', icon: <FaBalanceScale />, type: 'select', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
         ]);
       case 3:
         return renderFormFields([
-          { id: 'dealBreakers', label: 'What are your deal-breakers in purchasing a business?', name: 'dealBreakers', icon: <FaQuestionCircle />, type: 'textarea', placeholder: 'e.g., debt levels, location, etc.', required: true },
-          { id: 'teamPreferences', label: 'Do you have any specific requirements or preferences regarding the business\' existing team or staff?', name: 'teamPreferences', icon: <FaUsers />, type: 'textarea', required: true },
-          { id: 'supportTraining', label: 'Are you interested in any support or training after the business purchase?', name: 'supportTraining', icon: <FaClipboardCheck />, type: 'radio', options: ['Yes', 'No', 'Maybe'], required: true },
-          { id: 'ndaAgreement', label: 'Are you willing to sign a non-disclosure agreement (NDA) before receiving sensitive business information?', name: 'ndaAgreement', icon: <FaHandshake />, type: 'radio', options: ['Yes', 'No'], required: true },
+          { id: 'supportTraining', label: 'Are you interested in any support or training after the business purchase?', name: 'supportTraining', icon: <FaHandsHelping />, type: 'select', options: ['Yes', 'No', 'Maybe'], required: true },
+          { id: 'ndaAgreement', label: 'Are you willing to sign a non-disclosure agreement (NDA) before receiving sensitive business information?', name: 'ndaAgreement', icon: <FaFileSignature />, type: 'select', options: ['Yes', 'No'], required: true },
         ]);
       case 4:
         return renderFormFields([
-          { id: 'additionalInfo', label: 'Is there anything else you would like us to know about your business buying preferences?', name: 'additionalInfo', icon: <FaLightbulb />, type: 'textarea', required: false },
+          { id: 'additionalInfo', label: 'Is there anything else you would like us to know about your business buying preferences?', name: 'additionalInfo', icon: <FaInfoCircle />, type: 'text', required: false },
         ]);
       default:
         return null;
@@ -878,35 +810,34 @@ const {user } = useAuthContext()
 
   return (
     <div className="container mt-5">
-      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Business Acquirer</h2>
+      <h2 className="text-start mb-4">Business Preferences</h2>
 
       <div className="d-flex justify-content-center mb-4">
-  {sections.map((section, index) => (
-    <button
-      key={index}
-      type="button"
-      className="btn mx-2"
-      style={{
-        backgroundColor: step === index ? '#1ea1f2' : 'transparent',
-        borderColor: '#1ea1f2',
-        color: step === index ? 'white' : '#1ea1f2'
-      }}
-      onClick={() => setCurrentSection(index)}
-    >
-      {section.icon} {section.title}
-    </button>
-  ))}
-</div>
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            type="button"
+            className="btn mx-2"
+            style={{
+              backgroundColor: step === index ? '#1ea1f2' : 'transparent',
+              borderColor: '#1ea1f2',
+              color: step === index ? 'white' : '#1ea1f2',
+            }}
+            onClick={() => setCurrentSection(index)}
+          >
+            {section.icon} {section.title}
+          </button>
+        ))}
+      </div>
 
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         {renderStep()}
         <div className="d-flex justify-content-between mt-4">
-        <button type="button" className="btn btn-secondary btn-danger" onClick={handleSkip}>Skip</button>
-        <ButtonGroup>
-          {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
-          {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
-          
-          {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
+          <button type="button" className="btn btn-secondary btn-danger" onClick={handleSkip}>Skip</button>
+          <ButtonGroup>
+            {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep(step - 1)}>Previous</button>}
+            {step < sections.length - 1 && <button type="button" className="btn btn-primary" onClick={() => setStep(step + 1)}>Next</button>}
+            {step === sections.length - 1 && <button type="submit" className="btn btn-primary">Submit</button>}
           </ButtonGroup>
         </div>
       </form>
@@ -914,4 +845,4 @@ const {user } = useAuthContext()
   );
 };
 
-export default BusinessBuyerForm;
+export default BusinessPreferencesForm;
