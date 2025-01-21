@@ -1,6 +1,6 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
-
+import makeApiRequest from '@/utils/apiServer'
 import { getUserById } from '@/helpers/data'
 import type { ChatContextType, ChatOffcanvasStatesType, OffcanvasControlType } from '@/types/context'
 import type { UserType } from '@/types/data'
@@ -17,16 +17,30 @@ export const useChatContext = () => {
 }
 
 export const ChatProvider = ({ children }: ChildrenType) => {
-  const [activeChat, setActiveChat] = useState<UserType>()
+  const [activeChat, setActiveChat] = useState(null)
   const [offcanvasStates, setOffcanvasStates] = useState<ChatOffcanvasStatesType>({
     showChatList: false,
     showMessageToast: false,
   })
 
-  const changeActiveChat = async (userId: UserType['id']) => {
-    const user = await getUserById(userId)
-    if (user) setActiveChat(user)
-  }
+  const changeActiveChat = async (userId) => {
+
+    if (userId == 102) {
+      return;
+    }
+  
+    try {
+      const res = await makeApiRequest<{ data: any[] }>({
+        method: 'POST',
+        url: 'api/v1/auth/get-user-Profile',
+        data: { userId },
+      });
+      setActiveChat(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
 
   const toggleChatList: OffcanvasControlType['toggle'] = () => {
     setOffcanvasStates({ ...offcanvasStates, showChatList: !offcanvasStates.showChatList })

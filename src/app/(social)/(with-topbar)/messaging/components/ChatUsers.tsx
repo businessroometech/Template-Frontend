@@ -1,21 +1,22 @@
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient'
 import { useChatContext } from '@/context/useChatContext'
 import type { UserType } from '@/types/data'
+import avatar from '@/assets/images/avatar/default avatar.png'
 import clsx from 'clsx'
 import { useState, useEffect } from 'react'
 
 import { Card, Spinner } from 'react-bootstrap'
 import { BsSearch } from 'react-icons/bs'
 
-const ChatItem = ({ connectionId, profilePictureUrl, lastMessage, firstName, lastName, status='online', isStory }: UserType) => {
+const ChatItem = ({ userId,connectionId, profilePictureUrl, lastMessage, firstName, lastName, status='online', isStory }: UserType) => {
   const { changeActiveChat, activeChat } = useChatContext()
-
   return (
-    <li data-bs-dismiss="offcanvas" onClick={() => changeActiveChat(connectionId)}>
-      <div className={clsx('nav-link text-start', { active: activeChat?.id === connectionId })} id="chat-1-tab" data-bs-toggle="pill" role="tab">
+    <li data-bs-dismiss="offcanvas" onClick={()=>changeActiveChat(userId)
+    }>
+      <div className={clsx('nav-link text-start', { active: activeChat?.id === connectionId })} id="chat-1-tab" data-bs-toggle="pill" role="tab" >
         <div className="d-flex">
           <div className={clsx('flex-shrink-0 avatar me-2', status === 'online' ? 'status-online' : 'status-offline', { 'avatar-story': isStory })}>
-            <img className="avatar-img rounded-circle" src={profilePictureUrl} alt="" />
+            <img className="avatar-img rounded-circle" src={profilePictureUrl || avatar} alt="" />
           </div>
           <div className="flex-grow-1 d-block">
             <h6 className="mb-0 mt-1">{`${firstName} ${lastName}`}</h6>
@@ -73,7 +74,7 @@ const ChatUsers = ({ chats }: { chats: UserType[] }) => {
         ) : (
           <SimplebarReactClient className="chat-tab-list custom-scrollbar">
             <ul className="nav flex-column nav-pills nav-pills-soft">
-              {users.slice(0, 5).map((chat) => (
+              {users.map((chat) => (
                 <ChatItem {...chat} key={chat.connectionId} />
               ))}
             </ul>
