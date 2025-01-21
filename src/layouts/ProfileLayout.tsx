@@ -10,6 +10,7 @@ import { useFetchData } from '@/hooks/useFetchData'
 import type { ChildrenType } from '@/types/component'
 import { RiUserUnfollowFill } from 'react-icons/ri'
 import clsx from 'clsx'
+import EditProfilePictureModal from "../components/cards/EditProfilePictureModal";
 import {
   Button,
   Card,
@@ -441,6 +442,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const skeletonBaseColor = '#b0b0b0'
   const skeletonHighlightColor = '#d6d6d6'
   const navigate = useNavigate()
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -614,6 +616,12 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       </Suspense>
       <main>
         <Container>
+        <EditProfilePictureModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          onPhotoUpdate={() => console.log('press')}
+          src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+          />
           <Row className="g-4">
             {/* Main Profile Section */}
             <Col lg={8} className="vstack gap-4">
@@ -625,6 +633,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   ) : (
                     <div
                       className="h-200px rounded-top"
+                      
                       style={{
                         backgroundImage: `url(${profile?.coverImgUrl ? profile?.coverImgUrl : background5})`,
                         backgroundPosition: 'center',
@@ -657,6 +666,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           <Skeleton circle width={120} height={120} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         ) : (
                           <img
+                            onClick={() => setShowModal(true)}
                             className="avatar-img rounded-circle border border-white border-3"
                             src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
                             alt="avatar"

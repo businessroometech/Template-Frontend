@@ -125,13 +125,13 @@ const AccountSettings = () => {
         const result = await response.json();
         console.log(result);
 
-        for (const key in result) {
-          if (user[key]) {
-            user[key] = result[key];
-          }
-        }
+        // for (const key in result) {
+        //   if (user[key]) {
+        //     user[key] = result[key];
+        //   }
+        // }
 
-        saveSession(user);
+        // saveSession(user);
         navigate('/');
       } else {
         toast.error('Uploading photo required');
@@ -248,7 +248,7 @@ const AccountSettings = () => {
             control={control}
             containerClassName="col-12"
           />
-          <DropzoneFormInput
+          {/* <DropzoneFormInput
             icon={BsImages}
             onFileUpload={handleCoverPhotoChange}
             showPreview={true}
@@ -259,7 +259,7 @@ const AccountSettings = () => {
             onFileUpload={handleFileUploadProfile}
             showPreview={true}
             text="Drag here or click to upload profile photo."
-          />
+          /> */}
           <Col xs={12} className="mt-3">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Posting...' : 'Update Profile'}
