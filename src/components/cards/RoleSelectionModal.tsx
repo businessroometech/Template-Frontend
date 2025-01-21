@@ -15,6 +15,7 @@ const RoleSelectionModal = ({ show, onHide, onSelectRole }) => {
     {
       id: "entrepreneur",
       title: "Entrepreneur",
+      
       icon: <FaBuilding size={30} />,
       description: "Find a co-founder or investor to scale your startup.",
     },
