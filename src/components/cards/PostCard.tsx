@@ -29,6 +29,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
+  const [isDeleted,setIsDeleted] = useState<boolean>(false)
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
 
@@ -67,14 +68,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   
       const data = await response.json();
       console.log('dl',tlRefresh)
-      setTlRefresh(() => tlRefresh+1);
-      console.log('on delete postId ',post.Id,' item Id ',item.Id)
-      const index = (posts as []).findIndex((p) => p?.post?.Id === item?.post?.Id)
-
-      if (index !== -1) {
-        console.log(posts.splice(index, 1));
-        setPosts(() => posts.splice(index, 1));
-      }
+      setIsDeleted(true);
      
       console.log('dlr',tlRefresh);
       console.log('Post deleted successfully:', data.message);
@@ -181,7 +175,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       console.error('Error toggling like:', error);
     }
   };
-
+  if(isDeleted) return null;
   return (
     <Card className="mb-4">
 <CardHeader className="border-0 pb-0">
