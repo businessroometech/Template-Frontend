@@ -28,12 +28,12 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const skeletonBaseColor = '#e3e3e3'; 
   const skeletonHighlightColor = '#f2f2f2';
 
-  // console.log("user", user);
+  //console.log("user", user);
   useEffect(() => {
     const fetchUser = async () => {
       setSkeletonLoading(true)
       try {
-        const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -29,6 +29,7 @@ type ExperienceType = {
 }
 
 
+
 export const profilePanelLinksData1: ProfilePanelLink[] = [
   // {
   //   image: homeImg,
@@ -121,6 +122,7 @@ export const profilePanelLinksData2: ProfilePanelLink[] = [
 ]
 
 export const settingPanelLinksData: ProfilePanelLink[] = [
+  
   {
     image: personImg,
     name: 'Basic Profile',
@@ -132,30 +134,36 @@ export const settingPanelLinksData: ProfilePanelLink[] = [
     link : '/settings/role'
   },
   {
+    
+    image : personImg,
+    name : 'View Profile',
+    link : `profile/feed/`
+  },
+  {
     image: notificationImg,
     name: 'Notification',
     link: '/settings/notification',
   },
-  {
-    image: shieldImg,
-    name: 'Privacy and safety',
-    link: '/settings/privacy',
-  },
-  {
-    image: handshakeImg,
-    name: 'Communications',
-    link: '/settings/communication',
-  },
+  // {
+  //   image: shieldImg,
+  //   name: 'Privacy and safety',
+  //   link: '/settings/privacy',
+  // },
+  // {
+  //   image: handshakeImg,
+  //   name: 'Communications',
+  //   link: '/settings/communication',
+  // },
   {
     image: chatAltImg,
     name: 'Messaging',
     link: '/settings/messaging',
   },
-  {
-    image: trashImg,
-    name: 'Close account',
-    link: '/settings/close-account',
-  },
+  // {
+  //   image: trashImg,
+  //   name: 'Close account',
+  //   link: '/settings/close-account',
+  // },
 ]
 
 

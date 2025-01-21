@@ -250,9 +250,10 @@ import { useAuthContext } from '@/context/useAuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank } from 'lucide-react';
 
+// eslint-disable-next-line no-sparse-arrays
 const categories = [
-   'Agency', 'SaaS', 'Mobile App',
-  'Retail', 'Healthcare', 'E-commerce' , "Shopify app", "Content","Main Street", 'Others'
+    'SaaS', 'Mobile App',"Shopify app",, 'E-commerce', "Marketplace",'Agency'
+   
 ];
 
 const MarketPlace = () => {
@@ -271,7 +272,7 @@ const MarketPlace = () => {
       console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(` http://3.101.12.130:5000/businessseller/detail/${user.id}`);
+          const response = await fetch(` https://strengthholdings.com/businessseller/detail/${user.id}`);
           const data = await response.json();
           
           setMyBusinessData(Array.isArray(data) ? data : [data]);
@@ -284,7 +285,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-        const response = await fetch(' http://3.101.12.130:5000/businessseller/getall');
+        const response = await fetch(' https://strengthholdings.com/businessseller/getall');
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 
@@ -543,13 +544,7 @@ const MarketPlace = () => {
                             gap: '0.75rem',
                             marginBottom: '1.5rem' 
                           }}>
-                            <MetricBox 
-                              icon={DollarSign}
-                              label="Asking Price"
-                              value={formatCurrency(isMyBusiness ? business.data[0].askingPrice : business.askingPrice)}
-                              
-                            />
-                            <MetricBox 
+                             <MetricBox 
                               icon={TrendingUp}
                               label="TTM Revenue"
                               value={formatCurrency(isMyBusiness ? business.data[0].revenue : business.revenue)}
@@ -559,6 +554,13 @@ const MarketPlace = () => {
                               label="TTM Profit"
                               value={formatCurrency(isMyBusiness ? business.data[0].profit : business.profit)}
                             />
+                            <MetricBox 
+                              icon={DollarSign}
+                              label="Asking Price"
+                              value={formatCurrency(isMyBusiness ? business.data[0].askingPrice : business.askingPrice)}
+                              
+                            />
+                           
                           </div>
                           <div style={{ marginBottom: '1.5rem' }}>
                             <h6 style={{ 

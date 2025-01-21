@@ -19,7 +19,7 @@ const EmailVerification = () => {
     e.preventDefault();
     setLoading(true)
     try {
-      const response = await fetch('https://app-backend-8r74.onrender.com/api/v1/auth/send-verify-email', {
+      const response = await fetch('https://strengthholdings.com/api/v1/auth/send-verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

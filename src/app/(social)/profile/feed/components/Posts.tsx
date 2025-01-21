@@ -34,7 +34,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import PostCard from '@/components/cards/PostCard'
 import { getAllFeeds } from '@/helpers/data'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useFetchData } from '@/hooks/useFetchData'
 import LoadMoreButton from '../../connections/components/LoadMoreButton'
 import { useEffect, useRef, useState } from 'react'
@@ -98,6 +98,8 @@ const Posts = ({ isCreated }) => {
   const [page, setPage] = useState(1);
  const [hasMore, setHasMore] = useState(true);
   const [limit, setLimit] = useState<number>(3)
+  const CurrentUser = useParams()
+
   // const { setTrue, setFalse, isTrue: isSpinning } = useToggle()
   // onDelete= async () => {
 
@@ -138,7 +140,7 @@ const Posts = ({ isCreated }) => {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-userpost-byUserId',
-        data: { userId: user?.id, page: page, limit: limit },
+        data: { userId: CurrentUser  ?.id, page: page, limit: limit },
       })
       if(res.message == "No posts found for this user."){
         setHasMore(false);
@@ -149,7 +151,7 @@ const Posts = ({ isCreated }) => {
       setPosts(previousData => [...previousData,...res.data.posts])
     } catch (error: any) {
       console.error(JSON.stringify(error))
-      setError('This User have no Posts');
+      setError('This User have no Posts');//18001233330
     } finally {
       setLoading(false)
     }
