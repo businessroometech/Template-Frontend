@@ -109,7 +109,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     const fetchData = async () => {
       try {
         const res = await fetchReplies(comment.id);
-        console.log('this is the res', res);
+        // console.log('this is the res', res);
         setReplies(res);
       } catch (error) {
         console.error('Error in useEffect:', error);
@@ -119,7 +119,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     if(level < 1) fetchData();
   }, [comment.id]);
   
-  console.log('this is replies',replies);
+  // console.log('this is replies',replies);
   return (
     <li className="comment-item">
       <div className="d-flex align-items-start mb-3">
