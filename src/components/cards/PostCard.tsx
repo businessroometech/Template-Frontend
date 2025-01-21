@@ -53,7 +53,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   
       // Send a DELETE request to the backend
       const response = await fetch(' https://strengthholdings.com/api/v1/post/delete-userpost-byPostId', {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -220,39 +220,43 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     <span className="nav-item small mx-2" style={{ color: "#8b959b" }}>
       {userInfo?.timestamp}
     </span>
-    <div style={{ position: "relative" }}>
-      <button
-        className="btn btn-link p-0 text-dark"
-        style={{ fontSize: "1.5rem", lineHeight: "1" }}
-        onClick={() => setMenuVisible(!menuVisible)}
-      >
-        <BsThreeDots />
-      </button>
-      {menuVisible && (
-        <div
-          className="dropdown-menu show"
-          style={{
-            position: "absolute",
-            top: "100%",
-            right: 0,
-            zIndex: 1000,
-            display: "block",
-            backgroundColor: "white",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            borderRadius: "0.25rem",
-            overflow: "hidden",
-          }}
-        >
-          <button
-            className="dropdown-item text-danger d-flex align-items-center"
-            onClick={() => handleDeletePost(post?.Id)}
-            style={{ gap: "0.5rem" }}
-          >
-            <BsTrash /> Delete Post
-          </button>
-        </div>
-      )}
-    </div>
+    {
+        post.userId === user?.id &&
+
+<div style={{ position: "relative" }}>
+<button
+  className="btn btn-link p-0 text-dark"
+  style={{ fontSize: "1.5rem", lineHeight: "1" }}
+  onClick={() => setMenuVisible(!menuVisible)}
+>
+  <BsThreeDots />
+</button>
+{menuVisible && (
+  <div
+    className="dropdown-menu show"
+    style={{
+      position: "absolute",
+      top: "100%",
+      right: 0,
+      zIndex: 1000,
+      display: "block",
+      backgroundColor: "white",
+      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+      borderRadius: "0.25rem",
+      overflow: "hidden",
+    }}
+  >
+    <button
+      className="dropdown-item text-danger d-flex align-items-center"
+      onClick={() => handleDeletePost(post?.Id)}
+      style={{ gap: "0.5rem" }}
+    >
+      <BsTrash /> Delete Post
+    </button>
+  </div>
+)}
+</div>
+    }
   </div>
 </CardHeader>
 
