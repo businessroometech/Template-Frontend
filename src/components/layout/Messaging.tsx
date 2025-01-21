@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { messages } from '@/assets/data/other'
-import { getAllUsers } from '@/helpers/data'
+import makeApiRequest from '@/utils/apiServer'
 import { useFetchData } from '@/hooks/useFetchData'
+import { useAuthContext } from '@/context/useAuthContext'
 import useToggle from '@/hooks/useToggle'
 import { type ChatMessageType, type UserType } from '@/types/data'
 import { addOrSubtractMinutesFromDate, timeSince } from '@/utils/date'
@@ -17,7 +18,8 @@ import {
   DropdownToggle,
   Toast,
   ToastContainer,
-  ToastHeader
+  ToastHeader,
+  Spinner
 } from 'react-bootstrap'
 
 import { useChatContext } from '@/context/useChatContext'
@@ -97,38 +99,59 @@ const UserMessage = ({ message, toUser }: { message: ChatMessageType; toUser: Us
   )
 }
 
+
+
 const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }) => {
   const { changeActiveChat } = useChatContext()
-  return (
-    <>
-      <li
-        onClick={() => {
-          openToast()
-          changeActiveChat(user.id)
-        }}
-        className="mt-3 hstack gap-3 align-items-center position-relative toast-btn"
-        data-target="chatToast">
-        <div className={clsx(`avatar status-${user.status}`, { 'avatar-story': user.isStory })}>
-          {user.avatar && <img className="avatar-img rounded-circle" src={user.avatar} alt="avatar" />}
-        </div>
-        <div className="overflow-hidden">
-          <Link className="h6 mb-0 stretched-link" to="">
-            {user.name}
-          </Link>
-          <div className="small text-secondary text-truncate">{user.lastMessage}</div>
-        </div>
-        <div className="small ms-auto text-nowrap"> {timeSince(user.lastActivity)} </div>
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    if (user) {
+      setIsLoading(false)
+    }
+  }, [user])
+
+  if (isLoading) {
+    return (
+      <li className="mt-3 hstack gap-3 align-items-center position-relative toast-btn">
+        <Spinner animation="border" size="sm" className="ms-auto" />
+        <span className="ms-2">Loading user...</span>
       </li>
-    </>
+    )
+  }
+
+  return (
+    <li
+      onClick={() => {
+        openToast()
+        changeActiveChat(user.id)
+      }}
+      className="mt-3 hstack gap-3 align-items-center position-relative toast-btn"
+      data-target="chatToast"
+    >
+      <div className={clsx(`avatar status-${user.status}`, { 'avatar-story': user.isStory })}>
+        {user.profilePictureUrl && <img className="avatar-img rounded-circle" src={user.profilePictureUrl} alt="avatar" />}
+      </div>
+      <div className="overflow-hidden">
+        <Link className="h6 mb-0 stretched-link" to="">
+          {`${user.firstName} ${user.lastName}`}
+        </Link>
+        <div className="small text-secondary text-truncate">{user.lastMessage}</div>
+      </div>
+      {/* <div className="small ms-auto text-nowrap">{timeSince(user.lastActivity)}</div> */}
+    </li>
   )
 }
+
 
 const Messaging = () => {
   const { isTrue: isOpen, toggle, setTrue } = useToggle()
   const { activeChat } = useChatContext()
   const { isTrue: isOpenCollapseToast, toggle: toggleToastCollapse } = useToggle(true)
-
+  const [loading, setLoading] = useState(true)
+  const [allUserMessages, setAllUserMessages] = useState<UserType[]>([])
   const [userMessages, setUserMessages] = useState<ChatMessageType[]>([])
+  const { user } = useAuthContext()
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter message'),
   })
@@ -185,13 +208,31 @@ const Messaging = () => {
       reset()
     }
   }
-  const allUserMessages = useFetchData<UserType[]>(getAllUsers)
+
+  const fetchChatsList = async () =>{
+    try {
+      setLoading(true)
+      const res = await makeApiRequest<{ data: any[] }>({
+        method: 'POST',
+        url: 'api/v1/connection/get-connection-list',
+        data: { userId: user?.id, profileId:user?.id},
+      }) 
+      setAllUserMessages(res.connections)
+    } catch (error) {
+      console.error(error)
+    }finally{
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchChatsList(); 
+  },[])
 
   return (
     <>
       <ul className="list-unstyled">
         {allUserMessages?.map((user, idx) => <UserCard user={user} key={idx} openToast={setTrue} />)}
-
         <li className="mt-3 d-grid">
           <Link className="btn btn-primary-soft" to="/messaging">
             
