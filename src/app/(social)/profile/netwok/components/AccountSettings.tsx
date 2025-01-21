@@ -108,7 +108,7 @@ const AccountSettings = () => {
         console.log('Request body:', requestBody);
 
         const response = await fetch(
-          ' http://3.101.12.130:5000/api/v1/auth/update-or-create-Profile',
+          ' https://strengthholdings.com/api/v1/auth/update-or-create-Profile',
           {
             method: 'POST',
             headers: {
@@ -125,13 +125,13 @@ const AccountSettings = () => {
         const result = await response.json();
         console.log(result);
 
-        for (const key in result) {
-          if (user[key]) {
-            user[key] = result[key];
-          }
-        }
+        // for (const key in result) {
+        //   if (user[key]) {
+        //     user[key] = result[key];
+        //   }
+        // }
 
-        saveSession(user);
+        // saveSession(user);
         navigate('/');
       } else {
         toast.error('Uploading photo required');
@@ -147,7 +147,7 @@ const AccountSettings = () => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          ' http://3.101.12.130:5000/api/v1/auth/get-user-Profile',
+          ' https://strengthholdings.com/api/v1/auth/get-user-Profile',
           {
             method: 'POST',
             headers: {
@@ -248,7 +248,7 @@ const AccountSettings = () => {
             control={control}
             containerClassName="col-12"
           />
-          <DropzoneFormInput
+          {/* <DropzoneFormInput
             icon={BsImages}
             onFileUpload={handleCoverPhotoChange}
             showPreview={true}
@@ -259,7 +259,7 @@ const AccountSettings = () => {
             onFileUpload={handleFileUploadProfile}
             showPreview={true}
             text="Drag here or click to upload profile photo."
-          />
+          /> */}
           <Col xs={12} className="mt-3">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Posting...' : 'Update Profile'}

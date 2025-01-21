@@ -96,7 +96,7 @@ const AppRouter = (props: RouteProps) => {
       ))}
       <Route path='/business-seller' element={<BusinessSellerForm/>}></Route>
       <Route path='/business-acquirer' element={<BusinessBuyerForm/>}></Route>
-      <Route path='/entreprenuer' element={<Entrepreneurform/>}></Route>
+      {/* <Route path='/entreprenuer' element={<Entrepreneurform/>}></Route> */}
       <Route path='/investor' element={<InvestorForm/>}></Route>
       <Route path='/join-live' element={<JoinRoom/>} />
       <Route path='/live' element={<Live/>} />

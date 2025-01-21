@@ -42,10 +42,10 @@ const navigate = useNavigate();
 const [loading, setLoading] = useState(false);
   const { user,saveSession} = useAuthContext();
   // console.log('---account settings---',user);
-  console.log('profile in account settings',profile?.personalDetails?.gender);
+  console.log('profile in account settings',profile);
   
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit,reset } = useForm({
     resolver: yupResolver(schema),
     defaultValues : {
       fName : user?.firstName,
@@ -53,7 +53,7 @@ const [loading, setLoading] = useState(false);
       email : user?.emailAddress,
       occupation : user?.userRole,
       gender : profile?.personalDetails?.gender,
-      dob  : user?.dob
+      dob  : profile?.personalDetails?.dob,
     }
   });
 
@@ -105,8 +105,8 @@ const [loading, setLoading] = useState(false);
         const requestBody : UserType = {
           occupation: data.occupation,
           userId: user?.id,
-          profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
-          bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
+          // profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
+          // bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
           firstName: data.fName,
           lastName: data.lName,
           dob: data.dob,
@@ -140,7 +140,7 @@ const [loading, setLoading] = useState(false);
 
        
      
-      const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/update-or-create-Profile', {
+      const response = await fetch(' https://strengthholdings.com/api/v1/auth/update-or-create-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -155,13 +155,13 @@ const [loading, setLoading] = useState(false);
       const result = await response.json();
       console.log(result); // Handle response accordingly
 
-      for(const key in result) {
-        if(user[key]) {
-          user[key] = result[key];
-        }
-      }
+      // for(const key in result) {
+      //   if(user[key]) {
+      //     user[key] = result[key];
+      //   }
+      // }
 
-      saveSession(user);
+      // saveSession(user);
       navigate("/");
 
     
@@ -180,27 +180,38 @@ const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/get-user-Profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId: user?.id }),
-        });
-
+        const response = await fetch(
+          'https://strengthholdings.com/api/v1/auth/get-user-Profile',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user?.id }),
+          }
+        );
+  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
+  
         const data = await response.json();
         setProfile(data.data);
+  
+        // Update form values with fetched profile data
+        reset({
+          fName: user?.firstName || '',
+          lName: user?.lastName || '',
+          email: user?.emailAddress || '',
+          occupation: user?.userRole || '',
+          gender: data.data.personalDetails?.gender || '',
+          dob: data.data.personalDetails?.dob || '', // Set date properly
+        });
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
     };
-
+  
     fetchUser();
-  }, [user?.id]);
+  }, [user?.id, reset]);
 
   return (
     <Card>
@@ -252,8 +263,13 @@ const [loading, setLoading] = useState(false);
             <Controller
               name="dob"
               control={control}
+              defaultValue={control._defaultValues.dob} // Set the defaultValue here
               render={({ field }) => (
-                <DateFormInput {...field} placeholder="YYYY-MM-DD" className="form-control" />
+                <DateFormInput 
+                  {...field} 
+                  placeholder="YYYY-MM-DD" 
+                  className="form-control" 
+                />
               )}
             />
           </Col>
@@ -274,8 +290,8 @@ const [loading, setLoading] = useState(false);
             <TextFormInput name="currentAddress.state" label="State" control={control} containerClassName="col-6" />
             <TextFormInput name="currentAddress.pincode" label="Pincode" control={control} containerClassName="col-6" />
           </Col> */}
-          <DropzoneFormInput  icon={BsImages}  onFileUpload={handleCoverPhotoChange} showPreview={true} text="Drag here or click to upload Cover photo" />
-              <DropzoneFormInput  icon={BsImages}  onFileUpload={handleFileUploadProfile} showPreview={true} text="Drag here or click to upload profile photo." />
+          {/* <DropzoneFormInput  icon={BsImages}  onFileUpload={handleCoverPhotoChange} showPreview={true} text="Drag here or click to upload Cover photo" />
+              <DropzoneFormInput  icon={BsImages}  onFileUpload={handleFileUploadProfile} showPreview={true} text="Drag here or click to upload profile photo." /> */}
           
           <Col xs={12} className="mt-3">
           <Button type="submit" disabled={loading}>

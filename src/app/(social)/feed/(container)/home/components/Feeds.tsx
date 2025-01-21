@@ -736,9 +736,14 @@ const PostSkeleton = () => {
     {posts.map((post, index) => (
       <PostCard 
         item={post} 
+        posts={posts}
+        setPosts={setPosts}
         key={post.Id || index} 
         isMediaKeys={false}
         onDelete={handleDelete} 
+        setIsCreated={isCreated}
+        tlRefresh={tlRefresh}
+        setTlRefresh={setTlRefresh}
       />
     ))}
   </InfiniteScroll>

@@ -34,7 +34,7 @@ const Followers = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch(' http://3.101.12.130:5000/api/v1/connection/get-connection-suggest', {
+      const response = await fetch(' https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,8 +68,8 @@ const Followers = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? ' http://3.101.12.130:5000/api/v1/connection/send-connection-request'
-      : ' http://3.101.12.130:5000/api/v1/connection/unsend-connection-request'
+      ? ' https://strengthholdings.com/api/v1/connection/send-connection-request'
+      : ' https://strengthholdings.com/api/v1/connection/unsend-connection-request'
 
     try {
       const res = await fetch(apiUrl, {

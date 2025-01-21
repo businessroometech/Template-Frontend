@@ -102,7 +102,7 @@ const UserModel = () => {
                     },
                 };
 
-                const response = await fetch(' http://3.101.12.130:5000/api/v1/auth/update-or-create-Profile', {
+                const response = await fetch(' https://strengthholdings.com/api/v1/auth/update-or-create-Profile', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody),
