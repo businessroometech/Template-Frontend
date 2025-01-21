@@ -337,7 +337,6 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
             className="w-100"
             onSubmit={handleSubmit((values) => {
               console.log('---- create event ----', values)
-              // console.log('Post button clicked')
             })}>
             <textarea
             

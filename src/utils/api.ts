@@ -1,5 +1,5 @@
 export const BaseUrl = () : string => {
-    return "https://app-backend-8r74.onrender.com/api/v1/";
+    return "http://3.101.12.130:5000/api/v1/";
 }
 
 export const SignUpUrl = () : string => {

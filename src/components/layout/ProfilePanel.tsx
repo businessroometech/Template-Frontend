@@ -28,7 +28,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const skeletonBaseColor = '#e3e3e3'; 
   const skeletonHighlightColor = '#f2f2f2';
 
-  // console.log("user", user);
+  //console.log("user", user);
   useEffect(() => {
     const fetchUser = async () => {
       setSkeletonLoading(true)

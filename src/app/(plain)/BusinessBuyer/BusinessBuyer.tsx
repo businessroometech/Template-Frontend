@@ -28,7 +28,7 @@ const BusinessBuyingForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/businessbuyer/create', {
+      fetch('http://3.101.12.130:5000/businessbuyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ const BusinessBuyerForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/businessseller/create', {
+      fetch('http://3.101.12.130:5000/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -509,7 +509,7 @@ const BusinessBuyerForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/businessselle/create', {
+      fetch('http://3.101.12.130:5000/businessselle/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -41,7 +41,7 @@ const InvestorForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/investor/create', {
+      fetch('http://3.101.12.130:5000/investor/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -406,7 +406,7 @@ const InvestorForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      fetch('https://app-backend-8r74.onrender.com/investor/create', {
+      fetch('http://3.101.12.130:5000/investor/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1966,6 +1966,8 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
+import {ToastContainer , Toast} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const InvestorForm = () => {
   const { user } = useAuthContext();
