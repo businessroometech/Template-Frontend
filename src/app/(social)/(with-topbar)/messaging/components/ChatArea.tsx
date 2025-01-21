@@ -157,7 +157,7 @@ const ChatArea = () => {
             <div className="d-sm-flex justify-content-between align-items-center">
               <div className="d-flex mb-2 mb-sm-0">
                 <div className="flex-shrink-0 avatar me-2">
-                  <img className="avatar-img rounded-circle" src={avatar} alt="" />
+                  <img className="avatar-img rounded-circle" src={avatar} alt={avatar} />
                 </div>
                 <div className="d-block flex-grow-1">
                   <h6 className="mb-0 mt-1">{name}</h6>
