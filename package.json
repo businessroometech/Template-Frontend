@@ -53,6 +53,7 @@
     "react-toastify": "^10.0.6",
     "simplebar-core": "^1.2.6",
     "simplebar-react": "^3.2.6",
+    "socket.io-client": "^4.8.1",
     "swiper": "^11.2.1",
     "tiny-slider": "^2.9.4",
     "yup": "^1.4.0",

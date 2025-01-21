@@ -54,7 +54,6 @@ const useSignIn = () => {
       setMessage('Verification token is missing.');
       return;
     }
-    console.log("token*********", token);
     
 
     const verifyEmail = async () => {
@@ -109,7 +108,7 @@ const useSignIn = () => {
         showNotification({ message: 'please verify email, Redirecting....', variant: 'info' })
         navigate('/auth/verify-email')
       }
-      else if (json?.data?.accessToken && json?.data?.userStatus === 1) {
+      else if (json?.data?.accessToken ) {
         saveSession(json?.data?.user);
         redirectUser()
         showNotification({ message: 'Successfully logged in. Redirecting....', variant: 'info' })

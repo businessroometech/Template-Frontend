@@ -42,8 +42,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 
-  console.log('---postId---',post.userId);
-  console.log('--setIsCreated---',setIsCreated)
+  // console.log('---postId---',post.userId);
+  // console.log('-----testing-----')
   const deletePost = async (postId: string): Promise<void> => {
     try {
       // Validate PostId
