@@ -15,7 +15,7 @@ import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
 
-const PostCard = ({ item, isMediaKeys }) => {
+const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts }) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +43,7 @@ const PostCard = ({ item, isMediaKeys }) => {
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 
   console.log('---postId---',post.userId);
-  console.log('-----testing-----')
+  console.log('--setIsCreated---',setIsCreated)
   const deletePost = async (postId: string): Promise<void> => {
     try {
       // Validate PostId
@@ -53,7 +53,7 @@ const PostCard = ({ item, isMediaKeys }) => {
   
       // Send a DELETE request to the backend
       const response = await fetch(' http://3.101.12.130:5000/api/v1/post/delete-userpost-byPostId', {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -66,8 +66,19 @@ const PostCard = ({ item, isMediaKeys }) => {
       }
   
       const data = await response.json();
-      setRefresh(() => refresh+1);
+      console.log('dl',tlRefresh)
+      setTlRefresh(() => tlRefresh+1);
+      console.log('on delete postId ',post.Id,' item Id ',item.Id)
+      const index = (posts as []).findIndex((p) => p?.post?.Id === item?.post?.Id)
+
+      if (index !== -1) {
+        console.log(posts.splice(index, 1));
+        setPosts(() => posts.splice(index, 1));
+      }
+     
+      console.log('dlr',tlRefresh);
       console.log('Post deleted successfully:', data.message);
+      alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
     }
@@ -76,7 +87,6 @@ const PostCard = ({ item, isMediaKeys }) => {
   const handleDelete = async (postId: string) => {
     try {
       await deletePost(postId);
-      alert('Post deleted successfully!');
       // Optionally, refresh the post list here
     } catch (error) {
       alert('Failed to delete the post. Please try again.');

@@ -102,7 +102,7 @@ const Home = () => {
           onSelectRole={handleRoleSelect}
         />
        
-        <Feeds isCreated={isCreated} />
+        <Feeds isCreated={setIsCreated} />
       </Col>
 
       <Col lg={3} style={{ marginTop : '0px'}}>
