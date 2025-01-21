@@ -7,51 +7,46 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 
-const ChatUserList = () => {
- // const chats = useFetchData(getAllUsers)
-  const { width } = useViewPort()
-  const { chatList } = useChatContext()
-  const { user } = useAuthContext()
-  const [chats, setChats] = useState<chat[]>([])
-  const [loading, setLoading] = useState(false)
-  const [chatsList, setChatsList] = useState<any[]>([])
+const ChatUserList = ({ setTotalChats }) => {
+  const { width } = useViewPort();
+  const { chatList } = useChatContext();
+  const { user } = useAuthContext();
+  const [chats, setChats] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const fetchConnections = async () =>{
-    console.log(width)
+  const fetchConnections = async () => {
     try {
-      setLoading(true)
-      const res = await makeApiRequest<{ data: any[] }>({
+      setLoading(true);
+      const res = await makeApiRequest({
         method: 'POST',
         url: 'api/v1/connection/get-connection-list',
-        data: { userId: user?.id, profileId:user?.id},
-      }) 
-      setChats(res.connections)
+        data: { userId: user?.id, profileId: user?.id },
+      });
+      setChats(res.connections);
+      setTotalChats(res.connections.length);
     } catch (error) {
-      console.error(error)
-    }finally{
-      setLoading(false)
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchConnections();
-  },[])
-  
+  }, []);
 
   return (
     <>
       {width >= 992 ? (
-        <>
-        {chats &&
-          <ChatUsers chats={chats} />}
-        </>
+        chats && <ChatUsers chats={chats} />
       ) : (
-         <Offcanvas show={chatList.open} onHide={chatList.toggle} placement="start" tabIndex={-1} id="offcanvasNavbar">
-         <OffcanvasHeader closeButton />
-         <OffcanvasBody className="p-0">{chats && <ChatUsers chats={chats} />}</OffcanvasBody>
-         </Offcanvas>
+        <Offcanvas show={chatList.open} onHide={chatList.toggle} placement="start" tabIndex={-1} id="offcanvasNavbar">
+          <OffcanvasHeader closeButton />
+          <OffcanvasBody className="p-0">{chats && <ChatUsers chats={chats} />}</OffcanvasBody>
+        </Offcanvas>
       )}
     </>
-  )
-}
-export default ChatUserList
+  );
+};
+
+export default ChatUserList;
