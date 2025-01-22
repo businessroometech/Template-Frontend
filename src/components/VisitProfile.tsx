@@ -124,10 +124,10 @@ const ProfileVisits = () => {
                     </Link>
                   ) : visit.connectionStatus === "none" ? (
                     <Button
-                      // variant={sentStatus[visit.visitor.id] ? 'primary' : 'primary-soft'}
+                      variant={sentStatus[visit.visitor.id] ? 'primary' : 'primary-soft'}
                       className="rounded-circle icon-md ms-auto flex-centered"
-                      // onClick={() => handleUserRequest(visit.visitor.id)}
-                      // disabled={loading === visit.visitor.id}
+                      onClick={() => handleUserRequest(visit.visitor.id)}
+                      disabled={loading === visit.visitor.id}
                     >
                       {loading === visit.visitor.id ? (
                         <Loading size={15} loading={true} />
