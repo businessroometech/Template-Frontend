@@ -379,7 +379,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           <li className="nav-item d-inline">
             <a className="nav-link bg-light py-2 px-4 mb-2" onClick={handlePostClick}>
               <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
-              Write article
+              Post
             </a>
           </li>
 
