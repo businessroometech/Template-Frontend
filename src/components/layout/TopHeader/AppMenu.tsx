@@ -66,11 +66,56 @@ const MenuItem = ({ item, linkClassName, level, itemClassName }: SubMenus) => {
 }
 
 const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
-  const Icon = item.icon
+  const Icon = item.icon;
+  const [about,setAbout] = useState<boolean>(false);
+
   return (
-    <DropdownItem as={Link} to={item.url ?? ''} target={item.target} className={linkClassName}>
-      {Icon && <Icon className="text-success me-2" />}
-      {item.label}
+    <DropdownItem
+      as={Link}
+      to={item.url ?? ''}
+      target={item.target}
+      style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+    >
+    <div
+      style={{
+        padding: '8px',
+        borderRadius : '10%',
+        marginLeft : '20px',
+        background: 'rgba(136, 209, 254, 0.2)',
+        backdropFilter: 'blur(8px)',
+        transition: 'background 0.3s ease',
+      }}
+      about='Label'
+      
+      onMouseEnter={(e) => {
+        (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
+        setAbout(true);
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.2)');
+        setAbout(false);
+      }}
+    >
+      {Icon && <Icon style={{ color: '#1ea1f2' }} />}
+    </div>
+      {about && <span
+        style={{
+          position: 'absolute',
+          marginTop : '40px',
+          marginLeft : '15px',
+          top: '50%',
+          zIndex : 10000,
+          transform: 'translateY(-50%)',
+          background: '#333',
+          color: '#fff',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          whiteSpace: 'nowrap',
+        }}
+        className="label"
+      >
+        {item.label}
+      </span>}
     </DropdownItem>
   )
 }

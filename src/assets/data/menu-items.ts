@@ -56,7 +56,7 @@ export const PROFILE_MENU_ITEMS: MenuItemType[] = [
 export const APP_MENU_ITEMS: MenuItemType[] = [
   {
     key: 'demos',
-    label: '',
+    label: 'Live',
     isTitle: true,
     icon : Tv , //.....................change icon here.........................//
     url : "/live"
@@ -121,7 +121,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
   },
   {
     key: 'pages',
-    label: '',
+    label: 'Market Place',
     isTitle: true,
     icon: Building2 , //..................change icon here...................//
     url: "/"
@@ -270,7 +270,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
   },
   {
     key: 'accounts',
-    label: '',
+    label: 'Settings',
     isTitle: true,
     icon: Settings, //....................change icon here.................//
     url: "/settings/account"
@@ -374,7 +374,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
   },
   {
     icon :  Network,
-    label: '',
+    label: 'Network',
     url: '/AccountClone',
   },
 ]
