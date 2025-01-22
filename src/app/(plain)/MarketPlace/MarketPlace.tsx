@@ -247,30 +247,69 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank } from 'lucide-react';
+import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank , Trash2 } from 'lucide-react';
 import ProfilePanel from '@/components/layout/ProfilePanel';
 import { profilePanelLinksData2 } from '@/assets/data/layout';
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
+import axios from 'axios';
+
 // eslint-disable-next-line no-sparse-arrays
 const categories = [
     'SaaS', 'Mobile App',"Shopify app",, 'E-commerce', "Marketplace",'Agency'
-   
+   ,'Content' , 
 ];
 
 const MarketPlace = () => {
 
 
 
-  
+
+
+
   const navigate = useNavigate();
   const { user } = useAuthContext();
   console.log("user" , user)
   const [myBusinessData, setMyBusinessData] = useState([]);
   const [allBusinessData, setAllBusinessData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [activeTab, setActiveTab] = useState('myBusiness');
+  const [activeTab, setActiveTab] = useState('exploreMore');
   const [loading, setLoading] = useState(true);
   const isMyBusiness = activeTab === 'myBusiness';
+
+
+
+
+
+
+  const handledelete = async() => {
+
+  
+  try {
+    const response = await fetch(` https://strengthholdings.com/businessseller/detail/${user.id}`);
+    const data = await response.json();
+    console.log("data...." , data)
+   console.log("comparision" , data.data[0].UserId , user?.id)
+   console.log(data.data[0].id)
+    if (user?.id == data.data[0].UserId  ) {
+      const response = await fetch(`http://localhost:5000/businessseller/delete/${data.data[0].id}`, {
+        method: "DELETE",
+      });
+      console.log(await response.json())
+    
+    }
+    console.log("deleted")
+  } catch (error) {
+    console.log(error ,"in deletion")
+  }
+  }
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     const fetchMyBusiness = async () => {
@@ -287,6 +326,7 @@ const MarketPlace = () => {
         }
       }
     };
+    console.log("my business data" , myBusinessData.length)
 
     const fetchAllBusiness = async () => {
       try {
@@ -482,12 +522,14 @@ const MarketPlace = () => {
               >
                 Explore More
               </button>
+
               <button
                 style={tabStyle(activeTab === 'myBusiness')}
                 onClick={() => setActiveTab('myBusiness')}
               >
                 My Listing
-              </button>
+              </button> 
+             
             </div>
 
             {loading ? (
@@ -510,121 +552,136 @@ const MarketPlace = () => {
                   const data = isMyBusiness ? business.data[0] : business;
                   return (
                     <div key={business.id} className="col-md-6">
-                      <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                        height: '100%',
-                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                        cursor: 'pointer',
-                      }} className="hover-card">
-                        <div style={{ padding: '1.5rem' }}>
-                          <div style={{ 
-                            display: 'flex', 
-                            justifyContent: 'space-between', 
-                            alignItems: 'start',
-                            marginBottom: '1rem'
-                          }}>
-                            <div>
-                              <h5 style={{ 
-                                fontSize: '1.25rem', 
-                                fontWeight: '600',
-                                marginBottom: '0.5rem'
-                              }}>
-                                {isMyBusiness ? business.data[0].businessName : business.businessName || "Unnamed"}
-                              </h5>
-                              <div style={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '0.5rem',
-                                color: '#6c757d'
-                              }}>
-                                <MapPin size={16} />
-                                <span style={{ fontSize: '0.875rem' }}>{isMyBusiness ? business.data[0].businessLocation
- : business.businessLocation
-}</span>
-                              </div>
-                            </div>
-                            <div style={{ 
-                              backgroundColor: '#e9ecef',
-                              padding: '0.5rem 1rem',
-                              borderRadius: '20px',
-                              fontSize: '0.75rem',
-                              fontWeight: '500'
-                            }}>
-                              {isMyBusiness ? business.data[0].businessType
- : business.businessType
- || "undefined"}
-                            </div>
-                          </div>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+        height: '100%',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        cursor: 'pointer',
+      }} className="hover-card">
+        <div style={{ padding: '1.5rem' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'start',
+            marginBottom: '1rem'
+          }}>
+            <div>
+              <h5 style={{ 
+                fontSize: '1.25rem', 
+                fontWeight: '600',
+                marginBottom: '0.5rem'
+              }}>
+                {isMyBusiness ? business.data[0].businessName : business.businessName || "Unnamed"}
+              </h5>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem',
+                color: '#6c757d'
+              }}>
+                <MapPin size={16} />
+                <span style={{ fontSize: '0.875rem' }}>{isMyBusiness ? business.data[0].businessLocation : business.businessLocation}</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <div style={{ 
+                backgroundColor: '#e9ecef',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                fontSize: '0.75rem',
+                fontWeight: '500'
+              }}>
+                {isMyBusiness ? business.data[0].businessType : business.businessType || "undefined"}
+              </div>
+              <button
+                onClick={() => {
+                  console.log("Clicking....")
+                  handledelete()
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '0.25rem',
+                  cursor: 'pointer',
+                  color: '#dc3545',
+                  transition: 'color 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                title="Delete business"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          </div>
 
-                          <div style={{ 
-                            display: 'flex', 
-                            gap: '0.75rem',
-                            marginBottom: '1.5rem' 
-                          }}>
-                             <MetricBox 
-                              icon={TrendingUp}
-                              label="TTM Revenue"
-                              value={formatCurrency(isMyBusiness ? business.data[0].annualRevenue : business.annualRevenue)}
-                            />
-                            <MetricBox 
-                              icon={PiggyBank}
-                              label="TTM Profit"
-                              value={formatCurrency(isMyBusiness ? business.data[0].annualProfit
-                                : business.annualProfit
-                              )}
-                            />
-                            <MetricBox 
-                              icon={DollarSign}
-                              label="Asking Price"
-                              value={formatCurrency(isMyBusiness ? business.data[0].askingPrice : business.askingPrice)}
-                              
-                            />
-                           
-                          </div>
-                          <div style={{ marginBottom: '1.5rem' }}>
-                            <h6 style={{ 
-                              fontSize: '0.875rem', 
-                              fontWeight: '600',
-                              marginBottom: '0.5rem'
-                            }}>
-                              About
-                            </h6>
-                            <p style={{ 
-                              fontSize: '0.875rem',
-                              color: '#6c757d',
-                              margin: 0,
-                              display: '-webkit-box',
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden'
-                            }}>
-                              {isMyBusiness ? business.data[0].productsServices : business.productsServices}
-                            </p>
-                          </div>
+          <div style={{ 
+            display: 'flex', 
+            gap: '0.75rem',
+            marginBottom: '1.5rem' 
+          }}>
+            <MetricBox 
+              icon={TrendingUp}
+              label="TTM Revenue"
+              value={formatCurrency(isMyBusiness ? business.data[0].annualRevenue : business.annualRevenue)}
+            />
+            <MetricBox 
+              icon={PiggyBank}
+              label="TTM Profit"
+              value={formatCurrency(isMyBusiness ? business.data[0].annualProfit : business.annualProfit)}
+            />
+            <MetricBox 
+              icon={DollarSign}
+              label="Asking Price"
+              value={formatCurrency(isMyBusiness ? business.data[0].askingPrice : business.askingPrice)}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h6 style={{ 
+              fontSize: '0.875rem', 
+              fontWeight: '600',
+              marginBottom: '0.5rem'
+            }}>
+              About
+            </h6>
+            <p style={{ 
+              fontSize: '0.875rem',
+              color: '#6c757d',
+              margin: 0,
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}>
+              {isMyBusiness ? business.data[0].productsServices : business.productsServices}
+            </p>
+          </div>
 
-                          <Link 
-                            to={`/marketplacedetails/${isMyBusiness ? business.data[0].id : business.id}`}
-                            style={{ textDecoration: 'none' }}
-                          >
-                            <button style={{
-                              width: '100%',
-                              padding: '0.75rem',
-                              backgroundColor: '#0d6efd',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '8px',
-                              fontWeight: '500',
-                              transition: 'background-color 0.2s ease'
-                            }}>
-                              {isMyBusiness ? 'View Details' : 'Learn More'}
-                            </button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
+          <Link 
+            to={`/marketplacedetails/${isMyBusiness ? business.data[0].id : business.id}`}
+            style={{ textDecoration: 'none' }}
+          >
+            <button style={{
+              width: '100%',
+              padding: '0.75rem',
+              backgroundColor: '#0d6efd',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: '500',
+              transition: 'background-color 0.2s ease'
+            }}>
+              {isMyBusiness ? 'View Details' : 'Learn More'}
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
                   );
                 })}
                 {getCurrentData().length === 0 && (
