@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from 'react-bootstrap'
 import Skeleton from 'react-loading-skeleton'
+
 import 'react-loading-skeleton/dist/skeleton.css'
 import {
   BsBookmarkCheck,
@@ -90,11 +91,11 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     resolver: yupResolver(eventFormSchema),
   })
 
-  const [thoughts, setThoughts] = useState('');
-  const [photoQuote, setPhotoQuote] = useState('');
-  const [videoQuote, setVideoQuote] = useState('');
-  const [awsIds, setAwsIds] = useState<any>([]);
-  const [skeletonLoading, setSkeletonLoading] = useState(true);
+  const [thoughts, setThoughts] = useState('')
+  const [photoQuote, setPhotoQuote] = useState('')
+  const [videoQuote, setVideoQuote] = useState('')
+  const [awsIds, setAwsIds] = useState<any>([])
+  const [skeletonLoading, setSkeletonLoading] = useState(true)
 
   // const {user} = useAuthContext();
   const [profile, setProfile] = useState({})
@@ -319,13 +320,13 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           </div>
         </div>} */}
 
-      <Card className="card-body" style={{maxHeight:"10em"}}>
+      <Card className="card-body" style={{ maxHeight: '9em' }}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
-            <div className="avatar avatar-xs me-2">
+            <div className="avatar avatar-s me-2">
               <span role="button">
                 {skeletonLoading ? (
-                  <Skeleton height={40} width={40}  className='rounded-circle' baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor}/>
+                  <Skeleton height={40} width={40} className="rounded-circle" baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                 ) : (
                   <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
                 )}
@@ -339,43 +340,49 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               console.log('---- create event ----', values)
             })}>
             <textarea
-            
-              className="form-control pe-4 border-0"
-              rows={2}
+              className="form-control pe-4 border rounded-pill"
+              style={{
+                borderColor: '#212529',
+                color: '#212529',
+                backgroundColor: '#f8f9fa', // Light gray background
+                fontSize: '14px', // Slightly smaller, readable text
+              }}
+              rows={1}
               data-autoresize
               placeholder="Share your thoughts..."
               value={thoughts}
               onChange={(e) => setThoughts(e.target.value)} // Update state with input value
-              
             />
           </form>
         </div>
 
-        <ul className="nav nav-pills nav-stack small fw-normal">
-          <li className="nav-item">
-            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={togglePhotoModel}>
+        <ul className="nav nav-pills d-inline-flex small fw-normal justify-content-between flex-wrap">
+          <li className="nav-item d-inline">
+            <a className="nav-link bg-light py-2 px-4 mb-2" onClick={togglePhotoModel}>
               <BsImageFill size={20} className="text-success pe-2" />
               Photo
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={toggleVideoModel}>
+          <li className="nav-item d-inline">
+            <a className="nav-link bg-light py-2 px-4 mb-2" onClick={toggleVideoModel}>
               <BsCameraReelsFill size={20} className="text-info pe-2" />
               Video
             </a>
           </li>
-          {/* <li className="nav-item">
-            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={toggleEvent}>
-              <BsCalendar2EventFill size={20} className="text-danger pe-2" />
-              Event
-            </a>
-          </li> */}
-          <li className="nav-item">
-            <a className="nav-link bg-light py-1 px-2 mb-0" onClick={handlePostClick}>
+          {/* Uncomment if needed */}
+          {/* <li className="nav-item d-inline">
+    <a className="nav-link bg-light py-1 px-3 mb-2" onClick={toggleEvent}>
+      <BsCalendar2EventFill size={20} className="text-danger pe-2" />
+      Event
+    </a>
+  </li> */}
+          <li className="nav-item d-inline">
+            <a className="nav-link bg-light py-2 px-4 mb-2" onClick={handlePostClick}>
               <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
-              {'   Post'}
+              Write article
             </a>
           </li>
+
           {/* <Dropdown drop="start" className="nav-item ms-lg-auto">
             <DropdownToggle
               as="a"
@@ -440,7 +447,6 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
                 onChange={(e) => setPhotoQuote(e.target.value)}
                 placeholder="Share your thoughts..."
                 value={photoQuote} // Only use value for controlled input
-                
               />
             </form>
           </div>

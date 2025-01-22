@@ -403,7 +403,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
                 paddingRight: '10px',
                 paddingLeft: '10px',
                 backgroundColor: '#007bff', // Blue background
-                borderRadius: '20%',        // Circular button
+                borderRadius: '20%',// Circular button
                 cursor: 'pointer',
               }}
             >
@@ -417,12 +417,12 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
         ) : (
           <ul className="comment-wrap list-unstyled px-3">
             {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-              <CommentItem 
-                key={index} 
-                post={post} 
-                comment={comment} 
-                level={0} 
-                refresh={refresh} 
+              <CommentItem
+                key={index}
+                post={post}
+                comment={comment}
+                level={0}
+                refresh={refresh}
                 setRefresh={setRefresh}
                 commentCount = {commentCount}
                 setCommentCount = {setCommentCount}
