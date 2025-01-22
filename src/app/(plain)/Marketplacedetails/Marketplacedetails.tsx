@@ -495,7 +495,7 @@ const MarketplaceDetails = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -520,7 +520,7 @@ const MarketplaceDetails = () => {
   }, [user]);
 
   useEffect(() => {
-    fetch(`https://strengthholdings.com/businessseller/detailuuid/${id}`)
+    fetch(` https://strengthholdings.com/businessseller/detailuuid/${id}`)
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));
@@ -619,7 +619,8 @@ const MarketplaceDetails = () => {
                 <KeyMetric 
                   icon={TrendingUp} 
                   label="TTM Revenue" 
-                  value={`$${businessDetails.data.revenue}`} 
+                  value={`$${businessDetails.data.annualRevenue
+}`} 
                 />
               </div>
               <div style={{ 
@@ -629,7 +630,7 @@ const MarketplaceDetails = () => {
                 <KeyMetric 
                   icon={PiggyBank} 
                   label="TTM Profit" 
-                  value={`$${businessDetails.data.profit}`} 
+                  value={`$${businessDetails.data.annualProfit}`} 
                 />
               </div>
               <div style={{ 
@@ -652,24 +653,28 @@ const MarketplaceDetails = () => {
                 </div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Business Overview</h2>
               </div>
-              <p style={{ color: '#4b5563', marginBottom: '1rem' }}>{businessDetails.data.additionalInformation}</p>
+              <p style={{ color: '#4b5563', marginBottom: '1rem' }}>{businessDetails.data.productsServices
+              }</p>
               <div className="row g-3">
                 <div className="col-6">
                   <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
                     <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Ownership</div>
-                    <div style={{ color: '#111827' }}>{businessDetails.data.ownershipPercentage}%</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.ownershipStructure}</div>
                   </div>
                 </div>
                 <div className="col-6">
                   <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
                     <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Industry</div>
-                    <div style={{ color: '#111827' }}>{businessDetails.data.industry}</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.businessType
+                    }</div>
                   </div>
                 </div>
                 <div className="col-6">
                   <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
-                    <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Stage</div>
-                    <div style={{ color: '#111827' }}>{businessDetails.data.businessStage}</div>
+                    <div style={{ fontWeight: '500', marginBottom: '0.5rem' }}>Operating Years</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.
+operatingYears
+}</div>
                   </div>
                 </div>
                 <div className="col-6">
@@ -695,20 +700,23 @@ const MarketplaceDetails = () => {
                     <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '1rem' }}>Revenue Breakdown</h3>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ color: '#6b7280' }}>Monthly Revenue</span>
-                      <span style={{ fontWeight: '500' }}>${businessDetails.data.revenue/12}</span>
+                      <span style={{ fontWeight: '500' }}>${businessDetails.data.annualRevenue
+/12}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ color: '#6b7280' }}>Profit Margin</span>
                       <span style={{ fontWeight: '500' }}>
-                        {((businessDetails.data.profit / businessDetails.data.revenue) * 100).toFixed(1)}%
+                        {((businessDetails.data.annualProfit
+ / businessDetails.data.annualRevenue) * 100).toFixed(1)}%
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="col-6">
                   <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '1rem' }}>Assets Included</h3>
-                    <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.assetsForSale}</p>
+                    <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '1rem' }}>Assets Value</h3>
+                    <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.assetValue
+                    }</p>
                   </div>
                 </div>
               </div>
@@ -731,8 +739,8 @@ const MarketplaceDetails = () => {
                 </div>
                 <div className="col-6">
                   <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
-                    <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Expected Timeline</h3>
-                    <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.expectedTimeline}</p>
+                    <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Desired Timeline</h3>
+                    <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.desiredTimeline}</p>
                   </div>
                 </div>
                 <div className="col-12">

@@ -39,7 +39,7 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
   {
     image: personImg,
     name: 'Who viewed my profile',
-    link: '/profile/connections',
+    link: '/profile-visitors',
   },
   // {
   //   image: earthImg,
@@ -74,31 +74,31 @@ export const profilePanelLinksData2: ProfilePanelLink[] = [
     name: 'Feed',
     link: '/profile/feed',
   },
-  {
-    image: medalImg,
-    name: 'Popular',
-    link: '',
-  },
-  {
-    image: clockImg,
-    name: 'Recent',
-    link: '',
-  },
+  // {
+  //   image: medalImg,
+  //   name: 'Popular',
+  //   link: '',
+  // },
+  // {
+  //   image: clockImg,
+  //   name: 'Recent',
+  //   link: '',
+  // },
   {
     image: likeImg,
     name: 'Subscriptions',
     link: '',
   },
-  {
-    image: starImg,
-    name: 'My favorites',
-    link: '',
-  },
-  {
-    image: taskDoneImg,
-    name: 'Wishlist',
-    link: '',
-  },
+  // {
+  //   image: starImg,
+  //   name: 'My favorites',
+  //   link: '',
+  // },
+  // {
+  //   image: taskDoneImg,
+  //   name: 'Wishlist',
+  //   link: '',
+  // },
   {
     image: notificationImg,
     name: 'Notifications',
@@ -109,16 +109,16 @@ export const profilePanelLinksData2: ProfilePanelLink[] = [
     name: 'Settings',
     link: '/settings/account',
   },
-  {
-    image: arrowBoxedImg,
-    name: 'Logout',
-    link: '/auth/sign-in',
-  },
-  {
-    image: arrowBoxedImg,
-    name: 'Logout',
-    link: '/auth/verify-email',
-  },
+  // {
+  //   image: arrowBoxedImg,
+  //   name: 'Logout',
+  //   link: '/auth/sign-in',
+  // },
+  // {
+  //   image: arrowBoxedImg,
+  //   name: 'Logout',
+  //   link: '/auth/verify-email',
+  // },
 ]
 
 export const settingPanelLinksData: ProfilePanelLink[] = [

@@ -740,7 +740,7 @@ const BusinessSellerForm = () => {
     };
 
     try {
-      const response = await fetch('https://strengthholdings.com/businessseller/create', {
+      const response = await fetch(' https://strengthholdings.com/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -756,6 +756,7 @@ const BusinessSellerForm = () => {
       const responseData = await response.json();
       toast.success("Form submitted successfully!");
       navigate('/');
+      console.log(responseData)
     } catch (error) {
       console.error("Error details:", error);
       toast.error("There was an error submitting the form.");

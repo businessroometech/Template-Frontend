@@ -244,12 +244,13 @@
 
 
 
-
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank } from 'lucide-react';
-
+import ProfilePanel from '@/components/layout/ProfilePanel';
+import { profilePanelLinksData2 } from '@/assets/data/layout';
+import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
 // eslint-disable-next-line no-sparse-arrays
 const categories = [
     'SaaS', 'Mobile App',"Shopify app",, 'E-commerce', "Marketplace",'Agency'
@@ -257,6 +258,10 @@ const categories = [
 ];
 
 const MarketPlace = () => {
+
+
+
+  
   const navigate = useNavigate();
   const { user } = useAuthContext();
   console.log("user" , user)
@@ -366,7 +371,7 @@ const MarketPlace = () => {
             borderRight: '1px solid #dee2e6',
             minHeight: '100vh'
           }}>
-            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            {/* <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
               <div style={{ marginBottom: '1rem' }}>
                 <img
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -378,13 +383,13 @@ const MarketPlace = () => {
                     border: '3px solid #e9ecef'
                   }}
                 />
-              </div>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{user?.firstName} {user?.lastName}</h3>
+              </div> */}
+              {/* <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{user?.firstName} {user?.lastName}</h3>
               <p style={{ color: '#6c757d', marginBottom: '0.25rem' }}>{user?.role}</p>
               <p style={{ color: '#6c757d', fontSize: '0.875rem' }}>{user?.country}</p>
-            </div>
+            </div> */}
 
-            <div style={{ marginBottom: '2rem' }}>
+            {/* <div style={{ marginBottom: '2rem' }}>
               <Link to="/feed/home" className="d-flex align-items-center text-decoration-none text-dark p-2 mb-2 rounded hover-bg-light">
                 🏠 <span className="ms-2">Feed</span>
               </Link>
@@ -397,9 +402,9 @@ const MarketPlace = () => {
               <Link to="/settings/account" className="d-flex align-items-center text-decoration-none text-dark p-2 rounded hover-bg-light">
                 ⚙️ <span className="ms-2">Settings</span>
               </Link>
-            </div>
+            </div> */}
 
-            <Link to="/profile/about" style={{ textDecoration: 'none' }}>
+            {/* <Link to="/profile/about" style={{ textDecoration: 'none' }}>
               <button style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -412,8 +417,17 @@ const MarketPlace = () => {
               }}>
                 View Profile
               </button>
-            </Link>
+            </Link> */}
+ <SimplebarReactClient className="offcanvas-start">
+                <ProfilePanel links={profilePanelLinksData2} />
+              </SimplebarReactClient> 
+
+
+            
           </div>
+
+
+
 
           {/* Main Content */}
           <div className="col-md-9" style={{ padding: '2rem' }}>
@@ -490,6 +504,8 @@ const MarketPlace = () => {
             ) : (
               <div className="row g-4">
                 {getCurrentData().map((business) => {
+
+                  
                   console.log("business" ,business)
                   const data = isMyBusiness ? business.data[0] : business;
                   return (
@@ -525,7 +541,9 @@ const MarketPlace = () => {
                                 color: '#6c757d'
                               }}>
                                 <MapPin size={16} />
-                                <span style={{ fontSize: '0.875rem' }}>{isMyBusiness ? business.data[0].location : business.location}</span>
+                                <span style={{ fontSize: '0.875rem' }}>{isMyBusiness ? business.data[0].businessLocation
+ : business.businessLocation
+}</span>
                               </div>
                             </div>
                             <div style={{ 
@@ -535,7 +553,9 @@ const MarketPlace = () => {
                               fontSize: '0.75rem',
                               fontWeight: '500'
                             }}>
-                              {isMyBusiness ? business.data[0].industry : business.industry || "undefined"}
+                              {isMyBusiness ? business.data[0].businessType
+ : business.businessType
+ || "undefined"}
                             </div>
                           </div>
 
@@ -547,12 +567,14 @@ const MarketPlace = () => {
                              <MetricBox 
                               icon={TrendingUp}
                               label="TTM Revenue"
-                              value={formatCurrency(isMyBusiness ? business.data[0].revenue : business.revenue)}
+                              value={formatCurrency(isMyBusiness ? business.data[0].annualRevenue : business.annualRevenue)}
                             />
                             <MetricBox 
                               icon={PiggyBank}
                               label="TTM Profit"
-                              value={formatCurrency(isMyBusiness ? business.data[0].profit : business.profit)}
+                              value={formatCurrency(isMyBusiness ? business.data[0].annualProfit
+                                : business.annualProfit
+                              )}
                             />
                             <MetricBox 
                               icon={DollarSign}
@@ -579,7 +601,7 @@ const MarketPlace = () => {
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden'
                             }}>
-                              {isMyBusiness ? business.data[0].additionalInformation : business.additionalInformation}
+                              {isMyBusiness ? business.data[0].productsServices : business.productsServices}
                             </p>
                           </div>
 
