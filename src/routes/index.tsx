@@ -100,6 +100,11 @@ const generalRoutes: RoutesProps[] = [
     element: <HomeDemo />,
   },
   {
+    path: '/profile-visitors',
+    name: 'Profile Visitors',
+    element: <VisitProfile />,
+  },
+  {
     path: '/feed/albums',
     name: 'Albums',
     element: <Albums />,
@@ -210,11 +215,6 @@ export const settingPagesRoutes:RoutesProps[]=[
     path: '/AccountClone',
     name: 'Account Clone',
     element: <AcountSttingClone />,
-  },
-  {
-    path: '/profile-visitors',
-    name: 'Profile Visitors',
-    element: <VisitProfile />,
   },
   {
     path : '/settings/role',
