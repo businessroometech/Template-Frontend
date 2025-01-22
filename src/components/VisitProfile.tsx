@@ -17,7 +17,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/v1/auth/get-profile-visit', {
+        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-profile-visit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/v1/auth/get-profile-visited",
+          "https://strengthholdings.com/api/v1/auth/get-profile-visited",
           {
             method: "POST",
             headers: {
