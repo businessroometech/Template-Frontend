@@ -61,8 +61,8 @@ const [loading, setLoading] = useState(false);
   const [uploadedFilesProfile, setUploadedFilesProfile] = useState<FileType[]>([])
   const [uploadedFilesProfileBg, setUploadedFilesProfileBg] = useState<FileType[]>([])
 
-  console.log('---upf---',uploadedFilesProfile);
-  console.log('---upbgf---',uploadedFilesProfileBg);
+  // console.log('---upf---',uploadedFilesProfile);
+  // console.log('---upbgf---',uploadedFilesProfileBg);
   // This function will be triggered when files are uploaded
   const handleFileUploadProfile = (files: FileType[]) => {
     setUploadedFilesProfile(files)
@@ -201,7 +201,8 @@ const [loading, setLoading] = useState(false);
           fName: user?.firstName || '',
           lName: user?.lastName || '',
           email: user?.emailAddress || '',
-          occupation: user?.userRole || '',
+          occupation: data.data.personalDetails?.occupation 
+          || '',
           gender: data.data.personalDetails?.gender || '',
           dob: data.data.personalDetails?.dob || '', // Set date properly
         });
@@ -246,7 +247,16 @@ const [loading, setLoading] = useState(false);
           </div>
           <TextFormInput name="fName" label="First Name"  control={control} containerClassName="col-6" />
           <TextFormInput name="lName" label="Last Name" control={control} containerClassName="col-6" />
-          <TextFormInput name="occupation" label="Role" control={control} containerClassName="col-12" />
+          <DropdownFormInput
+            name="occupation"
+            label="Role"
+            control={control}
+            containerClassName="col-12"
+            options={[
+              { value: "entrepreneur", label: "Entrepreneur" },
+              { value: "investor", label: "Investor" },
+            ]}
+          />
           <DropdownFormInput
             name="gender"
             label="Gender"

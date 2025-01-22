@@ -131,7 +131,7 @@ const SuggestedConnections = () => {
                         />
                       ) : (
                         <img
-                          className="avatar-img rounded-circle"
+                
                           src={friend?.profilePictureUrl || avatar}
                           alt={`${friend.firstName}'s profile`}
                         />
