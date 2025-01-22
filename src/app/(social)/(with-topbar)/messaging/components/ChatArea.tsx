@@ -251,7 +251,13 @@ import TextFormInput from '@/components/form/TextFormInput';
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
 import Picker from 'emoji-picker-react';
 
-const socket = io('http://3.101.12.130:5000', { transports: ['websocket','polling'], withCredentials: true });
+const socket = io('http://3.101.12.130:5000/', {
+  transports: ['websocket'],
+  withCredentials: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  timeout: 20000, // 20 seconds
+});
 
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef<HTMLDivElement>(null);

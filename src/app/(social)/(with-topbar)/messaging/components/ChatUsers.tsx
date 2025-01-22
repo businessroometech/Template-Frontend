@@ -11,7 +11,13 @@ import { BsSearch } from 'react-icons/bs'
 
 const ChatItem = ({ userId,connectionId, profilePictureUrl, lastMessage, firstName, lastName, status='online', isStory }: UserType) => {
   const { changeActiveChat, activeChat } = useChatContext()
-  const socket = io('http://3.101.12.130:5000',{ transports: ["websocket",'polling'],withCredentials: true});
+  const socket = io('http://3.101.12.130:5000/', {
+    transports: ['websocket'],
+    withCredentials: true,
+    reconnection: true,
+    reconnectionAttempts: 5,
+    timeout: 20000, // 20 seconds
+  });
   const handleChange = () => {
     changeActiveChat(userId)
     socket.emit('joinRoom', userId);
