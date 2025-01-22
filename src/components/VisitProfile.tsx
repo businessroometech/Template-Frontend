@@ -17,7 +17,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-profile-visit', {
+        const response = await fetch('http://localhost:5000/api/v1/auth/get-profile-visit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const ProfileVisits = () => {
         <CardBody>
           <div className="d-flex justify-content-between align-center">
             <h3 className="mx-3">Who Visited My Profile</h3>
-            <CardTitle>Invitations ({visits.length})</CardTitle>
+            <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle>
           </div>
           <ListGroup>
             {visits.length&&visits.map((visit, index) => (
@@ -163,7 +163,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          "https://strengthholdings.com/api/v1/auth/get-profile-visited",
+          "http://localhost:5000/api/v1/auth/get-profile-visited",
           {
             method: "POST",
             headers: {
@@ -240,7 +240,7 @@ const ProfileVisited = () => {
         <CardBody>
           <div className="d-flex justify-content-between align-center">
             <h3 className="mx-3">My Visited Profiles</h3>
-            <CardTitle>Invitations ({visits.length})</CardTitle>
+            <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle>
           </div>
           <ListGroup>
             {visits.length>0&&visits.map((visit, index) => (
