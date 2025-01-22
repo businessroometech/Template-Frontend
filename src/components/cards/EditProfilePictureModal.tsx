@@ -3,21 +3,77 @@ import { Modal, Button, Container, Image, Form } from "react-bootstrap";
 import { FaEdit, FaPlus, FaBorderStyle, FaTrash } from "react-icons/fa";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthContext } from "@/context/useAuthContext";
-import { FileUpload, uploadDoc } from "@/utils/CustomS3ImageUpload";
+import { FileUpload, uploadDoc,GetImageWithUrl } from "@/utils/CustomS3ImageUpload";
+
+
+
+const handleAcceptedFiles = async (files: File[]): Promise<FileUpload[]> => {
+  const allFiles: FileUpload[] = [];
+
+  console.log('---files in handleAcceptedFiles---', files);
+
+  const fileProcessingPromises = files.map(
+    (file) =>
+      new Promise<FileUpload>((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+
+          const fileUploadData: FileUpload = {
+            key: file.name,
+            fileType: file.type,
+            fileObject: base64String, // Base64 content of the file
+            documentType: file.type.startsWith('image/') ? 'image' : 'document', // Set document type dynamically
+            documentName: file.name,
+            documentDescription: 'Uploaded file',
+            fileSize: file.size,
+          };
+
+          // Add preview URL for images
+          if (file.type.startsWith('image/')) {
+            (file as any).preview = URL.createObjectURL(file); // Create an object URL for image preview
+          }
+
+          resolve(fileUploadData);
+        };
+
+        reader.onerror = (error) => {
+          console.error('Error reading file:', error);
+          reject(new Error('Failed to read file.'));
+        };
+
+        reader.readAsDataURL(file); // Read file as base64
+      })
+  );
+
+  // Wait for all files to be processed
+  try {
+    const processedFiles = await Promise.all(fileProcessingPromises);
+    allFiles.push(...processedFiles);
+    console.log('---allFiles after processing---', allFiles);
+    return allFiles;
+  } catch (error) {
+    console.error('Error processing files:', error);
+    return [];
+  }
+};
 
 const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
-    const [exp,setExp] = useState(1);
+    const [exp,setExp] = useState(0);
     const[zoom,setZoom] = useState(50);
     const [straighten, setStraighten] = useState(50);
-    const [uploadedFile, setUploadedFile] = useState<FileUpload[]>([]);
+    const [uploadedFile, setUploadedFile] = useState<Files[]>(null);
     const {user} = useAuthContext();
     const [awsUrl,setAwsUrl] = useState<string>("");
-
+    console.log('---awsUrl---',awsUrl);
 
       const handleUploadprofile = async () => {
         try {
-          const response = await uploadDoc(uploadedFile, user?.id);
-          console.log('---- response in the upload doc function ----', response);
+            const modedFiles = await handleAcceptedFiles([uploadedFile])
+          const response = await uploadDoc(modedFiles, user?.id);
+          const srcUrl = await GetImageWithUrl(modedFiles[0]);
+        //   console.log('---- response in the upload doc function ----', response);
           return response;
         } catch (err) {
           console.error('Error in the createpostcard:', err);
@@ -32,6 +88,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
 
     const handleFileChange = async (e) => {
     const file = e.target.files[0];
+    console.log(file)
     if (file) {
         setUploadedFile(file);
         alert(`File uploaded: ${file.name}`);
@@ -190,7 +247,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
               style={{ width: "100px", height: "100px", margin: "20px 0" }}
             />
             <p>
-              On LinkedIn, we require members to use their real identities, so take
+              On Businessroom, we require members to use their real identities, so take
               or upload a photo of yourself. Then crop, filter, and adjust it to
               perfection.
             </p>

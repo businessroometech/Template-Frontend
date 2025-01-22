@@ -19,7 +19,7 @@ const LoadContentButton = ({ name, className }: { name: string; className?: stri
         <span className="spinner-dot" />
         <span className="spinner-dot" />
         <span className="spinner-dot" />
-      </div> : 
+      </div> :
         <X size={'20px'} style={{marginRight : '3px'}}/>
       }
       {name}

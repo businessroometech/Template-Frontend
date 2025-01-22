@@ -72,10 +72,13 @@ function base64ToBlob(base64, contentType) {
 
 // Upload function to handle file uploads to S3
 export const uploadDoc = async (file: FileUpload[], userId: string): Promise<string[] | null> => {
+  
   const doc = file[0];
-
+  console.log('---file is---',file);
+  console.log('----filetype---',doc.fileType)
   console.log('---- doc -------', doc)
-
+  console.log('----type of doc ----',typeof doc)
+  
   try {
     if (!doc || typeof file !== 'object') {
       throw new Error('Invalid file object')

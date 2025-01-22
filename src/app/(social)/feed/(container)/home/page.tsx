@@ -50,10 +50,16 @@ const Home = () => {
 
   return (
     <>
-      <Col md={8} lg={6} style={{maxHeight:"5em"}} className="vstack gap-4 ">
+      <Col md={8} lg={6} 
+        style={{
+          maxHeight:"70em",
+          overflowY: "auto",
+        }} 
+        className="vstack gap-4 "
+      >
       <CreatePostCard setIsCreated={setIsCreated} />
         {/* <Stories /> */}
-        <div className="d-flex justify-content-between gap-3 px-1 py-2">
+        {/* <div className="d-flex justify-content-between gap-3 px-1 py-2">
           <Button
             variant="primary"
             className="w-100"
@@ -95,7 +101,7 @@ const Home = () => {
           >
             Acquireroom
           </Button>
-        </div>
+        </div> */}
         <RoleSelectionModal
           show={showModal}
           onHide={() => setShowModal(false)}
@@ -105,7 +111,7 @@ const Home = () => {
         <Feeds isCreated={setIsCreated} />
       </Col>
 
-      <Col lg={3} style={{ marginTop : '0px'}}>
+      <Col lg={3} style={{ marginTop : '0px', overflowY : 'auto', height : '44rem'}}>
         <Row className="g-4">
           <Col sm={6} lg={12}>
             <Followers />
