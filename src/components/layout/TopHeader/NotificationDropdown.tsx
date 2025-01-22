@@ -30,28 +30,28 @@ const NotificationDropdown = () => {
   useEffect(() => {
   if(allNotifications.length>0) {
       fetchNotifications();}
-      // const socketConnection = io('http://localhost:5000', {
-      //   query: { userId: user?.id },
-      // });
+      const socketConnection = io('https://strengthholdings.com', {
+        query: { userId: user?.id },
+      });
 
-      // setSocket(socketConnection);
+      setSocket(socketConnection);
 
-      // // Listen for new notifications
-      // socketConnection.on('newNotification', (notification:any) => {
-      //   setAllNotifications((prev) => [notification, ...prev]);
-      // });
+      // Listen for new notifications
+      socketConnection.on('newNotification', (notification:any) => {
+        setAllNotifications((prev) => [notification, ...prev]);
+      });
 
-      // // Clean up on component unmount
-      // return () => {
-      //   socketConnection.disconnect();
-      // };
+      // Clean up on component unmount
+      return () => {
+        socketConnection.disconnect();
+      };
     
   }, [user?.id]);
 
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `https://strengthholdings.com/api/v1/socket-notifications/get?userId=${user?.id}`,
         {
           method: 'GET',
           headers: {

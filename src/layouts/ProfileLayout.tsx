@@ -464,7 +464,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const recordProfileVisit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/v1/auth/recored-visit",
+        "https://strengthholdings.com/api/v1/auth/recored-visit",
         {
           method: "POST",
           headers: {
