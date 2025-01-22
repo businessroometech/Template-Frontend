@@ -1,6 +1,6 @@
 import type { MenuItemType } from '@/types/menu'
 import { BsCloudDownloadFill } from 'react-icons/bs'
-import { Home, Layers, Tv, UserCog, Users } from 'lucide-react'
+import { Home, Layers, StoreIcon, Tv, UserCog, Users } from 'lucide-react'
 import { LayoutDashboard, Building2, Settings, Network } from 'lucide-react'
 
 import { FaUser } from 'react-icons/fa'
@@ -123,8 +123,8 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
     key: 'pages',
     label: 'Market Place',
     isTitle: true,
-    icon: Building2 , //..................change icon here...................//
-    url: "/"
+    icon: StoreIcon , //..................change icon here...................//
+    url: "/marketplace"
     // children: [
     //   {
     //     key: 'pages-albums',
@@ -268,12 +268,12 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
     //   },
     // ],
   },
-  {
-    key: 'accounts',
-    label: 'Settings',
-    isTitle: true,
-    icon: Settings, //....................change icon here.................//
-    url: "/settings/account"
+  // {
+  //   key: 'accounts',
+  //   label: 'Settings',
+  //   isTitle: true,
+  //   icon: Settings, //....................change icon here.................//
+  //   url: "/settings/account"
     // children: [
     //   {
     //     key: 'acc-create-a-page',
@@ -371,7 +371,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
     //     parentKey: 'accounts',
     //   },
     // ],
-  },
+  // },
   {
     icon :  Network,
     label: 'Network',
