@@ -230,62 +230,67 @@
 
 // export default ChatArea
 
-import { Spinner } from 'react-bootstrap'
-import { useChatContext } from '@/context/useChatContext'
-import type { ChatMessageType, UserType } from '@/types/data'
-import { useAuthContext } from '@/context/useAuthContext'
-import { addOrSubtractMinutesFromDate } from '@/utils/date'
-import { yupResolver } from '@hookform/resolvers/yup'
-import makeApiRequest from '@/utils/apiServer'
-import avatar from '@/assets/images/avatar/default avatar.png'
-import clsx from 'clsx'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-} from 'react-bootstrap'
-import { useForm } from 'react-hook-form'
-import { BsEmojiSmile } from 'react-icons/bs'
-import * as yup from 'yup'
-import debounce from 'lodash.debounce'
-// import { io } from 'socket.io-client'
-import TextFormInput from '@/components/form/TextFormInput'
-import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient'
-import Picker from 'emoji-picker-react'
+import { Spinner } from 'react-bootstrap';
+import { useChatContext } from '@/context/useChatContext';
+import type { ChatMessageType, UserType } from '@/types/data';
+import { useAuthContext } from '@/context/useAuthContext';
+import { addOrSubtractMinutesFromDate } from '@/utils/date';
+import { yupResolver } from '@hookform/resolvers/yup';
+import makeApiRequest from '@/utils/apiServer';
+import avatar from '@/assets/images/avatar/default avatar.png';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import clsx from 'clsx';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Card, CardBody, CardFooter } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import { BsEmojiSmile } from 'react-icons/bs';
+import * as yup from 'yup';
+import debounce from 'lodash.debounce';
+import { io } from 'socket.io-client';
+import TextFormInput from '@/components/form/TextFormInput';
+import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
+import Picker from 'emoji-picker-react';
 
-//const socket = io('https://strengthholdings.com/',{ transports: ["websocket"] });
-
-// Join the user's room
-
-
-
-
+const socket = io('http://3.101.12.130:5000', { transports: ['websocket','polling'], withCredentials: true });
 
 const AlwaysScrollToBottom = () => {
-  const elementRef = useRef<HTMLDivElement>(null)
+  const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (elementRef?.current?.scrollIntoView) elementRef.current.scrollIntoView({ behavior: 'smooth' })
-  })
-  return <div ref={elementRef} />
-}
+    if (elementRef?.current?.scrollIntoView) {
+      elementRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+  return <div ref={elementRef} />;
+};
 
 const UserMessage = ({ message, toUser }: { message: ChatMessageType; toUser: UserType }) => {
-  console.log("message",message)
-  console.log("toUser",toUser)
   const received = message.senderId === toUser.id;
 
   return (
-    <div className={clsx('d-flex mb-1', { 'justify-content-start': received, 'justify-content-end text-end': !received })}>
+    <div
+      className={clsx('d-flex mb-1', {
+        'justify-content-start': received,
+        'justify-content-end text-end': !received,
+      })}
+    >
       {received && (
         <div className="flex-shrink-0 avatar avatar-xs me-2">
           <img className="avatar-img rounded-circle" src={avatar} alt="User Avatar" />
         </div>
       )}
       <div className="flex-grow-1">
-        <div className={clsx('d-flex flex-column', received ? 'align-items-start' : 'align-items-end')}>
-          <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-light text-secondary' : 'bg-primary text-white')}>
+        <div
+          className={clsx(
+            'd-flex flex-column',
+            received ? 'align-items-start' : 'align-items-end'
+          )}
+        >
+          <div
+            className={clsx(
+              'p-2 px-3 rounded-2',
+              received ? 'bg-light text-secondary' : 'bg-primary text-white'
+            )}
+          >
             <p className="small mb-0">{message.content}</p>
           </div>
         </div>
@@ -299,99 +304,115 @@ const UserMessage = ({ message, toUser }: { message: ChatMessageType; toUser: Us
   );
 };
 
-
 const ChatArea = () => {
-  const { activeChat } = useChatContext()
-  const { user } = useAuthContext()
-  const [userMessages, setUserMessages] = useState<ChatMessageType[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  // useEffect(() => {
-  //   socket.on('connect_error', (err) => {
-  //     console.error('Connection Error:', err.message);
-  //   });
+  const { activeChat } = useChatContext();
+  const { user } = useAuthContext();
+  const [userMessages, setUserMessages] = useState<ChatMessageType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  //   socket.on('newMessage', (message) => {
-  //     setUserMessages((prevMessages) => [...prevMessages, message]);
-  //   });
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
-  //   return () => {
-  //     socket.off('connect_error');
-  //     socket.off('newMessage');
-  //   };
-  // }, [activeChat]);
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [userMessages]);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id); // Logs the unique socket ID
+    });
+  
+    socket.on('connect_error', (err) => {
+      console.error('Connection Error:', err.message);
+    });
+
+    socket.on('newMessage', (message) => {
+      setUserMessages((prevMessages) => [...prevMessages, message]);
+      console.log(userMessages)
+    });
+
+    return () => {
+      socket.off('connect_error');
+      socket.off('newMessage');
+    };
+  }, [activeChat]);
 
   const messageSchema = yup.object({
-    newMessage: yup.string().required('Please enter message'),
-  })
+    newMessage: yup.string().required('Please enter a message'),
+  });
 
   const { reset, handleSubmit, control, setValue, getValues } = useForm({
     resolver: yupResolver(messageSchema),
-  })
+  });
 
   const fetchMessages = useCallback(async () => {
-    if (!activeChat) return
-    setIsLoading(true)
+    if (!activeChat) return;
+    setIsLoading(true);
     try {
       const response = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/chat/get-messages-user-wise',
-        data: { senderId: user?.id, receiverId: activeChat.personalDetails.id, page: 1, limit: 10 },
-      })
-      setUserMessages(response.data.messages)
+        data: {
+          senderId: user?.id,
+          receiverId: activeChat.personalDetails.id,
+          page: 1,
+          limit: 10,
+        },
+      });
+      setUserMessages(response.data.messages);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [activeChat, user])
-
+  }, [activeChat, user]);
 
   useEffect(() => {
     if (activeChat) {
-      fetchMessages()
+      fetchMessages();
     }
-  }, [activeChat, fetchMessages])
-
+  }, [activeChat, fetchMessages]);
 
   const sendChatMessage = debounce(async (values: { newMessage?: string }) => {
-    if (!values.newMessage || !activeChat) return
+    if (!values.newMessage || !activeChat) return;
     const newMessage: ChatMessageType = {
       id: (userMessages.length + 1).toString(),
-      from: user.id,
-      to: activeChat.personalDetails.id,
-      message: values.newMessage,
+      senderId: user.id,
+      receiverId: activeChat.personalDetails.id,
+      content: values.newMessage,
       sentOn: addOrSubtractMinutesFromDate(-0.1),
       isSend: true,
       isRead: false,
-    }
+    };
 
     try {
-      await makeApiRequest<{ data: any[] }>({
+      await makeApiRequest({
         method: 'POST',
         url: 'api/v1/chat/send-message',
         data: { senderId: user.id, receiverId: activeChat.personalDetails.id, content: values.newMessage },
-      })
+      });
 
-      setUserMessages((prevMessages) => [...prevMessages, newMessage])
-      reset()
+      setUserMessages((prevMessages) => [...prevMessages, newMessage]);
+      reset();
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }, 1000)
+  }, 1000);
 
   const handleEmojiClick = (emoji: any) => {
-    const currentMessage = getValues('newMessage') || ''
-    setValue('newMessage', currentMessage + emoji.emoji)
-    setShowEmojiPicker(false)
-  }
+    const currentMessage = getValues('newMessage') || '';
+    setValue('newMessage', currentMessage + emoji.emoji);
+    setShowEmojiPicker(false);
+  };
 
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center h-100">
         <Spinner animation="border" variant="primary" />
       </div>
-    )
+    );
   }
 
   if (!activeChat) {
@@ -399,11 +420,11 @@ const ChatArea = () => {
       <div className="d-flex justify-content-center align-items-center h-100">
         <h5 className="text-secondary">Tap on a name to start chatting</h5>
       </div>
-    )
+    );
   }
 
-  const { firstName, lastName } = activeChat.personalDetails
-  const { profileImgUrl } = activeChat
+  const { firstName, lastName } = activeChat.personalDetails;
+  const { profileImgUrl } = activeChat;
 
   return (
     <Card className="card-chat rounded-start-lg-0 border-start-lg-0">
@@ -421,11 +442,10 @@ const ChatArea = () => {
         </div>
 
         <SimplebarReactClient className="flex-grow-1 message-box">
-          {Array.isArray(userMessages) &&
-            userMessages.map((message, index) => (
-              <UserMessage key={index} message={message} toUser={activeChat.personalDetails} />
-            ))}
-          <AlwaysScrollToBottom />
+          {userMessages.map((message, index) => (
+            <UserMessage key={index} message={message} toUser={activeChat.personalDetails} />
+          ))}
+          <div ref={messageEndRef} />
         </SimplebarReactClient>
       </CardBody>
 
@@ -460,15 +480,14 @@ const ChatArea = () => {
         )}
       </CardFooter>
     </Card>
-  )
-}
+  );
+};
 
-export default ChatArea
-
+export default ChatArea;
 
 const styles = `
 .card-chat .card-body {
-  height: calc(100% - 150px); /* Adjust the height as per your layout */
+  height: calc(100% - 150px); 
   overflow-y: auto;
 }
 
@@ -479,20 +498,10 @@ const styles = `
 
 .emoji-picker-container {
   position: absolute;
-  bottom: 60px; /* Adjust based on your layout */
-  left: 0;
-  z-index: 1;
-}
-
-.message-box {
-  overflow-y: auto;
-  max-height: 400px; /* Adjust the max-height as per your layout */
-}
-
-.d-flex {
-  display: flex;
+  bottom: 60px;
+  right: 15px;
+  z-index: 10;
 }
 `;
 
-export const GlobalStyles = () => <style>{styles}</style>;
 

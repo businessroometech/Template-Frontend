@@ -4,14 +4,20 @@ import type { UserType } from '@/types/data'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import clsx from 'clsx'
 import { useState, useEffect } from 'react'
-
+import { io } from 'socket.io-client'
 import { Card, Spinner } from 'react-bootstrap'
 import { BsSearch } from 'react-icons/bs'
 
+
 const ChatItem = ({ userId,connectionId, profilePictureUrl, lastMessage, firstName, lastName, status='online', isStory }: UserType) => {
   const { changeActiveChat, activeChat } = useChatContext()
+  const socket = io('http://3.101.12.130:5000',{ transports: ["websocket",'polling'],withCredentials: true});
+  const handleChange = () => {
+    changeActiveChat(userId)
+    socket.emit('joinRoom', userId);
+  }
   return (
-    <li data-bs-dismiss="offcanvas" onClick={()=>changeActiveChat(userId)
+    <li data-bs-dismiss="offcanvas" onClick={()=>handleChange()
     }>
       <div className={clsx('nav-link text-start', { active: activeChat?.id === connectionId })} id="chat-1-tab" data-bs-toggle="pill" role="tab" >
         <div className="d-flex">
