@@ -1,6 +1,6 @@
 import type { MenuItemType } from '@/types/menu'
 import { BsCloudDownloadFill } from 'react-icons/bs'
-import { Home, Layers, StoreIcon, Tv, UserCog, Users } from 'lucide-react'
+import { Home, HomeIcon, Layers, StoreIcon, Tv, UserCog, Users } from 'lucide-react'
 import { LayoutDashboard, Building2, Settings, Network } from 'lucide-react'
 
 import { FaUser } from 'react-icons/fa'
@@ -54,12 +54,18 @@ export const PROFILE_MENU_ITEMS: MenuItemType[] = [
 ]
 
 export const APP_MENU_ITEMS: MenuItemType[] = [
+
+  {
+    icon :  HomeIcon,
+    label: 'Home',
+    url: '/',
+  },
   {
     key: 'demos',
     label: 'Live',
     isTitle: true,
     icon : Tv , //.....................change icon here.........................//
-    url : "/live"
+    url : "/join-live"
     // children: [
     //   {
     //     key: 'home-default',
