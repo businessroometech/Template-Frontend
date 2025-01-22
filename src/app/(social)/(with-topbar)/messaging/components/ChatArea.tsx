@@ -256,7 +256,7 @@ const socket = io('http://3.101.12.130:5000/', {
   withCredentials: true,
   reconnection: true,
   reconnectionAttempts: 5,
-  timeout: 20000, // 20 seconds
+  timeout: 20000,
 });
 
 const AlwaysScrollToBottom = () => {
@@ -326,8 +326,10 @@ const ChatArea = () => {
   }, [userMessages]);
 
   useEffect(() => {
+
+    socket.emit('joinRoom', user.id);
     socket.on('connect', () => {
-      console.log('Socket connected:', socket.id); // Logs the unique socket ID
+      console.log('Socket connected:', socket.id);
     });
   
     socket.on('connect_error', (err) => {
@@ -335,6 +337,7 @@ const ChatArea = () => {
     });
 
     socket.on('newMessage', (message) => {
+      console.log('New message:', message);
       setUserMessages((prevMessages) => [...prevMessages, message]);
       console.log(userMessages)
     });
@@ -343,7 +346,7 @@ const ChatArea = () => {
       socket.off('connect_error');
       socket.off('newMessage');
     };
-  }, [activeChat]);
+  }, [userMessages]);
 
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter a message'),
