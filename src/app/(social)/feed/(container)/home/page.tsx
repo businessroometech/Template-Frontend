@@ -53,7 +53,9 @@ const Home = () => {
       <Col md={8} lg={6} 
         style={{
           maxHeight:"70em",
-          overflowY: "auto",
+          overflowY: 'scroll', /* Enable vertical scrolling */
+    scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
+    msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
         }} 
         className="vstack gap-4 "
       >
@@ -111,7 +113,10 @@ const Home = () => {
         <Feeds isCreated={setIsCreated} />
       </Col>
 
-      <Col lg={3} style={{ marginTop : '0px', overflowY : 'auto', height : '44rem'}}>
+      <Col lg={3} style={{ marginTop : '0px', height : '44rem'  ,   maxHeight:"70em",
+        overflowY: 'scroll', /* Enable vertical scrolling */
+    scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
+    msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */}}>
         <Row className="g-4">
           <Col sm={6} lg={12}>
             <Followers />
