@@ -240,7 +240,8 @@ const [loading, setLoading] = useState(false);
                 src={
                   profile.profileImgUrl || avatar7}
                 alt="avatar"
-                className="avatar-img rounded border border-white border-3"
+                style={{borderRadius : '22%'}}
+                className="avatar-img border border-white border-3"
               />
               {/* <input type="file" className="form-control" onChange={handleFileUploadProfile} /> */}
             </div>

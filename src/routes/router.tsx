@@ -17,6 +17,7 @@ import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import Founderforms from '@/app/(plain)/Founderform/Founderform'
 import AccountSettings from '@/assets/data/clone/accountClone'
 import MarketplaceDetails from '@/app/(plain)/Marketplacedetails/Marketplacedetails'
+import VisitProfile from '@/components/VisitProfile'
 
 
 const AppRouter = (props: RouteProps) => {
@@ -104,6 +105,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/marketplace' element={<MarketPlace></MarketPlace>} />
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
+      <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
     </Routes>
   )
 }

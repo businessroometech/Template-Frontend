@@ -189,13 +189,13 @@ const AccountSettings = () => {
             }}
           />
           <div className="text-center mt-3">
-            <div className="avatar avatar-lg mt-n5 mb-3">
+            <div className="mt-n5 mb-3">
               <img
                 height={64}
                 width={64}
                 src={avatar7}
                 alt="avatar"
-                className="avatar-img rounded border border-white border-3"
+                className="border border-white border-3"
               />
             </div>
           </div>

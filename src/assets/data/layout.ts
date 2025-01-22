@@ -39,7 +39,7 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
   {
     image: personImg,
     name: 'Who viewed my profile',
-    link: '/profile/connections',
+    link: '/profile-visitors',
   },
   // {
   //   image: earthImg,
