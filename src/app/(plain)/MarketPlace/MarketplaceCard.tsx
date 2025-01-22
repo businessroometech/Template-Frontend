@@ -16,7 +16,7 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
     const handledelete = async() => {
       try {
         if (user?.id == business.UserId  ) {
-          const response = await fetch(`http://localhost:5000/businessseller/delete/${business.id}`, {
+          const response = await fetch(`https://strengthholdings.com/businessseller/delete/${business.id}`, {
             method: "DELETE",
           });
           console.log(await response.json())
