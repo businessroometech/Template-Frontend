@@ -62,7 +62,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
   },
   {
     key: 'demos',
-    label: 'Live',
+    label: 'Businessroom Live',
     isTitle: true,
     icon : Tv , //.....................change icon here.........................//
     url : "/join-live"
@@ -127,7 +127,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
   },
   {
     key: 'pages',
-    label: 'Market Place',
+    label: 'Acquireroom',
     isTitle: true,
     icon: StoreIcon , //..................change icon here...................//
     url: "/marketplace"

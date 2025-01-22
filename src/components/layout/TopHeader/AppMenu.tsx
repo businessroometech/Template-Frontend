@@ -81,7 +81,7 @@ const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
         padding: '8px',
         borderRadius : '10%',
         marginLeft : '20px',
-        background: 'rgba(136, 209, 254, 0.2)',
+        // background: 'rgba(136, 209, 254, 0.2)',
         backdropFilter: 'blur(8px)',
         transition: 'background 0.3s ease',
       }}
@@ -92,7 +92,7 @@ const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
         setAbout(true);
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.2)');
+        (e.currentTarget.style.background = 'transparent');
         setAbout(false);
       }}
     >
