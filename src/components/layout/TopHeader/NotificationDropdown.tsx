@@ -13,29 +13,50 @@ import {
 } from 'react-bootstrap';
 import { BsBellFill } from 'react-icons/bs';
 import { useState, useEffect } from 'react';
+import { Socket } from 'socket.io-client';
 import { useAuthContext } from '@/context/useAuthContext';
 import avatar4 from '@/assets/images/avatar/04.jpg'
 
+import { io as socketIoClient } from 'socket.io-client';
+
+function io(url: string, options: { query: { userId: string } }) {
+  return socketIoClient(url, options);
+}
 const NotificationDropdown = () => {
   const { user } = useAuthContext();
-  const [allNotifications, setAllNotifications] = useState([]);
+  const [allNotifications, setAllNotifications] = useState<any[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    if (user?.id) {
-      fetchNotifications();
-    }
-  }, [user]);
+  if(allNotifications.length>0) {
+      fetchNotifications();}
+      // const socketConnection = io('http://localhost:5000', {
+      //   query: { userId: user?.id },
+      // });
+
+      // setSocket(socketConnection);
+
+      // // Listen for new notifications
+      // socketConnection.on('newNotification', (notification:any) => {
+      //   setAllNotifications((prev) => [notification, ...prev]);
+      // });
+
+      // // Clean up on component unmount
+      // return () => {
+      //   socketConnection.disconnect();
+      // };
+    
+  }, [user?.id]);
 
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        ' https://strengthholdings.com/api/v1/notifications/fetch',
+        `http://localhost:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userId: user?.id }),
         }
       );
 
@@ -48,7 +69,7 @@ const NotificationDropdown = () => {
     }
   };
 
-  const handleOnRead = async (notificationId) => {
+  const handleOnRead = async (notificationId:string) => {
     try {
       const response = await fetch(
         ' https://strengthholdings.com/api/v1/notifications/mark-as-read',
@@ -181,3 +202,4 @@ const NotificationDropdown = () => {
 };
 
 export default NotificationDropdown;
+
