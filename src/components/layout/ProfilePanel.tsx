@@ -154,8 +154,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             {links.map((item, idx) => (
               <li key={item.name + idx} className="nav-item">
                 <Link className="nav-link d-flex justify-content-center align-center" to={item.link}>
-                  {/* <img src={item.image} alt="icon" height={20} width={20} className="me-2 h-20px fa-fw" /> */}
-                  <span className='text-center'>{item.name ? item.name : 'Arun Jain'} </span>
+                  {item.image &&  <item.image size={20}/>}
+                  <span className='text-center' style={{marginLeft : '8px'}}>{item.name ? item.name : 'Arun Jain'} </span>
                 </Link>
               </li>
             ))}

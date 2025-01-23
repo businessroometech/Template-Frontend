@@ -12,7 +12,7 @@ import { AuthProvider } from '@/context/useAuthContext'
 
 const AppProvidersWrapper = ({ children }: ChildrenType) => {
   const handleChangeTitle = () => {
-    if (document.visibilityState === 'hidden') document.title = 'Please come back 🥺'
+    if (document.visibilityState === 'hidden') document.title = 'Businessroom'
     else document.title = DEFAULT_PAGE_TITLE
   }
 

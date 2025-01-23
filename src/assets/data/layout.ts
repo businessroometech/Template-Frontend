@@ -21,6 +21,7 @@ import trashImg from '@/assets/images/icon/trash-var-outline-filled.svg'
 import logo8 from '@/assets/images/logo/08.svg'
 import logo9 from '@/assets/images/logo/09.svg'
 import logo10 from '@/assets/images/logo/10.svg'
+import { ChartNetwork } from 'lucide-react'
 
 type ExperienceType = {
   title: string
@@ -36,8 +37,9 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
   //   name: 'Feed',
   //   link: '/profile/feed',
   // },
-  {
-  
+  { 
+
+    image : ChartNetwork,
     name: 'Profile Visit Analysis',
     link: '/profile-visitors',
   },

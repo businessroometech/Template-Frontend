@@ -25,7 +25,6 @@ function io(url: string, options: { query: { userId: string } }) {
 }
 const NotificationDropdown = () => {
   const { user } = useAuthContext();
-  const [allNotifications, setAllNotifications] = useState<any[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [allNotifications, setAllNotifications] = useState([]);
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
