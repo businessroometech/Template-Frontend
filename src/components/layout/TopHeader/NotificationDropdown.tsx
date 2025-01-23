@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { useAuthContext } from '@/context/useAuthContext';
 import avatar4 from '@/assets/images/avatar/04.jpg'
+import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Bell } from 'lucide-react';
 
 const NotificationDropdown = () => {
@@ -208,7 +209,7 @@ const NotificationDropdown = () => {
                         <div className="avatar text-center">
                           <img
                             className="avatar-img rounded-circle"
-                            src={notification.avatar || avatar4}
+                            src={notification.avatar || avatar7}
                             alt="Avatar"
                           />
                         </div>
