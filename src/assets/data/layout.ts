@@ -37,8 +37,8 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
   //   link: '/profile/feed',
   // },
   {
-    image: personImg,
-    name: 'Who viewed my profile',
+  
+    name: 'Profile Visit Analysis',
     link: '/profile-visitors',
   },
   // {

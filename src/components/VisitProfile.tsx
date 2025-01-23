@@ -96,13 +96,25 @@ const ProfileVisits = () => {
       <Card>
         <CardBody>
           <div className="d-flex justify-content-between align-center">
-            <h3 className="mx-3">Who Visited My Profile</h3>
-            <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle>
-          </div>
+          <h3 className="mx-3 d-flex justify-content-between align-items-center">
+      <span style={{ fontFamily: 'Poppins', fontWeight: '600' }}>
+        Who viewed my Profile
+      </span>
+      <p 
+        className="mb-0 mx-1 fs-6 text-muted" 
+        style={{ 
+          fontFamily: 'Roboto', 
+        
+        }}
+      >
+        - {visits.length}
+      </p>
+    </h3>
+    </div>
           <ListGroup>
             {visits.length&&visits.map((visit, index) => (
               <ListGroupItem key={index} className="d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
+                <Link to={`/profile/feed/${visit.visitor.id}`} className="d-flex align-items-center">
                   <img
                     src={visit.visitor.profilePicture || avatar7}
                     alt="Profile"
@@ -112,11 +124,11 @@ const ProfileVisits = () => {
                   <div>
                     <h6 className="mb-2 fw-semibold d-flex">
                       <span>{visit.visitor.firstName} {visit.visitor.lastName}</span>
-                      <p className="mb-0 mx-1 text-muted">({visit.visitCount})</p>
+                      <p className="mb-0 mx-1 text-muted">{visit.visitCount}</p>
                     </h6>
                     <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
                   </div>
-                </div>
+                </Link>
                 <div>
                   {visit.connectionStatus === "accepted" ? (
                     <Link to="/messaging" className="mx-2 btn-primary btn btn-sm">
@@ -239,8 +251,10 @@ const ProfileVisited = () => {
       <Card>
         <CardBody>
           <div className="d-flex justify-content-between align-center">
-            <h3 className="mx-3">My Visited Profiles</h3>
-            <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle>
+          <h3 className="mx-3 d-flex justify-content-between align-items-center">
+          <span style={{ fontFamily: 'Poppins', fontWeight: '600' }}>Profiles I visited</span> <p className="mb-0 mx-1 fs-6 text-muted text-align-center d-flex justify-content-center align-items-center">- {visits.length}</p></h3>
+            
+            {/* <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle> */}
           </div>
           <ListGroup>
             {visits.length>0&&visits.map((visit, index) => (
@@ -248,7 +262,7 @@ const ProfileVisited = () => {
                 key={index}
                 className="d-flex rounded justify-content-between align-items-center"
               >
-                <div className="d-flex align-items-center">
+                <Link to={`/profile/feed/${visit.profile.id}`} className="d-flex align-items-center">
                   <img
                     src={visit.profile.profilePicture || avatar7}
                     alt="Profile"
@@ -260,11 +274,11 @@ const ProfileVisited = () => {
                       <span>
                         {visit.profile.firstName} {visit.profile.lastName}
                       </span>
-                      <p className="mb-0 mx-1 text-muted">({visit.visitCount})</p>
+                      <p className="mb-0 mx-1 text-muted">{visit.visitCount}</p>
                     </h6>
                     <p className="mb-0 text-muted">{visit.profile.userRole}</p>
                   </div>
-                </div>
+                </Link>
                 <div>
                 {visit.connectionStatus === "accepted" ? (
                     <Link to="/messaging" className="mx-2 btn-primary btn btn-sm">

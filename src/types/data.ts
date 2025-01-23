@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 type IdType = string
 
 export type ProfilePanelLink = {
-  image: string
+  // image: string
   name: string
   link: string
 }

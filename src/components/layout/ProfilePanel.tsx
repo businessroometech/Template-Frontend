@@ -153,9 +153,9 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           <ul className="nav nav-link-secondary flex-column fw-bold gap-2">
             {links.map((item, idx) => (
               <li key={item.name + idx} className="nav-item">
-                <Link className="nav-link" to={item.link}>
-                  <img src={item.image} alt="icon" height={20} width={20} className="me-2 h-20px fa-fw" />
-                  <span>{item.name ? item.name : 'Arun Jain'} </span>
+                <Link className="nav-link d-flex justify-content-center align-center" to={item.link}>
+                  {/* <img src={item.image} alt="icon" height={20} width={20} className="me-2 h-20px fa-fw" /> */}
+                  <span className='text-center'>{item.name ? item.name : 'Arun Jain'} </span>
                 </Link>
               </li>
             ))}
