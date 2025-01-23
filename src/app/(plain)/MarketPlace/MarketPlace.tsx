@@ -117,7 +117,7 @@ const MarketPlace = () => {
   // console.log('All Business Data:', allBusinessData);
   
   return (
-<div>
+<div style={{backgroundColor : "#f8f9fa"}}>
 <TopHeader></TopHeader>
 
 
@@ -126,13 +126,13 @@ const MarketPlace = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-3" style={{ 
-            backgroundColor: 'white', 
+            backgroundColor: '#f8f9fa', 
             padding: '2rem',
             borderRight: '1px solid #dee2e6',
             minHeight: '100vh'
           }}>
     
-          <SimplebarReactClient className="offcanvas-start" style={{marginTop: "20px"}}>
+          <SimplebarReactClient className="offcanvas-start" style={{marginBottom : "20px", backgroundColor: "#f8f9fa"}}>
           <ProfilePanel links={profilePanelLinksData1} />
           </SimplebarReactClient>            
         </div>
