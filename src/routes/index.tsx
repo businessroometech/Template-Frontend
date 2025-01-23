@@ -3,6 +3,7 @@ import { lazy } from 'react'
 import { Navigate, type RouteProps } from 'react-router-dom'
 import AcountSttingClone from '@/assets/data/clone/accountClone'
 import VisitProfile from '@/components/VisitProfile'
+import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 
 // profiles for seller //
 //const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
@@ -98,6 +99,11 @@ const generalRoutes: RoutesProps[] = [
     path: '/feed/home',
     name: 'Demo Home',
     element: <HomeDemo />,
+  },
+  {
+      path : '/marketplace',
+      name : 'Acquireroom',
+      element : <MarketPlace/>
   },
   {
     path: '/profile-visitors',

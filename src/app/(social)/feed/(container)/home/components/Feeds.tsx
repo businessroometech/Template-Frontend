@@ -664,62 +664,52 @@ const PostSkeleton = () => {
 
   return (
     <>
-<div 
-  className="position-relative"
-  id="scrollableDiv" // Add an ID to reference the container
-  style={{
-    position: 'sticky',
-    overflowY: 'auto',
-    maxHeight: '520px',
-    WebkitOverflowScrolling: 'touch',
-    marginLeft: '0',
-  }} 
->
-  <InfiniteScroll
-    dataLength={posts.length}
-    next={fetchNextPage}
-    hasMore={hasMore}
-    loader={
       <div>
-        {[...Array(5)].map((_, index) => (
-          <PostSkeleton key={index} />
-        ))}
-      </div>
-    }
-    endMessage={
-      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <strong>No Posts are available.</strong>
-      </div>
-    }
-    scrollableTarget="scrollableDiv" // Tell InfiniteScroll to use this container for scrolling
-  >
-    {showNewPostButton && (
-      <Link 
-        to="/feed/home#"
-        className="btn-primary"
-        onClick={() => setShowNewPostButton(false)}
-        style={{ zIndex: 99, top: "4em", position: "fixed", left: "47%" }}
-      >
-        ⬆️ New Posts
-      </Link>
-    )}
-    
-    {posts.map((post, index) => (
-      <PostCard 
-        item={post} 
-        posts={posts}
-        setPosts={setPosts}
-        key={post.Id || index} 
-        isMediaKeys={false}
-        onDelete={handleDelete} 
-        setIsCreated={isCreated}
-        tlRefresh={tlRefresh}
-        setTlRefresh={setTlRefresh}
-        scrollbarWidth="none"
-      />
-    ))}
-  </InfiniteScroll>
-</div>
+          <InfiniteScroll
+            dataLength={posts.length} // Total number of posts
+            next={fetchNextPage} // Function to fetch the next page of posts
+            hasMore={hasMore} // Boolean indicating whether more posts are available
+            loader={
+              <div>
+                {[...Array(5)].map((_, index) => (
+                  <PostSkeleton key={index} />
+                ))}
+              </div>
+            }
+            endMessage={
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <strong>No Posts are available.</strong>
+              </div>
+            }
+            scrollableTarget="scrollableDiv" // Matches the id of the scrollable container
+          >
+            {showNewPostButton && (
+              <Link
+                to="/feed/home#"
+                className="btn-primary"
+                onClick={() => setShowNewPostButton(false)}
+                style={{ zIndex: 99, top: '4em', position: 'fixed', left: '47%' }}
+              >
+                ⬆️ New Posts
+              </Link>
+            )}
+
+            {posts.map((post, index) => (
+              <PostCard
+                item={post}
+                posts={posts}
+                setPosts={setPosts}
+                key={post.Id || index}
+                isMediaKeys={false}
+                onDelete={handleDelete}
+                setIsCreated={isCreated}
+                tlRefresh={tlRefresh}
+                setTlRefresh={setTlRefresh}
+                scrollbarWidth="none"
+              />
+            ))}
+          </InfiniteScroll>
+        </div>
     </>
   )
 }
