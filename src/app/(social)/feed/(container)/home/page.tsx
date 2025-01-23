@@ -56,8 +56,8 @@ const Home = () => {
         id="scrollableDiv"
         style={{
           position: 'sticky', // Ensure the container's position is suitable for scrolling
-          overflowY: 'auto', // Enables vertical scrolling
-          maxHeight: '680px', // Sets a height limit for scrolling
+       // Enables vertical scrolling
+           // Sets a height limit for scrolling
           WebkitOverflowScrolling: 'touch', // Smooth scrolling for iOS
           marginLeft: '0',
           scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
@@ -74,9 +74,9 @@ const Home = () => {
           marginTop : '0px', 
           height : '44rem',   
           maxHeight:"70em",
-          overflowY: 'auto', /* Enable vertical scrolling */
-          scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
-          msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
+          //  /* Enable vertical scrolling */
+          // scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
+          // msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
       }}>
         <Row className="g-4">
           <Col sm={6} lg={12} >

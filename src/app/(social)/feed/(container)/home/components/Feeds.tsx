@@ -681,7 +681,7 @@ const PostSkeleton = () => {
                 <strong>No Posts are available.</strong>
               </div>
             }
-            scrollableTarget="scrollableDiv" // Matches the id of the scrollable container
+            // Matches the id of the scrollable container
           >
             {showNewPostButton && (
               <Link
