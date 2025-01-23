@@ -323,12 +323,16 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       <Card className="card-body" style={{ maxHeight: '9em' }}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
-            <div className="avatar avatar-s me-2">
+            <div className="avatar avatar-s me-2"
+              style={{
+                marginTop : '-4px'
+              }}
+            >
               <span role="button">
                 {skeletonLoading ? (
                   <Skeleton height={40} width={40} className="rounded-circle" baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                 ) : (
-                  <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar3" />
+                  <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar" />
                 )}
               </span>
             </div>
@@ -340,7 +344,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               console.log('---- create event ----', values)
             })}>
             <textarea
-              className="form-control pe-4 border rounded-pill"
+              className="form-control pe-4 border rounded"
               style={{
                 borderColor: '#212529',
                 color: '#212529',

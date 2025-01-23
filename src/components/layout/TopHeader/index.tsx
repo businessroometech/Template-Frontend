@@ -7,8 +7,15 @@ import MobileMenuToggle from './MobileMenuToggle'
 import NotificationDropdown from './NotificationDropdown'
 import ProfileDropdown from './ProfileDropdown'
 import StyledHeader from './StyledHeader'
+import { MessageSquareText, Settings } from 'lucide-react'
+import { useState } from 'react'
 
 const TopHeader = () => {
+
+  const [messageAbout,setMessageAbout] = useState<boolean>(false);
+  const [settingsAbout,setSettingsAbout] = useState<boolean>(false);
+  const [notiAbout,setNotiAbout] = useState<boolean>(false);
+
   return (
     <StyledHeader>
       <div className="container">
@@ -18,16 +25,96 @@ const TopHeader = () => {
 
         <CollapseMenu isSearch />
 
-        <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
-          <li className="nav-item ms-2">
-            <Link className="nav-link bg-light icon-md btn btn-light p-0" to="/messaging">
-              <BsChatLeftTextFill size={15} />
+        <ul className="nav flex-nowrap align-items-center  list-unstyled">
+          <li className="nav-item">
+            <Link to="/messaging">
+            <div
+              style={{
+                padding: '8px',
+                borderRadius : '10%',
+                marginLeft : '10px',
+                // background: 'rgba(136, 209, 254, 0.2)',
+                backdropFilter: 'blur(8px)',
+                transition: 'background 0.3s ease',
+              }}
+              about='Label'
+      
+              onMouseEnter={(e) => {
+                (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
+                setMessageAbout(true);
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget.style.background = 'transparent');
+                setMessageAbout(false);
+              }}
+            >
+              {<MessageSquareText style={{ color: '#1ea1f2' }} />}
+            </div>
+              {messageAbout && 
+                <span
+                  style={{
+                    position: 'absolute',
+                    marginTop : '40px',
+                    marginLeft : '15px',
+                    top: '50%',
+                    zIndex : 10000,
+                    transform: 'translateY(-50%)',
+                    background: '#333',
+                    color: '#fff',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    whiteSpace: 'nowrap',
+                  }}
+                  className="label"
+                >
+                  {'Message'}
+                </span>}
             </Link>
           </li>
 
-          <li className="nav-item ms-2">
-            <Link className="nav-link bg-light icon-md btn btn-light p-0" to="/settings/account">
-              <BsGearFill size={15} />
+          <li className="nav-item">
+            <Link to="/settings/account">
+            <div
+              style={{
+                padding: '8px',
+                borderRadius : '10%',
+                marginLeft : '10px',
+                // background: 'rgba(136, 209, 254, 0.2)',
+                backdropFilter: 'blur(8px)',
+                transition: 'background 0.3s ease',
+              }}
+              about='Label'
+      
+              onMouseEnter={(e) => {
+                (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
+                setSettingsAbout(true);
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget.style.background = 'transparent');
+                setSettingsAbout(false);
+              }}
+            >
+              {<Settings style={{ color: '#1ea1f2' }} />}
+            </div>
+              {settingsAbout && 
+                <span
+                  style={{
+                    position: 'absolute',
+                    marginTop : '40px',
+                    marginLeft : '15px',
+                    top: '50%',
+                    zIndex : 10000,
+                    transform: 'translateY(-50%)',
+                    background: '#333',
+                    color: '#fff',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    whiteSpace: 'nowrap',
+                  }}
+                  className="label"
+                >
+                  {'Settings'}
+                </span>}
             </Link>
           </li>
 

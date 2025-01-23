@@ -15,10 +15,12 @@ import { BsBellFill } from 'react-icons/bs';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import avatar4 from '@/assets/images/avatar/04.jpg'
+import { Bell } from 'lucide-react';
 
 const NotificationDropdown = () => {
   const { user } = useAuthContext();
   const [allNotifications, setAllNotifications] = useState([]);
+  const [notiAbout,setNotiAbout] = useState<boolean>(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -95,10 +97,53 @@ const NotificationDropdown = () => {
   };
 
   return (
-    <Dropdown as="li" autoClose="outside" className="nav-item ms-2" drop="down" align="end">
-      <DropdownToggle className="content-none nav-link bg-light icon-md btn btn-light p-0">
-        <span className="badge-notif animation-blink" />
-        <BsBellFill size={15} />
+    <Dropdown as="li" autoClose="outside" className="nav-item" drop="down" align="end">
+      <DropdownToggle className="content-none nav-link icon-md btn btn-light p-0"
+        style={{
+          marginRight : '10px'
+        }}
+      >
+        <div
+          style={{
+            padding: '8px',
+            borderRadius : '10%',
+            marginLeft : '10px',
+            // background: 'rgba(136, 209, 254, 0.2)',
+            backdropFilter: 'blur(8px)',
+            transition: 'background 0.3s ease',
+          }}
+          about='Label'
+  
+          onMouseEnter={(e) => {
+            (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
+            setNotiAbout(true);
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget.style.background = 'transparent');
+            setNotiAbout(false);
+          }}
+        >
+          {<Bell style={{ color: '#1ea1f2' }} />}
+        </div>
+          {notiAbout && 
+            <span
+              style={{
+                position: 'absolute',
+                marginTop : '40px',
+                marginLeft : '15px',
+                top: '50%',
+                zIndex : 10000,
+                transform: 'translateY(-50%)',
+                background: '#333',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
+              }}
+              className="label"
+            >
+              {'Notification'}
+            </span>}
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
         <Card>

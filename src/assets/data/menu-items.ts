@@ -1,9 +1,9 @@
 import type { MenuItemType } from '@/types/menu'
 import { BsCloudDownloadFill } from 'react-icons/bs'
-import { Home, HomeIcon, Layers, StoreIcon, Tv, UserCog, Users } from 'lucide-react'
+import { Home, HomeIcon, Layers, StoreIcon, Tv, TvMinimalPlay, UserCog, Users } from 'lucide-react'
 import { LayoutDashboard, Building2, Settings, Network } from 'lucide-react'
-
 import { FaUser } from 'react-icons/fa'
+
 export const PROFILE_MENU_ITEMS: MenuItemType[] = [
   {
     key: 'profile-feed',
@@ -64,7 +64,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
     key: 'demos',
     label: 'Businessroom Live',
     isTitle: true,
-    icon : Tv , //.....................change icon here.........................//
+    icon : TvMinimalPlay , //.....................change icon here.........................//
     url : "/join-live"
     // children: [
     //   {
@@ -379,8 +379,8 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
     // ],
   // },
   {
-    icon :  Network,
-    label: 'Network',
+    icon :  Users,
+    label: 'My Connections',
     url: '/AccountClone',
   },
 ]

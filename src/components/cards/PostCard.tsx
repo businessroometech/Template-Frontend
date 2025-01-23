@@ -205,16 +205,20 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
                   <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
                     {userInfo?.firstName} {userInfo?.lastName}
                   </Link>
-                  <span className="small mx-3" style={{ color: "#8b959b" }}>
-                    {userInfo?.userRole ? userInfo?.userRole : null}
-                  </span>
+                  <div style={{flex : 1,flexDirection : 'row'}}>
+                    <span className="small mx-3" style={{ color: "#8b959b" }}>
+                      {userInfo?.userRole ? userInfo?.userRole : null}
+                      <span className='mx-2'></span>
+                    </span>
+                    <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
+                      {userInfo?.timestamp}
+                    </span>
+                  </div>
                 </h6>
               </div>
             </div>
           </div>
-          <span className="nav-item small mx-2" style={{ color: "#8b959b" }}>
-            {userInfo?.timestamp}
-          </span>
+          
           {
               post.userId === user?.id &&
 

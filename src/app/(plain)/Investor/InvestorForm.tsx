@@ -2573,9 +2573,9 @@ const InvestorForm = () => {
         </div>
       </div>
 
-      <Toast
-        show={showToast}
-        onClose={() => setShowToast(false)}
+      {/* <Toast
+        // show={showToast}
+        // onClose={() => setShowToast(false)}
         delay={3000}
         autohide
         style={{
@@ -2589,7 +2589,7 @@ const InvestorForm = () => {
           <strong className="me-auto">Notification</strong>
         </Toast.Header>
         <Toast.Body>{toastMessage}</Toast.Body>
-      </Toast>
+      </Toast> */}
     </div>
   );
 };
