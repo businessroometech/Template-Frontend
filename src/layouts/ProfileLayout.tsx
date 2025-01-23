@@ -443,6 +443,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const skeletonHighlightColor = '#d6d6d6'
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false);
+  const [msg, setMsg] = useState("")
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -450,6 +451,44 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
     }
     fetchUser()
   }, [profile?.personalDetails])
+
+  useEffect(() => {
+    if (id && user?.id && !msg) {
+      if(id === user?.id){
+        return
+      }
+      recordProfileVisit();
+    }
+  }, [id, user?.id]);
+
+  const recordProfileVisit = async () => {
+    try {
+      const response = await fetch(
+        "https://strengthholdings.com/api/v1/auth/recored-visit",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            visitorId: user?.id,
+            visitedId: id,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setMsg(data?.message);
+    } catch (error) {
+      console.error("Error recording profile visit:", error);
+    } finally {
+      setSkeletonLoading(false);
+    }
+  };
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString)
@@ -464,6 +503,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
     }
     return date.toLocaleString('en-GB', options).replace(',', ' at')
   }
+
+
 
   const fetchUser = async () => {
     try {

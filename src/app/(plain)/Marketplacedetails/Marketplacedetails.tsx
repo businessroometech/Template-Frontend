@@ -7,7 +7,7 @@
 
 //   useEffect(() => {
 //     // Fetch data from the API
-//     fetch(`http://localhost:5000/businessseller/detailuuid/${id}`)
+//     fetch(`https://strengthholdings.com/businessseller/detailuuid/${id}`)
 //       .then(response => response.json())
 //       .then(data => setBusinessDetails(data))
 //       .catch(error => console.error('Error fetching data:', error));
