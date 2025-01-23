@@ -521,6 +521,7 @@ const Feeds = (isCreated: boolean) => {
   const fetchPosts = async () => {
     setError(null);
     setHasMore(true);
+    console.log('fetching posts');
     try {      
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
@@ -701,6 +702,7 @@ const PostSkeleton = () => {
   className="position-relative"
   style={{
     position: 'sticky',
+    overflowY: 'auto',
     maxHeight: '500px',
     WebkitOverflowScrolling: 'touch',
     // Example to shrink the space taken by the sidebar (if sidebar is hidden)
@@ -744,6 +746,7 @@ const PostSkeleton = () => {
         setIsCreated={isCreated}
         tlRefresh={tlRefresh}
         setTlRefresh={setTlRefresh}
+        scrollbarWidth="none"
       />
     ))}
   </InfiniteScroll>

@@ -53,7 +53,7 @@ const Home = () => {
       <Col md={8} lg={6} 
         style={{
           maxHeight:"70em",
-          overflowY: 'scroll', /* Enable vertical scrolling */
+          overflowY: 'auto', /* Enable vertical scrolling */
     scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
     msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
         }} 
@@ -114,7 +114,8 @@ const Home = () => {
       </Col>
 
       <Col lg={3} style={{ marginTop : '0px', height : '44rem'  ,   maxHeight:"70em",
-        overflowY: 'scroll', /* Enable vertical scrolling */
+      
+         overflowY: 'auto', /* Enable vertical scrolling */
     scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
     msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */}}>
         <Row className="g-4">
