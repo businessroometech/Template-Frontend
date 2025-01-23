@@ -481,6 +481,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
+import TopBar from '../landing/components/TopBar';
 import { 
   Building2, BadgeDollarSign, Users, Briefcase, MapPin, TrendingUp,
   PiggyBank, Calendar, Shield, Target, BarChart, FileText,
@@ -578,6 +579,7 @@ const MarketplaceDetails = () => {
 
   return (
     <div style={{ height: '100vh' }}>
+<TopBar></TopBar>
       {/* Header */}
       <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' }}>
         <div className="container">

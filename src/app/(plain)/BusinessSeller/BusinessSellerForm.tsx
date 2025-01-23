@@ -787,10 +787,10 @@ const BusinessSellerForm = () => {
         { id: 'customerBaseType', name: 'customerBaseType', label: 'What is the type of customer base?', icon: <FaUsers />, type: 'select', options: ['B2B', 'B2C', 'Both'], required: true }
       ],
       2: [ // Financial Information
-        { id: 'askingPrice', name: 'askingPrice', label: 'What is the asking price for the business?', icon: <FaDollarSign />, inputType: 'number', required: true },
-        { id: 'annualRevenue', name: 'annualRevenue', label: 'What is the approximate annual revenue (TTM)?', icon: <FaDollarSign />, inputType: 'number', required: true },
-        { id: 'annualProfit', name: 'annualProfit', label: 'What is the approximate annual profit (TTM)?', icon: <FaDollarSign />, inputType: 'number', required: true },
-        { id: 'assetValue', name: 'assetValue', label: 'What is the value of business assets?', icon: <FaDollarSign />, inputType: 'number', required: true },
+        { id: 'askingPrice', name: 'askingPrice', label: 'What is the asking price for the business?', icon: <FaDollarSign />, inputType: '', required: true },
+        { id: 'annualRevenue', name: 'annualRevenue', label: 'What is the approximate annual revenue (TTM)?', icon: <FaDollarSign />, inputType: '', required: true },
+        { id: 'annualProfit', name: 'annualProfit', label: 'What is the approximate annual profit (TTM)?', icon: <FaDollarSign />, inputType: '', required: true },
+        { id: 'assetValue', name: 'assetValue', label: 'What is the value of business assets?', icon: <FaDollarSign />, inputType: '', required: true },
         { id: 'hasDebts', name: 'hasDebts', label: 'Does the business have any outstanding debts or liabilities?', icon: <FaMoneyBillWave />, type: 'select', options: ['Yes', 'No'], required: true },
         { id: 'isProfitable', name: 'isProfitable', label: 'Is the business currently profitable?', icon: <FaChartLine />, type: 'select', options: ['Yes', 'No', 'Break-even'], required: true }
       ],

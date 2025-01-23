@@ -96,6 +96,9 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
             }}>
                 {isMyBusiness ? business.businessType : business.businessType || "undefined"}
             </div>
+
+
+{isMyBusiness? 
             <button
                 onClick={() => {
                 console.log("Clicking....")
@@ -116,6 +119,8 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
             >
                 <Trash2 size={18} />
             </button>
+ : ""}
+
             </div>
             </div>
 

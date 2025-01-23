@@ -16,50 +16,59 @@ import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { useAuthContext } from '@/context/useAuthContext';
 import avatar4 from '@/assets/images/avatar/04.jpg'
+import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Bell } from 'lucide-react';
 
-import { io as socketIoClient } from 'socket.io-client';
-
-function io(url: string, options: { query: { userId: string } }) {
-  return socketIoClient(url, options);
-}
 const NotificationDropdown = () => {
   const { user } = useAuthContext();
+  // const [allNotifications, setAllNotifications] = useState<any[]>([]);
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [allNotifications, setAllNotifications] = useState([]);
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
 
   useEffect(() => {
-  if(allNotifications.length>0) {
-      fetchNotifications();}
-      const socketConnection = io('https://strengthholdings.com', {
-        query: { userId: user?.id },
-      });
+    if (!user?.id) return;
 
-      setSocket(socketConnection);
+    const wsConnection = new WebSocket(`wss://strengthholdings.com?userId=${user.id}`);
+    setWs(wsConnection);
 
-      // Listen for new notifications
-      socketConnection.on('newNotification', (notification:any) => {
-        setAllNotifications((prev) => [notification, ...prev]);
-      });
+    // Handle WebSocket connection open
+    wsConnection.onopen = () => {
+      console.log('WebSocket connected');
+      setIsConnected(true);
+    };
 
-      // Clean up on component unmount
-      return () => {
-        socketConnection.disconnect();
-      };
-    
+    // Handle WebSocket message event
+    wsConnection.onmessage = (event) => {
+      const notification = JSON.parse(event.data);
+      setAllNotifications((prev) => [notification, ...prev]);
+    };
+
+    // Handle WebSocket error
+    wsConnection.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setIsConnected(false);
+    };
+
+    // Handle WebSocket connection close
+    wsConnection.onclose = () => {
+      console.log('WebSocket disconnected');
+      setIsConnected(false);
+    };
+
+    // Clean up on component unmount
+    return () => {
+      wsConnection.close();
+    };
   }, [user?.id]);
 
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
         `https://strengthholdings.com/api/v1/socket-notifications/get?userId=${user?.id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } }
       );
 
       const data = await response.json();
@@ -71,10 +80,15 @@ const NotificationDropdown = () => {
     }
   };
 
-  const handleOnRead = async (notificationId:string) => {
+  useEffect(() => {
+    fetchNotifications();
+  }, [user?.id]);
+
+
+  const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        ' https://strengthholdings.com/api/v1/notifications/mark-as-read',
+        'https://strengthholdings.com/api/v1/notifications/mark-as-read',
         {
           method: 'POST',
           headers: {
@@ -84,7 +98,7 @@ const NotificationDropdown = () => {
         }
       );
       await response.json();
-     
+
       fetchNotifications();
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -195,7 +209,7 @@ const NotificationDropdown = () => {
                         <div className="avatar text-center">
                           <img
                             className="avatar-img rounded-circle"
-                            src={notification.avatar || avatar4}
+                            src={notification.avatar || avatar7}
                             alt="Avatar"
                           />
                         </div>
@@ -204,7 +218,7 @@ const NotificationDropdown = () => {
                           <p className="small mb-2 pb-2 text-secondary">
                             {notification.message}
                           </p>
-                          {notification.type==="isFriendRequest" && (
+                          {notification.type === "isFriendRequest" && (
                             <div className="d-flex mt-2">
                               <Button variant="primary" size="sm" className="py-1 me-2">
                                 Accept
