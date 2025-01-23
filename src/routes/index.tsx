@@ -95,6 +95,9 @@ const initialRoutes: RoutesProps[] = [
 
 // feed with container
 const generalRoutes: RoutesProps[] = [
+
+
+
   {
     path: '/feed/home',
     name: 'Demo Home',
