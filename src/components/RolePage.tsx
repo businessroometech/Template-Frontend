@@ -1,5 +1,5 @@
 import BusinessBuyerForm from "@/app/(plain)/BusinessBuyer/BusinessBuyer.tsx";
-//import EntrepreneurForm from "@/app/(plain)/Entrepreneur/Entrepreneurform";
+import EntrepreneurForm from "@/app/(plain)/Entrepreneur/Entrepreneurform";
 import InvestorForm from "@/app/(plain)/Investor/InvestorForm.tsx";
 import BusinessSellerForm from '@/app/(plain)/BusinessSeller/BusinessSellerForm';
 import { useAuthContext } from "@/context/useAuthContext";
@@ -11,6 +11,9 @@ const RolePage = () => {
     console.log(role);
     const renderContent = () => {
       switch (role) {
+        case "Entrepreneur" :
+          return <EntrepreneurForm/>;
+          break;
         case "Investor":
           return <InvestorForm/>;
           break;

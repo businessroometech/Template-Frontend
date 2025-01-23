@@ -3,10 +3,12 @@ import { useAuthContext } from '@/context/useAuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Users, DollarSign, TrendingUp, PiggyBank , Trash2 } from 'lucide-react';
 import ProfilePanel from '@/components/layout/ProfilePanel';
-import { profilePanelLinksData2 } from '@/assets/data/layout';
+import { profilePanelLinksData1 } from '@/assets/data/layout';
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
 import axios from 'axios';
 import MarketplaceCard from './MarketplaceCard';
+import TopHeader from '@/components/layout/TopHeader';
+
 
 // eslint-disable-next-line no-sparse-arrays
 const categories = [
@@ -115,7 +117,12 @@ const MarketPlace = () => {
   // console.log('All Business Data:', allBusinessData);
   
   return (
-    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+<div>
+<TopHeader></TopHeader>
+
+
+    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' , marginTop: "50px" }}>
+     
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-3" style={{ 
@@ -125,8 +132,8 @@ const MarketPlace = () => {
             minHeight: '100vh'
           }}>
     
-          <SimplebarReactClient className="offcanvas-start">
-          <ProfilePanel links={profilePanelLinksData2} />
+          <SimplebarReactClient className="offcanvas-start" style={{marginTop: "20px"}}>
+          <ProfilePanel links={profilePanelLinksData1} />
           </SimplebarReactClient>            
         </div>
         <div className="col-md-9" style={{ padding: '2rem' }}>
@@ -136,7 +143,7 @@ const MarketPlace = () => {
               alignItems: 'center', 
               marginBottom: '2rem' 
             }}>
-              <h1 style={{ fontSize: '1.75rem', fontWeight: '600', margin: 0 }}>Acquireroom Marketplace</h1>
+              <h1 style={{ fontSize: '1.75rem', fontWeight: '600', margin: 0 }}>Acquireroom </h1>
               <button 
                 className="btn btn-primary"
                 style={{
@@ -237,6 +244,7 @@ const MarketPlace = () => {
           background-color: #f8f9fa;
         }
       `}</style>
+    </div>
     </div>
   );
 };

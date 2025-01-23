@@ -73,7 +73,7 @@ import { set } from 'react-hook-form'
 
 const Experience = () => {
   return (
-    <Card>
+    <Card style={{marginTop : '25px'}}>
       <CardHeader className="d-flex justify-content-between border-0">
         <h5 className="card-title">Suggested Pages</h5>
         <Button variant="primary-soft" size="sm">
@@ -623,18 +623,18 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       },
       parentKey: 'pages-profile',
     },
-    {
-      key: 'profile-media',
-      label: 'Media',
-      url: `/profile/media/${id}`,
-      parentKey: 'pages-profile',
-    },
-    {
-      key: 'profile-videos',
-      label: 'Videos',
-      url: `/profile/videos/${id}`,
-      parentKey: 'pages-profile',
-    },
+    // {
+    //   key: 'profile-media',
+    //   label: 'Media',
+    //   url: `/profile/media/${id}`,
+    //   parentKey: 'pages-profile',
+    // },
+    // {
+    //   key: 'profile-videos',
+    //   label: 'Videos',
+    //   url: `/profile/videos/${id}`,
+    //   parentKey: 'pages-profile',
+    // },
     {
       key: 'profile-events',
       label: 'Events',
@@ -683,7 +683,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       }}
                     />
                   )}
-                  <Button
+                  {/* <Button
                     className="position-absolute width"
                     style={{
                       bottom: '10px',
@@ -695,7 +695,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       navigate('/feed/groups')
                     }}>
                     View My Business Profile
-                  </Button>
+                  </Button> */}
                 </div>
                 <CardBody className="py-0">
                   {/* Profile Info Section */}
@@ -866,12 +866,12 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
             {/* Sidebar Section */}
             <Col lg={4}>
-              <Row className="g-4">
+              <Row>
                 {/* About Card */}
 
-                <Col md={6} lg={12}>
+                {/* <Col md={6} lg={12}> */}
                   {/* <Card> */}
-                  <CardHeader className="border-0 pb-0">{/* <CardTitle>View My Business Profile</CardTitle> */}</CardHeader>
+                  {/* <CardHeader className="border-0 pb-0"> <CardTitle>View My Business Profile</CardTitle></CardHeader> */}
 
                   {/* <CardBody className="position-relative pt-0">
                       <Button
@@ -905,13 +905,13 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       </ul>
                     </CardBody> */}
                   {/* </Card> */}
-                </Col>
+                {/* </Col> */}
 
-                <ConnectionRequest />
+                {/* <ConnectionRequest /> */}
                 {/* Additional Components */}
-                <Col md={6} lg={12}>
+                {/* <Col md={6} lg={12}>
                   <Friends />
-                </Col>
+                </Col> */}
                 {/* <Col md={6} lg={12}>
                   <Photos />
                 </Col> */}

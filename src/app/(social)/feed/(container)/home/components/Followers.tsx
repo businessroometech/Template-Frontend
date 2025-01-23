@@ -112,7 +112,7 @@ const Followers = () => {
     <>
       {/* <ConnectionRequest /> */}
       <br />
-      <Card style={{ marginTop: '0px' }}>
+      <Card style={{ marginTop: '-22px' }}>
         <CardHeader className="pb-0 border-0">
           <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
             Suggested Connections

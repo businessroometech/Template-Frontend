@@ -246,7 +246,7 @@ const Posts = ({ isCreated }) => {
             </div>}
             endMessage={
               <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                <strong>No more posts are available.</strong>
+                <strong>No posts are available.</strong>
               </div>
             }
           >

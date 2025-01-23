@@ -521,6 +521,7 @@ const Feeds = (isCreated: boolean) => {
   const fetchPosts = async () => {
     setError(null);
     setHasMore(true);
+    console.log('fetching posts');
     try {      
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
@@ -658,69 +659,39 @@ const PostSkeleton = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div> // Show an error message
+    return <div>Error: {error}</div>
   }
-
-
-  // Infinte Scroll
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     if (scrollContainerRef.current) {
-  //       const scrollTop = scrollContainerRef.current.scrollTop;
-
-  //       // Show button if scrolled up or near the top (scrollTop < 1000)
-  //       if (scrollTop < 1) {
-  //         setShowNewPostButton(true);
-  //       } else {
-  //         setShowNewPostButton(false);
-  //       }
-  //     }
-  //   };
-
-  //   const container = scrollContainerRef.current;
-
-  //   if (container) {
-  //     container.addEventListener('scroll', handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (container) {
-  //       container.removeEventListener('scroll', handleScroll);
-  //     }
-  //   };
-  // }, []);
-
-// setTimeout(() => {
-//   setShowNewPostButton(true)
-// }, 500000);
 
   return (
     <>
-   <div 
+<div 
   className="position-relative"
+  id="scrollableDiv" // Add an ID to reference the container
   style={{
     position: 'sticky',
-    maxHeight: '500px',
+    overflowY: 'auto',
+    maxHeight: '520px',
     WebkitOverflowScrolling: 'touch',
-    // Example to shrink the space taken by the sidebar (if sidebar is hidden)
-    marginLeft: '0', // Adjust margin or padding if the sidebar is removed
+    marginLeft: '0',
   }} 
 >
   <InfiniteScroll
     dataLength={posts.length}
     next={fetchNextPage}
     hasMore={hasMore}
-    loader={<div>
-      {[...Array(5)].map((_, index) => (
-        <PostSkeleton key={index} />
-      ))}
-    </div>}
-    endMessage={
-      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <strong>No more posts are available.</strong>
+    loader={
+      <div>
+        {[...Array(5)].map((_, index) => (
+          <PostSkeleton key={index} />
+        ))}
       </div>
     }
+    endMessage={
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <strong>No Posts are available.</strong>
+      </div>
+    }
+    scrollableTarget="scrollableDiv" // Tell InfiniteScroll to use this container for scrolling
   >
     {showNewPostButton && (
       <Link 
@@ -744,59 +715,11 @@ const PostSkeleton = () => {
         setIsCreated={isCreated}
         tlRefresh={tlRefresh}
         setTlRefresh={setTlRefresh}
+        scrollbarWidth="none"
       />
     ))}
   </InfiniteScroll>
 </div>
-
-
-      {/* <SponsoredCard /> */}
-      {/* <Post2 /> */}
-      {/* <People /> */}
-      {/* <CommonPost>
-        <div className="vstack gap-2">
-          {postData.map((item, idx) => (
-            <div key={idx}>
-              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
-              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
-                {item.title}
-              </label>
-            </div>
-          ))}
-        </div>
-      </CommonPost> */}
-
-      {/* <CommonPost>
-        <Card className="card-body mt-4">
-          <div className="d-sm-flex justify-content-sm-between align-items-center">
-            <span className="small">16/20 responded</span>
-            <span className="small">Results not visible to participants</span>
-          </div>
-          <div className="vstack gap-4 gap-sm-3 mt-3">
-            {postData.map((item, idx) => (
-              <div className="d-flex align-items-center justify-content-between" key={idx}>
-                <div className="overflow-hidden w-100 me-3">
-                  <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>
-                    <div
-                      className="progress-bar bg-primary bg-opacity-25"
-                      role="progressbar"
-                      style={{ width: `${item.progress}%` }}
-                      aria-valuenow={item.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.userRole}</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">{item.progress}%</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </CommonPost> */}
-
-      {/* <Post3 /> */}
-      {/* <SuggestedStories /> */}
-      {/* <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/> */}
     </>
   )
 }
