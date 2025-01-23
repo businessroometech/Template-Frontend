@@ -141,7 +141,7 @@ const ProfileVisits = () => {
                       <span className="badge  text-success small">{visit.visitCount}</span>
                     </h6>
                     <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
-                    <p className="mb-0 text-muted">{formatTimestamp(visit.visitor.createdAt) || "1w"}</p>
+                    <p className="mb-0 text-muted">{visit.visitor.createdAt?formatTimestamp(visit.visitor.createdAt) : "1w"}</p>
                   </div>
                 </Link>
                 <div>
@@ -294,7 +294,7 @@ const ProfileVisited = () => {
                       <span className="badge  text-success small">{visit.visitCount}</span>
                     </h6>
                     <p className="mb-0 text-muted">{visit.profile.userRole}</p>
-                    <p className="mb-0 text-muted">{formatTimestamp(visit.profile.createdAt) || "1w"}</p>
+                    <p className="mb-0 text-muted">{visit.profile.createdAt?formatTimestamp(visit.profile.createdAt) : "1w"}</p>
                   </div>
                 </Link>
                 <div>
