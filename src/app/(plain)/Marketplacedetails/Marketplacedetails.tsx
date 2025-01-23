@@ -7,7 +7,7 @@
 
 //   useEffect(() => {
 //     // Fetch data from the API
-//     fetch(`http://localhost:5000/businessseller/detailuuid/${id}`)
+//     fetch(`https://strengthholdings.com/businessseller/detailuuid/${id}`)
 //       .then(response => response.json())
 //       .then(data => setBusinessDetails(data))
 //       .catch(error => console.error('Error fetching data:', error));
@@ -486,7 +486,7 @@ import {
   PiggyBank, Calendar, Shield, Target, BarChart, FileText,
   Globe, Mail, Phone, Clock, DollarSign, Award, ChevronRight, User
 } from 'lucide-react';
-
+import title from "@/assets/title 02.png"
 const MarketplaceDetails = () => {
   const [profile, setProfile] = useState({});
   const { id } = useParams();
@@ -528,12 +528,21 @@ const MarketplaceDetails = () => {
 
   if (!businessDetails) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%)' }}>
-        <div style={{ padding: '2rem', borderRadius: '12px', backgroundColor: 'white', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: '4rem', height: '4rem', borderRadius: '50%', borderTop: '4px solid #2563eb', animation: 'spin 1s linear infinite' }}></div>
-          <p style={{ marginTop: '1rem', color: '#4b5563' }}>Loading business details...</p>
-        </div>
+      // <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%)' }}>
+      //   <div style={{ padding: '2rem', borderRadius: '12px', backgroundColor: 'white', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      //     <div style={{ width: '4rem', height: '4rem', borderRadius: '50%', borderTop: '4px solid #2563eb', animation: 'spin 1s linear infinite' }}></div>
+      //     <p style={{ marginTop: '1rem', color: '#4b5563' }}>Loading business details...</p>
+      //   </div>
+      // </div>
+      <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center">
+      <div className="rounded-circle overflow-hidden" style={{ width: '100px', height: '100px' }}>
+        <img 
+          src={title} 
+          alt="Loader" 
+          className="w-100 h-100 object-fit-cover"
+        />
       </div>
+    </div>
     );
   }
 
