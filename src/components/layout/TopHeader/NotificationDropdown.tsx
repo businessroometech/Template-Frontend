@@ -30,7 +30,7 @@ const NotificationDropdown = () => {
   useEffect(() => {
     if (!user?.id) return;
 
-    const wsConnection = new WebSocket(`ws://localhost:5000?userId=${user.id}`);
+    const wsConnection = new WebSocket(`ws://strengthholdings.com?userId=${user.id}`);
     setWs(wsConnection);
 
     // Handle WebSocket connection open
