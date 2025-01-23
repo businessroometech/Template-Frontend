@@ -50,74 +50,34 @@ const Home = () => {
 
   return (
     <>
-      <Col md={8} lg={6} 
+      <Col
+        md={8}
+        lg={6}
+        id="scrollableDiv"
         style={{
-          maxHeight:"70em",
-          overflowY: 'auto', /* Enable vertical scrolling */
-    scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
-    msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
-        }} 
-        className="vstack gap-4 "
+          position: 'sticky', // Ensure the container's position is suitable for scrolling
+          overflowY: 'auto', // Enables vertical scrolling
+          maxHeight: '680px', // Sets a height limit for scrolling
+          WebkitOverflowScrolling: 'touch', // Smooth scrolling for iOS
+          marginLeft: '0',
+          scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
+          msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
+        }}
+        className="position-relative vstack gap-4"
       >
-      <CreatePostCard setIsCreated={setIsCreated} />
-        {/* <Stories /> */}
-        {/* <div className="d-flex justify-content-between gap-3 px-1 py-2">
-          <Button
-            variant="primary"
-            className="w-100"
-            style={{
-              backgroundColor: "red",
-              borderColor: "red",
-              fontWeight: "bold",
-            }}
-            onClick={() => {
-              navigate("/live/");
-            }}
-          >
-            Live
-          </Button>
-          <Button
-            variant="outline-primary"
-            className="w-100"
-            style={{
-              borderColor: "#0f6fec",
-              backgroundColor: "#0f6fec",
-              color: "white",
-            }}
-            onClick={() => {
-              navigate("/join-live");
-            }}
-          >
-            Businessroom Live
-          </Button>
-          <Button
-            variant="outline-success"
-            className="w-100 bg-success"
-            style={{
-              backgroundColor: "#0f6fec",
-              color: "white",
-            }}
-            onClick={() => {
-              navigate("/marketplace");
-            }}
-          >
-            Acquireroom
-          </Button>
-        </div> */}
-        <RoleSelectionModal
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          onSelectRole={handleRoleSelect}
-        />
-       
+      <CreatePostCard setIsCreated={setIsCreated} />       
         <Feeds isCreated={setIsCreated} />
       </Col>
 
-      <Col lg={3} style={{ marginTop : '0px', height : '44rem'  ,   maxHeight:"70em",
-      
-         overflowY: 'auto', /* Enable vertical scrolling */
-    scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
-    msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */}}>
+      <Col lg={3} 
+        style={{ 
+          marginTop : '0px', 
+          height : '44rem',   
+          maxHeight:"70em",
+          overflowY: 'auto', /* Enable vertical scrolling */
+          scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
+          msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
+      }}>
         <Row className="g-4">
           <Col sm={6} lg={12} >
             <div style={{marginTop : '23px'}}>

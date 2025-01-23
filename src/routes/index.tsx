@@ -104,6 +104,11 @@ const generalRoutes: RoutesProps[] = [
     element: <HomeDemo />,
   },
   {
+      path : '/marketplace',
+      name : 'Acquireroom',
+      element : <MarketPlace/>
+  },
+  {
     path: '/profile-visitors',
     name: 'Profile Visitors',
     element: <VisitProfile />,

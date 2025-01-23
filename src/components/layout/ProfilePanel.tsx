@@ -9,7 +9,7 @@ import bgBannerImg from '@/assets/images/bg/Profile-Bg.jpg'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
-import { Globe, Map, MapPin } from 'lucide-react'
+import { Diamond, Gem, Globe, Map, MapPin } from 'lucide-react'
 import { useLayoutContext } from '@/context/useLayoutContext'
 import { set } from 'react-hook-form'
 
@@ -176,7 +176,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                 color: 'black',
                 fontWeight: 'bold',
               }}>
-              Subscribe to Premium
+              <span>Subscribe to Premium</span>
             </p>
             <p>Subscribe to unlock new features</p>
 
@@ -185,13 +185,14 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               style={{
                 backgroundColor: '#1ea1f3',
                 color: 'white',
-                padding: '2px',
+                padding: '3px',
                 marginBottom: '3px',
+
               }}
               onClick={() => {
                 navigate('/feed/groups')
               }}>
-              Subscribe
+              <Gem size={16}/> <span style={{paddingLeft : '2px',paddingTop : '4px'}}>Subscribe</span>
             </Button>
           </div>
           {/* </Link> */}

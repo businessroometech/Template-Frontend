@@ -96,6 +96,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
   const [videoQuote, setVideoQuote] = useState('')
   const [awsIds, setAwsIds] = useState<any>([])
   const [skeletonLoading, setSkeletonLoading] = useState(true)
+  const { isTrue: isOpenPost, toggle: togglePost } = useToggle()
 
   // const {user} = useAuthContext();
   const [profile, setProfile] = useState({})
@@ -302,24 +303,6 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
   return (
     <>
-      {/* {show && modelTime &&
-        <div className="modal-body w-100 " >
-          <div className="modal fade show d-block " style={{ backgroundColor: "#000000ab" }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header d-flex row">
-                  <h5 className="modal-title w-50" id="exampleModalLongTitle">Complete your profile</h5>
-                  <button type="button" className="close border-0 w-25 text-info justify-content-around" onClick={handleClose} aria-label="Close">
-                    skip
-                  </button>
-                </div>
-                <UserModel />
-
-              </div>
-            </div>
-          </div>
-        </div>} */}
-
       <Card className="card-body" style={{ maxHeight: '9em' }}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
@@ -351,6 +334,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
                 backgroundColor: '#f8f9fa', // Light gray background
                 fontSize: '14px', // Slightly smaller, readable text
               }}
+              onClick={togglePost}
               rows={1}
               data-autoresize
               placeholder="Share your thoughts..."
@@ -373,58 +357,14 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               Video
             </a>
           </li>
-          {/* Uncomment if needed */}
-          {/* <li className="nav-item d-inline">
-    <a className="nav-link bg-light py-1 px-3 mb-2" onClick={toggleEvent}>
-      <BsCalendar2EventFill size={20} className="text-danger pe-2" />
-      Event
-    </a>
-  </li> */}
           <li className="nav-item d-inline">
             <a className="nav-link bg-light py-2 px-4 mb-2" onClick={handlePostClick}>
               <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
               Post
             </a>
           </li>
-
-          {/* <Dropdown drop="start" className="nav-item ms-lg-auto">
-            <DropdownToggle
-              as="a"
-              className="nav-link bg-light py-1 px-2 mb-0 content-none"
-              id="feedActionShare"
-              data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <BsThreeDots />
-            </DropdownToggle>
-
-            <DropdownMenu className="dropdown-menu-end" aria-labelledby="feedActionShare">
-              <li>
-                <DropdownItem>
-                  <BsEnvelope size={21} className="fa-fw pe-2" />
-                  Create a poll
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsBookmarkCheck size={21} className="fa-fw pe-2" />
-                  Ask a question
-                </DropdownItem>
-              </li>
-              <li>
-                <DropdownDivider />
-              </li>
-              <li>
-                <DropdownItem>
-                  <BsPencilSquare size={21} className="fa-fw pe-2" />
-                  Help
-                </DropdownItem>
-              </li>
-            </DropdownMenu>
-          </Dropdown> */}
         </ul>
       </Card>
-
-      {/* photo */}
       <Modal
         show={isOpenPhoto}
         onHide={togglePhotoModel}
@@ -512,80 +452,83 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
         </ModalFooter>
       </Modal>
 
-      {/* event */}
-      <Modal
-        show={isOpenEvent}
-        onHide={toggleEvent}
-        centered
-        className="fade"
-        id="modalCreateEvents"
-        tabIndex={-1}
-        aria-labelledby="modalLabelCreateEvents"
-        aria-hidden="true">
-        <form
-          onSubmit={handleSubmit((values) => {
-            console.log('---- create event ----', values)
-            console.log('Post button clicked')
-          })}>
-          <ModalHeader closeButton>
-            <h5 className="modal-title" id="modalLabelCreateEvents">
-              Create event
-            </h5>
-          </ModalHeader>
-          <ModalBody>
-            <Row className="g-4">
-              <TextFormInput name="title" label="Title" placeholder="Event name here" containerClassName="col-12" control={control} />
-              <TextAreaFormInput
-                name="description"
-                label="Description"
-                rows={2}
-                placeholder="Ex: topics, schedule, etc."
-                containerClassName="col-12"
-                control={control}
-              />
-
-              <Col sm={4}>
-                <label className="form-label">Date</label>
-                <DateFormInput options={{ enableTime: false }} type="text" className="form-control" placeholder="Select date" />
-              </Col>
-              <Col sm={4}>
-                <label className="form-label">Time</label>
-                <DateFormInput options={{ enableTime: true, noCalendar: true }} type="text" className="form-control" placeholder="Select time" />
-              </Col>
-              <TextFormInput name="duration" label="Duration" placeholder="1hr 23m" containerClassName="col-sm-4" control={control} />
-              <TextFormInput name="location" label="Location" placeholder="Logansport, IN 46947" containerClassName="col-12" control={control} />
-              <TextFormInput name="guest" type="email" label="Add guests" placeholder="Guest email" containerClassName="col-12" control={control} />
-              <Col xs={12} className="mt-3">
-                <ul className="avatar-group list-unstyled align-items-center mb-0">
-                  {guests.map((avatar, idx) => (
-                    <li className="avatar avatar-xs" key={idx}>
-                      <img className="avatar-img rounded-circle" src={avatar} alt="avatar" />
-                    </li>
-                  ))}
-                  <li className="ms-3">
-                    <small> +50 </small>
-                  </li>
-                </ul>
-              </Col>
-              <div className="mb-3">
-                <DropzoneFormInput
-                  showPreview
-                  helpText="Drop presentation and document here or click to upload."
-                  icon={BsFileEarmarkText}
-                  label="Upload attachment"
-                />
-              </div>
-            </Row>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="danger-soft" type="button" className="me-2" onClick={toggleEvent}>
-              Cancel
+      <Modal show={isOpenPost} onHide={togglePost} className="fade" centered id="modalCreateFeed" tabIndex={-1}>
+        <ModalHeader closeButton>
+          <h5 className="modal-title" id="modalLabelCreateFeed">
+            Create post
+          </h5>
+        </ModalHeader>
+        <ModalBody>
+          <div className="d-flex mb-3">
+            <div className="avatar avatar-xs me-2">
+              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+            </div>
+            <form className="w-100">
+              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts..." defaultValue={''} />
+            </form>
+          </div>
+          <div className="hstack gap-2">
+            <OverlayTrigger overlay={<Tooltip>Photo</Tooltip>}>
+              <Link className="icon-md bg-success bg-opacity-10 text-success rounded-circle" to="">
+                
+                <BsImageFill />
+              </Link>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip>Video</Tooltip>}>
+              <Link className="icon-md bg-info bg-opacity-10 text-info rounded-circle" to="">
+                
+                <BsCameraReelsFill />
+              </Link>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip>Events</Tooltip>}>
+              <Link className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle" to="">
+                
+                <BsCalendar2EventFill />
+              </Link>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip>Feeling/Activity</Tooltip>}>
+              <Link className="icon-md bg-warning bg-opacity-10 text-warning rounded-circle" to="">
+                
+                <BsEmojiSmileFill />
+              </Link>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip>Check in</Tooltip>}>
+              <Link className="icon-md bg-light text-secondary rounded-circle" to="">
+                
+                <BsGeoAltFill />
+              </Link>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip>Tag people on top</Tooltip>}>
+              <Link className="icon-md bg-primary bg-opacity-10 text-primary rounded-circle" to="">
+                
+                <BsTagFill />
+              </Link>
+            </OverlayTrigger>
+          </div>
+        </ModalBody>
+        <ModalFooter className="row justify-content-between">
+          <Col lg={3}>
+            <ChoicesFormInput
+              options={{ searchEnabled: false }}
+              className="form-select js-choice choice-select-text-none"
+              data-position="top"
+              data-search-enabled="false">
+              <option value="PB">Public</option>
+              <option value="PV">Friends</option>
+              <option value="PV">Only me</option>
+              <option value="PV">Custom</option>
+            </ChoicesFormInput>
+          </Col>
+          <Col lg={8} className="text-sm-end">
+            <Button variant="danger-soft" type="button" className="me-2">
+              
+              <BsCameraVideoFill className="pe-1" /> Live video
             </Button>
-            <Button variant="success-soft" type="submit">
-              Create now
+            <Button variant="success-soft" type="button">
+              Post
             </Button>
-          </ModalFooter>
-        </form>
+          </Col>
+        </ModalFooter>
       </Modal>
     </>
   )

@@ -659,147 +659,57 @@ const PostSkeleton = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div> // Show an error message
+    return <div>Error: {error}</div>
   }
-
-
-  // Infinte Scroll
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     if (scrollContainerRef.current) {
-  //       const scrollTop = scrollContainerRef.current.scrollTop;
-
-  //       // Show button if scrolled up or near the top (scrollTop < 1000)
-  //       if (scrollTop < 1) {
-  //         setShowNewPostButton(true);
-  //       } else {
-  //         setShowNewPostButton(false);
-  //       }
-  //     }
-  //   };
-
-  //   const container = scrollContainerRef.current;
-
-  //   if (container) {
-  //     container.addEventListener('scroll', handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (container) {
-  //       container.removeEventListener('scroll', handleScroll);
-  //     }
-  //   };
-  // }, []);
-
-// setTimeout(() => {
-//   setShowNewPostButton(true)
-// }, 500000);
 
   return (
     <>
-   <div 
-  className="position-relative"
-  style={{
-    position: 'sticky',
-    overflowY: 'auto',
-    maxHeight: '500px',
-    WebkitOverflowScrolling: 'touch',
-    // Example to shrink the space taken by the sidebar (if sidebar is hidden)
-    marginLeft: '0', // Adjust margin or padding if the sidebar is removed
-  }} 
->
-  <InfiniteScroll
-    dataLength={posts.length}
-    next={fetchNextPage}
-    hasMore={hasMore}
-    loader={<div>
-      {[...Array(5)].map((_, index) => (
-        <PostSkeleton key={index} />
-      ))}
-    </div>}
-    endMessage={
-      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <strong>posts are available.</strong>
-      </div>
-    }
-  >
-    {showNewPostButton && (
-      <Link 
-        to="/feed/home#"
-        className="btn-primary"
-        onClick={() => setShowNewPostButton(false)}
-        style={{ zIndex: 99, top: "4em", position: "fixed", left: "47%" }}
-      >
-        ⬆️ New Posts
-      </Link>
-    )}
-    
-    {posts.map((post, index) => (
-      <PostCard 
-        item={post} 
-        posts={posts}
-        setPosts={setPosts}
-        key={post.Id || index} 
-        isMediaKeys={false}
-        onDelete={handleDelete} 
-        setIsCreated={isCreated}
-        tlRefresh={tlRefresh}
-        setTlRefresh={setTlRefresh}
-        scrollbarWidth="none"
-      />
-    ))}
-  </InfiniteScroll>
-</div>
-
-
-      {/* <SponsoredCard /> */}
-      {/* <Post2 /> */}
-      {/* <People /> */}
-      {/* <CommonPost>
-        <div className="vstack gap-2">
-          {postData.map((item, idx) => (
-            <div key={idx}>
-              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
-              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
-                {item.title}
-              </label>
-            </div>
-          ))}
-        </div>
-      </CommonPost> */}
-
-      {/* <CommonPost>
-        <Card className="card-body mt-4">
-          <div className="d-sm-flex justify-content-sm-between align-items-center">
-            <span className="small">16/20 responded</span>
-            <span className="small">Results not visible to participants</span>
-          </div>
-          <div className="vstack gap-4 gap-sm-3 mt-3">
-            {postData.map((item, idx) => (
-              <div className="d-flex align-items-center justify-content-between" key={idx}>
-                <div className="overflow-hidden w-100 me-3">
-                  <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>
-                    <div
-                      className="progress-bar bg-primary bg-opacity-25"
-                      role="progressbar"
-                      style={{ width: `${item.progress}%` }}
-                      aria-valuenow={item.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.userRole}</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">{item.progress}%</div>
+      <div>
+          <InfiniteScroll
+            dataLength={posts.length} // Total number of posts
+            next={fetchNextPage} // Function to fetch the next page of posts
+            hasMore={hasMore} // Boolean indicating whether more posts are available
+            loader={
+              <div>
+                {[...Array(5)].map((_, index) => (
+                  <PostSkeleton key={index} />
+                ))}
               </div>
-            ))}
-          </div>
-        </Card>
-      </CommonPost> */}
+            }
+            endMessage={
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <strong>No Posts are available.</strong>
+              </div>
+            }
+            scrollableTarget="scrollableDiv" // Matches the id of the scrollable container
+          >
+            {showNewPostButton && (
+              <Link
+                to="/feed/home#"
+                className="btn-primary"
+                onClick={() => setShowNewPostButton(false)}
+                style={{ zIndex: 99, top: '4em', position: 'fixed', left: '47%' }}
+              >
+                ⬆️ New Posts
+              </Link>
+            )}
 
-      {/* <Post3 /> */}
-      {/* <SuggestedStories /> */}
-      {/* <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/> */}
+            {posts.map((post, index) => (
+              <PostCard
+                item={post}
+                posts={posts}
+                setPosts={setPosts}
+                key={post.Id || index}
+                isMediaKeys={false}
+                onDelete={handleDelete}
+                setIsCreated={isCreated}
+                tlRefresh={tlRefresh}
+                setTlRefresh={setTlRefresh}
+                scrollbarWidth="none"
+              />
+            ))}
+          </InfiniteScroll>
+        </div>
     </>
   )
 }

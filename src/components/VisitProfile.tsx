@@ -7,6 +7,31 @@ import { BsPersonCheckFill } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+export const formatTimestamp = (createdAt: Date): string => {
+  const now = Date.now();
+  const createdTime = new Date(createdAt).getTime();
+  const secondsAgo = Math.floor((now - createdTime) / 1000);
+
+  if (secondsAgo < 60) return `just now`;
+
+  const minutesAgo = Math.floor(secondsAgo / 60);
+  if (minutesAgo < 60) return `${minutesAgo}m`;
+
+  const hoursAgo = Math.floor(minutesAgo / 60);
+  if (hoursAgo < 24) return `${hoursAgo}h`;
+
+  const daysAgo = Math.floor(hoursAgo / 24);
+  if (daysAgo < 7) return `${daysAgo}d`;
+
+  const weeksAgo = Math.floor(daysAgo / 7);
+  if (weeksAgo < 52) return `${weeksAgo}w`;
+
+  const monthsAgo = Math.floor(weeksAgo / 4);
+  if (monthsAgo < 12) return `${monthsAgo}mo`;
+
+  const yearsAgo = Math.floor(monthsAgo / 12);
+  return `${yearsAgo}y`;
+};
 
 const ProfileVisits = () => {
   const [visits, setVisits] = useState([]);
@@ -17,7 +42,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-profile-visit', {
+        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-profile-visit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -43,7 +68,7 @@ const ProfileVisits = () => {
     }
   }, [user]);
 
-  const handleUserRequest = async (userId:string) => {
+  const handleUserRequest = async (userId: string) => {
     const newSentStatus = { ...sentStatus };
     const isSending = !sentStatus[userId];
     newSentStatus[userId] = isSending;
@@ -96,23 +121,12 @@ const ProfileVisits = () => {
       <Card>
         <CardBody>
           <div className="d-flex justify-content-between align-center">
-          <h3 className="mx-3 d-flex justify-content-between align-items-center">
-      <span style={{ fontFamily: 'Poppins', fontWeight: '600' }}>
-        Who viewed my Profile
-      </span>
-      <p 
-        className="mb-0 mx-1 fs-6 text-muted" 
-        style={{ 
-          fontFamily: 'Roboto', 
-        
-        }}
-      >
-        - {visits.length}
-      </p>
-    </h3>
-    </div>
+          <h1 className="mb-1 h5 d-flex align-items-center">Who viewed my Profile 
+          <span className="badge text-success small">{visits.length}</span>
+          </h1>
+          </div>
           <ListGroup>
-            {visits.length&&visits.map((visit, index) => (
+            {visits.length && visits.map((visit, index) => (
               <ListGroupItem key={index} className="d-flex justify-content-between align-items-center">
                 <Link to={`/profile/feed/${visit.visitor.id}`} className="d-flex align-items-center">
                   <img
@@ -122,11 +136,12 @@ const ProfileVisits = () => {
                     style={{ width: '50px', height: '50px' }}
                   />
                   <div>
-                    <h6 className="mb-2 fw-semibold d-flex">
+                    <h6 className="mb-0 fw-semibold d-flex">
                       <span>{visit.visitor.firstName} {visit.visitor.lastName}</span>
-                      <p className="mb-0 mx-1 text-muted">{visit.visitCount}</p>
+                      <span className="badge  text-success small">{visit.visitCount}</span>
                     </h6>
                     <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
+                    <p className="mb-0 text-muted">{visit.visitor.createdAt?formatTimestamp(visit.visitor.createdAt) : "1w"}</p>
                   </div>
                 </Link>
                 <div>
@@ -175,7 +190,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          "https://strengthholdings.com/api/v1/auth/get-profile-visited",
+          " https://strengthholdings.com/api/v1/auth/get-profile-visited",
           {
             method: "POST",
             headers: {
@@ -201,8 +216,8 @@ const ProfileVisited = () => {
     fetchProfileVisits();
   }, [user?.id]);
 
-  
-  const handleUserRequest = async (userId:string) => {
+
+  const handleUserRequest = async (userId: string) => {
     const newSentStatus = { ...sentStatus };
     const isSending = !sentStatus[userId];
     newSentStatus[userId] = isSending;
@@ -251,13 +266,14 @@ const ProfileVisited = () => {
       <Card>
         <CardBody>
           <div className="d-flex justify-content-between align-center">
-          <h3 className="mx-3 d-flex justify-content-between align-items-center">
-          <span style={{ fontFamily: 'Poppins', fontWeight: '600' }}>Profiles I visited</span> <p className="mb-0 mx-1 fs-6 text-muted text-align-center d-flex justify-content-center align-items-center">- {visits.length}</p></h3>
-            
+            <h1 class="mb-1 h5 d-flex align-items-center">
+              Profiles I visited
+                      <span className="badge  text-success small">{visits.length}</span></h1>
+
             {/* <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle> */}
           </div>
           <ListGroup>
-            {visits.length>0&&visits.map((visit, index) => (
+            {visits.length > 0 && visits.map((visit, index) => (
               <ListGroupItem
                 key={index}
                 className="d-flex rounded justify-content-between align-items-center"
@@ -270,17 +286,19 @@ const ProfileVisited = () => {
                     style={{ width: "50px", height: "50px" }}
                   />
                   <div>
-                    <h6 className="mb-2 fw-semibold d-flex">
+                    <h6 className="mb-0 fw-semibold d-flex">
                       <span>
                         {visit.profile.firstName} {visit.profile.lastName}
                       </span>
-                      <p className="mb-0 mx-1 text-muted">{visit.visitCount}</p>
+                     
+                      <span className="badge  text-success small">{visit.visitCount}</span>
                     </h6>
                     <p className="mb-0 text-muted">{visit.profile.userRole}</p>
+                    <p className="mb-0 text-muted">{visit.profile.createdAt?formatTimestamp(visit.profile.createdAt) : "1w"}</p>
                   </div>
                 </Link>
                 <div>
-                {visit.connectionStatus === "accepted" ? (
+                  {visit.connectionStatus === "accepted" ? (
                     <Link to="/messaging" className="mx-2 btn-primary btn btn-sm">
                       Message
                     </Link>
@@ -294,7 +312,7 @@ const ProfileVisited = () => {
                       {loading === visit.profile.id ? (
                         <Loading size={15} loading={true} />
                       ) : (
-                        <span>{sentStatus[visit.profile.id] ? <BsPersonCheckFill  /> : <FaPlus />}</span>
+                        <span>{sentStatus[visit.profile.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
                       )}
                     </Button>
                   ) : (
