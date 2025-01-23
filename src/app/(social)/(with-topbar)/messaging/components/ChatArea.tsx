@@ -250,13 +250,18 @@ import { io } from 'socket.io-client'
 import TextFormInput from '@/components/form/TextFormInput'
 import Picker from 'emoji-picker-react'
 
-const socket = io('http://3.101.12.130:5000/', {
-  transports: ['websocket'],
-  withCredentials: true,
-  reconnection: true,
-  reconnectionAttempts: 5,
-  timeout: 20000,
-})
+// const socket = io('http://3.101.12.130:5000/', {
+//   transports: ['websocket'],
+//   withCredentials: true,
+//   reconnection: true,
+//   reconnectionAttempts: 5,
+//   timeout: 20000,
+// })
+
+const socket = io("wss://strengthholdings.com", {
+  path: "/socket.io/",
+  transports: ["websocket"]
+});
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: image }) => {
   const received = message.senderId === toUser.id
