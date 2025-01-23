@@ -105,6 +105,7 @@ const [loading, setLoading] = useState(false);
         const requestBody : UserType = {
           occupation: data.occupation,
           userId: user?.id,
+          userRole : data.occupation,
           // profilePictureUploadId: profilePhoto, // Use the profile photo ID after upload
           // bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
           firstName: data.fName,

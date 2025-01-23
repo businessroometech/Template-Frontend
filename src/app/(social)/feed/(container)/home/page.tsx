@@ -119,8 +119,10 @@ const Home = () => {
     scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
     msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */}}>
         <Row className="g-4">
-          <Col sm={6} lg={12}>
-            <Followers />
+          <Col sm={6} lg={12} >
+            <div style={{marginTop : '23px'}}>
+             <Followers />
+            </div>
           </Col>
 
           <Col sm={6} lg={12} style={{}}>

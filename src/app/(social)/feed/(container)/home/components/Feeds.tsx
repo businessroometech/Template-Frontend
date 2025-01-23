@@ -720,7 +720,7 @@ const PostSkeleton = () => {
     </div>}
     endMessage={
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <strong>No more posts are available.</strong>
+        <strong>posts are available.</strong>
       </div>
     }
   >
