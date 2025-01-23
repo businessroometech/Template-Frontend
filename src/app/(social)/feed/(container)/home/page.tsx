@@ -113,11 +113,15 @@ const Home = () => {
         <Feeds isCreated={setIsCreated} />
       </Col>
 
-      <Col lg={3} style={{ marginTop : '0px', height : '44rem'  ,   maxHeight:"70em",
-      
-         overflowY: 'auto', /* Enable vertical scrolling */
-    scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
-    msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */}}>
+      <Col lg={3} 
+        style={{ 
+          marginTop : '0px', 
+          height : '44rem',   
+          maxHeight:"70em",
+          overflowY: 'auto', /* Enable vertical scrolling */
+          scrollbarWidth: 'none', /* Firefox: Hide scrollbar */
+          msOverflowStyle: 'none', /* IE 10+: Hide scrollbar */
+      }}>
         <Row className="g-4">
           <Col sm={6} lg={12} >
             <div style={{marginTop : '23px'}}>
