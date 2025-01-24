@@ -334,7 +334,6 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
                 backgroundColor: '#f8f9fa', // Light gray background
                 fontSize: '14px', // Slightly smaller, readable text
               }}
-              onClick={togglePost}
               rows={1}
               data-autoresize
               placeholder="Share your thoughts..."
