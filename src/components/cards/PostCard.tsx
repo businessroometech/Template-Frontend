@@ -264,7 +264,19 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
         {media.length > 0 && (
 
-          isVideo ? <div style={{ position: 'relative', marginBottom: '10px' }}>{videoPlayer}</div> :
+          isVideo ? 
+            <div 
+              style={{ 
+                position: 'relative', 
+                marginBottom: '10px',
+                width : '100%',
+                height : '100%',
+                display : 'flex',
+                justifyContent : 'center', 
+                alignItems : 'center'
+              }}
+              >{videoPlayer}
+              </div> :
 
             
               <ResponsiveGallery media={media} />
