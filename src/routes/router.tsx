@@ -102,7 +102,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/join-live' element={<JoinRoom/>} />
       <Route path='/live' element={<Live/>} />
       <Route path='/AccountClone' element={<AccountSettings/>} />
-      <Route path='/marketplace' element={<MarketPlace></MarketPlace>} />
+      <Route path='/marketplace' element={<MarketPlace/>} />
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
