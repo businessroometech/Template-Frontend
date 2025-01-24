@@ -560,12 +560,8 @@ import Picker from 'emoji-picker-react'
 import { set } from 'date-fns'
 
 const socket = io("wss://strengthholdings.com", {
-  path: "/socket.io/",
+  // path: "/socket.io",
   transports: ["websocket"],
-  withCredentials: true,
-  reconnection: true,
-  reconnectionAttempts: 5,
-  timeout: 20000,
 });
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
