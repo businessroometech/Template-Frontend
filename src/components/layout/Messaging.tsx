@@ -6,6 +6,7 @@ import { useAuthContext } from '@/context/useAuthContext'
 import useToggle from '@/hooks/useToggle'
 import { type ChatMessageType, type UserType } from '@/types/data'
 import { addOrSubtractMinutesFromDate, timeSince } from '@/utils/date'
+// import { io } from 'socket.io-client'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import {
@@ -19,28 +20,18 @@ import {
   Toast,
   ToastContainer,
   ToastHeader,
-  Spinner
+  Spinner,
 } from 'react-bootstrap'
-
 import { useChatContext } from '@/context/useChatContext'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
-import {
-  BsArchive,
-  BsCameraVideo,
-  BsChatSquareText,
-  BsDashLg,
-  BsFlag,
-  BsTelephone,
-  BsThreeDotsVertical,
-  BsTrash,
-  BsVolumeUp
-} from 'react-icons/bs'
+import { BsArchive, BsCameraVideo, BsChatSquareText, BsDashLg, BsFlag, BsTelephone, BsThreeDotsVertical, BsTrash, BsVolumeUp } from 'react-icons/bs'
+import debounce from 'lodash.debounce'
 import { FaCheck, FaCheckDouble, FaCircle, FaFaceSmile, FaPaperclip, FaXmark } from 'react-icons/fa6'
 import * as yup from 'yup'
 import TextAreaFormInput from '../form/TextAreaFormInput'
 import SimplebarReactClient from '../wrappers/SimplebarReactClient'
-
+import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
 
 const AlwaysScrollToBottom = () => {
@@ -51,58 +42,67 @@ const AlwaysScrollToBottom = () => {
   return <div ref={elementRef} />
 }
 
-const UserMessage = ({ message, toUser }: { message: ChatMessageType; toUser: UserType }) => {
-  const received = message.from.id === toUser.id
+const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
+  console.log(message, toUser)
+  const received = message.receiverId === toUser.userId
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
-      <div className="flex-shrink-0 avatar avatar-xs me-2">
-        {!received && <img className="avatar-img rounded-circle" src={message.from.avatar} alt="" />}
-      </div>
-      <div className="flex-grow-1">
-        <div className="w-100">
-          <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
-            {message.image ? (
-              <div className="bg-light text-secondary p-2 px-3 rounded-2">
-                <p className="small mb-0">{message.message}</p>
-                <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                  <img width={87} height={91} src={message.image} alt="image" />
-                </Card>
-              </div>
-            ) : (
-              <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-primary text-white' : 'bg-light text-secondary')}>{message.message}</div>
+    <div className="flex-shrink-0 avatar avatar-xs me-2">
+      {!received && (
+        <img
+          className="avatar-img rounded-circle"
+          src={profile || avatar}
+          alt="User Avatar"
+        />
+      )}
+    </div>
+    <div className="flex-grow-1">
+      <div className="w-100">
+        <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
+          {message.image ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img
+                width={87}
+                height={91}
+                src={message.image}
+                alt={message.content || 'Message Image'}
+              />
+            </Card>
+          ) : (
+            <div
+              className={clsx(
+                'p-2 px-3 rounded-2',
+                received ? 'bg-primary text-white' : 'bg-light text-secondary'
+              )}
+            >
+              {message.content}
+            </div>
+          )}
+          <div className="d-flex my-2 align-items-center">
+            <div className="small text-secondary">
+              {message.createdAt?.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+              })}
+            </div>
+            {message.isRead && (
+              <FaCheckDouble className="text-info small ms-2" />
             )}
-            {message.isRead ? (
-              <div className="d-flex my-2">
-                <div className="small text-secondary">
-                  {message.sentOn.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                </div>
-                <div className="small ms-2">
-                  <FaCheckDouble className="text-info" />
-                </div>
-              </div>
-            ) : message.isSend ? (
-              <div className="d-flex my-2">
-                <div className="small text-secondary">
-                  {message.sentOn.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                </div>
-                <div className="small ms-2">
-                  <FaCheck />
-                </div>
-              </div>
-            ) : (
-              <div className="small my-2">{message.sentOn.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
+            {!message.isRead && message.isSend && (
+              <FaCheck className="small ms-2" />
             )}
           </div>
         </div>
       </div>
     </div>
+  </div>
+  
   )
 }
 
-
-
 const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }) => {
-  const { changeActiveChat } = useChatContext()
+  // const { changeActiveChat } = useChatContext()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -124,13 +124,15 @@ const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }
     <li
       onClick={() => {
         openToast()
-        changeActiveChat(user.id)
       }}
       className="mt-3 hstack gap-3 align-items-center position-relative toast-btn"
-      data-target="chatToast"
-    >
+      data-target="chatToast">
       <div className={clsx(`avatar status-${user.status}`, { 'avatar-story': user.isStory })}>
-        {user.profilePictureUrl && <img className="avatar-img rounded-circle" src={user.profilePictureUrl} alt="avatar" />}
+        {user.profilePictureUrl ? (
+          <img className="avatar-img rounded-circle" src={user.profilePictureUrl} alt="avatar" />
+        ) : (
+          <img className="avatar-img rounded-circle" src={avatar} alt="avatar" />
+        )}
       </div>
       <div className="overflow-hidden">
         <Link className="h6 mb-0 stretched-link" to="">
@@ -143,15 +145,17 @@ const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }
   )
 }
 
-
 const Messaging = () => {
   const { isTrue: isOpen, toggle, setTrue } = useToggle()
   const { activeChat } = useChatContext()
+  const [hasMore, setHasMore] = useState(true)
+  const [page, setPage] = useState(1)
   const { isTrue: isOpenCollapseToast, toggle: toggleToastCollapse } = useToggle(true)
-  const [loading, setLoading] = useState(true)
+  const [loading, setIsLoading] = useState(true)
   const [allUserMessages, setAllUserMessages] = useState<UserType[]>([])
   const [userMessages, setUserMessages] = useState<ChatMessageType[]>([])
   const { user } = useAuthContext()
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter message'),
   })
@@ -160,82 +164,123 @@ const Messaging = () => {
     resolver: yupResolver(messageSchema),
   })
 
-  const [toUser] = useState<UserType>({
-    id: '108',
-    lastActivity: addOrSubtractMinutesFromDate(0),
-    lastMessage: 'Hey! Okay, thank you for letting me know. See you!',
-    status: 'online',
-    avatar: avatar10,
-    mutualCount: 30,
-    name: 'Judy Nguyen',
-    role: 'web',
-  })
+  // const getMessagesForUser = useCallback(() => {
+  //   if (activeChat) {
+  //     setUserMessages(
+  //       messages.filter((m) => (m.to.id === toUser.id && m.from.id === activeChat.id) || (toUser.id === m.from.id && m.to.id === activeChat.id)),
+  //     )
+  //   }
+  // }, [activeChat])
 
-  const getMessagesForUser = useCallback(() => {
-    if (activeChat) {
-      setUserMessages(
-        messages.filter((m) => (m.to.id === toUser.id && m.from.id === activeChat.id) || (toUser.id === m.from.id && m.to.id === activeChat.id)),
-      )
-    }
-  }, [activeChat, toUser])
+  // useEffect(() => {
+  //   getMessagesForUser()
+  // }, [activeChat])
 
-  useEffect(() => {
-    getMessagesForUser()
-  }, [activeChat])
+  // Removed duplicate sendChatMessage function
 
-  const sendChatMessage = (values: { newMessage?: string }) => {
-    if (activeChat) {
-      const newUserMessages = [...userMessages]
-      newUserMessages.push({
-        id: (userMessages.length + 1).toString(),
-        from: toUser,
-        to: activeChat,
-        message: values.newMessage ?? '',
-        sentOn: addOrSubtractMinutesFromDate(-0.1),
-      })
-      setTimeout(() => {
-        const otherNewMessages = [...newUserMessages]
-        otherNewMessages.push({
-          id: (userMessages.length + 1).toString(),
-          from: activeChat,
-          to: toUser,
-          message: values.newMessage ?? '',
-          sentOn: addOrSubtractMinutesFromDate(0),
-        })
-        setUserMessages(otherNewMessages)
-      }, 1000)
-      setUserMessages(newUserMessages)
-      reset()
-    }
-  }
-
-  const fetchChatsList = async () =>{
+  const fetchChatsList = async () => {
     try {
-      setLoading(true)
+      setIsLoading(true)
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/connection/get-connection-list',
-        data: { userId: user?.id, profileId:user?.id},
-      }) 
+        data: { userId: user?.id, profileId: user?.id },
+      })
+      // console.log(res.connections)
       setAllUserMessages(res.connections)
     } catch (error) {
       console.error(error)
-    }finally{
-      setLoading(false)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchChatsList(); 
-  },[])
+    fetchChatsList()
+  }, [])
+
+  const fetchMessages = useCallback(async () => {
+    console.log('selectedUser', selectedUser)
+    if (!selectedUser) return
+    setIsLoading(true)
+    try {
+      const response = await makeApiRequest<{ data: any[] }>({
+        method: 'POST',
+        url: 'api/v1/chat/get-messages-user-wise',
+        data: {
+          senderId: user?.id,
+          receiverId: selectedUser.userId,
+          page: 1,
+          limit: 50,
+        },
+      })
+
+      if (response?.data?.messages) {
+        if (response.data.messages.length === 0) {
+          setHasMore(false)
+        } else {
+          const sortedMessages = response.data.messages.sort((a, b) => new Date(a.sentOn).getTime() - new Date(b.sentOn).getTime())
+          console.log('sortedMessages', sortedMessages)
+          setUserMessages(sortedMessages)
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [selectedUser, page, user])
+  useEffect(() => {
+    if (selectedUser) {
+      fetchMessages()
+    }
+  }, [selectedUser,page,user,toggle])
+
+  const sendChatMessage = debounce(async (values: { newMessage?: string }) => {
+    if (!values.newMessage || !selectedUser) return
+    const newMessage: ChatMessageType = {
+      id: (userMessages.length + 1).toString(),
+      senderId: user.id,
+      receiverId: selectedUser.userId,
+      content: values.newMessage,
+      sentOn: addOrSubtractMinutesFromDate(-0.1),
+      isSend: true,
+      isRead: false,
+    }
+  
+
+    try {
+      await makeApiRequest({
+        method: 'POST',
+        url: 'api/v1/chat/send-message',
+        data: { senderId: user.id, receiverId: selectedUser.userId, content: values.newMessage },
+      })
+      // console.log('newMessage', newMessage)
+      setUserMessages((prevMessages) => [newMessage, ...prevMessages])
+      reset()
+    } catch (error) {
+      console.error(error)
+    }
+  }, 1000)
+
+  const handleUserToggle = (user: UserType) => {
+    setSelectedUser(user) // Set the selected user
+    // console.log(user)
+    setTrue() // Open the toast
+  }
+
+  // const handleEmojiClick = (emoji: any) => {
+  //   const currentMessage = getValues('newMessage') || ''
+  //   setValue('newMessage', currentMessage + emoji.emoji)
+  //   setShowEmojiPicker(false)
+  // }
 
   return (
     <>
       <ul className="list-unstyled">
-        {allUserMessages?.map((user, idx) => <UserCard user={user} key={idx} openToast={setTrue} />)}
+        {allUserMessages?.map((user, index) => <UserCard user={user} key={index} openToast={() => handleUserToggle(user)} />)}
         <li className="mt-3 d-grid">
           <Link className="btn btn-primary-soft" to="/messaging">
-            
             See all in messaging
           </Link>
         </li>
@@ -255,10 +300,14 @@ const Messaging = () => {
               <div className="d-flex justify-content-between align-items-center w-100">
                 <div className="d-flex">
                   <div className={clsx('flex-shrink-0 avatar me-2', { 'avatar-story': activeChat?.isStory })}>
-                    {activeChat?.avatar && <img className="avatar-img rounded-circle" src={activeChat.avatar} alt="avatar" />}
+                    {selectedUser && selectedUser.profilePictureUrl ? (
+                      <img className="avatar-img rounded-circle" src={selectedUser.profilePictureUrl} alt="avatar" />
+                    ) : (
+                      <img className="avatar-img rounded-circle" src={avatar} alt="default avatar" />
+                    )}
                   </div>
                   <div className="flex-grow-1">
-                    <h6 className="mb-0 mt-1">{activeChat?.name}</h6>
+                    <h6 className="mb-0 mt-1">{`${selectedUser?.firstName || ''} ${selectedUser?.lastName || ''}`}</h6>
                     <div className="small text-secondary">
                       <FaCircle className={`text-${activeChat?.status === 'offline' ? 'danger' : 'success'} me-1`} />
                       {activeChat?.status}
@@ -335,8 +384,8 @@ const Messaging = () => {
               <div>
                 <SimplebarReactClient className="chat-conversation-content custom-scrollbar h-200px">
                   <div className="text-center small my-2">Jul 16, 2022, 06:15 am</div>
-                  {userMessages.map((message) => (
-                    <UserMessage message={message} key={message.id} toUser={toUser} />
+                  {[...userMessages].reverse().map((message, index) => (
+                    <UserMessage message={message} key={index} toUser={selectedUser} />
                   ))}
                   <AlwaysScrollToBottom />
                 </SimplebarReactClient>
@@ -358,11 +407,9 @@ const Messaging = () => {
                       <FaPaperclip className="fs-6" />
                     </Button>
                     <Button variant="success-soft" size="sm" className="me-2">
-                      
                       Gif
                     </Button>
                     <Button variant="primary" size="sm" className="ms-auto" type="submit">
-                      
                       Send
                     </Button>
                   </div>
