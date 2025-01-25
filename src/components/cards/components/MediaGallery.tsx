@@ -37,52 +37,63 @@ const MediaGallery = ({ media }) => {
     container: { 
       width: '100%',
       height: 'auto',
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '1px' // Adding space between images
     },
     fullImage: {
       width: '100%', 
       height: '100%', 
       objectFit: 'fit',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      margin: '1px', // Add space between images
     },
     twoImageContainer: {
       display: 'flex',
       width: '100%',
-      height: '450px'
+      height: '450px',
+      gap: '1px', // Adding space between images
     },
     twoImageItem: {
-      width: '50%', 
+      width: '50%',
       height: '100%',
       objectFit: 'cover',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      margin: '1px', // Add space between images
     },
     threeImageContainer: {
       display: 'flex',
       width: '100%',
-      height: '450px'
+      height: '450px',
+      gap: '1px', // Adding space between images
     },
     threeImageMainImage: {
-      width: '50%', 
+      width: '50%',
       height: '100%',
       objectFit: 'cover',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      margin: '1px', // Add space between images
     },
     threeImageSideContainer: {
-      width: '50%', 
+      width: '50%',
       height: '100%',
       display: 'flex', 
-      flexDirection: 'column'
+      flexDirection: 'column',
+      gap: '1px', // Adding space between images
     },
     threeImageTopImage: {
       width: '100%', 
       height: '50%',
       objectFit: 'fill',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      margin: '1px', // Add space between images
     },
     threeImageBottomImageContainer: {
       width: '100%', 
       height: '50%',
       position: 'relative',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      margin: '1px', // Add space between images
     },
     overlayContainer: {
       position: 'absolute',
@@ -93,12 +104,12 @@ const MediaGallery = ({ media }) => {
       backgroundColor: 'rgba(0,0,0,0.5)',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     overlayText: {
       color: 'white',
       fontSize: '24px',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     }
   };
 
