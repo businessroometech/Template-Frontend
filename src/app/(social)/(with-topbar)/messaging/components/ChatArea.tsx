@@ -552,6 +552,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, Card, CardBody, CardFooter } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { BsEmojiSmile } from 'react-icons/bs'
+import { FaCheck, FaCheckDouble } from 'react-icons/fa6'
+import { BsThreeDots } from 'react-icons/bs'
 import * as yup from 'yup'
 import debounce from 'lodash.debounce'
 import { io } from 'socket.io-client'
@@ -565,7 +567,7 @@ const socket = io("http://54.177.193.30:5000/", {
 });
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
-  const received = message.senderId === toUser.id
+  const received = message.receiverId === toUser.id
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
     <div className="flex-shrink-0 avatar avatar-xs me-2">
@@ -637,25 +639,25 @@ const ChatArea = () => {
     }
   }, [userMessages])
 
-  // useEffect(() => {
-  //   socket.emit('joinRoom', user.id)
-  //   socket.on('connect', () => {
-  //     console.log('Socket connected:', socket.id)
-  //   })
+  useEffect(() => {
+    socket.emit('joinRoom', user.id)
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id)
+    })
 
-  //   socket.on('connect_error', (err) => {
-  //     console.error('Connection Error:', err.message)
-  //   })
+    socket.on('connect_error', (err) => {
+      console.error('Connection Error:', err.message)
+    })
 
-  //   socket.on('newMessage', (message) => {
-  //     setUserMessages((prevMessages) => [message, ...prevMessages])
-  //   })
+    socket.on('newMessage', (message) => {
+      setUserMessages((prevMessages) => [message, ...prevMessages])
+    })
 
-  //   return () => {
-  //     socket.off('connect_error')
-  //     socket.off('newMessage')
-  //   }
-  // }, [user.id])
+    return () => {
+      socket.off('connect_error')
+      socket.off('newMessage')
+    }
+  }, [user.id])
 
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter a message'),
@@ -761,65 +763,110 @@ const ChatArea = () => {
   const { profileImgUrl } = activeChat
 
   return (
-    <Card className="card-chat rounded-start-lg-0 border-start-lg-0" style={{ minHeight: '500px' }}>
-      <CardBody className="h-100 d-flex flex-column" style={{ padding: 0 }}>
-        <div className="d-sm-flex justify-content-between align-items-center p-3 border-bottom bg-white" style={{ position: 'sticky', top: 0, zIndex: 1 }}>
-          <div className="d-flex mb-2 mb-sm-0">
-            <div className="flex-shrink-0 avatar me-2">
-              <img className="avatar-img rounded-circle" src={profileImgUrl || avatar} alt={firstName} />
-            </div>
-            <div className="d-block flex-grow-1">
-              <h6 className="mb-0 text-dark">{`${firstName} ${lastName}`}</h6>
-              <div className="small text-secondary">{activeChat?.isOnline ? 'Online' : 'Offline'}</div>
-            </div>
-          </div>
+    <Card className="card-chat rounded-0 border-0 shadow-lg" style={{ minHeight: '500px', maxWidth: '800px', margin: '0 auto' }}>
+  <CardBody className="d-flex flex-column h-100 p-0">
+    {/* Header */}
+    <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white sticky-top" style={{ top: 0, zIndex: 1 }}>
+      <div className="d-flex align-items-center">
+        <img
+          className="avatar-img rounded-circle me-2"
+          src={profileImgUrl || avatar}
+          alt={firstName}
+          style={{ width: '50px', height: '50px' }}
+        />
+        <div>
+          <h6 className="mb-0 text-dark">{`${firstName} ${lastName}`}</h6>
+          <small className="text-secondary">{activeChat?.isOnline ? 'Online' : 'Offline'}</small>
         </div>
+      </div>
+    </div>
 
-        <div className="flex-grow-1 message-box" style={{ overflowY: 'auto', padding: '15px', background: 'linear-gradient(135deg, #f3f4f6, #e5e7eb)' }}>
-          <InfiniteScroll
-            dataLength={userMessages.length}
-            next={loadMore}
-            hasMore={hasMore}
-            inverse={true}
-            loader={
-              <div className="d-flex justify-content-center align-items-center">
-                <Spinner animation="border" variant="primary" />
-              </div>
-            }>
-            {[...userMessages].reverse().map((message, index) => (
-              <UserMessage key={index} message={message} toUser={activeChat.personalDetails} profile={profileImgUrl} />
-            ))}
-          </InfiniteScroll>
-          <div ref={messageEndRef} />
-        </div>
-      </CardBody>
-
-      <CardFooter className="border-0 pb-0 pt-2 bg-light" style={{ flexShrink: 0, position: 'relative', bottom: 0, borderTop: '2px solid #ccc', background: '#f8f9fa', width: '100%' }}>
-        <form onSubmit={handleSubmit(sendChatMessage)} className="d-flex align-items-center" style={{ marginBottom: '1rem', width: '100%' }}>
-          <TextFormInput
-            placeholder="Type a message"
-            control={control}
-            name="newMessage"
-            autoFocus
-            maxLength={500}
-            autoComplete="off"
-            className="flex-grow-1 px-4 py-3 rounded-3 border shadow-sm"
-            style={{ height: '50px', fontSize: '1.4rem', border: '2px solid #ccc', outline: 'none', width: '100%' }}
-          />
-          <Button variant="outline-secondary" className="ms-2" onClick={() => setShowEmojiPicker((prev) => !prev)} type="button" style={{ height: '50px', width: '50px', padding: '0.5rem', margin: '0.5rem', borderRadius: '50%', border: '2px solid #ccc', backgroundColor: 'transparent', cursor: 'pointer' }}>
-            <BsEmojiSmile size={24} />
-          </Button>
-          <Button type="submit" variant="primary" disabled={isLoading} style={{ height: '50px', padding: '0.5rem 1rem', borderRadius: '50px', backgroundColor: '#007bff', color: '#fff', border: 'none', cursor: 'pointer' }}>
-            Send
-          </Button>
-        </form>
-        {showEmojiPicker && (
-          <div className="emoji-picker-container bg-white shadow-sm border rounded" style={{ position: 'absolute', bottom: '60px', right: '15px', zIndex: 10, maxWidth: '300px', maxHeight: '300px', overflow: 'hidden' }}>
-            <Picker onEmojiClick={handleEmojiClick} />
+    {/* Message Box */}
+    <div
+      className="flex-grow-1 message-box bg-light"
+      style={{
+        overflowY: 'auto',
+        padding: '20px',
+        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
+      }}
+    >
+      <InfiniteScroll
+        dataLength={userMessages.length}
+        next={loadMore}
+        hasMore={hasMore}
+        inverse={true}
+        loader={
+          <div className="d-flex justify-content-center align-items-center py-3">
+            <Spinner animation="border" variant="primary" />
           </div>
-        )}
-      </CardFooter>
-    </Card>
+        }
+      >
+        {[...userMessages].reverse().map((message, index) => (
+          <UserMessage key={index} message={message} toUser={activeChat.personalDetails} profile={profileImgUrl} />
+        ))}
+      </InfiniteScroll>
+      <div ref={messageEndRef} />
+    </div>
+
+    {/* Footer */}
+    <CardFooter className="bg-white border-top p-3">
+      <form onSubmit={handleSubmit(sendChatMessage)} className="d-flex align-items-center">
+        {/* Input Field */}
+        <TextFormInput
+          placeholder="Type a message"
+          control={control}
+          name="newMessage"
+          maxLength={500}
+          autoFocus
+          autoComplete="off"
+          className="form-control flex-grow-1 me-2 px-3 py-2 shadow-sm rounded"
+          style={{ fontSize: '1rem', border: '2px solid #ced4da', outline: 'none' }}
+        />
+
+        {/* Emoji Button */}
+        <Button
+          variant="light"
+          onClick={() => setShowEmojiPicker((prev) => !prev)}
+          className="d-flex align-items-center m-2 justify-content-center p-2 rounded-circle border shadow-sm me-2"
+          style={{ width: '45px', height: '45px' }}
+        >
+          <BsEmojiSmile size={20} />
+        </Button>
+
+        {/* Send Button */}
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isLoading}
+          className="d-flex align-items-center justify-content-center px-3 py-2 rounded-pill"
+          style={{ fontSize: '1rem' }}
+        >
+          Send
+        </Button>
+      </form>
+
+      {/* Emoji Picker */}
+      {showEmojiPicker && (
+        <div
+          className="emoji-picker-container bg-white shadow-sm border rounded"
+          style={{
+            position: 'absolute',
+            bottom: '60px',
+            right: '15px',
+            zIndex: 10,
+            maxWidth: '300px',
+            maxHeight: '300px',
+            overflow: 'hidden',
+          }}
+        >
+          <Picker onEmojiClick={handleEmojiClick} />
+        </div>
+      )}
+    </CardFooter>
+  </CardBody>
+</Card>
+
+
   )
 }
 
