@@ -72,8 +72,9 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
         try {
             const modedFiles = await handleAcceptedFiles([uploadedFile])
           const response = await uploadDoc(modedFiles, user?.id);
-          const srcUrl = await GetImageWithUrl(modedFiles[0]);
-        //   console.log('---- response in the upload doc function ----', response);
+          console.log('response of uploadDoc',response);
+          const srcUrl = await GetImageWithUrl(response[0]);
+          console.log('---- response in the upload doc function ----', srcUrl);
           return response;
         } catch (err) {
           console.error('Error in the createpostcard:', err);
@@ -87,15 +88,20 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
     };
 
     const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    console.log(file)
-    if (file) {
+      const file = e.target.files[0];
+      console.log(file);
+    
+      if (file && file instanceof File) {
         setUploadedFile(file);
         alert(`File uploaded: ${file.name}`);
         const url = await handleUploadprofile();
-        setAwsUrl(url) // Example: display file name
+        if (url) {
+          setAwsUrl(url); // Example: display file name or URL
+        }
         setExp(2);
-    }
+      } else {
+        console.error("Uploaded file is not a valid File.");
+      }
     };
     const handleClose = () => {
         console.log('clicking')

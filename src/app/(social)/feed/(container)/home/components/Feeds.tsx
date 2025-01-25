@@ -529,8 +529,9 @@ const Feeds = (isCreated: boolean) => {
         return;
       }
       setLoading(false)
-      console.log('Fetched Posts:', res.data)
-      setPosts(previousPosts => [...previousPosts, ...res.data])
+      console.log('Fetched Posts:', res.data);
+      console.log('What is res data',res.data);
+      setPosts(previousPosts => [...previousPosts, ...res.data.posts])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
       setError(error.message || 'An unknown error occurred')
