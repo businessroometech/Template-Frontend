@@ -294,111 +294,44 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       <ResponsiveGallery media={media} />
     )
   )}
-        <ButtonGroup className="w-100 border-top border-bottom mb-3">
-        <div className="relative inline-block">
-          <Button
-            variant={likeStatus ? "primary" : "light"}
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            onClick={toggleLike}
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-            <span>Like {likeCount}</span>
-          </Button>
-          {showReactions && (
-        <div style={{
-          position: 'absolute',
-          bottom: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: 'white',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
-          display: 'flex',
-          gap: '0.5rem'
-        }}>
-          <button style={{
-            backgroundColor: 'transparent',
-            borderRadius: '9999px',
-            padding: '0.5rem',
-            ':hover': {
-              backgroundColor: '#e5e7eb'
-            }
-          }}>
-            <Smile size={20} />
-          </button>
-          <button style={{
-            backgroundColor: 'transparent',
-            borderRadius: '9999px',
-            padding: '0.5rem',
-            ':hover': {
-              backgroundColor: '#e5e7eb'
-            }
-          }}>
-            <Rocket size={20} />
-          </button>
-          <button style={{
-            backgroundColor: 'transparent',
-            borderRadius: '9999px',
-            padding: '0.5rem',
-            ':hover': {
-              backgroundColor: '#e5e7eb'
-            }
-          }}>
-            <Heart size={20} />
-          </button>
-          <button style={{
-            backgroundColor: 'transparent',
-            borderRadius: '9999px',
-            padding: '0.5rem',
-            ':hover': {
-              backgroundColor: '#e5e7eb'
-            }
-          }}>
-            <Star size={20} />
-          </button>
-          <button style={{
-            backgroundColor: 'transparent',
-            borderRadius: '9999px',
-            padding: '0.5rem',
-            ':hover': {
-              backgroundColor: '#e5e7eb'
-            }
-            
-          }}>
-            <Bulb size={20} />
-          </button>
-        </div>
-      )}
-    </div>
-          <Button
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <MessageSquare size={16} />
-            <span>Comment {commentCount}</span>
-          </Button>
+  <ButtonGroup className="w-100 border-top border-bottom mb-3">
+    <Button
+      variant={likeStatus ? "primary" : "light"}
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      onClick={toggleLike}
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+      <span>Like {likeCount}</span>
+    </Button>
 
-          <Button
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Repeat size={16} />
-            <span>Repost</span>
-          </Button>
+    <Button
+      variant="light"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      <MessageSquare size={16} />
+      <span>Comment {commentCount}</span>
+    </Button>
 
-          <Button
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-            <span>Share</span>
-          </Button>
-        </ButtonGroup>
+    <Button
+      variant="light"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      <Repeat size={16} />
+      <span>Repost</span>
+    </Button>
+
+    <Button
+      variant="light"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      <Share size={16} />
+      <span>Share</span>
+    </Button>
+  </ButtonGroup>
 
 
         <div className="d-flex mb-4 px-3">
