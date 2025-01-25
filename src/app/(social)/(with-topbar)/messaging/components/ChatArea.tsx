@@ -559,32 +559,65 @@ import TextFormInput from '@/components/form/TextFormInput'
 import Picker from 'emoji-picker-react'
 import { set } from 'date-fns'
 
-const socket = io("wss://strengthholdings.com", {
-  // path: "/socket.io",
-  transports: ["websocket"],
-});
+// // const socket = io("http://54.177.193.30:5173/", {
+//   // path: "/socket.io",
+//   transports: ["websocket"],
+// });
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
   const received = message.senderId === toUser.id
   return (
-    <div
-      className={clsx('d-flex mb-1', {
-        'justify-content-start': received,
-        'justify-content-end text-end': !received,
-      })}>
-      {received && (
-        <div className="flex-shrink-0 avatar avatar-xs me-2">
-          <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />
-        </div>
+    <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
+    <div className="flex-shrink-0 avatar avatar-xs me-2">
+      {!received && (
+        <img
+          className="avatar-img rounded-circle"
+          src={profile || avatar}
+          alt="User Avatar"
+        />
       )}
-      <div className="flex-grow-1">
-        <div className={clsx('d-flex flex-column', received ? 'align-items-start' : 'align-items-end')}>
-          <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-white text-secondary' : 'bg-primary text-white')}>
-            <p className="small mb-0">{message.content}</p>
+    </div>
+    <div className="flex-grow-1">
+      <div className="w-100">
+        <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
+          {message.image ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img
+                width={87}
+                height={91}
+                src={message.image}
+                alt={message.content || 'Message Image'}
+              />
+            </Card>
+          ) : (
+            <div
+              className={clsx(
+                'p-2 px-3 rounded-2',
+                received ? 'bg-primary text-white' : 'bg-light text-secondary'
+              )}
+            >
+              {message.content}
+            </div>
+          )}
+          <div className="d-flex my-2 align-items-center">
+            <div className="small text-secondary">
+              {message.createdAt?.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+              })}
+            </div>
+            {message.isRead && (
+              <FaCheckDouble className="text-info small ms-2" />
+            )}
+            {!message.isRead && message.isSend && (
+              <FaCheck className="small ms-2" />
+            )}
           </div>
         </div>
       </div>
     </div>
+  </div>
   )
 }
 
@@ -604,25 +637,25 @@ const ChatArea = () => {
     }
   }, [userMessages])
 
-  useEffect(() => {
-    socket.emit('joinRoom', user.id)
-    socket.on('connect', () => {
-      console.log('Socket connected:', socket.id)
-    })
+  // useEffect(() => {
+  //   socket.emit('joinRoom', user.id)
+  //   socket.on('connect', () => {
+  //     console.log('Socket connected:', socket.id)
+  //   })
 
-    socket.on('connect_error', (err) => {
-      console.error('Connection Error:', err.message)
-    })
+  //   socket.on('connect_error', (err) => {
+  //     console.error('Connection Error:', err.message)
+  //   })
 
-    socket.on('newMessage', (message) => {
-      setUserMessages((prevMessages) => [message, ...prevMessages])
-    })
+  //   socket.on('newMessage', (message) => {
+  //     setUserMessages((prevMessages) => [message, ...prevMessages])
+  //   })
 
-    return () => {
-      socket.off('connect_error')
-      socket.off('newMessage')
-    }
-  }, [user.id])
+  //   return () => {
+  //     socket.off('connect_error')
+  //     socket.off('newMessage')
+  //   }
+  // }, [user.id])
 
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter a message'),

@@ -43,7 +43,7 @@ const AlwaysScrollToBottom = () => {
 }
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
-  console.log(message, toUser)
+  // console.log(message, toUser)
   const received = message.receiverId === toUser.userId
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
