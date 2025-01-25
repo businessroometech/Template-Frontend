@@ -740,7 +740,7 @@ const BusinessSellerForm = () => {
     };
 
     try {
-      const response = await fetch(' https://strengthholdings.com/businessseller/create', {
+      const response = await fetch(' http://54.177.193.30:5000/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

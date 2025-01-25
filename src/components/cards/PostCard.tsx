@@ -53,7 +53,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       }
   
       // Send a DELETE request to the backend
-      const response = await fetch(' https://strengthholdings.com/api/v1/post/delete-userpost-byPostId', {
+      const response = await fetch(' http://54.177.193.30:5000/api/v1/post/delete-userpost-byPostId', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     const fetchComments = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(' https://strengthholdings.com/api/v1/post/get-comments', {
+        const response = await fetch(' http://54.177.193.30:5000/api/v1/post/get-comments', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     if (!commentText.trim()) return;
 
     try {
-      const response = await fetch(' https://strengthholdings.com/api/v1/post/create-comment', {
+      const response = await fetch(' http://54.177.193.30:5000/api/v1/post/create-comment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
   const toggleLike = async () => {
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/post/create-like', {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/post/create-like', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -264,7 +264,19 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
         {media.length > 0 && (
 
-          isVideo ? <div style={{ position: 'relative', marginBottom: '10px' }}>{videoPlayer}</div> :
+          isVideo ? 
+            <div 
+              style={{ 
+                position: 'relative', 
+                marginBottom: '10px',
+                width : '100%',
+                height : '100%',
+                display : 'flex',
+                justifyContent : 'center', 
+                alignItems : 'center'
+              }}
+              >{videoPlayer}
+              </div> :
 
             
               <ResponsiveGallery media={media} />

@@ -42,7 +42,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        'https://strengthholdings.com/api/v1/notifications/fetch',
+        'http://54.177.193.30:5000/api/v1/notifications/fetch',
         {
           method: 'POST',
           headers: {
@@ -64,7 +64,7 @@ const Notifications = () => {
   const handleOnRead = async (notificationId) => {
     try {
       await fetch(
-        ' https://strengthholdings.com/api/v1/notifications/mark-as-read',
+        ' http://54.177.193.30:5000/api/v1/notifications/mark-as-read',
         {
           method: 'POST',
           headers: {
