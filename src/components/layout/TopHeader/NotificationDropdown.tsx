@@ -110,7 +110,7 @@ const NotificationDropdown = () => {
       const notificationIds = allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        ' https://strengthholdings.com/api/v1/notifications/mark-all-as-read',
+        ' http://54.177.193.30:5000/api/v1/notifications/mark-all-as-read',
         {
           method: 'POST',
           headers: {

@@ -29,10 +29,16 @@ import { BsArchive, BsCameraVideo, BsChatSquareText, BsDashLg, BsFlag, BsTelepho
 import debounce from 'lodash.debounce'
 import { FaCheck, FaCheckDouble, FaCircle, FaFaceSmile, FaPaperclip, FaXmark } from 'react-icons/fa6'
 import * as yup from 'yup'
+import { io } from 'socket.io-client'
 import TextAreaFormInput from '../form/TextAreaFormInput'
 import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
+
+const socket = io("http://54.177.193.30:5000/", {
+  // path: "/socket.io",
+  transports: ["websocket"],
+});
 
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef<HTMLDivElement>(null)
@@ -43,7 +49,7 @@ const AlwaysScrollToBottom = () => {
 }
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
-  console.log(message, toUser)
+  // console.log(message, toUser)
   const received = message.receiverId === toUser.userId
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
@@ -177,6 +183,25 @@ const Messaging = () => {
   // }, [activeChat])
 
   // Removed duplicate sendChatMessage function
+   useEffect(() => {
+      socket.emit('joinRoom', user.id)
+      socket.on('connect', () => {
+        console.log('Socket connected:', socket.id)
+      })
+  
+      socket.on('connect_error', (err) => {
+        console.error('Connection Error:', err.message)
+      })
+  
+      socket.on('newMessage', (message) => {
+        setUserMessages((prevMessages) => [message, ...prevMessages])
+      })
+  
+      return () => {
+        socket.off('connect_error')
+        socket.off('newMessage')
+      }
+    }, [user.id])
 
   const fetchChatsList = async () => {
     try {
@@ -220,7 +245,7 @@ const Messaging = () => {
           setHasMore(false)
         } else {
           const sortedMessages = response.data.messages.sort((a, b) => new Date(a.sentOn).getTime() - new Date(b.sentOn).getTime())
-          console.log('sortedMessages', sortedMessages)
+          // console.log('sortedMessages', sortedMessages)
           setUserMessages(sortedMessages)
         }
       }

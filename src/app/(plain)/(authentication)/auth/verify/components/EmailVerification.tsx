@@ -19,7 +19,7 @@ const EmailVerification = () => {
     e.preventDefault();
     setLoading(true)
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/auth/send-verify-email', {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/auth/send-verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
