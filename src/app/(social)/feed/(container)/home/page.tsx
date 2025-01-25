@@ -66,7 +66,7 @@ const Home = () => {
         className="position-relative vstack gap-4"
       >
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated} isCreated={isCreated} />
+        <Feeds isCreated={setIsCreated}  />
       </Col>
 
       <Col lg={3} 
