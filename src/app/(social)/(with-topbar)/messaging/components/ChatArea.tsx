@@ -687,7 +687,7 @@ const ChatArea = () => {
           limit: 50,
         },
       })
-      socket.emit('sendMessage', newMessage)
+      // socket.emit('sendMessage', newMessage)
 
       if (response?.data?.messages) {
         if (response.data.total === 0) {

@@ -530,7 +530,7 @@ const Feeds = (isCreated: boolean) => {
       }
       setLoading(false)
       console.log('Fetched Posts:', res.data)
-      setPosts(previousPosts => [...previousPosts, ...res.data])
+      setPosts(previousPosts => [...previousPosts, ...res.data])zz
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
       setError(error.message || 'An unknown error occurred')
