@@ -1,18 +1,59 @@
 import { useAuthContext } from "@/context/useAuthContext";
 import { DollarSign, MapPin, PiggyBank, Trash2, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const MarketplaceCard = ({business,isMyBusiness}) => {
-    const data = business;
+
+const MarketplaceCard = ({business,isMyBusiness , isMyWishlist}) => {
+
     const {user} = useAuthContext();
+  const [Wishlists, setWishlists] = useState([]);
+console.log(user?.id)
+    const fetchWishlist = async() => {
+        const response = await fetch(`http://localhost:5000/wishlists/getall/${user?.id}`)
+        const result = await response.json();
+        setWishlists(result)
+        console.log("-------WISHLISTS-------" , Wishlists)
+        console.log(result)
+       }
+useEffect(() => {
+fetchWishlist()
+} ,[])
+console.log("-------WISHLISTS-------" , Wishlists)
+const handleWishlistDelete = async () => {
+    const response = await fetch(`http://localhost:5000/wishlists/delete/${Wishlists.data[0].id}`, {
+        method: "DELETE",
+      });
+      console.log(await response.json())
+
+}
+const handleWishlist = async () => {
+    try {
+        const payload = {
+            name: "My Wishlist",
+            Wishlistdata: [business], // This should be the correct data structure
+            Identity : user?.id
+        };
+console.log("---Payload----" , payload)
+    const response = await fetch("http://localhost:5000/wishlists/create" , {
+            method : "POST",
+            headers : {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload )
+        })
+        console.log("--------response-------" , response.body)
+    } catch (error) {
+        console.log(  "error in  sending wishlist" , error)
+    }
+}
+    const data = business;
     const [isDeleted,setIsDeleted] = useState<boolean>(false);
     // console.log('---isMyBusiness---',isMyBusiness);
     if(isMyBusiness) {
         console.log('---What is the data of my business---',data);
     }
-
-
     const handledelete = async() => {
       try {
         if (user?.id == business.UserId  ) {
@@ -27,7 +68,6 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
         console.log(error ,"in deletion")
       }
       }
-
     const formatCurrency = (value) => value ? (value.startsWith('$') ? value : `$${value}`) : 'N/A';
     const MetricBox = ({ icon: Icon, label, value }) => (
         <div style={{ 
@@ -46,10 +86,7 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
           </div>
         </div>
       );
-
-    
-    if(isDeleted) return null;
-                  
+    if(isDeleted) return null;           
     return (
         <div key={business.id} className="col-md-6">
             <div style={{
@@ -96,8 +133,6 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
             }}>
                 {isMyBusiness ? business.businessType : business.businessType || "undefined"}
             </div>
-
-
 {isMyBusiness? 
             <button
                 onClick={() => {
@@ -119,7 +154,33 @@ const MarketplaceCard = ({business,isMyBusiness}) => {
             >
                 <Trash2 size={18} />
             </button>
- : ""}
+ :  isMyWishlist? <button
+ onClick={() => {
+ console.log("Clicking Wishlist Delete....")
+ handleWishlistDelete()
+ }}
+ style={{
+ background: 'none',
+ border: 'none',
+ padding: '0.25rem',
+ cursor: 'pointer',
+ color: '#dc3545',
+ transition: 'color 0.2s ease',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center'
+ }}
+ title="Delete business"
+>
+ <Trash2 size={18} />
+</button>
+:
+<Button onClick={
+    () => {
+        console.log("Wishlist id" , Wishlists.data.Identity)
+        handleWishlist()
+    }
+ }>Wishlist</Button>}
 
             </div>
             </div>

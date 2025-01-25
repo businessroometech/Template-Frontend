@@ -579,7 +579,7 @@ const MarketplaceDetails = () => {
 
   return (
     <div style={{ height: '100vh' }}>
-<TopBar></TopBar>
+
       {/* Header */}
       <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' }}>
         <div className="container">
