@@ -71,11 +71,9 @@ interface ApiResponse<T> {
   data: T
 }
 
-const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
-  const guests = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7]
+const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
-  const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
   const [modelTime, setModelTime] = useState(false)
   const { user } = useAuthContext()
 
@@ -172,7 +170,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
 
       if (response.data) {
         setThoughts('') // Clear thoughts after successful post
-        setIsCreated(true) // Trigger the state update in the parent component
+        setIsCreated(() => !isCreated) // Trigger the state update in the parent component
       }
     } catch (err) {
       console.log('Error in the posting', err)
@@ -230,7 +228,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           setThoughts('') // Reset thoughts after successful post
           togglePhotoModel()
           setTimeout(() => {
-            setIsCreated(true)
+            setIsCreated(() => !isCreated)
           }, 1000)
         }
       } else {
@@ -272,7 +270,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           setThoughts('') // Reset thoughts after successful post
           toggleVideoModel()
           setTimeout(() => {
-            setIsCreated(true)
+            setIsCreated(() => isCreated);
           }, 1000)
         }
       } else {

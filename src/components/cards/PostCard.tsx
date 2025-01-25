@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
+import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp,Lightbulb as Bulb } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
@@ -29,7 +29,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
-  const [isDeleted,setIsDeleted] = useState<boolean>(false)
+  const [isDeleted,setIsDeleted] = useState<boolean>(false);
+  const [showReactions,setShowReactions] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
 
@@ -308,16 +309,84 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
         )}
 
         <ButtonGroup className="w-100 border-top border-bottom mb-3">
+        <div className="relative inline-block">
           <Button
             variant={likeStatus ? "primary" : "light"}
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
             onClick={toggleLike}
+            onMouseEnter={() => setShowReactions(true)}
             style={{ fontSize: "0.8rem" }} // Slightly smaller font size
           >
             {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
             <span>Like {likeCount}</span>
           </Button>
-
+          {showReactions && (
+        <div style={{
+          position: 'absolute',
+          bottom: '100%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: 'white',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          borderRadius: '0.5rem',
+          padding: '0.5rem',
+          display: 'flex',
+          gap: '0.5rem'
+        }}>
+          <button style={{
+            backgroundColor: 'transparent',
+            borderRadius: '9999px',
+            padding: '0.5rem',
+            ':hover': {
+              backgroundColor: '#e5e7eb'
+            }
+          }}>
+            <Smile size={20} />
+          </button>
+          <button style={{
+            backgroundColor: 'transparent',
+            borderRadius: '9999px',
+            padding: '0.5rem',
+            ':hover': {
+              backgroundColor: '#e5e7eb'
+            }
+          }}>
+            <Rocket size={20} />
+          </button>
+          <button style={{
+            backgroundColor: 'transparent',
+            borderRadius: '9999px',
+            padding: '0.5rem',
+            ':hover': {
+              backgroundColor: '#e5e7eb'
+            }
+          }}>
+            <Heart size={20} />
+          </button>
+          <button style={{
+            backgroundColor: 'transparent',
+            borderRadius: '9999px',
+            padding: '0.5rem',
+            ':hover': {
+              backgroundColor: '#e5e7eb'
+            }
+          }}>
+            <Star size={20} />
+          </button>
+          <button style={{
+            backgroundColor: 'transparent',
+            borderRadius: '9999px',
+            padding: '0.5rem',
+            ':hover': {
+              backgroundColor: '#e5e7eb'
+            }
+            
+          }}>
+            <Bulb size={20} />
+          </button>
+        </div>
+      )}
+    </div>
           <Button
             variant="light"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
