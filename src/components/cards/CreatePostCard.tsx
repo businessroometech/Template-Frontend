@@ -154,10 +154,8 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     }
 
     try {
-      // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
-      console.log('------user--------', user, user?.id)
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
@@ -169,8 +167,8 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
       })
 
       if (response.data) {
-        setThoughts('') // Clear thoughts after successful post
-        setIsCreated(() => !isCreated) // Trigger the state update in the parent component
+        setThoughts('') 
+        setIsCreated(() => !isCreated) 
       }
     } catch (err) {
       console.log('Error in the posting', err)
@@ -329,14 +327,14 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
               style={{
                 borderColor: '#212529',
                 color: '#212529',
-                backgroundColor: '#f8f9fa', // Light gray background
-                fontSize: '14px', // Slightly smaller, readable text
+                backgroundColor: '#f8f9fa', 
+                fontSize: '14px', 
               }}
               rows={1}
               data-autoresize
               placeholder="Share your thoughts..."
               value={thoughts}
-              onChange={(e) => setThoughts(e.target.value)} // Update state with input value
+              onChange={(e) => setThoughts(e.target.value)} 
             />
           </form>
         </div>
