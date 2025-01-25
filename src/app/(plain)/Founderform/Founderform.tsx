@@ -64,7 +64,7 @@ const Founderforms = () => {
     try {
       console.log(formData , user?.id);
   
-      const response = await fetch(" https://strengthholdings.com/entrepreneur/create", {
+      const response = await fetch(" http://54.177.193.30:5000/entrepreneur/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -712,7 +712,7 @@ const BusinessPreferencesForm = () => {
     e.preventDefault();
     toast.success("Form submitted successfully!");
     try {
-      fetch('https://strengthholdings.com/business-buyer/create', {
+      fetch('http://54.177.193.30:5000/business-buyer/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

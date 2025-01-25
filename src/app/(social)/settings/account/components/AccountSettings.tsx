@@ -141,7 +141,7 @@ const [loading, setLoading] = useState(false);
 
        
      
-      const response = await fetch(' https://strengthholdings.com/api/v1/auth/update-or-create-Profile', {
+      const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/update-or-create-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ const [loading, setLoading] = useState(false);
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          'https://strengthholdings.com/api/v1/auth/get-user-Profile',
+          'http://54.177.193.30:5000/api/v1/auth/get-user-Profile',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
