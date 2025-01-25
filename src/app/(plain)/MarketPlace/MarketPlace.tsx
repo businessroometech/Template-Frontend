@@ -73,7 +73,7 @@ const MarketPlace = () => {
 
 
  const fetchWishlist = async() => {
-  const response = await fetch(`http://localhost:5000/wishlists/getall/${user?.id}`)
+  const response = await fetch(`http://54.177.193.30:5000/wishlists/getall/${user?.id}`)
   const result = await response.json();
   setWishlists(result)
   console.log("-------WISHLISTS-------" , Wishlists)
