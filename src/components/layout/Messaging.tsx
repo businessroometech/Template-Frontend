@@ -241,8 +241,9 @@ const Messaging = () => {
       })
 
       if (response?.data?.messages) {
-        if (response.data.messages.length === 0) {
+        if (response.data.total === 0) {
           setHasMore(false)
+          setUserMessages([])
         } else {
           const sortedMessages = response.data.messages.sort((a, b) => new Date(a.sentOn).getTime() - new Date(b.sentOn).getTime())
           // console.log('sortedMessages', sortedMessages)
@@ -408,7 +409,7 @@ const Messaging = () => {
             <Collapse in={isOpenCollapseToast} className="toast-body">
               <div>
                 <SimplebarReactClient className="chat-conversation-content custom-scrollbar h-200px">
-                  <div className="text-center small my-2">Jul 16, 2022, 06:15 am</div>
+                    <div className="text-center small my-2">{new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</div>
                   {[...userMessages].reverse().map((message, index) => (
                     <UserMessage message={message} key={index} toUser={selectedUser} />
                   ))}

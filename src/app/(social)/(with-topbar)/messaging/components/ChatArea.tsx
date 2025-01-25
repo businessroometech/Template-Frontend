@@ -683,8 +683,9 @@ const ChatArea = () => {
       })
 
       if (response?.data?.messages) {
-        if (response.data.messages.length === 0) {
+        if (response.data.total === 0) {
           setHasMore(false)
+          setUserMessages([])
         } else {
           const sortedMessages = response.data.messages.sort((a, b) =>
             new Date(a.sentOn).getTime() - new Date(b.sentOn).getTime()
@@ -703,7 +704,7 @@ const ChatArea = () => {
     if (activeChat) {
       fetchMessages()
     }
-  }, [activeChat, fetchMessages])
+  }, [activeChat, fetchMessages,page])
 
   const loadMore = () => {
     if (!hasMore) return
