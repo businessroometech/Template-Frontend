@@ -261,60 +261,45 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       </CardHeader>
 
       <CardBody>
-        {post?.content && <p className="mb-3">{post.content}</p>}
+      {post?.content && (
+     <div className="mb-3 p-4 bg-gray-100 rounded-lg">
+     <div
+       className="w-full"
+       style={{
+         whiteSpace: "pre-wrap", // Preserve line breaks
+         wordWrap: "break-word", // Prevent horizontal overflow for long words
+       }}
+     >
+       {post.content}
+     </div>
+   </div>
+  )}
 
-        {media.length > 0 && (
-
-          isVideo ? 
-            <div 
-              style={{ 
-                position: 'relative', 
-                marginBottom: '10px',
-                width : '100%',
-                height : '100%',
-                display : 'flex',
-                justifyContent : 'center', 
-                alignItems : 'center'
-              }}
-              >{videoPlayer}
-              </div> :
-
-            
-              <ResponsiveGallery media={media} />
-          // <div className="d-flex justify-content-between">
-          //   <Row className="g-3">
-          //     <Col xs={6}>
-          //       <GlightBox className="h-100" href={"postImg3"} data-gallery="image-popup">
-          //         <img className="rounded img-fluid" src={media[0]} alt="Image" />
-          //       </GlightBox>
-          //     </Col>
-          //     <Col xs={6}>
-          //       <GlightBox href={"/"} data-glightbox data-gallery="image-popup">
-          //         <img className="rounded img-fluid" src={media[1]} alt="Image" />
-          //       </GlightBox>
-          //       <div className="position-relative bg-dark mt-3 rounded">
-          //         <div className="hover-actions-item position-absolute top-50 start-50 translate-middle z-index-9">
-          //           <Link className="btn btn-link text-white" to="">
-
-          //             View all
-          //           </Link>
-          //         </div>
-          //         <GlightBox href={"/"} data-glightbox data-gallery="image-popup">
-          //           <img className="img-fluid opacity-50 rounded" src={media[2]} alt="image" />
-          //         </GlightBox>
-          //       </div>
-          //     </Col>
-          //   </Row>
-          // </div>
-        )}
-
+  {media.length > 0 && (
+    isVideo ? (
+      <div
+        style={{
+          position: "relative",
+          marginBottom: "10px",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {videoPlayer}
+      </div>
+    ) : (
+      <ResponsiveGallery media={media} />
+    )
+  )}
         <ButtonGroup className="w-100 border-top border-bottom mb-3">
         <div className="relative inline-block">
           <Button
             variant={likeStatus ? "primary" : "light"}
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
             onClick={toggleLike}
-            onMouseEnter={() => setShowReactions(true)}
             style={{ fontSize: "0.8rem" }} // Slightly smaller font size
           >
             {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
