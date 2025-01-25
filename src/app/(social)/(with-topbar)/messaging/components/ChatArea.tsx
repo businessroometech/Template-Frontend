@@ -559,7 +559,7 @@ import TextFormInput from '@/components/form/TextFormInput'
 import Picker from 'emoji-picker-react'
 import { set } from 'date-fns'
 
-const socket = io("wss://strengthholdings.com", {
+const socket = io("http://54.177.193.30:5000/", {
   // path: "/socket.io",
   transports: ["websocket"],
 });
