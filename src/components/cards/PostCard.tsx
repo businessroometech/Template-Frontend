@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
+import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp,Lightbulb as Bulb } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
@@ -29,7 +29,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
-  const [isDeleted,setIsDeleted] = useState<boolean>(false)
+  const [isDeleted,setIsDeleted] = useState<boolean>(false);
+  const [showReactions,setShowReactions] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
 
@@ -260,91 +261,77 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       </CardHeader>
 
       <CardBody>
-        {post?.content && <p className="mb-3">{post.content}</p>}
+      {post?.content && (
+     <div className="mb-3 p-4 bg-gray-100 rounded-lg">
+     <div
+       className="w-full"
+       style={{
+         whiteSpace: "pre-wrap", // Preserve line breaks
+         wordWrap: "break-word", // Prevent horizontal overflow for long words
+       }}
+     >
+       {post.content}
+     </div>
+   </div>
+  )}
 
-        {media.length > 0 && (
+  {media.length > 0 && (
+    isVideo ? (
+      <div
+        style={{
+          position: "relative",
+          marginBottom: "10px",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {videoPlayer}
+      </div>
+    ) : (
+      <ResponsiveGallery media={media} />
+    )
+  )}
+  <ButtonGroup className="w-100 border-top border-bottom mb-3">
+    <Button
+      variant={likeStatus ? "primary" : "light"}
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      onClick={toggleLike}
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+      <span>Like {likeCount}</span>
+    </Button>
 
-          isVideo ? 
-            <div 
-              style={{ 
-                position: 'relative', 
-                marginBottom: '10px',
-                width : '100%',
-                height : '100%',
-                display : 'flex',
-                justifyContent : 'center', 
-                alignItems : 'center'
-              }}
-              >{videoPlayer}
-              </div> :
+    <Button
+      variant="light"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      <MessageSquare size={16} />
+      <span>Comment {commentCount}</span>
+    </Button>
 
-            
-              <ResponsiveGallery media={media} />
-          // <div className="d-flex justify-content-between">
-          //   <Row className="g-3">
-          //     <Col xs={6}>
-          //       <GlightBox className="h-100" href={"postImg3"} data-gallery="image-popup">
-          //         <img className="rounded img-fluid" src={media[0]} alt="Image" />
-          //       </GlightBox>
-          //     </Col>
-          //     <Col xs={6}>
-          //       <GlightBox href={"/"} data-glightbox data-gallery="image-popup">
-          //         <img className="rounded img-fluid" src={media[1]} alt="Image" />
-          //       </GlightBox>
-          //       <div className="position-relative bg-dark mt-3 rounded">
-          //         <div className="hover-actions-item position-absolute top-50 start-50 translate-middle z-index-9">
-          //           <Link className="btn btn-link text-white" to="">
+    <Button
+      variant="light"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      <Repeat size={16} />
+      <span>Repost</span>
+    </Button>
 
-          //             View all
-          //           </Link>
-          //         </div>
-          //         <GlightBox href={"/"} data-glightbox data-gallery="image-popup">
-          //           <img className="img-fluid opacity-50 rounded" src={media[2]} alt="image" />
-          //         </GlightBox>
-          //       </div>
-          //     </Col>
-          //   </Row>
-          // </div>
-        )}
-
-        <ButtonGroup className="w-100 border-top border-bottom mb-3">
-          <Button
-            variant={likeStatus ? "primary" : "light"}
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            onClick={toggleLike}
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-            <span>Like {likeCount}</span>
-          </Button>
-
-          <Button
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <MessageSquare size={16} />
-            <span>Comment {commentCount}</span>
-          </Button>
-
-          <Button
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Repeat size={16} />
-            <span>Repost</span>
-          </Button>
-
-          <Button
-            variant="light"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-            <span>Share</span>
-          </Button>
-        </ButtonGroup>
+    <Button
+      variant="light"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+    >
+      <Share size={16} />
+      <span>Share</span>
+    </Button>
+  </ButtonGroup>
 
 
         <div className="d-flex mb-4 px-3">

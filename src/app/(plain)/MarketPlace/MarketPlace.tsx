@@ -22,12 +22,22 @@ const MarketPlace = () => {
   // console.log("user" , user)
   const [myBusinessData, setMyBusinessData] = useState([]);
   const [allBusinessData, setAllBusinessData] = useState([]);
+  const [Wishlists, setWishlists] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeTab, setActiveTab] = useState('exploreMore');
   const [loading, setLoading] = useState(true);
   const isMyBusiness = activeTab === 'myBusiness';
+  const isMyWishlist = activeTab === 'myWishlist'
     useEffect(() => {
     console.log('Use Effect Called');
+
+
+
+
+
+
+
+
     const fetchMyBusiness = async () => {
       // console.log(user?.id)
       if (user?.id) {
@@ -61,10 +71,20 @@ const MarketPlace = () => {
       }
     };
 
+
+ const fetchWishlist = async() => {
+  const response = await fetch(`http://54.177.193.30:5000/wishlists/getall/${user?.id}`)
+  const result = await response.json();
+  setWishlists(result)
+  console.log("-------WISHLISTS-------" , Wishlists)
+  console.log(result)
+ }
+
+
     const fetchData = async () => {
       setLoading(true);
      
-        await Promise.all([fetchAllBusiness(),fetchMyBusiness()]);
+        await Promise.all([fetchAllBusiness(),fetchMyBusiness() , fetchWishlist()]);
         console.log('---all  Business---',allBusinessData);
         console.log('---all My business---',myBusinessData)
       setLoading(false);
@@ -74,7 +94,8 @@ const MarketPlace = () => {
   }, [activeTab, user.id]);
 
   const getCurrentData = () => {
-    const data = isMyBusiness ? myBusinessData[0].data : allBusinessData;
+    
+    const data = isMyBusiness ? myBusinessData[0].data: isMyWishlist? Wishlists.data.flatMap(item => item.Wishlistdata): allBusinessData;
     console.log('Data From GetCurrentData',data);
     return selectedCategory === 'All' 
       ? data 
@@ -195,6 +216,14 @@ const MarketPlace = () => {
               >
                 My Listing
               </button> 
+
+              <button
+                style={tabStyle(activeTab === 'myWishlist')}
+                onClick={() => setActiveTab('myWishlist')}
+              >
+                WishList
+              </button>
+
              
             </div>
 
@@ -212,7 +241,7 @@ const MarketPlace = () => {
             ) : (
               <div className="row g-4">
                 {getCurrentData().map((business) => {
-                  return <MarketplaceCard business={business} key={business.id} isMyBusiness={isMyBusiness}/>
+                  return <MarketplaceCard business={business} key={business.id} isMyBusiness={isMyBusiness}   isMyWishlist={isMyWishlist}/>
                 })}
                 {getCurrentData().length === 0 && (
                   <div style={{ 
@@ -249,4 +278,4 @@ const MarketPlace = () => {
   );
 };
 
-export default MarketPlace;
+export default MarketPlace ;

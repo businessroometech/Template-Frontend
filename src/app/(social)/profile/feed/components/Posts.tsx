@@ -151,7 +151,7 @@ const Posts = ({ isCreated }) => {
       setPosts(previousData => [...previousData,...res.data.posts])
     } catch (error: any) {
       console.error(JSON.stringify(error))
-      setError('This User have no Posts');//18001233330
+      setError('This User have no Posts');
     } finally {
       setLoading(false)
     }

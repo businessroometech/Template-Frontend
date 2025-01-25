@@ -71,11 +71,9 @@ interface ApiResponse<T> {
   data: T
 }
 
-const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
-  const guests = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7]
+const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
-  const { isTrue: isOpenEvent, toggle: toggleEvent } = useToggle()
   const [modelTime, setModelTime] = useState(false)
   const { user } = useAuthContext()
 
@@ -156,10 +154,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
     }
 
     try {
-      // Regular expression to match hashtags
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
-      console.log('------user--------', user, user?.id)
       const response = await makeApiRequest<ApiResponse<{ url: string }>>({
         method: 'POST',
         url: CREATE_POST,
@@ -171,8 +167,8 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
       })
 
       if (response.data) {
-        setThoughts('') // Clear thoughts after successful post
-        setIsCreated(true) // Trigger the state update in the parent component
+        setThoughts('') 
+        setIsCreated(() => !isCreated) 
       }
     } catch (err) {
       console.log('Error in the posting', err)
@@ -230,7 +226,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           setThoughts('') // Reset thoughts after successful post
           togglePhotoModel()
           setTimeout(() => {
-            setIsCreated(true)
+            setIsCreated(() => !isCreated)
           }, 1000)
         }
       } else {
@@ -272,7 +268,7 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
           setThoughts('') // Reset thoughts after successful post
           toggleVideoModel()
           setTimeout(() => {
-            setIsCreated(true)
+            setIsCreated(() => isCreated);
           }, 1000)
         }
       } else {
@@ -331,14 +327,14 @@ const CreatePostCard = ({ setIsCreated }: CreatePostCardProps) => {
               style={{
                 borderColor: '#212529',
                 color: '#212529',
-                backgroundColor: '#f8f9fa', // Light gray background
-                fontSize: '14px', // Slightly smaller, readable text
+                backgroundColor: '#f8f9fa', 
+                fontSize: '14px', 
               }}
               rows={1}
               data-autoresize
               placeholder="Share your thoughts..."
               value={thoughts}
-              onChange={(e) => setThoughts(e.target.value)} // Update state with input value
+              onChange={(e) => setThoughts(e.target.value)} 
             />
           </form>
         </div>
