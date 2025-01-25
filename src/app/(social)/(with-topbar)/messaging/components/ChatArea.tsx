@@ -640,7 +640,11 @@ const ChatArea = () => {
   }, [userMessages])
 
   useEffect(() => {
-    socket.emit('joinRoom', user.id)
+    if(!activeChat) return
+    
+    const roomId = `${user.id}-${activeChat.personalDetails.id}`
+    console.log(roomId)
+    socket.emit('joinRoom', roomId)
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id)
     })
@@ -654,10 +658,11 @@ const ChatArea = () => {
     })
 
     return () => {
+      socket.emit('leaveRoom', roomId)
       socket.off('connect_error')
       socket.off('newMessage')
     }
-  }, [user.id])
+  }, [user.id,activeChat])
 
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter a message'),
@@ -682,6 +687,7 @@ const ChatArea = () => {
           limit: 50,
         },
       })
+      socket.emit('sendMessage', newMessage)
 
       if (response?.data?.messages) {
         if (response.data.total === 0) {
@@ -711,9 +717,10 @@ const ChatArea = () => {
     setPage((prevPage) => prevPage + 1)
   }
 
-  const sendChatMessage = async (values: { newMessage?: string }) => {
+  const sendChatMessage =async (values: { newMessage?: string }) => {
     if (!values.newMessage || !activeChat) return
     setUserMessages((prevMessages) => [newMessage, ...prevMessages])
+    reset()
     const newMessage: ChatMessageType = {
       id: (userMessages.length + 1).toString(),
       senderId: user.id,
@@ -723,14 +730,13 @@ const ChatArea = () => {
       isSend: true,
       isRead: false,
     }
-
     try {
       await makeApiRequest({
         method: 'POST',
         url: 'api/v1/chat/send-message',
         data: { senderId: user.id, receiverId: activeChat.personalDetails.id, content: values.newMessage },
       })
-      reset()
+      
     } catch (error) {
       console.error(error)
     }

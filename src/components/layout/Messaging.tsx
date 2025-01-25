@@ -184,7 +184,8 @@ const Messaging = () => {
 
   // Removed duplicate sendChatMessage function
    useEffect(() => {
-      socket.emit('joinRoom', user.id)
+    const roomId = `${user.id}-${selectedUser?.userId}`
+      socket.emit('joinRoom', roomId)
       socket.on('connect', () => {
         console.log('Socket connected:', socket.id)
       })
@@ -265,6 +266,7 @@ const Messaging = () => {
   const sendChatMessage = async (values: { newMessage?: string }) => {
     if (!values.newMessage || !selectedUser) return
     setUserMessages((prevMessages) => [newMessage, ...prevMessages])
+    reset()
     const newMessage: ChatMessageType = {
       id: (userMessages.length + 1).toString(),
       senderId: user.id,
@@ -274,8 +276,6 @@ const Messaging = () => {
       isSend: true,
       isRead: false,
     }
-  
-
     try {
       await makeApiRequest({
         method: 'POST',
