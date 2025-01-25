@@ -1,8 +1,7 @@
-import { getAllFeeds } from '@/helpers/data'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Button,
   Card,
@@ -34,7 +33,6 @@ import {
   BsThreeDots,
   BsXCircle,
 } from 'react-icons/bs'
-import People from './People'
 
 import avatar4 from '@/assets/images/avatar/04.jpg'
 import logo11 from '@/assets/images/logo/11.svg'
@@ -44,13 +42,9 @@ import postImg2 from '@/assets/images/post/3by2/02.jpg'
 import postImg4 from '@/assets/images/post/3by2/03.jpg'
 import PostCard from '@/components/cards/PostCard'
 import { Link } from 'react-router-dom'
-import LoadMoreButton from './LoadMoreButton'
-import SuggestedStories from './SuggestedStories'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
-import useToggle from '@/hooks/useToggle'
-import Loading from '@/components/Loading'
 
 // ----------------- data type --------------------
 interface Post {
@@ -535,7 +529,7 @@ const Feeds = (isCreated: boolean) => {
         return;
       }
       setLoading(false)
-      //console.log('Fetched Posts:', res)
+      console.log('Fetched Posts:', res.data)
       setPosts(previousPosts => [...previousPosts, ...res.data])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
