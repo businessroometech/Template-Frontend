@@ -184,7 +184,8 @@ const Messaging = () => {
 
   // Removed duplicate sendChatMessage function
    useEffect(() => {
-      socket.emit('joinRoom', user.id)
+    const roomId = `${user.id}-${selectedUser?.userId}`
+      socket.emit('joinRoom', roomId)
       socket.on('connect', () => {
         console.log('Socket connected:', socket.id)
       })
@@ -227,6 +228,7 @@ const Messaging = () => {
   const fetchMessages = useCallback(async () => {
     console.log('selectedUser', selectedUser)
     if (!selectedUser) return
+    setUserMessages([])
     setIsLoading(true)
     try {
       const response = await makeApiRequest<{ data: any[] }>({
@@ -241,7 +243,7 @@ const Messaging = () => {
       })
 
       if (response?.data?.messages) {
-        if (response.data.messages.length === 0) {
+        if (response.data.total === 0) {
           setHasMore(false)
         } else {
           const sortedMessages = response.data.messages.sort((a, b) => new Date(a.sentOn).getTime() - new Date(b.sentOn).getTime())
@@ -261,8 +263,10 @@ const Messaging = () => {
     }
   }, [selectedUser,page,user,toggle])
 
-  const sendChatMessage = debounce(async (values: { newMessage?: string }) => {
+  const sendChatMessage = async (values: { newMessage?: string }) => {
     if (!values.newMessage || !selectedUser) return
+    setUserMessages((prevMessages) => [newMessage, ...prevMessages])
+    reset()
     const newMessage: ChatMessageType = {
       id: (userMessages.length + 1).toString(),
       senderId: user.id,
@@ -272,8 +276,6 @@ const Messaging = () => {
       isSend: true,
       isRead: false,
     }
-  
-
     try {
       await makeApiRequest({
         method: 'POST',
@@ -281,12 +283,11 @@ const Messaging = () => {
         data: { senderId: user.id, receiverId: selectedUser.userId, content: values.newMessage },
       })
       // console.log('newMessage', newMessage)
-      setUserMessages((prevMessages) => [newMessage, ...prevMessages])
       reset()
     } catch (error) {
       console.error(error)
     }
-  }, 1000)
+  }
 
   const handleUserToggle = (user: UserType) => {
     setSelectedUser(user) // Set the selected user
@@ -408,7 +409,7 @@ const Messaging = () => {
             <Collapse in={isOpenCollapseToast} className="toast-body">
               <div>
                 <SimplebarReactClient className="chat-conversation-content custom-scrollbar h-200px">
-                  <div className="text-center small my-2">Jul 16, 2022, 06:15 am</div>
+                    <div className="text-center small my-2">{new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</div>
                   {[...userMessages].reverse().map((message, index) => (
                     <UserMessage message={message} key={index} toUser={selectedUser} />
                   ))}

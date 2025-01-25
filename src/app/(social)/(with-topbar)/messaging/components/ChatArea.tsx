@@ -640,7 +640,11 @@ const ChatArea = () => {
   }, [userMessages])
 
   useEffect(() => {
-    socket.emit('joinRoom', user.id)
+    if(!activeChat) return
+    
+    const roomId = `${user.id}-${activeChat.personalDetails.id}`
+    console.log(roomId)
+    socket.emit('joinRoom', roomId)
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id)
     })
@@ -654,10 +658,11 @@ const ChatArea = () => {
     })
 
     return () => {
+      socket.emit('leaveRoom', roomId)
       socket.off('connect_error')
       socket.off('newMessage')
     }
-  }, [user.id])
+  }, [user.id,activeChat])
 
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter a message'),
@@ -669,6 +674,7 @@ const ChatArea = () => {
 
   const fetchMessages = useCallback(async () => {
     if (!activeChat) return
+    setUserMessages([])
     setIsLoading(true)
     try {
       const response = await makeApiRequest<{ data: any[] }>({
@@ -681,9 +687,10 @@ const ChatArea = () => {
           limit: 50,
         },
       })
+      // socket.emit('sendMessage', newMessage)
 
       if (response?.data?.messages) {
-        if (response.data.messages.length === 0) {
+        if (response.data.total === 0) {
           setHasMore(false)
         } else {
           const sortedMessages = response.data.messages.sort((a, b) =>
@@ -703,16 +710,17 @@ const ChatArea = () => {
     if (activeChat) {
       fetchMessages()
     }
-  }, [activeChat, fetchMessages])
+  }, [activeChat, fetchMessages,page])
 
   const loadMore = () => {
     if (!hasMore) return
     setPage((prevPage) => prevPage + 1)
   }
 
-  const sendChatMessage = debounce(async (values: { newMessage?: string }) => {
+  const sendChatMessage =async (values: { newMessage?: string }) => {
     if (!values.newMessage || !activeChat) return
-
+    setUserMessages((prevMessages) => [newMessage, ...prevMessages])
+    reset()
     const newMessage: ChatMessageType = {
       id: (userMessages.length + 1).toString(),
       senderId: user.id,
@@ -722,20 +730,17 @@ const ChatArea = () => {
       isSend: true,
       isRead: false,
     }
-
     try {
       await makeApiRequest({
         method: 'POST',
         url: 'api/v1/chat/send-message',
         data: { senderId: user.id, receiverId: activeChat.personalDetails.id, content: values.newMessage },
       })
-
-      setUserMessages((prevMessages) => [newMessage, ...prevMessages])
-      reset()
+      
     } catch (error) {
       console.error(error)
     }
-  }, 1000)
+  }
 
   const handleEmojiClick = (emoji: any) => {
     const currentMessage = getValues('newMessage') || ''

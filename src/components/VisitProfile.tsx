@@ -47,7 +47,9 @@ const ProfileVisits = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userId: user?.id }),
+          body: JSON.stringify({ userId: user?.id,
+            page: 1, 
+            limit: 10 }),
         });
 
         if (response.ok) {
@@ -196,7 +198,11 @@ const ProfileVisited = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ userId: user?.id }),
+            body: JSON.stringify({ userId: user?.id,
+              page: 1, 
+              limit: 10,
+             }),
+            
           }
         );
 
