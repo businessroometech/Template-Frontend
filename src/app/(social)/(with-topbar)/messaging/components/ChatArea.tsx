@@ -669,6 +669,7 @@ const ChatArea = () => {
 
   const fetchMessages = useCallback(async () => {
     if (!activeChat) return
+    setUserMessages([])
     setIsLoading(true)
     try {
       const response = await makeApiRequest<{ data: any[] }>({
@@ -685,7 +686,6 @@ const ChatArea = () => {
       if (response?.data?.messages) {
         if (response.data.total === 0) {
           setHasMore(false)
-          setUserMessages([])
         } else {
           const sortedMessages = response.data.messages.sort((a, b) =>
             new Date(a.sentOn).getTime() - new Date(b.sentOn).getTime()
@@ -711,9 +711,9 @@ const ChatArea = () => {
     setPage((prevPage) => prevPage + 1)
   }
 
-  const sendChatMessage = debounce(async (values: { newMessage?: string }) => {
+  const sendChatMessage = async (values: { newMessage?: string }) => {
     if (!values.newMessage || !activeChat) return
-
+    setUserMessages((prevMessages) => [newMessage, ...prevMessages])
     const newMessage: ChatMessageType = {
       id: (userMessages.length + 1).toString(),
       senderId: user.id,
@@ -730,13 +730,11 @@ const ChatArea = () => {
         url: 'api/v1/chat/send-message',
         data: { senderId: user.id, receiverId: activeChat.personalDetails.id, content: values.newMessage },
       })
-
-      setUserMessages((prevMessages) => [newMessage, ...prevMessages])
       reset()
     } catch (error) {
       console.error(error)
     }
-  }, 1000)
+  }
 
   const handleEmojiClick = (emoji: any) => {
     const currentMessage = getValues('newMessage') || ''
