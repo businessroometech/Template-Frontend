@@ -643,7 +643,8 @@ const ChatArea = () => {
     if(!activeChat) return
     
     const roomId = `${user.id}-${activeChat.personalDetails.id}`
-    console.log(roomId)
+    // const roomId = `${activeChat.personalDetails.id}-${user.id}`
+    // console.log(roomId)
     socket.emit('joinRoom', roomId)
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id)
@@ -654,7 +655,12 @@ const ChatArea = () => {
     })
 
     socket.on('newMessage', (message) => {
-      setUserMessages((prevMessages) => [message, ...prevMessages])
+      if (
+        (message.senderId === user.id && message.receiverId === activeChat.personalDetails.id) ||
+        (message.receiverId === user.id && message.senderId === activeChat.personalDetails.id)
+      ) {
+        setUserMessages((prevMessages) => [message, ...prevMessages])
+      }
     })
 
     return () => {
