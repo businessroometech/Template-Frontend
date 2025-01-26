@@ -29,12 +29,15 @@ export const OnlineUsersProvider: React.FC<React.PropsWithChildren<{}>> = ({ chi
                 throw new Error('Network response was not ok');
             }
 
-            console.log('Online users response:', response?.data);
-
-            // Assuming `data.activeUsers` contains the list of online user IDs
-            setOnlineUsers(response?.data?.onlineUsers);
+            if (response.data && response.data.onlineUsers && Array.isArray(data.onlineUsers)) {
+                setOnlineUsers(data.onlineUsers);
+            } else {
+                console.error('Unexpected response structure:', response.data);
+                setOnlineUsers([]); // Fallback to an empty array
+            }
         } catch (error) {
-            console.error('Failed to fetch online users:', error);
+            console.error('Error fetching online users:', error);
+            setOnlineUsers([]); // Handle errors gracefully
         }
     };
 
