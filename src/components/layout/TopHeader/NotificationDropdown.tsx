@@ -47,7 +47,7 @@ console.log("isConnected",isConnected);
   useEffect(() => {
     if (!user?.id) return;
 
-    const socketConnection = io("http://54.177.193.30:5000", {
+    const socketConnection = io("http://localhost:5000", {
       query: { userId: user.id },
     });
 
@@ -89,7 +89,7 @@ console.log("isConnected",isConnected);
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://54.177.193.30:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `http://localhost:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
@@ -111,13 +111,13 @@ console.log("isConnected",isConnected);
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'http://54.177.193.30:5000/api/v1/notifications/mark-as-read',
+        'http://localhost:5000/api/v1/socket-notifications/mark-read',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ notificationId }),
+          body: JSON.stringify({ notificationId:notificationId }),
         }
       );
       await response.json();
@@ -133,13 +133,13 @@ console.log("isConnected",isConnected);
       const notificationIds = allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        ' http://54.177.193.30:5000/api/v1/notifications/mark-all-as-read',
+        'http://localhost:5000/api/v1/socket-notifications/mark-all-read',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ notificationIds }),
+          body: JSON.stringify({ userId: user?.id }),
         }
       );
       const data = await response.json();
@@ -207,13 +207,13 @@ console.log("isConnected",isConnected);
         <Card>
           <CardHeader className="d-flex justify-content-between align-items-center">
             <h6 className="m-0">
-              Notifications{' '}
+              Notifications
               <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
-                {allNotifications.filter((n) => !n.isRead).length} new
+                {allNotifications.slice(0, 4).filter((n) => !n.isRead).length} new
               </span>
             </h6>
             <Link className="small" to="#" onClick={handleReadAll}>
-              read all
+              Read all
             </Link>
           </CardHeader>
           <CardBody className="p-0">

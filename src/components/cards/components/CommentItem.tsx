@@ -26,13 +26,13 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
 
-   console.log('---comment---',comment);
+  //  console.log('---comment---',comment);
 
   function formatText(text : string,name : string) : string {
       return  `@${name} ${text}`
   }
 
-  console.log('levl',level)
+  // console.log('levl',level)
   const handleDeleteComment = async (commentId: string, level: number, setIsDeleted: (value: boolean) => void): Promise<void> => {
     if (!commentId) {
       console.error('Comment ID is required');
