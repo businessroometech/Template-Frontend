@@ -28,9 +28,9 @@ export const OnlineUsersProvider: React.FC<React.PropsWithChildren<{}>> = ({ chi
             if (!response) {
                 throw new Error('Network response was not ok');
             }
-
-            if (response.data && response.data.onlineUsers && Array.isArray(data.onlineUsers)) {
-                setOnlineUsers(data.onlineUsers);
+            console.log(response.data)
+            if (response.data && response.data.onlineUsers && Array.isArray(response.data.onlineUsers)) {
+                setOnlineUsers(response.data.onlineUsers);
             } else {
                 console.error('Unexpected response structure:', response.data);
                 setOnlineUsers([]); // Fallback to an empty array
