@@ -65,7 +65,7 @@ interface CreatePostCardProps {
 }
 import { useAuthContext } from '@/context/useAuthContext'
 import UserModel from './UserModel'
-
+import { Spinner } from "react-bootstrap"; 
 interface ApiResponse<T> {
   status: number
   data: T
@@ -75,7 +75,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
   const [modelTime, setModelTime] = useState(false)
-  const { user } = useAuthContext()
+  const { user } = useAuthContext();
+  const [isSubmittingPost, setIsSubmittingPost] = useState(false);
+  const [isSubmittingPhoto, setIsSubmittingPhoto] = useState(false);
+  const [isSubmittingVideo, setIsSubmittingVideo] = useState(false);
 
   const eventFormSchema = yup.object({
     title: yup.string().required('Please enter event title'),
@@ -152,7 +155,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
       console.log('Thoughts cannot be empty.')
       return
     }
-
+    setIsSubmittingPost(true);
     try {
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
@@ -168,10 +171,15 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
 
       if (response.data) {
         setThoughts('') 
+        console.log('isCreated before',isCreated)
         setIsCreated(() => !isCreated) 
+        console.log('isCreated after',isCreated)
       }
     } catch (err) {
       console.log('Error in the posting', err)
+    }
+    finally {
+      setIsSubmittingPost(false);
     }
   }
 
@@ -199,7 +207,9 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
+    setIsSubmittingPhoto(true);
     const uploadSuccess = await handleUpload()
+    
 
     try {
       // Wait for handleUpload to complete before proceeding
@@ -235,9 +245,13 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     } catch (err) {
       console.log('Error in the posting', err)
     }
+    finally {
+      setIsSubmittingPhoto(false);
+    }
   }
 
   const handleVideoSubmit = async () => {
+    setIsSubmittingVideo(true);
     try {
       // Wait for handleUpload to complete before proceeding
       const uploadSuccess = await handleUpload()
@@ -267,15 +281,18 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         if (response.data) {
           setThoughts('') // Reset thoughts after successful post
           toggleVideoModel()
-          setTimeout(() => {
-            setIsCreated(() => isCreated);
-          }, 1000)
+          console.log('isCreated before',isCreated)
+        setIsCreated(() => !isCreated) 
+        console.log('isCreated after',isCreated)
         }
       } else {
         console.log('Upload failed. Post not submitted.')
       }
     } catch (err) {
       console.log('Error in the posting', err)
+    }
+    finally{
+      setIsSubmittingVideo(false);
     }
   }
   // console.log("profile", profile);
@@ -354,8 +371,8 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
           </li>
           <li className="nav-item d-inline">
             <a className="nav-link bg-light py-2 px-4 mb-2" onClick={handlePostClick}>
-              <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
-              Post
+              {isSubmittingPost ? <Spinner size="sm" animation="border" />  : <> <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
+              <span style={{marginLeft : '5px'}}>Post</span> </>}
             </a>
           </li>
         </ul>
@@ -399,7 +416,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
             Cancel
           </button>
           <button type="submit" onClick={handlePhotoSubmit} className="btn btn-success-soft">
-            Post
+          {isSubmittingPhoto ? <Spinner size="sm" animation="border" /> : "Post"}
           </button>
         </ModalFooter>
       </Modal>
@@ -442,7 +459,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
             <BsCameraVideoFill className="pe-1" /> Live video
           </Button>
           <button type="submit" onClick={handleVideoSubmit} className="btn btn-success-soft">
-            Post
+          {isSubmittingVideo ? <Spinner size="sm" animation="border" /> : "Post"}
           </button>
         </ModalFooter>
       </Modal>
