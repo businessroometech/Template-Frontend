@@ -32,7 +32,7 @@ interface GetAllLikesResponse {
 }
 
 
-const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts }) => {
+const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts,profile}) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +51,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [allLikes,setAllLikes] = useState([]);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
-
+  console.log(profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -63,7 +63,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
   // console.log(user);
 
-  // console.log('---postId---',post.userId);
+  // console.log('---postId---',post.userI
+  // d);
   // console.log('-----testing-----')
   const deletePost = async (postId: string): Promise<void> => {
     try {
@@ -233,7 +234,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       console.error('Error toggling like:', error);
     }
   };
-  console.log(allLikes);
+  // console.log(allLikes);
   if(isDeleted) return null;
   return (
     <Card className="mb-4">
