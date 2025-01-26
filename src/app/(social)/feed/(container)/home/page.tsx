@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row } from "react-bootstrap";
 import Stories from "./components/Stories";
 import Feeds from "./components/Feeds";
@@ -7,14 +7,45 @@ import CreatePostCard from "@/components/cards/CreatePostCard";
 import { Link, useNavigate } from "react-router-dom";
 import LoadContentButton from "@/components/LoadContentButton";
 import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
+import { useAuthContext } from "@/context/useAuthContext";
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const {user} = useAuthContext();
   const navigate = useNavigate();
+  const [profile,setProfile] = useState({});
   console.log('Home reloads')
   
-
+   useEffect(() => {
+        const fetchUser = async () => {
+          try {
+            const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userId: user?.id
+              })
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json(); 
+            setProfile(data.data); 
+          } catch (error) {
+            console.error("Error fetching user profile:", error);
+          }
+        };
+        if (profile.personalDetails){
+          return;
+        }
+        fetchUser();
+      }, [user?.id]);
+      // console.log('profile in feed', profile);
   return (
     <>
       <Col
@@ -33,7 +64,7 @@ const Home = () => {
         className="position-relative vstack gap-4"
       >
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} />
+        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} profile={profile} />
       </Col>
 
       <Col lg={3} 
