@@ -209,7 +209,7 @@ const NotificationDropdown = () => {
                         <div className="avatar text-center">
                           <img
                             className="avatar-img rounded-circle"
-                            src={notification.mediaUrl || avatar7}
+                            src={notification.mediaUrl || avatar7} 
                             alt="Avatar"
                           />
                         </div>
