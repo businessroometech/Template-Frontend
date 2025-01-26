@@ -6,6 +6,7 @@ import Picker from 'emoji-picker-react'
 import { useAuthContext } from '@/context/useAuthContext'
 import GifPicker from 'gif-picker-react';
 import useToggle from '@/hooks/useToggle'
+import { formatDistanceToNow } from 'date-fns';
 import { type ChatMessageType, type UserType } from '@/types/data'
 import { addOrSubtractMinutesFromDate, timeSince } from '@/utils/date'
 // import { io } from 'socket.io-client'
@@ -57,45 +58,43 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
 
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
-      <div className="flex-shrink-0 avatar avatar-xs me-2">
-        {!received && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
-      </div>
-      <div className="flex-grow-1">
-        <div className="w-100">
-          <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
-            {message.gif ? (
-              <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                <img width={87} height={91} src={message.gif} alt={message.content || 'Message GIF'} />
-              </Card>
-            ) : match ? (
-              // If the message content contains the GIF pattern
-              <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                <img width={87} height={91} src={match[1]} alt="Message GIF" />
-              </Card>
-            ) : message.image ? (
-              <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                <img width={87} height={91} src={message.image} alt={message.content || 'Message Image'} />
-              </Card>
-            ) : (
-              <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-primary text-white' : 'bg-light text-secondary')}>
-                {message.content}
-              </div>
-            )}
-            <div className="d-flex my-2 align-items-center">
-              <div className="small text-secondary">
-                {message.createdAt?.toLocaleString('en-US', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  hour12: true,
-                })}
-              </div>
-              {message.isRead && <FaCheckDouble className="text-info small ms-2" />}
-              {!message.isRead && message.isSend && <FaCheck className="small ms-2" />}
+    <div className="flex-shrink-0 avatar avatar-xs me-2">
+      {!received && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
+    </div>
+    <div className="flex-grow-1">
+      <div className="w-100">
+        <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
+          {message.gif ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img width={87} height={91} src={message.gif} alt={message.content || 'Message GIF'} />
+            </Card>
+          ) : match ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img width={107} height={111} src={match[1]} alt="Message GIF" />
+            </Card>
+          ) : message.image ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img width={87} height={91} src={message.image} alt={message.content || 'Message Image'} />
+            </Card>
+          ) : (
+            <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-primary text-white' : 'bg-light text-secondary')}>
+              {message.content}
             </div>
+          )}
+          <div className="d-flex my-2 align-items-center">
+            <div className="small text-secondary">
+              {/* Calculate relative time */}
+              {message.createdAt
+                ? formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })
+                : 'Just now'}
+            </div>
+            {message.isRead && <FaCheckDouble className="text-info small ms-2" />}
+            {!message.isRead && message.isSend && <FaCheck className="small ms-2" />}
           </div>
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
