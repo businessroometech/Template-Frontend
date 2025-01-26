@@ -67,7 +67,7 @@ const NotificationDropdown = () => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
         { method: 'GET', headers: { 'Content-Type': 'application/json' } }
       );
 
@@ -88,7 +88,7 @@ const NotificationDropdown = () => {
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'https://strengthholdings.com/api/v1/notifications/mark-as-read',
+        'http://54.177.193.30:5000/api/v1/notifications/mark-as-read',
         {
           method: 'POST',
           headers: {
