@@ -6,6 +6,7 @@ import Picker from 'emoji-picker-react'
 import { useAuthContext } from '@/context/useAuthContext'
 import GifPicker from 'gif-picker-react';
 import useToggle from '@/hooks/useToggle'
+import { useOnlineUsers } from '@/context/OnlineUser.'
 import { formatDistanceToNow } from 'date-fns';
 import { type ChatMessageType, type UserType } from '@/types/data'
 import { addOrSubtractMinutesFromDate, timeSince } from '@/utils/date'
@@ -55,6 +56,8 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
   const received = message.receiverId === toUser.userId;
   const gifPattern = /GIF:\[([^\]]+)\]/;
   const match = message.content.match(gifPattern);
+  // const {onlineUsers} = useOnlineUsers();
+  // const status = onlineUsers?.includes(toUser.userId) ? 'online' : 'offline';
 
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
@@ -100,7 +103,8 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
 
 const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }) => {
   const [isLoading, setIsLoading] = useState(true)
-
+  const {onlineUsers} = useOnlineUsers(); 
+  const status = onlineUsers?.includes(user.id) ? 'online' : 'offline';
   useEffect(() => {
     if (user) {
       setIsLoading(false)
@@ -123,7 +127,7 @@ const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }
       }}
       className="mt-3 hstack gap-3 align-items-center position-relative toast-btn"
       data-target="chatToast">
-      <div className={clsx(`avatar status-${user.status}`, { 'avatar-story': user.isStory })}>
+      <div className={clsx(`avatar status-${status}`, { 'avatar-story': user.isStory })}>
         {user.profilePictureUrl ? (
           <img className="avatar-img rounded-circle" src={user.profilePictureUrl} alt="avatar" />
         ) : (
@@ -301,6 +305,8 @@ const Messaging = () => {
   //   setValue('newMessage', currentMessage + emoji.emoji)
   //   setShowEmojiPicker(false)
   // }
+  const {onlineUsers} = useOnlineUsers(); 
+  const status = onlineUsers?.includes(selectedUser.userId) ? 'online' : 'offline';
 
   return (
     <>
@@ -336,8 +342,8 @@ const Messaging = () => {
                   <div className="flex-grow-1">
                     <h6 className="mb-0 mt-1">{`${selectedUser?.firstName || ''} ${selectedUser?.lastName || ''}`}</h6>
                     <div className="small text-secondary">
-                      <FaCircle className={`text-${activeChat?.status === 'offline' ? 'danger' : 'success'} me-1`} />
-                      {activeChat?.status}
+                      <FaCircle className={`text-${ status === 'offline' ? 'danger' : 'success'} me-1`} />
+                      {status ===  'online' ? 'Online' : 'Offline'}
                     </div>
                   </div>
                 </div>

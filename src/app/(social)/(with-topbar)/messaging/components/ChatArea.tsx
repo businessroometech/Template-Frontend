@@ -552,10 +552,10 @@ import { FaCheck, FaCheckDouble } from 'react-icons/fa6'
 import { BsThreeDots } from 'react-icons/bs'
 import * as yup from 'yup'
 import debounce from 'lodash.debounce'
+import { useOnlineUsers } from '@/context/OnlineUser.'
 import { io } from 'socket.io-client'
 import TextFormInput from '@/components/form/TextFormInput'
 import Picker from 'emoji-picker-react'
-import { set } from 'date-fns'
 
 const socket = io('http://54.177.193.30:5000/', {
   // path: "/socket.io",
@@ -566,6 +566,7 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
   const received = message.receiverId === toUser.id
   const gifPattern = /GIF:\[([^\]]+)\]/
   const match = message.content.match(gifPattern)
+
 
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
@@ -762,6 +763,8 @@ const ChatArea = () => {
 
   const { firstName, lastName } = activeChat.personalDetails
   const { profileImgUrl } = activeChat
+  const {onlineUsers} = useOnlineUsers()
+  const status = onlineUsers?.includes(activeChat.personalDetails.id) ? 'online' : 'offline'
 
   return (
     <Card className="card-chat rounded-0 border-0 shadow-lg" style={{ minHeight: '595px', maxWidth: '800px', margin: '0 auto', borderRadius: '15px' }}>
@@ -772,7 +775,7 @@ const ChatArea = () => {
         <img className="avatar-img rounded-circle me-2" src={profileImgUrl || avatar} alt={firstName} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
         <div>
           <h6 className="mb-0 text-dark" style={{ fontWeight: '600' }}>{`${firstName} ${lastName}`}</h6>
-          <small className="text-secondary" style={{ fontSize: '0.85rem' }}>{activeChat?.isOnline ? 'Offline' : 'Online'}</small>
+          <small className="text-secondary" style={{ fontSize: '0.85rem' }}>{status}</small>
         </div>
       </div>
     </div>
