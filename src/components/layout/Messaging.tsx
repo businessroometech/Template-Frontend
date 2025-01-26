@@ -184,25 +184,35 @@ const Messaging = () => {
 
   // Removed duplicate sendChatMessage function
    useEffect(() => {
-    const roomId = `${user.id}-${selectedUser?.userId}`
-      socket.emit('joinRoom', roomId)
-      socket.on('connect', () => {
-        console.log('Socket connected:', socket.id)
-      })
-  
-      socket.on('connect_error', (err) => {
-        console.error('Connection Error:', err.message)
-      })
-  
-      socket.on('newMessage', (message) => {
-        setUserMessages((prevMessages) => [message, ...prevMessages])
-      })
-  
-      return () => {
-        socket.off('connect_error')
-        socket.off('newMessage')
-      }
-    }, [user.id])
+       if(!selectedUser) return
+       
+       const roomId = `${user.id}-${selectedUser.userId}`
+       // const roomId = `${activeChat.personalDetails.id}-${user.id}`
+       // console.log(roomId)
+       socket.emit('joinRoom', roomId)
+       socket.on('connect', () => {
+         console.log('Socket connected:', socket.id)
+       })
+   
+       socket.on('connect_error', (err) => {
+         console.error('Connection Error:', err.message)
+       })
+   
+       socket.on('newMessage', (message) => {
+         if (
+           (message.senderId === user.id && message.receiverId === selectedUser.userId) ||
+           (message.receiverId === user.id && message.senderId === selectedUser.userId)
+         ) {
+           setUserMessages((prevMessages) => [message, ...prevMessages])
+         }
+       })
+   
+       return () => {
+         socket.emit('leaveRoom', roomId)
+         socket.off('connect_error')
+         socket.off('newMessage')
+       }
+     }, [user.id,selectedUser])
 
   const fetchChatsList = async () => {
     try {
@@ -226,7 +236,7 @@ const Messaging = () => {
   }, [])
 
   const fetchMessages = useCallback(async () => {
-    console.log('selectedUser', selectedUser)
+    // console.log('selectedUser', selectedUser)
     if (!selectedUser) return
     setUserMessages([])
     setIsLoading(true)
