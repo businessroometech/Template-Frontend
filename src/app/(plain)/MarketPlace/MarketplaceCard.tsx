@@ -31,12 +31,16 @@ const MarketplaceCard = ({business, isMyBusiness, isMyWishlist}) => {
 
     console.log("-------WISHLISTS-------" , Wishlists)
 
+//.................//
+const [WishlistDeleted , setWishlistDeleted] = useState(false)
+
     const handleWishlistDelete = async () => {
         const response = await fetch(`http://54.177.193.30:5000/wishlists/delete/${Wishlists.data[0].id}`, {
             method: "DELETE",
         });
         console.log(await response.json())
         setIsInWishlist(false);
+        setWishlistDeleted(true)
     }
 
     const handleWishlist = async () => {
@@ -100,7 +104,8 @@ const MarketplaceCard = ({business, isMyBusiness, isMyWishlist}) => {
         </div>
     );
 
-    if(isDeleted) return null;           
+    if(isDeleted) return null;   
+    if(WishlistDeleted) return null;        
 
     return (
         <div key={business.id} className="col-md-6">
