@@ -499,7 +499,7 @@ const Post3 = () => {
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>,profile) => {
  
    const { user } = useAuthContext();
-  console.log('profile in feed',profile)
+  // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
@@ -516,7 +516,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
     setError(null);
     setHasMore(true);
     console.log('fetching posts');
-    try {      
+    try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
