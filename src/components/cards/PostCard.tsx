@@ -43,6 +43,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   }, [post.likeStatus]);
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
+  console.log(user);
 
   // console.log('---postId---',post.userId);
   // console.log('-----testing-----')
@@ -302,7 +303,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       style={{ fontSize: "0.8rem" }} // Slightly smaller font size
     >
       {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-      <span>Like {likeCount}</span>
+      <span>Like {likeCount !== 0 && likeCount}</span>
     </Button>
 
     <Button
@@ -311,7 +312,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       style={{ fontSize: "0.8rem" }} // Slightly smaller font size
     >
       <MessageSquare size={16} />
-      <span>Comment {commentCount}</span>
+      <span>Comment {commentCount != 0 && commentCount}</span>
     </Button>
 
     <Button
@@ -350,7 +351,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
           <form
             className="nav nav-item w-100 d-flex align-items-center"
             onSubmit={handleCommentSubmit}
-            style={{ gap: '10px' }} // Add spacing between the textarea and button
+            style={{ gap: '10px' }} 
           >
             <textarea
               data-autoresize
