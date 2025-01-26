@@ -43,7 +43,6 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   }, [post.likeStatus]);
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
-  console.log(user);
 
   // console.log('---postId---',post.userId);
   // console.log('-----testing-----')
