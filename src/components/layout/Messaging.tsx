@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { messages } from '@/assets/data/other'
 import makeApiRequest from '@/utils/apiServer'
 import { useFetchData } from '@/hooks/useFetchData'
+import Picker from 'emoji-picker-react'
 import { useAuthContext } from '@/context/useAuthContext'
+import GifPicker from 'gif-picker-react';
 import useToggle from '@/hooks/useToggle'
 import { type ChatMessageType, type UserType } from '@/types/data'
 import { addOrSubtractMinutesFromDate, timeSince } from '@/utils/date'
@@ -30,15 +32,15 @@ import debounce from 'lodash.debounce'
 import { FaCheck, FaCheckDouble, FaCircle, FaFaceSmile, FaPaperclip, FaXmark } from 'react-icons/fa6'
 import * as yup from 'yup'
 import { io } from 'socket.io-client'
-import TextAreaFormInput from '../form/TextAreaFormInput'
+import TextFormInput from '../form/TextFormInput'
 import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
 
-const socket = io("http://54.177.193.30:5000/", {
+const socket = io('http://54.177.193.30:5000/', {
   // path: "/socket.io",
-  transports: ["websocket"],
-});
+  transports: ['websocket'],
+})
 
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef<HTMLDivElement>(null)
@@ -49,66 +51,55 @@ const AlwaysScrollToBottom = () => {
 }
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
-  // console.log(message, toUser)
-  const received = message.receiverId === toUser.userId
+  const received = message.receiverId === toUser.userId;
+  const gifPattern = /GIF:\[([^\]]+)\]/;
+  const match = message.content.match(gifPattern);
+
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
-    <div className="flex-shrink-0 avatar avatar-xs me-2">
-      {!received && (
-        <img
-          className="avatar-img rounded-circle"
-          src={profile || avatar}
-          alt="User Avatar"
-        />
-      )}
-    </div>
-    <div className="flex-grow-1">
-      <div className="w-100">
-        <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
-          {message.image ? (
-            <Card className="shadow-none p-2 border border-2 rounded mt-2">
-              <img
-                width={87}
-                height={91}
-                src={message.image}
-                alt={message.content || 'Message Image'}
-              />
-            </Card>
-          ) : (
-            <div
-              className={clsx(
-                'p-2 px-3 rounded-2',
-                received ? 'bg-primary text-white' : 'bg-light text-secondary'
-              )}
-            >
-              {message.content}
-            </div>
-          )}
-          <div className="d-flex my-2 align-items-center">
-            <div className="small text-secondary">
-              {message.createdAt?.toLocaleString('en-US', {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true,
-              })}
-            </div>
-            {message.isRead && (
-              <FaCheckDouble className="text-info small ms-2" />
+      <div className="flex-shrink-0 avatar avatar-xs me-2">
+        {!received && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
+      </div>
+      <div className="flex-grow-1">
+        <div className="w-100">
+          <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
+            {message.gif ? (
+              <Card className="shadow-none p-2 border border-2 rounded mt-2">
+                <img width={87} height={91} src={message.gif} alt={message.content || 'Message GIF'} />
+              </Card>
+            ) : match ? (
+              // If the message content contains the GIF pattern
+              <Card className="shadow-none p-2 border border-2 rounded mt-2">
+                <img width={87} height={91} src={match[1]} alt="Message GIF" />
+              </Card>
+            ) : message.image ? (
+              <Card className="shadow-none p-2 border border-2 rounded mt-2">
+                <img width={87} height={91} src={message.image} alt={message.content || 'Message Image'} />
+              </Card>
+            ) : (
+              <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-primary text-white' : 'bg-light text-secondary')}>
+                {message.content}
+              </div>
             )}
-            {!message.isRead && message.isSend && (
-              <FaCheck className="small ms-2" />
-            )}
+            <div className="d-flex my-2 align-items-center">
+              <div className="small text-secondary">
+                {message.createdAt?.toLocaleString('en-US', {
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: true,
+                })}
+              </div>
+              {message.isRead && <FaCheckDouble className="text-info small ms-2" />}
+              {!message.isRead && message.isSend && <FaCheck className="small ms-2" />}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  
-  )
-}
+  );
+};
 
 const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }) => {
-  // const { changeActiveChat } = useChatContext()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -158,61 +149,50 @@ const Messaging = () => {
   const [page, setPage] = useState(1)
   const { isTrue: isOpenCollapseToast, toggle: toggleToastCollapse } = useToggle(true)
   const [loading, setIsLoading] = useState(true)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [allUserMessages, setAllUserMessages] = useState<UserType[]>([])
   const [userMessages, setUserMessages] = useState<ChatMessageType[]>([])
   const { user } = useAuthContext()
+  const [isGifPickerVisible, setIsGifPickerVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter message'),
   })
 
-  const { reset, handleSubmit, control } = useForm({
+  const { reset, handleSubmit, control, getValues, setValue } = useForm({
     resolver: yupResolver(messageSchema),
   })
 
-  // const getMessagesForUser = useCallback(() => {
-  //   if (activeChat) {
-  //     setUserMessages(
-  //       messages.filter((m) => (m.to.id === toUser.id && m.from.id === activeChat.id) || (toUser.id === m.from.id && m.to.id === activeChat.id)),
-  //     )
-  //   }
-  // }, [activeChat])
+  useEffect(() => {
+    if (!selectedUser) return
 
-  // useEffect(() => {
-  //   getMessagesForUser()
-  // }, [activeChat])
+    const roomId = `${user.id}-${selectedUser.userId}`
+    // const roomId = `${activeChat.personalDetails.id}-${user.id}`
+    // console.log(roomId)
+    socket.emit('joinRoom', roomId)
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id)
+    })
 
-  // Removed duplicate sendChatMessage function
-   useEffect(() => {
-       if(!selectedUser) return
-       
-       const roomId = `${user.id}-${selectedUser.userId}`
-       // const roomId = `${activeChat.personalDetails.id}-${user.id}`
-       // console.log(roomId)
-       socket.emit('joinRoom', roomId)
-       socket.on('connect', () => {
-         console.log('Socket connected:', socket.id)
-       })
-   
-       socket.on('connect_error', (err) => {
-         console.error('Connection Error:', err.message)
-       })
-   
-       socket.on('newMessage', (message) => {
-         if (
-           (message.senderId === user.id && message.receiverId === selectedUser.userId) ||
-           (message.receiverId === user.id && message.senderId === selectedUser.userId)
-         ) {
-           setUserMessages((prevMessages) => [message, ...prevMessages])
-         }
-       })
-   
-       return () => {
-         socket.emit('leaveRoom', roomId)
-         socket.off('connect_error')
-         socket.off('newMessage')
-       }
-     }, [user.id,selectedUser])
+    socket.on('connect_error', (err) => {
+      console.error('Connection Error:', err.message)
+    })
+
+    socket.on('newMessage', (message) => {
+      if (
+        (message.senderId === user.id && message.receiverId === selectedUser.userId) ||
+        (message.receiverId === user.id && message.senderId === selectedUser.userId)
+      ) {
+        setUserMessages((prevMessages) => [message, ...prevMessages])
+      }
+    })
+
+    return () => {
+      socket.emit('leaveRoom', roomId)
+      socket.off('connect_error')
+      socket.off('newMessage')
+    }
+  }, [user.id, selectedUser])
 
   const fetchChatsList = async () => {
     try {
@@ -271,7 +251,7 @@ const Messaging = () => {
     if (selectedUser) {
       fetchMessages()
     }
-  }, [selectedUser,page,user,toggle])
+  }, [selectedUser, page, user, toggle])
 
   const sendChatMessage = async (values: { newMessage?: string }) => {
     if (!values.newMessage || !selectedUser) return
@@ -298,6 +278,18 @@ const Messaging = () => {
       console.error(error)
     }
   }
+
+  const handleEmojiClick = (emoji: any) => {
+    const currentMessage = getValues('newMessage') || ''
+    setValue('newMessage', currentMessage + emoji.emoji)
+    setShowEmojiPicker(false)
+  }
+
+  const handleGifClick = (gif) => {
+    const currentMessage = getValues('newMessage') || '';
+    setValue('newMessage', currentMessage + `GIF:[${gif.url}]`);
+    setIsGifPickerVisible(false);  
+  };
 
   const handleUserToggle = (user: UserType) => {
     setSelectedUser(user) // Set the selected user
@@ -419,30 +411,40 @@ const Messaging = () => {
             <Collapse in={isOpenCollapseToast} className="toast-body">
               <div>
                 <SimplebarReactClient className="chat-conversation-content custom-scrollbar h-200px">
-                    <div className="text-center small my-2">{new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</div>
+                  <div className="text-center small my-2">
+                    {new Date().toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })}
+                  </div>
                   {[...userMessages].reverse().map((message, index) => (
                     <UserMessage message={message} key={index} toUser={selectedUser} />
                   ))}
                   <AlwaysScrollToBottom />
                 </SimplebarReactClient>
                 <form onSubmit={handleSubmit(sendChatMessage)} className="mt-2">
-                  <TextAreaFormInput
+                  <TextFormInput
                     className="mb-sm-0 mb-3"
                     name="newMessage"
                     control={control}
-                    rows={1}
+                    // rows={1}
                     placeholder="Type a message"
-                    noValidate
+                    autoFocus
                     containerClassName="w-100"
+                    style={{ fontSize: '1rem', border: '2px solid #ced4da', outline: 'none' }}
                   />
                   <div className="d-sm-flex align-items-end mt-2">
-                    <Button variant="danger-soft" size="sm" className="me-2">
+                    <Button variant="danger-soft" size="sm" className="me-2" onClick={() => setShowEmojiPicker((prev) => !prev)}>
                       <FaFaceSmile className="fs-6" />
                     </Button>
                     <Button variant="secondary-soft" size="sm" className="me-2">
                       <FaPaperclip className="fs-6" />
                     </Button>
-                    <Button variant="success-soft" size="sm" className="me-2">
+                    <Button variant="success-soft" size="sm" className="me-2" onClick={() => setIsGifPickerVisible((prev) => !prev)}>
                       Gif
                     </Button>
                     <Button variant="primary" size="sm" className="ms-auto" type="submit">
@@ -450,6 +452,28 @@ const Messaging = () => {
                     </Button>
                   </div>
                 </form>
+                {
+                  isGifPickerVisible && (
+                    <div className="gif-picker-container bg-white shadow-sm border rounded" style={{ position: 'absolute', bottom: '60px', right: '15px', zIndex: 10, maxWidth: '300px', maxHeight: '300px', overflow: 'hidden' }}>
+                      <GifPicker onGifClick={handleGifClick} tenorApiKey="AIzaSyD1wsKDALKwa8_pRGvhHcENUGFLq5DWhfs" />
+                    </div>
+                    )
+                }
+                {showEmojiPicker && (
+                  <div
+                    className="emoji-picker-container bg-white shadow-sm border rounded"
+                    style={{
+                      position: 'absolute',
+                      bottom: '60px',
+                      right: '15px',
+                      zIndex: 10,
+                      maxWidth: '300px',
+                      maxHeight: '300px',
+                      overflow: 'hidden',
+                    }}>
+                    <Picker onEmojiClick={handleEmojiClick} />
+                  </div>
+                )}
               </div>
             </Collapse>
           </Toast>
