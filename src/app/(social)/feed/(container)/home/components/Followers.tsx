@@ -163,9 +163,9 @@ const Followers = () => {
             )}
             <div className="d-grid mt-3">
               {totalUsers >= limit ? (
-                <Button variant="primary-soft" size="sm" onClick={handleViewMore}>
+                <Link to="/profile-visitors" className="primary-soft btn btn-sm"  >
                   View more
-                </Button>
+                </Link>
               ) : (
                 <Button variant="info-soft" size="sm" disabled>
                   no more suggestions

@@ -47,7 +47,7 @@ console.log("isConnected",isConnected);
   useEffect(() => {
     if (!user?.id) return;
 
-    const socketConnection = io("http://localhost:5000", {
+    const socketConnection = io("http://54.177.193.30:5000", {
       query: { userId: user.id },
     });
 
@@ -89,7 +89,7 @@ console.log("isConnected",isConnected);
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
@@ -111,7 +111,7 @@ console.log("isConnected",isConnected);
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'http://localhost:5000/api/v1/socket-notifications/mark-read',
+        'http://54.177.193.30:5000/api/v1/socket-notifications/mark-read',
         {
           method: 'POST',
           headers: {
@@ -130,10 +130,10 @@ console.log("isConnected",isConnected);
 
   const handleReadAll = async () => {
     try {
-      const notificationIds = allNotifications.map((notification) => notification.id);
+      allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        'http://localhost:5000/api/v1/socket-notifications/mark-all-read',
+        'http://54.177.193.30:5000/api/v1/socket-notifications/mark-all-read',
         {
           method: 'POST',
           headers: {
@@ -259,7 +259,7 @@ console.log("isConnected",isConnected);
                           right: '0',
                           position: 'absolute',
                         }}>
-                          {timeSince(new Date(notification.createdAt))} ago
+                          {timeSince(new Date(notification.createdAt))}
                         </p>
                       </div>
                     </Link>
