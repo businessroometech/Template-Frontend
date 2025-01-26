@@ -496,10 +496,10 @@ const Post3 = () => {
 }
 
 // poll
-const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
+const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>,profile) => {
  
    const { user } = useAuthContext();
- 
+  console.log('profile in feed',profile)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
@@ -530,7 +530,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       }
       setLoading(false)
       console.log('Fetched Posts:', res.data);
-      console.log('What is res data',res.data);
+      // console.log('What is res data',res.data);
       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
@@ -703,6 +703,7 @@ const PostSkeleton = () => {
                 tlRefresh={tlRefresh}
                 setTlRefresh={setTlRefresh}
                 scrollbarWidth="none"
+                profile={profile}
               />
             ))}
           </InfiniteScroll>

@@ -15,13 +15,30 @@ import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
 
-const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts }) => {
+interface Like {
+  id: string;
+  postId: string;
+  userId: string;
+  createdAt: string;
+}
+
+interface GetAllLikesResponse {
+  status: "success" | "error";
+  message: string;
+  data?: {
+    likes: Like[];
+  };
+  error?: string;
+}
+
+
+const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts,profile}) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuthContext();
   const [refresh, setRefresh] = useState(0);
-  const [likeStatus, setLikeStatus] = useState(false);
+  const [likeStatus, setLikeStatus] = useState();
   const [loadMore, setLoadMore] = useState(false);
   const post = item?.post;
   const userInfo = item?.userDetails;
@@ -31,9 +48,10 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
   const [showReactions,setShowReactions] = useState<boolean>(false);
+  const [allLikes,setAllLikes] = useState([]);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
-
+  console.log(profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -45,7 +63,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
   // console.log(user);
 
-  // console.log('---postId---',post.userId);
+  // console.log('---postId---',post.userI
+  // d);
   // console.log('-----testing-----')
   const deletePost = async (postId: string): Promise<void> => {
     try {
@@ -77,6 +96,42 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
+    }
+  };
+
+
+  const handleGetAllLikesForPost = async (postId: string): Promise<void> => {
+    if (!postId) {
+      console.error('Post ID is required');
+      return;
+    }
+  
+    try {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/post/get-likes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId }),
+      });
+  
+      if (response.ok) {
+        const data: GetAllLikesResponse = await response.json();
+        if (data.status === 'success') {
+          console.log('Likes fetched successfully:', data.data?.likes);
+          setAllLikes(data.data?.likes);
+          // Optionally, update the UI with the likes data
+        } else {
+          console.error('Error fetching likes:', data.message);
+          alert(data.message); // Optionally show an error message to the user
+        }
+      } else {
+        const errorData: GetAllLikesResponse = await response.json();
+        console.error('Error fetching likes:', errorData.message);
+        alert(errorData.message); // Optionally show an error message to the user
+      }
+    } catch (error) {
+      console.error('An unknown error occurred:', (error as Error).message);
     }
   };
 
@@ -122,7 +177,9 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
         setIsLoading(false);
       }
     };
-
+    if (post?.Id || post?.likeStatus) {
+      handleGetAllLikesForPost(post?.Id);
+    }
     if (post?.Id) fetchComments();
   }, [refresh, post?.Id]);
   // console.log('---item---',item);
@@ -177,7 +234,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       console.error('Error toggling like:', error);
     }
   };
-
+  // console.log(allLikes);
   if(isDeleted) return null;
   return (
     <Card className="mb-4">

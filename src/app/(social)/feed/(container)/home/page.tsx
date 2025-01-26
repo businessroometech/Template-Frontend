@@ -21,6 +21,7 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const { user} = useAuthContext();
   const navigate = useNavigate();
+  const [profile,setProfile] = useState({});
   console.log('Home reloads')
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const Home = () => {
         className="position-relative vstack gap-4"
       >
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} />
+        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} profile={profile} />
       </Col>
 
       <Col lg={3} 

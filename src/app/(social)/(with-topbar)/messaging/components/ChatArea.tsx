@@ -656,7 +656,7 @@ const ChatArea = () => {
       socket.off('connect_error')
       socket.off('newMessage')
     }
-  }, [user.id, activeChat])
+  }, [user.id, activeChat]) 
 
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter a message'),
