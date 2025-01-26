@@ -496,7 +496,7 @@ const Post3 = () => {
 }
 
 // poll
-const Feeds = (isCreated: boolean) => {
+const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
    const { user } = useAuthContext();
  
@@ -540,25 +540,28 @@ const Feeds = (isCreated: boolean) => {
      }
   }
 
-  // useEffect(() => {
-  //   // If the component has mounted already, only fetch posts if `isCreated` is true
-  //   // fetchPosts()
-  //   setTrue();
-  //   if (hasMounted.current) {
-  //     if (isCreated) {
-  //       fetchPosts()
-  //     }
-  //   } else {
-  //     // If it's the first mount, fetch posts
-  //     fetchPosts()
-  //     hasMounted.current = true // Set to true after the first call
-  //   }
-  // }, [isCreated])
+  useEffect(() => {
+    // Fetch posts on mount
+    if (!hasMounted.current) {
+      fetchPosts();
+      hasMounted.current = true;
+    }
+  }, []);
 
-  useEffect(() =>{
+  useEffect(() => {
+    // Refetch posts when `isCreated` changes
+    if (isCreated) {
+      setPosts([]); // Reset posts
+      setPage(1); // Reset page to 1
+      setHasMore(true); // Reset pagination state
+      fetchPosts();
+    }
+  }, [isCreated]);
+
+  useEffect(() => {
+    // Fetch the next page of posts when `page` changes
     fetchPosts();
-  },[page])
-
+  }, [page]);
   const fetchNextPage = () => {
     if(!loading && hasMore){
       setPage(page => page + 1);
@@ -591,7 +594,6 @@ const Feeds = (isCreated: boolean) => {
   
 
   const handleDelete = async () => {
-        
     try {
       const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
         method: 'POST',

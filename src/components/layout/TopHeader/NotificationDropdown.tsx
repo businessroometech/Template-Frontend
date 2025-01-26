@@ -28,82 +28,82 @@ const NotificationDropdown = () => {
   const [allNotifications, setAllNotifications] = useState([]);
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   if (!user?.id) return;
+  useEffect(() => {
+    if (!user?.id) return;
 
-  //   const wsConnection = new WebSocket(`wss://strengthholdings.com?userId=${user.id}`);
-  //   setWs(wsConnection);
+    const wsConnection = new WebSocket(`wss://54.177.193.30:5000?userId=${user.id}`);
+    setWs(wsConnection);
 
-  //   // Handle WebSocket connection open
-  //   wsConnection.onopen = () => {
-  //     console.log('WebSocket connected');
-  //     setIsConnected(true);
-  //   };
+    // Handle WebSocket connection open
+    wsConnection.onopen = () => {
+      console.log('WebSocket connected');
+      setIsConnected(true);
+    };
 
-  //   // Handle WebSocket message event
-  //   wsConnection.onmessage = (event) => {
-  //     const notification = JSON.parse(event.data);
-  //     setAllNotifications((prev) => [notification, ...prev]);
-  //   };
+    // Handle WebSocket message event
+    wsConnection.onmessage = (event) => {
+      const notification = JSON.parse(event.data);
+      setAllNotifications((prev) => [notification, ...prev]);
+    };
 
-  //   // Handle WebSocket error
-  //   wsConnection.onerror = (error) => {
-  //     console.error('WebSocket error:', error);
-  //     setIsConnected(false);
-  //   };
+    // Handle WebSocket error
+    wsConnection.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setIsConnected(false);
+    };
 
-  //   // Handle WebSocket connection close
-  //   wsConnection.onclose = () => {
-  //     console.log('WebSocket disconnected');
-  //     setIsConnected(false);
-  //   };
+    // Handle WebSocket connection close
+    wsConnection.onclose = () => {
+      console.log('WebSocket disconnected');
+      setIsConnected(false);
+    };
 
-  //   // Clean up on component unmount
-  //   return () => {
-  //     wsConnection.close();
-  //   };
-  // }, [user?.id]);
+    // Clean up on component unmount
+    return () => {
+      wsConnection.close();
+    };
+  }, [user?.id]);
 
-  // const fetchNotifications = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://strengthholdings.com/api/v1/socket-notifications/get?userId=${user?.id}`,
-  //       { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-  //     );
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch(
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+      );
 
-  //     const data = await response.json();
-  //     if (data?.notifications) {
-  //       setAllNotifications(data.notifications);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching notifications:', error);
-  //   }
-  // };
+      const data = await response.json();
+      if (data?.notifications) {
+        setAllNotifications(data.notifications);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchNotifications();
-  // }, [user?.id]);
+  useEffect(() => {
+    fetchNotifications();
+  }, [user?.id]);
 
 
-  // const handleOnRead = async (notificationId: string) => {
-  //   try {
-  //     const response = await fetch(
-  //       'https://strengthholdings.com/api/v1/notifications/mark-as-read',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ notificationId }),
-  //       }
-  //     );
-  //     await response.json();
+  const handleOnRead = async (notificationId: string) => {
+    try {
+      const response = await fetch(
+        'http://54.177.193.30:5000/api/v1/notifications/mark-as-read',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ notificationId }),
+        }
+      );
+      await response.json();
 
-  //     fetchNotifications();
-  //   } catch (error) {
-  //     console.error('Error marking notification as read:', error);
-  //   }
-  // };
+      fetchNotifications();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
 
   const handleReadAll = async () => {
     try {

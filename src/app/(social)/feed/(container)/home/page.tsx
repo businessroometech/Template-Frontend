@@ -12,41 +12,8 @@ const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
-  const handleRoleSelect = (roleId:string) => {
-    console.log("Selected role:", roleId);
-    if (roleId === "entrepreneur") navigate("/entreprenuer");
-    else if (roleId === "investor") navigate("/investor");
-    else if (roleId === "acquirer") navigate("/business-acquirer");
-    else if (roleId === "seller") navigate("/business-seller");
-    else alert("Error: Invalid role Id");
-  };
-
-  if (showModal) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          zIndex: 1000,
-          backgroundColor: "rgba(0, 0, 0, 0.5)", // Black with transparency
-          backdropFilter: "blur(10px)", // Blur effect
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <RoleSelectionModal
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          onSelectRole={handleRoleSelect}
-        />
-      </div>
-    );
-  }
+  console.log('Home reloads')
+  
 
   return (
     <>
@@ -66,7 +33,7 @@ const Home = () => {
         className="position-relative vstack gap-4"
       >
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  />
+        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} />
       </Col>
 
       <Col lg={3} 
