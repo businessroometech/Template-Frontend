@@ -26,6 +26,7 @@ const NotificationDropdown = () => {
   const [allNotifications, setAllNotifications] = useState<any[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
+  const [count, setCount] = useState<number>(0);
 console.log("isConnected",isConnected);
 
   // Request notification permission on component mount
@@ -74,7 +75,7 @@ console.log("isConnected",isConnected);
       if (Notification.permission === "granted") {
         new Notification(notification.message, {
           body: notification.mediaUrl ? "You have a new media notification." : "Check your notifications!",
-          icon: "/notification-icon.png", // Replace with your notification icon path
+          icon: "/notification-icon.png", 
         });
       }
     });
@@ -102,11 +103,31 @@ console.log("isConnected",isConnected);
     }
   };
 
+  const fetchNotificationsCount = async () => {
+    try {
+      const response = await fetch(
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+        { method: "GET", headers: { "Content-Type": "application/json" } }
+      );
+
+      const data = await response.json();
+      console.log("data",count);
+      
+      setCount(data.unreadCount);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
   // Fetch notifications when the component mounts
   useEffect(() => {
     fetchNotifications();
   }, [user?.id]);
 
+  setTimeout(() => {
+    fetchNotificationsCount();
+  }
+  , 1);
 
   const handleOnRead = async (notificationId: string) => {
     try {
@@ -181,7 +202,12 @@ console.log("isConnected",isConnected);
             setNotiAbout(false);
           }}
         >
-          {<Bell style={{ color: '#1ea1f2' }} />}
+          {<>
+            <Bell style={{ color: '#1ea1f2' }} />
+            <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:3 , left:24, color:"white", }}>{count>0?count:""}</p>
+          </>
+          
+          }
         </div>
           {notiAbout && 
             <span
@@ -259,7 +285,7 @@ console.log("isConnected",isConnected);
                           right: '0',
                           position: 'absolute',
                         }}>
-                          {timeSince(new Date(notification.createdAt))}
+                          {formatTimestamp(notification.createdAt)}
                         </p>
                       </div>
                     </Link>
@@ -285,3 +311,28 @@ console.log("isConnected",isConnected);
 
 export default NotificationDropdown;
 
+export const formatTimestamp = (createdAt: Date): string => {
+  const now = Date.now();
+  const createdTime = new Date(createdAt).getTime();
+  const secondsAgo = Math.floor((now - createdTime) / 1000);
+
+  if (secondsAgo < 240) return `just now`;
+
+  const minutesAgo = Math.floor(secondsAgo / 60);
+  if (minutesAgo < 60) return `${minutesAgo}m`;
+
+  const hoursAgo = Math.floor(minutesAgo / 60);
+  if (hoursAgo < 24) return `${hoursAgo}h`;
+
+  const daysAgo = Math.floor(hoursAgo / 24);
+  if (daysAgo < 7) return `${daysAgo}d`;
+
+  const weeksAgo = Math.floor(daysAgo / 7);
+  if (weeksAgo < 52) return `${weeksAgo}w`;
+
+  const monthsAgo = Math.floor(weeksAgo / 4);
+  if (monthsAgo < 12) return `${monthsAgo}mo`;
+
+  const yearsAgo = Math.floor(monthsAgo / 12);
+  return `${yearsAgo}y`;
+};

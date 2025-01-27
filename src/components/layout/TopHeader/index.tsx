@@ -17,113 +17,137 @@ const TopHeader = () => {
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
 
   return (
-    <StyledHeader>
-      <div className="container">
-        <LogoBox />
+<StyledHeader>
+  <div
+    style={{
+      backgroundColor : 'white',
+      width : '100%',
+      display: 'flex',
+      alignItems: 'center', // Vertically centers all items
+      justifyContent: 'space-between', // Space items evenly between
+      padding: '0px 80px', // Adds padding to the container
+    }}
+  >
+    {/* Left side: Logo and MobileMenu */}
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <LogoBox />
+      <MobileMenuToggle />
+    </div>
 
-        <MobileMenuToggle />
+    {/* Center: Collapse Menu */}
+    <CollapseMenu isSearch />
 
-        <CollapseMenu isSearch />
-
-        <ul className="nav flex-nowrap align-items-center  list-unstyled">
-          <li className="nav-item">
-            <Link to="/messaging">
-            <div
+    {/* Right side: Navigation Links */}
+    <ul
+      className="nav flex-nowrap align-items-center list-unstyled"
+      style={{
+        display: 'flex', // Make the list items flex container
+        alignItems: 'center', // Vertically center items
+        margin: 0, // Remove default margin
+        padding: 0, // Remove default padding
+      }}
+    >
+      {/* Messaging Link */}
+      <li className="nav-item" style={{ position: 'relative' }}>
+        <Link to="/messaging">
+          <div
+            style={{
+              padding: '8px',
+              borderRadius: '10%',
+              marginLeft: '10px',
+              backdropFilter: 'blur(8px)',
+              transition: 'background 0.3s ease',
+              cursor: 'pointer', // Add pointer cursor for better UX
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
+              setMessageAbout(true);
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              setMessageAbout(false);
+            }}
+          >
+            <MessageSquareText style={{ color: '#1ea1f2' }} />
+          </div>
+          {messageAbout && (
+            <span
               style={{
-                padding: '8px',
-                borderRadius : '10%',
-                marginLeft : '10px',
-                // background: 'rgba(136, 209, 254, 0.2)',
-                backdropFilter: 'blur(8px)',
-                transition: 'background 0.3s ease',
+                position: 'absolute',
+                marginTop: '40px',
+                marginLeft: '15px',
+                top: '50%',
+                zIndex: 10000,
+                transform: 'translateY(-50%)',
+                background: '#333',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
               }}
-              about='Label'
-      
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
-                setMessageAbout(true);
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.background = 'transparent');
-                setMessageAbout(false);
-              }}
+              className="label"
             >
-              {<MessageSquareText style={{ color: '#1ea1f2' }} />}
-            </div>
-              {messageAbout && 
-                <span
-                  style={{
-                    position: 'absolute',
-                    marginTop : '40px',
-                    marginLeft : '15px',
-                    top: '50%',
-                    zIndex : 10000,
-                    transform: 'translateY(-50%)',
-                    background: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    whiteSpace: 'nowrap',
-                  }}
-                  className="label"
-                >
-                  {'Message'}
-                </span>}
-            </Link>
-          </li>
+              {'Message'}
+            </span>
+          )}
+        </Link>
+      </li>
 
-          <li className="nav-item">
-            <Link to="/settings/account">
-            <div
+      {/* Settings Link */}
+      <li className="nav-item" style={{ position: 'relative' }}>
+        <Link to="/settings/account">
+          <div
+            style={{
+              padding: '8px',
+              borderRadius: '10%',
+              marginLeft: '10px',
+              backdropFilter: 'blur(8px)',
+              transition: 'background 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
+              setSettingsAbout(true);
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              setSettingsAbout(false);
+            }}
+          >
+            <Settings style={{ color: '#1ea1f2' }} />
+          </div>
+          {settingsAbout && (
+            <span
               style={{
-                padding: '8px',
-                borderRadius : '10%',
-                marginLeft : '10px',
-                // background: 'rgba(136, 209, 254, 0.2)',
-                backdropFilter: 'blur(8px)',
-                transition: 'background 0.3s ease',
+                position: 'absolute',
+                marginTop: '40px',
+                marginLeft: '15px',
+                top: '50%',
+                zIndex: 10000,
+                transform: 'translateY(-50%)',
+                background: '#333',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
               }}
-              about='Label'
-      
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
-                setSettingsAbout(true);
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.background = 'transparent');
-                setSettingsAbout(false);
-              }}
+              className="label"
             >
-              {<Settings style={{ color: '#1ea1f2' }} />}
-            </div>
-              {settingsAbout && 
-                <span
-                  style={{
-                    position: 'absolute',
-                    marginTop : '40px',
-                    marginLeft : '15px',
-                    top: '50%',
-                    zIndex : 10000,
-                    transform: 'translateY(-50%)',
-                    background: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    whiteSpace: 'nowrap',
-                  }}
-                  className="label"
-                >
-                  {'Settings'}
-                </span>}
-            </Link>
-          </li>
+              {'Settings'}
+            </span>
+          )}
+        </Link>
+      </li>
 
-          <NotificationDropdown />
+      {/* Notification Dropdown */}
+      <NotificationDropdown />
 
-          <ProfileDropdown />
-        </ul>
-      </div>
-    </StyledHeader>
+      {/* Profile Dropdown */}
+      <ProfileDropdown />
+    </ul>
+  </div>
+</StyledHeader>
+
   )
 }
 

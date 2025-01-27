@@ -62,6 +62,7 @@ const Home = () => {
         lg={6}
         id="scrollableDiv"
         style={{
+         
           position: 'sticky', // Ensure the container's position is suitable for scrolling
        // Enables vertical scrolling
            // Sets a height limit for scrolling
@@ -73,7 +74,7 @@ const Home = () => {
         className="position-relative vstack gap-4"
       >
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} profile={profile} />
+        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
       </Col>
 
       <Col lg={3} 
