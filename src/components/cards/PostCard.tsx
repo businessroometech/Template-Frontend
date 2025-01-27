@@ -419,6 +419,7 @@ function LikeText(allLikes : Like[]) {
             whiteSpace: 'pre-wrap', // Preserve line breaks
             wordWrap: 'break-word', // Prevent horizontal overflow for long words
             lineHeight: '16px',
+            color : 'black',
             maxHeight: isExpanded ? 'none' : '250px',
             overflow: 'hidden',
           }}
@@ -456,7 +457,7 @@ function LikeText(allLikes : Like[]) {
       <ResponsiveGallery media={media} />
     )
   )}
-  <div>
+  <div style={{marginTop : '20px'}}>
     {allLikes && LikeText(allLikes)}
   </div>
   <ButtonGroup className="w-100 border-top border-bottom mb-3">
