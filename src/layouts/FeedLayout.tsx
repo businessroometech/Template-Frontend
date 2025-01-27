@@ -47,14 +47,18 @@ const FeedLayout = ({ children }: ChildrenType) => {
       <Suspense fallback={<Preloader/>}>
         <TopHeader />
       </Suspense>
-      <main>
-        <Container>
+      <main style={{marginTop : '0px'}}>
+        <Col
+        style={{
+          paddingLeft: "80px", // Adjust left padding
+          paddingRight: "80px", // Adjust right padding
+        }}>
           <Row className="g-4">
             <Col lg={3}>
               <div className="d-flex align-items-center d-lg-none">
                 <button
                   onClick={startOffcanvas.toggle}
-                  className="border-0 bg-transparent"
+                  className="border-0 bg-white"
                   type="button"
                   data-bs-toggle="offcanvas"
                   data-bs-target="#offcanvasSideNavbar"
@@ -86,12 +90,13 @@ const FeedLayout = ({ children }: ChildrenType) => {
             </Col>
          <Suspense fallback={<FallbackLoading/>}>{children}</Suspense>   
           </Row>
-        </Container>
+        </Col>
       </main>
       <div className="d-none d-lg-block">
         <a
           onClick={messagingOffcanvas.toggle}
-          className="icon-md btn btn-primary position-fixed end-0 bottom-0 me-5 mb-5"
+          style={{marginRight : '26px'}}
+          className="icon-md btn btn-primary position-fixed end-0 bottom-0 mb-5"
           role="button"
           aria-controls="offcanvasChat">
           <span>

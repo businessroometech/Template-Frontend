@@ -496,7 +496,7 @@ const Post3 = () => {
 }
 
 // poll
-const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>,profile) => {
+const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
    const { user } = useAuthContext();
   // console.log('profile in feed',profile)
@@ -508,6 +508,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [page, setPage] = useState(1);
  const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
+  const [profile,setProfile] = useState({});
   // const [limit,setLimit] = useState<number>(5);
 //  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
   
@@ -542,8 +543,38 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
 
   useEffect(() => {
     // Fetch posts on mount
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json(); 
+        console.log('Profile Response',data);
+        setProfile(() => data.data); 
+        console.log('Profile in Home',profile);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    if (profile.personalDetails){
+      return;
+    }
+
+
     if (!hasMounted.current) {
       fetchPosts();
+      fetchUser();
       hasMounted.current = true;
     }
   }, []);
@@ -567,31 +598,6 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       setPage(page => page + 1);
     }
   }
-
-  // const handleScroll = useCallback(() => {
-  //   const scrollHeight = scrollContainerRef.current.scrollHeight;
-  //   const scrollTop = scrollContainerRef.current.scrollTop;
-  //   const clientHeight = scrollContainerRef.current.clientHeight;
-  //   if (scrollTop + clientHeight >= scrollHeight) {
-  //     setPage((prev) => prev + 1);
-  //   }
-  // },[loading,page]);
-
-  // useEffect(()=>{
-  //   const currentRef = scrollContainerRef.current;
-  //   if (currentRef) {
-  //     currentRef.addEventListener('scroll', handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (currentRef) {
-  //       currentRef.removeEventListener('scroll', handleScroll);
-  //     }
-  //   };
-  // },[handleScroll])
-  
-
-  
 
   const handleDelete = async () => {
     try {

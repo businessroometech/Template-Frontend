@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
+import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp,Lightbulb as Bulb } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
@@ -14,12 +15,36 @@ import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
+import { FaGlobe } from 'react-icons/fa';
 
 interface Like {
   id: string;
-  postId: string;
-  userId: string;
-  createdAt: string;
+  occupation: string;
+  password: string;
+  country: string;
+  profilePictureUploadId: string;
+  bgPictureUploadId: string;
+  firstName: string;
+  lastName: string;
+  dob: string; // ISO date string
+  mobileNumber: string | null;
+  emailAddress: string;
+  bio: string | null;
+  gender: string; // "male", "female", or empty string
+  preferredLanguage: string;
+  socialMediaProfile: string;
+  height: string;
+  weight: string;
+  permanentAddress: string | null;
+  currentAddress: string | null;
+  aadharNumberUploadId: string;
+  panNumberUploadId: string;
+  userRole: string;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  likerUrl: string; // URL string
 }
 
 interface GetAllLikesResponse {
@@ -48,10 +73,13 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
   const [showReactions,setShowReactions] = useState<boolean>(false);
-  const [allLikes,setAllLikes] = useState([]);
+  const [allLikes,setAllLikes] = useState<Like[]>([]);
+  const [isExpanded,setIsExpanded] = useState<boolean>(false);
+  const [openComment,setOpenComment] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
+  console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -107,7 +135,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
   
     try {
-      const response = await fetch('http://54.177.193.30:5000/api/v1/post/get-likes', {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/post/get-post-likes-list', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,17 +146,17 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       if (response.ok) {
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
-          // console.log('Likes fetched successfully:', data.data?.likes);
-          setAllLikes(data.data?.likes);
+          console.log('Likes fetched successfully:', data.data?.likes);
+          setAllLikes(data.data?.likers);
           // Optionally, update the UI with the likes data
         } else {
           console.error('Error fetching likes:', data.message);
-          alert(data.message); // Optionally show an error message to the user
+          setAllLikes([]);
         }
       } else {
         const errorData: GetAllLikesResponse = await response.json();
         console.error('Error fetching likes:', errorData.message);
-        alert(errorData.message); // Optionally show an error message to the user
+        setAllLikes([]);
       }
     } catch (error) {
       console.error('An unknown error occurred:', (error as Error).message);
@@ -235,6 +263,54 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
   };
   // console.log(allLikes);
+
+function LikeText(allLikes : Like[]) {
+  let str = '';
+  if(allLikes.length === 0) return null;
+  else if(allLikes.length === 1) str =  `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
+  else str =  `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} and ${allLikes.length - 1} others`
+
+  return <p
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "4px 8px",
+    margin: "0",
+  }}
+>
+  {/* Left side with like icon and text */}
+  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+    <MdThumbUp size={16} />
+    <span
+      style={{
+        marginRight: "6px",
+        cursor: "pointer",
+        transition: "color 0.2s, text-decoration 0.2s",
+      }}
+      onMouseEnter={(e : React.MouseEvent<HTMLSpanElement>) => {
+        const target = e.target as HTMLSpanElement;
+        target.style.color = "#1EA1F2";
+        target.style.textDecoration = "underline";
+      }}
+      onMouseLeave={(e) => {
+        const target = e.target as HTMLSpanElement;
+        target.style.color = "inherit";
+        target.style.textDecoration = "none";
+      }}
+    >
+      {str}
+    </span>
+  </span>
+
+  {/* Right side with comment count */}
+  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+    <span>{commentCount}</span>
+    <MdComment size={16} />
+  </span>
+</p>
+}
+
   if(isDeleted) return null;
   return (
     <Card className="mb-4">
@@ -271,6 +347,23 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
                       {userInfo?.timestamp}
+                      <span
+                      className='nav-item small'
+                      style={{
+                        borderRadius: '100%',
+                        width: '3px', // Adjust size of the dot as needed
+                        height: '3px', // Adjust size of the dot as needed
+                        backgroundColor: '#8b959b',
+                        marginLeft: '8px', // Space between dot and icon
+                      }}
+                    />
+                    <FaGlobe
+                      style={{
+                        color: '#8b959b', // Adjust the color of the globe icon as needed
+                        fontSize: '12px', // Adjust the size of the globe icon as needed
+                        marginLeft: '6px', // Space between dot and icon
+                      }}
+                    />
                     </span>
                   </div>
                 </h6>
@@ -320,18 +413,31 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
       <CardBody>
       {post?.content && (
-     <div className="mb-3 p-4 bg-gray-100 rounded-lg">
-     <div
-       className="w-full"
-       style={{
-         whiteSpace: "pre-wrap", // Preserve line breaks
-         wordWrap: "break-word", // Prevent horizontal overflow for long words
-       }}
-     >
-       {post.content}
-     </div>
-   </div>
-  )}
+      <div className="mb-1 p-1 bg-gray-100 rounded-lg">
+        <div
+          className="w-full"
+          style={{
+            whiteSpace: 'pre-wrap', // Preserve line breaks
+            wordWrap: 'break-word', // Prevent horizontal overflow for long words
+            lineHeight: '19px',
+            color : 'black',
+            maxHeight: isExpanded ? 'none' : '192px',
+            overflow: 'hidden',
+          }}
+        >
+          {post.content}
+        </div>
+        {!isExpanded && post.content.length > 230 && (
+          <span
+            className="text-blue-500 mt-1 cursor-pointer"
+            onClick={() => setIsExpanded(true)}
+          >
+            ...read more
+          </span>
+        )}
+      </div>
+    )
+  }
 
   {media.length > 0 && (
     isVideo ? (
@@ -352,100 +458,106 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       <ResponsiveGallery media={media} />
     )
   )}
-  <ButtonGroup className="w-100 border-top border-bottom mb-3">
-    <Button
-      variant={likeStatus ? "primary" : "light"}
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      onClick={toggleLike}
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-      <span>Like {likeCount !== 0 && likeCount}</span>
-    </Button>
+  <div style={{marginTop : '20px'}}>
+    {allLikes && LikeText(allLikes)}
+  </div>
+  <ButtonGroup
+  className="w-100 border-top border-bottom mb-3"
+  style={{
+    backgroundColor: "white",
+    borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
+  }}
+>
+  <Button
+    variant={likeStatus ? "primary" : "ghost"}
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    onClick={toggleLike}
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+    {/* <span>Like</span> */}
+  </Button>
 
-    <Button
-      variant="light"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      <MessageSquare size={16} />
-      <span>Comment {commentCount != 0 && commentCount}</span>
-    </Button>
+  <Button
+    variant="ghost"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    onClick={() => setOpenComment(!openComment)}
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <MessageSquare size={16} />
+    {/* <span>Comment</span> */}
+  </Button>
 
-    <Button
-      variant="light"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      <Repeat size={16} />
-      <span>Repost</span>
-    </Button>
+  <Button
+    variant="ghost"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <Repeat size={16} />
+    {/* <span>Repost</span> */}
+  </Button>
 
-    <Button
-      variant="light"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      <Share size={16} />
-      <span>Share</span>
-    </Button>
-  </ButtonGroup>
+  <Button
+    variant="ghost"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <Share size={16} />
+    {/* <span>Share</span> */}
+  </Button>
+</ButtonGroup>
 
 
-        <div className="d-flex mb-4 px-3">
+        {openComment && <div className="d-flex mb-4 px-3">
           <div className="avatar avatar-xs me-3">
             <Link to={`/profile/feed/${user?.id}`}>
               <span role="button">
                 <img
                   className="avatar-img rounded-circle"
                   style={{ width: '52px', height: '35px', objectFit: 'cover' }}
-                  src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
+                  src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
                   alt="avatar"
                 />
               </span>
             </Link>
           </div>
-          <form
-            className="nav nav-item w-100 d-flex align-items-center"
-            onSubmit={handleCommentSubmit}
-            style={{ gap: '10px' }} 
-          >
-            <textarea
-              data-autoresize
-              className="form-control bg-light"
-              style={{
-                whiteSpace: 'nowrap',      // Keep text on a single line
-                overflow: 'hidden',        // Hide overflowing content
-                textOverflow: 'ellipsis',  // Optional: show ellipsis for overflow
-                textAlign: 'left',         // Start text and cursor from the left
-                resize: 'none',            // Disable resizing
-                height: '38px',            // Fixed height for a single line
-                flex: 1,                   // Allow textarea to take available space
-              }}
-              rows={1}
-              placeholder="Add a comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-            />
-            <button
-              className="btn border-0 d-flex align-items-center justify-content-center"
-              type="submit"
-              style={{
-                width: '38px',
-                height: '38px',
-                paddingRight: '10px',
-                paddingLeft: '10px',
-                backgroundColor: '#007bff', // Blue background
-                borderRadius: '20%',// Circular button
-                cursor: 'pointer',
-              }}
-            >
-              <BsSendFill style={{ color: '#fff', fontSize: '18px' }} /> {/* White icon */}
-            </button>
-          </form>
-        </div>
+<form
+  className="nav nav-item w-100 d-flex align-items-center"
+  onSubmit={handleCommentSubmit}
+  style={{ gap: "10px" }}
+>
+  <textarea
+    data-autoresize
+    className="form-control"
+    style={{
+      backgroundColor: "#fff",   // Set the input background to white
+      color: "#000",             // Optional: Ensure text color is black for contrast
+      whiteSpace: "nowrap",      // Keep text on a single line
+      overflow: "hidden",        // Hide overflowing content
+      textOverflow: "ellipsis",  // Optional: show ellipsis for overflow
+      textAlign: "left",         // Start text and cursor from the left
+      resize: "none",            // Disable resizing
+      height: "38px",            // Fixed height for a single line
+      flex: 1,                   // Allow textarea to take available space
+      border: "1px solid #ced4da", // Optional: Subtle border for better visibility
+      borderRadius: "4px",       // Rounded corners for a smoother look
+      padding: "5px 10px",       // Add some padding for better UX
+    }}
+    rows={1}
+    placeholder="Add a comment..."
+    value={commentText}
+    onChange={(e) => setCommentText(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) { // Submit on Enter, allow Shift+Enter for new lines
+        e.preventDefault(); // Prevent adding a new line
+        handleCommentSubmit(e); // Call the form's submit handler
+      }
+    }}
+  />
+</form>
+        </div>}
 
-        {isLoading ? (
+        {openComment && (isLoading ? (
           <p>Loading comments...</p>
         ) : (
           <ul className="comment-wrap list-unstyled px-3">
@@ -462,18 +574,20 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
               />
             ))}
           </ul>
-        )}
+        ))}
       </CardBody>
 
-      {comments.length > 2 && (
-        <CardFooter
-          className="border-0 pt-0"
-          onClick={() => {
-            setLoadMore(!loadMore);
-          }}
-        >
-          <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
-        </CardFooter>
+      {openComment && (
+        comments.length > 2 && (
+          <CardFooter
+            className="border-0 pt-0"
+            onClick={() => {
+              setLoadMore(!loadMore);
+            }}
+          >
+            <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
+          </CardFooter>
+        )
       )}
     </Card>
   );

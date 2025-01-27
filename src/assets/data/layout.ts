@@ -104,8 +104,8 @@ export const profilePanelLinksData2: ProfilePanelLink[] = [
   // },
   {
     image: notificationImg,
-    name: 'Notifications',
-    link: '/notifications',
+    name: 'ManageConnections',
+    link: '/ManageConnections',
   },
   {
     image: cogImg,
@@ -144,8 +144,8 @@ export const settingPanelLinksData: ProfilePanelLink[] = [
   },
   {
     image: notificationImg,
-    name: 'Notification',
-    link: '/settings/notification',
+    name: 'Manage Connections',
+    link: '/settings/ManageConnections',
   },
   // {
   //   image: shieldImg,
