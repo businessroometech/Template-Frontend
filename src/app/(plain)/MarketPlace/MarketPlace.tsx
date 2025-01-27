@@ -155,7 +155,7 @@ const MarketPlace = () => {
     
           <SimplebarReactClient className="offcanvas-start" style={{marginBottom : "20px", backgroundColor: "#f8f9fa"}}>
           <ProfilePanel links={profilePanelLinksData1} />
-          </SimplebarReactClient>            
+          </SimplebarReactClient>              
         </div>
         <div className="col-md-9" style={{ padding: '2rem' }}>
             <div style={{ 

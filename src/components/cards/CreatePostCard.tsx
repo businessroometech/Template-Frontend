@@ -317,7 +317,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   return (
     <>
       <Card className="card-body" style={{ maxHeight: '9em' }}>
-        <div className="d-flex mb-3">
+        <div className="d-flex mb-3" >
           <Link to={`/profile/feed/${user?.id}`}>
             <div className="avatar avatar-s me-2"
               style={{
