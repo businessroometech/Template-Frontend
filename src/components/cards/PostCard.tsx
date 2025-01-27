@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
+import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp,Lightbulb as Bulb } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
@@ -17,9 +18,32 @@ import axios from 'axios';
 
 interface Like {
   id: string;
-  postId: string;
-  userId: string;
-  createdAt: string;
+  occupation: string;
+  password: string;
+  country: string;
+  profilePictureUploadId: string;
+  bgPictureUploadId: string;
+  firstName: string;
+  lastName: string;
+  dob: string; // ISO date string
+  mobileNumber: string | null;
+  emailAddress: string;
+  bio: string | null;
+  gender: string; // "male", "female", or empty string
+  preferredLanguage: string;
+  socialMediaProfile: string;
+  height: string;
+  weight: string;
+  permanentAddress: string | null;
+  currentAddress: string | null;
+  aadharNumberUploadId: string;
+  panNumberUploadId: string;
+  userRole: string;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  likerUrl: string; // URL string
 }
 
 interface GetAllLikesResponse {
@@ -48,10 +72,10 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
   const [showReactions,setShowReactions] = useState<boolean>(false);
-  const [allLikes,setAllLikes] = useState([]);
+  const [allLikes,setAllLikes] = useState<Like[]>([]);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
-  console.log(profile);
+  // console.log(profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -107,7 +131,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
   
     try {
-      const response = await fetch('http://54.177.193.30:5000/api/v1/post/get-likes', {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/post/get-post-likes-list', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,16 +143,16 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
           console.log('Likes fetched successfully:', data.data?.likes);
-          setAllLikes(data.data?.likes);
+          setAllLikes(data.data?.likers);
           // Optionally, update the UI with the likes data
         } else {
           console.error('Error fetching likes:', data.message);
-          alert(data.message); // Optionally show an error message to the user
+          setAllLikes([]);
         }
       } else {
         const errorData: GetAllLikesResponse = await response.json();
         console.error('Error fetching likes:', errorData.message);
-        alert(errorData.message); // Optionally show an error message to the user
+        setAllLikes([]);
       }
     } catch (error) {
       console.error('An unknown error occurred:', (error as Error).message);
@@ -235,6 +259,52 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
   };
   // console.log(allLikes);
+
+function LikeText(allLikes : Like[]) {
+  let str = '';
+  if(allLikes.length === 0) return null;
+  else if(allLikes.length === 1) str =  `${allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
+  else str =  `${allLikes[0].firstName} ${allLikes[0].lastName} and ${allLikes.length - 1} others`
+
+  return <p
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "4px 8px",
+    margin: "0",
+  }}
+>
+  {/* Left side with like icon and text */}
+  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+    <MdThumbUp size={16} />
+    <span
+      style={{
+        marginRight: "6px",
+        cursor: "pointer",
+        transition: "color 0.2s, text-decoration 0.2s",
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.color = "#1EA1F2";
+        e.target.style.textDecoration = "underline";
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.color = "inherit";
+        e.target.style.textDecoration = "none";
+      }}
+    >
+      {str}
+    </span>
+  </span>
+
+  {/* Right side with comment count */}
+  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+    <span>{commentCount}</span>
+    <MdComment size={16} />
+  </span>
+</p>
+}
+
   if(isDeleted) return null;
   return (
     <Card className="mb-4">
@@ -320,12 +390,13 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
       <CardBody>
       {post?.content && (
-     <div className="mb-3 p-4 bg-gray-100 rounded-lg">
+     <div className="mb-1 p-1 bg-gray-100 rounded-lg">
      <div
        className="w-full"
        style={{
          whiteSpace: "pre-wrap", // Preserve line breaks
          wordWrap: "break-word", // Prevent horizontal overflow for long words
+         lineHeight : '16px'
        }}
      >
        {post.content}
@@ -352,6 +423,9 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       <ResponsiveGallery media={media} />
     )
   )}
+  <div>
+    {allLikes && LikeText(allLikes)}
+  </div>
   <ButtonGroup className="w-100 border-top border-bottom mb-3">
     <Button
       variant={likeStatus ? "primary" : "light"}
@@ -360,7 +434,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       style={{ fontSize: "0.8rem" }} // Slightly smaller font size
     >
       {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-      <span>Like {likeCount !== 0 && likeCount}</span>
+      <span>Like</span>
     </Button>
 
     <Button
@@ -369,7 +443,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       style={{ fontSize: "0.8rem" }} // Slightly smaller font size
     >
       <MessageSquare size={16} />
-      <span>Comment {commentCount != 0 && commentCount}</span>
+      <span>Comment</span>
     </Button>
 
     <Button
@@ -405,44 +479,40 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
               </span>
             </Link>
           </div>
-          <form
-            className="nav nav-item w-100 d-flex align-items-center"
-            onSubmit={handleCommentSubmit}
-            style={{ gap: '10px' }} 
-          >
-            <textarea
-              data-autoresize
-              className="form-control bg-light"
-              style={{
-                whiteSpace: 'nowrap',      // Keep text on a single line
-                overflow: 'hidden',        // Hide overflowing content
-                textOverflow: 'ellipsis',  // Optional: show ellipsis for overflow
-                textAlign: 'left',         // Start text and cursor from the left
-                resize: 'none',            // Disable resizing
-                height: '38px',            // Fixed height for a single line
-                flex: 1,                   // Allow textarea to take available space
-              }}
-              rows={1}
-              placeholder="Add a comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-            />
-            <button
-              className="btn border-0 d-flex align-items-center justify-content-center"
-              type="submit"
-              style={{
-                width: '38px',
-                height: '38px',
-                paddingRight: '10px',
-                paddingLeft: '10px',
-                backgroundColor: '#007bff', // Blue background
-                borderRadius: '20%',// Circular button
-                cursor: 'pointer',
-              }}
-            >
-              <BsSendFill style={{ color: '#fff', fontSize: '18px' }} /> {/* White icon */}
-            </button>
-          </form>
+<form
+  className="nav nav-item w-100 d-flex align-items-center"
+  onSubmit={handleCommentSubmit}
+  style={{ gap: "10px" }}
+>
+  <textarea
+    data-autoresize
+    className="form-control"
+    style={{
+      backgroundColor: "#fff",   // Set the input background to white
+      color: "#000",             // Optional: Ensure text color is black for contrast
+      whiteSpace: "nowrap",      // Keep text on a single line
+      overflow: "hidden",        // Hide overflowing content
+      textOverflow: "ellipsis",  // Optional: show ellipsis for overflow
+      textAlign: "left",         // Start text and cursor from the left
+      resize: "none",            // Disable resizing
+      height: "38px",            // Fixed height for a single line
+      flex: 1,                   // Allow textarea to take available space
+      border: "1px solid #ced4da", // Optional: Subtle border for better visibility
+      borderRadius: "4px",       // Rounded corners for a smoother look
+      padding: "5px 10px",       // Add some padding for better UX
+    }}
+    rows={1}
+    placeholder="Add a comment..."
+    value={commentText}
+    onChange={(e) => setCommentText(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) { // Submit on Enter, allow Shift+Enter for new lines
+        e.preventDefault(); // Prevent adding a new line
+        handleCommentSubmit(e); // Call the form's submit handler
+      }
+    }}
+  />
+</form>
         </div>
 
         {isLoading ? (

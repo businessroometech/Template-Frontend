@@ -12,40 +12,8 @@ import { useAuthContext } from "@/context/useAuthContext";
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const {user} = useAuthContext();
   const navigate = useNavigate();
-  const [profile,setProfile] = useState({});
-  console.log('Home reloads')
   
-   useEffect(() => {
-        const fetchUser = async () => {
-          try {
-            const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                userId: user?.id
-              })
-            });
-    
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-    
-            const data = await response.json(); 
-            setProfile(data.data); 
-          } catch (error) {
-            console.error("Error fetching user profile:", error);
-          }
-        };
-        if (profile.personalDetails){
-          return;
-        }
-        fetchUser();
-      }, [user?.id]);
-      // console.log('profile in feed', profile);
   return (
     <>
       <Col
@@ -53,6 +21,7 @@ const Home = () => {
         lg={6}
         id="scrollableDiv"
         style={{
+         
           position: 'sticky', // Ensure the container's position is suitable for scrolling
        // Enables vertical scrolling
            // Sets a height limit for scrolling
@@ -64,7 +33,7 @@ const Home = () => {
         className="position-relative vstack gap-4"
       >
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} profile={profile} />
+        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
       </Col>
 
       <Col lg={3} 
