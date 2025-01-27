@@ -9,7 +9,7 @@ import LoadContentButton from '../LoadContentButton';
 import { CircleUserRound } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
-import fallBackAvatar from '../../assets/images/avatar/01.jpg';
+import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
 import VideoPlayer from './components/VideoPlayer';
 import GlightBox from '../GlightBox';
 import { mixed } from 'yup';

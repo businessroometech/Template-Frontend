@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { counterData, faqsData } from '../data'
 
 import event6 from '@/assets/images/events/06.jpg'
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import { useFetchData } from '@/hooks/useFetchData'

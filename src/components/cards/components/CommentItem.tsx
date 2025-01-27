@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
-import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
+import fallBackAvatar from '../../../assets/images/avatar/default avatar.png';
 import axios, { AxiosResponse } from 'axios';
 import { useAuthContext } from '@/context/useAuthContext';
 
