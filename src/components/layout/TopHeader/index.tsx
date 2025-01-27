@@ -21,7 +21,9 @@ const TopHeader = () => {
 
   useEffect(() => {
     fetchNotificationsCount();
-      },[Notificount] );
+    const interval = setInterval(fetchNotificationsCount, 1500);
+    return () => clearInterval(interval);
+      }, );
   const fetchNotificationsCount = async () => {
     try {
       const response = await fetch(
@@ -38,9 +40,6 @@ const TopHeader = () => {
   };
 
 
-  setTimeout(() => {
-    fetchNotificationsCount();
-  }, 150);
   
 
   return (
