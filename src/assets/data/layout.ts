@@ -17,7 +17,7 @@ import shieldImg from '@/assets/images/icon/shield-outline-filled.svg'
 import handshakeImg from '@/assets/images/icon/handshake-outline-filled.svg'
 import chatAltImg from '@/assets/images/icon/chat-alt-outline-filled.svg'
 import trashImg from '@/assets/images/icon/trash-var-outline-filled.svg'
-
+import { useAuthContext } from '@/context/useAuthContext'
 import logo8 from '@/assets/images/logo/08.svg'
 import logo9 from '@/assets/images/logo/09.svg'
 import logo10 from '@/assets/images/logo/10.svg'
@@ -71,6 +71,7 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
 ]
 
 export const profilePanelLinksData2: ProfilePanelLink[] = [
+  
   {
     image: homeImg,
     name: 'Feed',

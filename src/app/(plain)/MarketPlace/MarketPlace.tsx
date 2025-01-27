@@ -13,7 +13,7 @@ import TopHeader from '@/components/layout/TopHeader';
 // eslint-disable-next-line no-sparse-arrays
 const categories = [
     'SaaS', 'Mobile App',"Shopify app",, 'E-commerce', "Marketplace",'Agency'
-   ,'Content' , 
+    , 
 ];
 
 const MarketPlace = () => {

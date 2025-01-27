@@ -488,6 +488,10 @@ import {
   Globe, Mail, Phone, Clock, DollarSign, Award, ChevronRight, User
 } from 'lucide-react';
 import title from "@/assets/title 02.png"
+import TopHeader from '@/components/layout/TopHeader';
+import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
+import { profilePanelLinksData1 } from '@/assets/data/layout';
+import ProfilePanel from '@/components/layout/ProfilePanel';
 const MarketplaceDetails = () => {
   const [profile, setProfile] = useState({});
   const { id } = useParams();
@@ -521,12 +525,12 @@ const MarketplaceDetails = () => {
   }, [user]);
 
   useEffect(() => {
-    fetch(` http://54.177.193.30:5000/businessseller/detailuuid/${id}`)
+    fetch(` http://localhost:5000/businessseller/detailuuid/${id}`)
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));
   }, [id]);
-
+console.log("----------Business Details------------" , businessDetails)
   if (!businessDetails) {
     return (
       // <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%)' }}>
@@ -579,9 +583,10 @@ const MarketplaceDetails = () => {
 
   return (
     <div style={{ height: '100vh' }}>
+      <TopHeader></TopHeader>
 
       {/* Header */}
-      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' }}>
+      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0', marginTop:"60px"}}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
@@ -612,6 +617,16 @@ const MarketplaceDetails = () => {
       </div>
 
       {/* Main Content */}
+
+
+
+
+
+
+
+
+
+
       <div className="container" style={{ paddingTop: '1.5rem', height: 'calc(100vh - 5rem)' }}>
         <div className="row" style={{ height: '100%' }}>
           <div className="col-8" style={{ paddingRight: '1.5rem', overflowY: 'auto' }}>
@@ -795,7 +810,7 @@ operatingYears
                     borderRadius: '1rem',
                     fontSize: '0.875rem',
                     fontWeight: '500'
-                  }}>{user.occupation}</span>
+                  }}>{businessDetails.data.OwnerDetails[0].occupation}</span>
                 </div>
               </div>
 
@@ -804,16 +819,16 @@ operatingYears
                   <Globe style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
                   <div>
                     <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Location</div>
-                    <div style={{ color: '#111827' }}>{user.country}, {user.location}</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.OwnerDetails[0].country}, {businessDetails.data.OwnerDetails[0].location}</div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                {/* <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <Mail style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
                   <div>
                     <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Email</div>
-                    <div style={{ color: '#111827' }}>{user.emailAddress}</div>
+                    <div style={{ color: '#111827' }}>{businessDetails.data.OwnerDetails[0].emailAddress}</div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
