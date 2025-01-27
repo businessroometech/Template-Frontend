@@ -75,10 +75,11 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [showReactions,setShowReactions] = useState<boolean>(false);
   const [allLikes,setAllLikes] = useState<Like[]>([]);
   const [isExpanded,setIsExpanded] = useState<boolean>(false);
+  const [openComment,setOpenComment] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
-  // console.log("Profile In PostCard",profile);
+  console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -145,7 +146,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       if (response.ok) {
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
-          // console.log('Likes fetched successfully:', data.data?.likes);
+          console.log('Likes fetched successfully:', data.data?.likes);
           setAllLikes(data.data?.likers);
           // Optionally, update the UI with the likes data
         } else {
@@ -460,47 +461,54 @@ function LikeText(allLikes : Like[]) {
   <div style={{marginTop : '20px'}}>
     {allLikes && LikeText(allLikes)}
   </div>
-  <ButtonGroup className="w-100 border-top border-bottom mb-3">
-    <Button
-      variant={likeStatus ? "primary" : "light"}
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      onClick={toggleLike}
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-      <span>Like</span>
-    </Button>
+  <ButtonGroup
+  className="w-100 border-top border-bottom mb-3"
+  style={{
+    backgroundColor: "white",
+    borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
+  }}
+>
+  <Button
+    variant={likeStatus ? "primary" : "ghost"}
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    onClick={toggleLike}
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+    {/* <span>Like</span> */}
+  </Button>
 
-    <Button
-      variant="light"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      <MessageSquare size={16} />
-      <span>Comment</span>
-    </Button>
+  <Button
+    variant="ghost"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    onClick={() => setOpenComment(!openComment)}
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <MessageSquare size={16} />
+    {/* <span>Comment</span> */}
+  </Button>
 
-    <Button
-      variant="light"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      <Repeat size={16} />
-      <span>Repost</span>
-    </Button>
+  <Button
+    variant="ghost"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <Repeat size={16} />
+    {/* <span>Repost</span> */}
+  </Button>
 
-    <Button
-      variant="light"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-    >
-      <Share size={16} />
-      <span>Share</span>
-    </Button>
-  </ButtonGroup>
+  <Button
+    variant="ghost"
+    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+  >
+    <Share size={16} />
+    {/* <span>Share</span> */}
+  </Button>
+</ButtonGroup>
 
 
-        <div className="d-flex mb-4 px-3">
+        {openComment && <div className="d-flex mb-4 px-3">
           <div className="avatar avatar-xs me-3">
             <Link to={`/profile/feed/${user?.id}`}>
               <span role="button">
@@ -547,9 +555,9 @@ function LikeText(allLikes : Like[]) {
     }}
   />
 </form>
-        </div>
+        </div>}
 
-        {isLoading ? (
+        {openComment && (isLoading ? (
           <p>Loading comments...</p>
         ) : (
           <ul className="comment-wrap list-unstyled px-3">
@@ -566,18 +574,20 @@ function LikeText(allLikes : Like[]) {
               />
             ))}
           </ul>
-        )}
+        ))}
       </CardBody>
 
-      {comments.length > 2 && (
-        <CardFooter
-          className="border-0 pt-0"
-          onClick={() => {
-            setLoadMore(!loadMore);
-          }}
-        >
-          <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
-        </CardFooter>
+      {openComment && (
+        comments.length > 2 && (
+          <CardFooter
+            className="border-0 pt-0"
+            onClick={() => {
+              setLoadMore(!loadMore);
+            }}
+          >
+            <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
+          </CardFooter>
+        )
       )}
     </Card>
   );
