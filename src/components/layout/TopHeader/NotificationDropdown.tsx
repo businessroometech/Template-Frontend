@@ -106,14 +106,14 @@ console.log("isConnected",isConnected);
   const fetchNotificationsCount = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
       const data = await response.json();
-      if (data.unreadCount) {
-        setCount(data.unreadCount);
-      }
+      console.log("data",count);
+      
+      setCount(data.unreadCount);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
@@ -204,7 +204,7 @@ console.log("isConnected",isConnected);
         >
           {<>
             <Bell style={{ color: '#1ea1f2' }} />
-            <p className='bg-info px-1 rounded-pill' style={{position:"absolute", top:3 , left:24, color:"white", }}>{count}</p>
+            <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:3 , left:24, color:"white", }}>{count>0?count:""}</p>
           </>
           
           }
@@ -285,7 +285,7 @@ console.log("isConnected",isConnected);
                           right: '0',
                           position: 'absolute',
                         }}>
-                          {timeSince(new Date(notification.createdAt))}
+                          {formatTimestamp(notification.createdAt)}
                         </p>
                       </div>
                     </Link>
@@ -311,3 +311,28 @@ console.log("isConnected",isConnected);
 
 export default NotificationDropdown;
 
+export const formatTimestamp = (createdAt: Date): string => {
+  const now = Date.now();
+  const createdTime = new Date(createdAt).getTime();
+  const secondsAgo = Math.floor((now - createdTime) / 1000);
+
+  if (secondsAgo < 240) return `just now`;
+
+  const minutesAgo = Math.floor(secondsAgo / 60);
+  if (minutesAgo < 60) return `${minutesAgo}m`;
+
+  const hoursAgo = Math.floor(minutesAgo / 60);
+  if (hoursAgo < 24) return `${hoursAgo}h`;
+
+  const daysAgo = Math.floor(hoursAgo / 24);
+  if (daysAgo < 7) return `${daysAgo}d`;
+
+  const weeksAgo = Math.floor(daysAgo / 7);
+  if (weeksAgo < 52) return `${weeksAgo}w`;
+
+  const monthsAgo = Math.floor(weeksAgo / 4);
+  if (monthsAgo < 12) return `${monthsAgo}mo`;
+
+  const yearsAgo = Math.floor(monthsAgo / 12);
+  return `${yearsAgo}y`;
+};
