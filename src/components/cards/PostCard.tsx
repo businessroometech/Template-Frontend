@@ -266,8 +266,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 function LikeText(allLikes : Like[]) {
   let str = '';
   if(allLikes.length === 0) return null;
-  else if(allLikes.length === 1) str =  `${allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
-  else str =  `${allLikes[0].firstName} ${allLikes[0].lastName} and ${allLikes.length - 1} others`
+  else if(allLikes.length === 1) str =  `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
+  else str =  `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} and ${allLikes.length - 1} others`
 
   return <p
   style={{
