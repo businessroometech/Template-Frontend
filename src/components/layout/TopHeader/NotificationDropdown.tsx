@@ -26,7 +26,7 @@ const NotificationDropdown = ({count}) => {
   const [allNotifications, setAllNotifications] = useState<any[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [notiAbout, setNotiAbout] = useState<boolean>(false);
-  console.log("isConnected", isConnected);
+  // console.log("isConnected", isConnected);
 
   // Request notification permission on component mount
   useEffect(() => {
@@ -34,9 +34,9 @@ const NotificationDropdown = ({count}) => {
       Notification.requestPermission()
         .then((permission) => {
           if (permission === "granted") {
-            console.log("Notification permission granted.");
+            // console.log("Notification permission granted.");
           } else {
-            console.log("Notification permission denied.");
+            // console.log("Notification permission denied.");
           }
         })
         .catch((err) => console.error("Error requesting notification permission:", err));
