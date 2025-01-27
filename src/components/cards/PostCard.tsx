@@ -418,7 +418,7 @@ function LikeText(allLikes : Like[]) {
           style={{
             whiteSpace: 'pre-wrap', // Preserve line breaks
             wordWrap: 'break-word', // Prevent horizontal overflow for long words
-            lineHeight: '16px',
+            lineHeight: '19px',
             color : 'black',
             maxHeight: isExpanded ? 'none' : '192px',
             overflow: 'hidden',
