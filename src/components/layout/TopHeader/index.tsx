@@ -8,13 +8,40 @@ import NotificationDropdown from './NotificationDropdown'
 import ProfileDropdown from './ProfileDropdown'
 import StyledHeader from './StyledHeader'
 import { MessageSquareText, Settings } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useAuthContext } from '@/context/useAuthContext'
 
 const TopHeader = () => {
 
+  const { user } = useAuthContext();
   const [messageAbout,setMessageAbout] = useState<boolean>(false);
   const [settingsAbout,setSettingsAbout] = useState<boolean>(false);
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
+  const [Notificount,setNotifiCount] = useState(0);
+
+  useEffect(() => {
+    fetchNotificationsCount();
+      },[Notificount] );
+  const fetchNotificationsCount = async () => {
+    try {
+      const response = await fetch(
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+        { method: "GET", headers: { "Content-Type": "application/json" } }
+      );
+
+      const data = await response.json();
+           
+      setNotifiCount(data.unreadCount);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+
+  setTimeout(() => {
+    fetchNotificationsCount();
+  }, 150);
+  
 
   return (
 <StyledHeader>
@@ -140,7 +167,7 @@ const TopHeader = () => {
       </li>
 
       {/* Notification Dropdown */}
-      <NotificationDropdown />
+      <NotificationDropdown  count={Notificount}/>
 
       {/* Profile Dropdown */}
       <ProfileDropdown />
