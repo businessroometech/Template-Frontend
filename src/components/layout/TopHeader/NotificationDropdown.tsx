@@ -144,7 +144,7 @@ const NotificationDropdown = ({count}) => {
       const data = await response.json();
       if (data?.success) {
         console.log('All notifications marked as read successfully.');
-        fetchNotifications();
+
       } else {
         console.error('Failed to mark all notifications as read:', data.message);
       }
@@ -220,9 +220,9 @@ const NotificationDropdown = ({count}) => {
           <CardHeader className="d-flex justify-content-between align-items-center">
             <h6 className="m-0">
               Notifications
-              <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
+             {allNotifications.slice(0, 4).filter((n) => !n.isRead).length>0 && <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
                 {allNotifications.slice(0, 4).filter((n) => !n.isRead).length} new
-              </span>
+              </span>}
             </h6>
             <Link className="small" to="#" onClick={handleReadAll}>
               Read all
