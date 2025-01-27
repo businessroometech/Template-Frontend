@@ -53,6 +53,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       if (response.ok) {
         const data: DeleteCommentResponse = await response.json();
         console.log('Comment deleted successfully:', data.message);
+        setCommentCount(()=>commentCount-1);
         setIsDeleted(true);
         // Optionally update the UI
       } else {
