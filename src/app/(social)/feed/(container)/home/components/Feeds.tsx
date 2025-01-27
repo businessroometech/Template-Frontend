@@ -517,7 +517,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
     setError(null);
     setHasMore(true);
     console.log('fetching posts');
-    try {      
+    try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',

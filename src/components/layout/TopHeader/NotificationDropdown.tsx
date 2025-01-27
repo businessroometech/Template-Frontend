@@ -26,6 +26,7 @@ const NotificationDropdown = () => {
   const [allNotifications, setAllNotifications] = useState<any[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [notiAbout,setNotiAbout] = useState<boolean>(false);
+  const [count, setCount] = useState<number>(0);
 console.log("isConnected",isConnected);
 
   // Request notification permission on component mount
@@ -47,7 +48,7 @@ console.log("isConnected",isConnected);
   useEffect(() => {
     if (!user?.id) return;
 
-    const socketConnection = io("http://localhost:5000", {
+    const socketConnection = io("http://54.177.193.30:5000", {
       query: { userId: user.id },
     });
 
@@ -74,7 +75,7 @@ console.log("isConnected",isConnected);
       if (Notification.permission === "granted") {
         new Notification(notification.message, {
           body: notification.mediaUrl ? "You have a new media notification." : "Check your notifications!",
-          icon: "/notification-icon.png", // Replace with your notification icon path
+          icon: "/notification-icon.png", 
         });
       }
     });
@@ -89,7 +90,7 @@ console.log("isConnected",isConnected);
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
@@ -102,16 +103,36 @@ console.log("isConnected",isConnected);
     }
   };
 
+  const fetchNotificationsCount = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+        { method: "GET", headers: { "Content-Type": "application/json" } }
+      );
+
+      const data = await response.json();
+      if (data.unreadCount) {
+        setCount(data.unreadCount);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
   // Fetch notifications when the component mounts
   useEffect(() => {
     fetchNotifications();
   }, [user?.id]);
 
+  setTimeout(() => {
+    fetchNotificationsCount();
+  }
+  , 1);
 
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'http://localhost:5000/api/v1/socket-notifications/mark-read',
+        'http://54.177.193.30:5000/api/v1/socket-notifications/mark-read',
         {
           method: 'POST',
           headers: {
@@ -130,10 +151,10 @@ console.log("isConnected",isConnected);
 
   const handleReadAll = async () => {
     try {
-      const notificationIds = allNotifications.map((notification) => notification.id);
+      allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        'http://localhost:5000/api/v1/socket-notifications/mark-all-read',
+        'http://54.177.193.30:5000/api/v1/socket-notifications/mark-all-read',
         {
           method: 'POST',
           headers: {
@@ -181,7 +202,12 @@ console.log("isConnected",isConnected);
             setNotiAbout(false);
           }}
         >
-          {<Bell style={{ color: '#1ea1f2' }} />}
+          {<>
+            <Bell style={{ color: '#1ea1f2' }} />
+            <p className='bg-info px-1 rounded-pill' style={{position:"absolute", top:3 , left:24, color:"white", }}>{count}</p>
+          </>
+          
+          }
         </div>
           {notiAbout && 
             <span
@@ -259,7 +285,7 @@ console.log("isConnected",isConnected);
                           right: '0',
                           position: 'absolute',
                         }}>
-                          {timeSince(new Date(notification.createdAt))} ago
+                          {timeSince(new Date(notification.createdAt))}
                         </p>
                       </div>
                     </Link>

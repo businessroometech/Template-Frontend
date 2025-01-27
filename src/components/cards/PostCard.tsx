@@ -76,6 +76,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
+  // console.log(profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -112,11 +113,11 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       }
   
       const data = await response.json();
-      console.log('dl',tlRefresh)
+      // console.log('dl',tlRefresh)
       setIsDeleted(true);
      
-      console.log('dlr',tlRefresh);
-      console.log('Post deleted successfully:', data.message);
+      // console.log('dlr',tlRefresh);
+      // console.log('Post deleted successfully:', data.message);
       alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
