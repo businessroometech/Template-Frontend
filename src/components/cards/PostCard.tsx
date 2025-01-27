@@ -420,13 +420,13 @@ function LikeText(allLikes : Like[]) {
             wordWrap: 'break-word', // Prevent horizontal overflow for long words
             lineHeight: '16px',
             color : 'black',
-            maxHeight: isExpanded ? 'none' : '250px',
+            maxHeight: isExpanded ? 'none' : '185px',
             overflow: 'hidden',
           }}
         >
           {post.content}
         </div>
-        {!isExpanded && post.content.length > 250 && (
+        {!isExpanded && post.content.length > 230 && (
           <span
             className="text-blue-500 mt-1 cursor-pointer"
             onClick={() => setIsExpanded(true)}
