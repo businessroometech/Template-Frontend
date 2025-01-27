@@ -42,7 +42,7 @@ const MarketPlace = () => {
       // console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(` http://100.29.20.215:5000/businessseller/detail/${user.id}`);
+          const response = await fetch(`http://54.177.193.30:5000/businessseller/detail/${user.id}`);
           const data = await response.json();
           
           setMyBusinessData(Array.isArray(data) ? data : [data]);
@@ -56,7 +56,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-        const response = await fetch(' http://100.29.20.215:5000/businessseller/getall');
+        const response = await fetch(' http://54.177.193.30:5000/businessseller/getall');
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 
@@ -73,7 +73,7 @@ const MarketPlace = () => {
 
 
  const fetchWishlist = async() => {
-  const response = await fetch(`http://100.29.20.215:5000/wishlists/getall/${user?.id}`)
+  const response = await fetch(`http://54.177.193.30:5000/wishlists/getall/${user?.id}`)
   const result = await response.json();
   setWishlists(result)
   console.log("-------WISHLISTS-------" , Wishlists)
