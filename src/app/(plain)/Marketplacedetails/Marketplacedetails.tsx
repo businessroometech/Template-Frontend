@@ -711,7 +711,7 @@ operatingYears
                 </div>
               </div>
             </div>
-
+            
             {/* Financial Overview */}
             <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
