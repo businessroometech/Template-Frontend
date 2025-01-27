@@ -560,8 +560,8 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
         }
 
         const data = await response.json(); 
-        console.log('Profile Response',data)
-        setProfile(() => data); 
+        console.log('Profile Response',data);
+        setProfile(() => data.data); 
         console.log('Profile in Home',profile);
       } catch (error) {
         console.error("Error fetching user profile:", error);
@@ -574,6 +574,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
 
     if (!hasMounted.current) {
       fetchPosts();
+      fetchUser();
       hasMounted.current = true;
     }
   }, []);

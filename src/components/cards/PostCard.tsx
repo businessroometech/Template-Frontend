@@ -78,7 +78,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
-  // console.log(profile);
+  // console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -145,7 +145,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       if (response.ok) {
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
-          console.log('Likes fetched successfully:', data.data?.likes);
+          // console.log('Likes fetched successfully:', data.data?.likes);
           setAllLikes(data.data?.likers);
           // Optionally, update the UI with the likes data
         } else {
@@ -507,7 +507,7 @@ function LikeText(allLikes : Like[]) {
                 <img
                   className="avatar-img rounded-circle"
                   style={{ width: '52px', height: '35px', objectFit: 'cover' }}
-                  src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
+                  src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
                   alt="avatar"
                 />
               </span>
