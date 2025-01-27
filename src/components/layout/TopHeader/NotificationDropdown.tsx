@@ -156,7 +156,7 @@ const NotificationDropdown = ({count}) => {
   return (
     <div className='position-relative'>
     {<>
-        <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:24, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{count>0?count:1}</p>
+        <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:24, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{count>0?count:""}</p>
       </>
       }
   
