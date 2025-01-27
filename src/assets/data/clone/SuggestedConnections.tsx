@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import Skeleton from 'react-loading-skeleton';
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FaUserPlus, FaUserCheck, FaUserTimes } from 'react-icons/fa';
 import { BsPersonAdd } from 'react-icons/bs';
 import { useAuthContext } from '@/context/useAuthContext';
 import Loading from '@/components/Loading';
@@ -101,66 +102,74 @@ const SuggestedConnections = () => {
 
   return (
     <Card>
-      <CardHeader className="d-sm-flex justify-content-between align-items-center border-0">
-        <CardTitle>Suggested Connections</CardTitle>
-      </CardHeader>
-      <CardBody className="position-relative pt-0">
-        <InfiniteScroll
-          dataLength={filteredFollowers.length}
-          next={fetchMoreData}
-          hasMore={filteredFollowers.length < totalUsers}
-          loader={<Loading loading={filteredFollowers.length !== totalUsers} size={12}/>}
-          style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-          endMessage={
-            <Button disabled style={{ textAlign: 'center' }}>
-              <b>no more suggested connections</b>
-            </Button>}
-          scrollableTarget="scrollableDiv">
-          <Row className="g-3">
-            {filteredFollowers.map((friend, idx) => (
-              <Col xs={3} key={idx}>
-                <Card className="shadow-none text-center h-100">
-                  <CardBody className="p-2 pb-0">
-                    <div className={clsx('avatar avatar-xl', { 'avatar-story': friend.isStory })}>
-                      {skeletonLoading ? (
-                        <Skeleton
-                          height={40}
-                          width={40}
-                          baseColor={skeletonBaseColor}
-                          highlightColor={skeletonHighlightColor}
-                        />
-                      ) : (
-                        <img
-                
-                          src={friend?.profilePictureUrl || avatar}
-                          alt={`${friend.firstName}'s profile`}
-                        />
-                      )}
-                    </div>
-                    <h6 className="card-title mb-1 mt-3">
-                      <Link to="#">{friend.name}</Link>
-                    </h6>
-                    <p className="mb-0 small lh-sm">
-                      {friend.firstName} {friend.lastName}
-                    </p>
-                  </CardBody>
-                  <div className="card-footer p-2 border-0">
-                    <button
-                      className="btn btn-sm btn-primary"
-                      title="Add friend"
-                      onClick={() => UserRequest(friend.id)}
-                      disabled={loading === friend.id}
-                    >
-                      <BsPersonAdd />
-                    </button>
-                  </div>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </InfiniteScroll>
-      </CardBody>
-    </Card>
+    <CardHeader className="border-0 pb-0">
+      {/* <CardTitle>Suggested Connections</CardTitle> */}
+    </CardHeader>
+    <CardBody>
+    <InfiniteScroll
+      dataLength={filteredFollowers.length}
+      next={fetchMoreData}
+      hasMore={filteredFollowers.length < totalUsers}
+      loader={<Loading loading={filteredFollowers.length !== totalUsers} size={16} />}
+      style={{ overflowX: 'hidden', overflowY: 'hidden' }}
+      endMessage={
+      <Button disabled style={{ textAlign: 'center' }}>
+      <b>No more suggested connections</b>
+      </Button>
+      }
+      scrollableTarget="scrollableDiv"
+      >
+      {filteredFollowers.map((friend, idx) => (
+      <div className="d-md-flex align-items-center mb-4" key={idx}>
+      <div className="avatar me-3 mb-3 mb-md-0">
+        {friend?.profilePictureUrl ? (
+        <img
+        className="avatar-img rounded-circle"
+        src={friend.profilePictureUrl || avatar}
+        alt={`${friend.firstName} ${friend.lastName}'s profile`}
+        />
+        ) : (
+        <span
+        className="avatar-img rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+        style={{ width: '40px', height: '40px', fontSize: '20px' }}
+        >
+        {friend.firstName?.charAt(0).toUpperCase()}
+        {friend.lastName?.charAt(0).toUpperCase()}
+        </span>
+        )}
+      </div>
+      <div className="w-100">
+        <div className="d-sm-flex align-items-start">
+        <h6 className="mb-0">
+        <Link to="#">{`${friend.firstName} ${friend.lastName}`}</Link>
+        </h6>
+        <p className="small ms-sm-2 mb-0 text-muted">{friend.userRole}</p>
+        {friend.mutual && (
+        <p style={{ fontSize: '10px' }} className="small text-info ms-sm-2 mb-0">
+        Mutual connection
+        </p>
+        )}
+        </div>
+        <ul className="avatar-group mt-1 list-unstyled align-items-sm-center">
+        <li className="small">{friend.meeted}</li>
+        </ul>
+      </div>
+      <div className="ms-md-auto d-flex">
+        <Button
+        variant="primary"
+        size="sm"
+        className="mb-0 me-2"
+        onClick={() => UserRequest(friend.id)}
+        disabled={loading === friend.id}
+        >
+        {loading === friend.id ? <Loading size={16} /> : 'Connect'}
+        </Button>
+      </div>
+      </div>
+      ))}
+      </InfiniteScroll>
+    </CardBody>
+    </Card>  
   );
 };
 

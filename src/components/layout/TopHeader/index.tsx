@@ -52,8 +52,7 @@ const TopHeader = () => {
       display: 'flex',
       alignItems: 'center', // Vertically centers all items
       justifyContent: 'space-between', // Space items evenly between
-      padding: '10px 80px', // Adds padding to the container
-      paddingBottom : '10px',
+      padding: '0px 80px', // Adds padding to the container
     }}
   >
     {/* Left side: Logo and MobileMenu */}
