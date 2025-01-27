@@ -490,6 +490,7 @@ import title from "@/assets/title 02.png"
 import { profilePanelLinksData1 } from '@/assets/data/layout';
 import ProfilePanel from '@/components/layout/ProfilePanel';
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
+import TopHeader from '@/components/layout/TopHeader';
 
 const MarketplaceDetails = () => {
   const [profile, setProfile] = useState({});
@@ -577,8 +578,8 @@ const MarketplaceDetails = () => {
   return (
     <div style={{ height: '100vh' }}>
       {/* Header */}
-      <TopBar />
-      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' }}>
+      <TopHeader></TopHeader>
+      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' ,marginTop:"60px"}}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
@@ -601,7 +602,7 @@ const MarketplaceDetails = () => {
       </div>
 
       {/* Main Content with Profile Panel */}
-      <div style={{ display: 'flex', height: 'calc(100vh - 8rem)' }}>
+      <div style={{ display: 'flex', height: 'calc(100vh - 8rem)'  }}>
         {/* Profile Panel */}
         <div style={{ width: '280px', borderRight: '1px solid #e5e7eb', backgroundColor: '#f8f9fa', marginTop:"25px"}}>
           <SimplebarReactClient style={{ height: '100%' }}>
