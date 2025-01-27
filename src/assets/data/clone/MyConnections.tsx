@@ -155,7 +155,7 @@ const MyConnections = () => {
 {/* <ToastContainer /> */}
       <Card>
         <CardHeader className="border-0 pb-0">
-          <CardTitle>My Connections</CardTitle>
+          {/* <CardTitle>My Connections</CardTitle> */}
         </CardHeader>
         <CardBody>
         {allConnections && allConnections.map((connection, idx) => (

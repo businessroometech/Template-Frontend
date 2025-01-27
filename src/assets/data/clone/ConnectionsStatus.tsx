@@ -91,8 +91,10 @@ const ConnectionsStatus = () => {
         }
     };
 
-    const handleCancel = async (req:string) => {
-        setLoading(true);
+    const handleCancel = async (req: string) => {
+        // Set loading to true only for the specific profileId
+        setLoadingStates((prev) => ({ ...prev, [req]: true }));
+
         const apiUrl = " http://54.177.193.30:5000/api/v1/connection/unsend-connection-request";
         try {
             const res = await fetch(apiUrl, {
@@ -117,17 +119,16 @@ const ConnectionsStatus = () => {
             console.error(`Error while unsending connection request:`, error);
             toast.error(`Failed to unsend connection request.`);
         } finally {
-            setLoading(false);
+            // Set loading to false only for the specific profileId
+            setLoadingStates((prev) => ({ ...prev, [req]: false }));
         }
     };
-
-   
 
     return (
         <>
             <Card>
                 <CardHeader className="border-0 pb-0">
-                    <CardTitle>Connections status</CardTitle>
+                    {/* <CardTitle>Connections status</CardTitle> */}
                     {/* Dropdown for filtering connection status */}
                     {/* <div className="d-flex justify-content-end">
                         <select
@@ -169,18 +170,23 @@ const ConnectionsStatus = () => {
 
                                 </div>
                             </div>
-                            <div className="ms-md-auto d-flex">
-                                <p variant="danger-soft"
-                                    className="me-2 btn w-100 text-danger"
+                            <div className="ms-md-auto d-flex align-items-center">
+                                <Button
+                                    variant="outline-danger"
+                                    className="me-2"
                                     onClick={() => handleCancel(connection.receiver.id)}
-                                    disabled={loading}
+                                    disabled={loadingStates[connection.receiver.id]}
+                                    style={{ minWidth: '120px' }}
                                 >
-                                    {loading ? <span>Loading...</span> : "cancel request"}
-                                </p>
-
-                                <p className={` text-warning ms-sm-2 btn`}>
-                                    {connection.status}
-                                </p>
+                                    {loadingStates[connection.receiver.id] ? <span>Loading...</span> : "Cancel"}
+                                </Button>
+                                <Button
+                                    variant={connection.status === 'accepted' ? 'outline-success' : connection.status === 'rejected' ? 'outline-danger' : 'outline-secondary'}
+                                    className="ms-sm-2 mb-0"
+                                    disabled
+                                >
+                                    {connection.status === 'pending' && 'Pending'}
+                                </Button>
                             </div>
                         </div>
                     ))}
