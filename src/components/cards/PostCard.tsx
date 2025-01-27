@@ -420,7 +420,7 @@ function LikeText(allLikes : Like[]) {
             wordWrap: 'break-word', // Prevent horizontal overflow for long words
             lineHeight: '16px',
             color : 'black',
-            maxHeight: isExpanded ? 'none' : '185px',
+            maxHeight: isExpanded ? 'none' : '192px',
             overflow: 'hidden',
           }}
         >
