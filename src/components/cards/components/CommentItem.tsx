@@ -180,8 +180,9 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
         {/* Comment Content */}
         <div
-          className="bg-light rounded p-3 flex-grow-1"
+          className="bg-white rounded p-3 flex-grow-1"
           style={{
+            border: '1px solid #e0e0e0',
             wordWrap: 'break-word',
             overflowWrap: 'break-word',
             wordBreak: 'break-word',
