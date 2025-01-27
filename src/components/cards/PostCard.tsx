@@ -15,6 +15,7 @@ import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
+import { FaGlobe } from 'react-icons/fa';
 
 interface Like {
   id: string;
@@ -73,6 +74,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
   const [showReactions,setShowReactions] = useState<boolean>(false);
   const [allLikes,setAllLikes] = useState<Like[]>([]);
+  const [isExpanded,setIsExpanded] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
@@ -285,13 +287,15 @@ function LikeText(allLikes : Like[]) {
         cursor: "pointer",
         transition: "color 0.2s, text-decoration 0.2s",
       }}
-      onMouseEnter={(e) => {
-        e.target.style.color = "#1EA1F2";
-        e.target.style.textDecoration = "underline";
+      onMouseEnter={(e : React.MouseEvent<HTMLSpanElement>) => {
+        const target = e.target as HTMLSpanElement;
+        target.style.color = "#1EA1F2";
+        target.style.textDecoration = "underline";
       }}
       onMouseLeave={(e) => {
-        e.target.style.color = "inherit";
-        e.target.style.textDecoration = "none";
+        const target = e.target as HTMLSpanElement;
+        target.style.color = "inherit";
+        target.style.textDecoration = "none";
       }}
     >
       {str}
@@ -342,6 +346,23 @@ function LikeText(allLikes : Like[]) {
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
                       {userInfo?.timestamp}
+                      <span
+                      className='nav-item small'
+                      style={{
+                        borderRadius: '100%',
+                        width: '3px', // Adjust size of the dot as needed
+                        height: '3px', // Adjust size of the dot as needed
+                        backgroundColor: '#8b959b',
+                        marginLeft: '8px', // Space between dot and icon
+                      }}
+                    />
+                    <FaGlobe
+                      style={{
+                        color: '#8b959b', // Adjust the color of the globe icon as needed
+                        fontSize: '12px', // Adjust the size of the globe icon as needed
+                        marginLeft: '6px', // Space between dot and icon
+                      }}
+                    />
                     </span>
                   </div>
                 </h6>
@@ -391,19 +412,30 @@ function LikeText(allLikes : Like[]) {
 
       <CardBody>
       {post?.content && (
-     <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-     <div
-       className="w-full"
-       style={{
-         whiteSpace: "pre-wrap", // Preserve line breaks
-         wordWrap: "break-word", // Prevent horizontal overflow for long words
-         lineHeight : '16px'
-       }}
-     >
-       {post.content}
-     </div>
-   </div>
-  )}
+      <div className="mb-1 p-1 bg-gray-100 rounded-lg">
+        <div
+          className="w-full"
+          style={{
+            whiteSpace: 'pre-wrap', // Preserve line breaks
+            wordWrap: 'break-word', // Prevent horizontal overflow for long words
+            lineHeight: '16px',
+            maxHeight: isExpanded ? 'none' : '250px',
+            overflow: 'hidden',
+          }}
+        >
+          {post.content}
+        </div>
+        {!isExpanded && post.content.length > 250 && (
+          <span
+            className="text-blue-500 mt-1 cursor-pointer"
+            onClick={() => setIsExpanded(true)}
+          >
+            ...read more
+          </span>
+        )}
+      </div>
+    )
+  }
 
   {media.length > 0 && (
     isVideo ? (
