@@ -137,7 +137,7 @@ const AppMenu = () => {
     fetchConnections();
     try {
     socket.emit("connect", user?.id);
-    socket.on('connect', () => {
+    socket.on('connections', () => {
       fetchConnections();      
     });
 

@@ -270,7 +270,6 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     }
     handleGetAllLikesForPost(post.Id)
   };
-  // // console.log(allLikes);
 
   function LikeText(allLikes: Like[]) {
     let str = '';
