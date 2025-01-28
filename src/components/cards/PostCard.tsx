@@ -16,6 +16,7 @@ import { mixed } from 'yup';
 import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
 import { FaGlobe } from 'react-icons/fa';
+import RepostModal from './RepostModal';
 
 interface Like {
   id: string;
@@ -77,6 +78,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   const [allLikes, setAllLikes] = useState<Like[]>([]);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
+  const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
@@ -244,6 +246,8 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       console.error('Error posting comment:', error);
     }
   };
+
+  
 
   const toggleLike = async () => {
     setLikeStatus((prev) => !prev);
@@ -507,11 +511,14 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
             variant="ghost"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
             style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+            onClick={() => setShowRepostOp(true)}
           >
             <Repeat size={16} />
             {/* <span>Repost</span> */}
           </Button>
-
+            {
+              <RepostModal isOpen={showRepostOp} onClose={() => setShowRepostOp(false)} authorName={userInfo?.firstName} item={item} />
+            }
           {/* <Button
             variant="ghost"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
