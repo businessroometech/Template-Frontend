@@ -7,7 +7,7 @@ import Music from './components/Music'
 import OfficialTrailer from './components/OfficialTrailer'
 import TrendingVideos from './components/TrendingVideos'
 
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import backgroundImg from '@/assets/images/post/16by9/big/02.jpg'
 import PageMetaData from '@/components/PageMetaData'
 import VideoLayout from './components/VideoLayout'

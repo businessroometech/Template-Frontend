@@ -13,7 +13,7 @@ import TopHeader from '@/components/layout/TopHeader';
 // eslint-disable-next-line no-sparse-arrays
 const categories = [
     'SaaS', 'Mobile App',"Shopify app",, 'E-commerce', "Marketplace",'Agency'
-   ,'Content' , 
+    , 
 ];
 
 const MarketPlace = () => {
@@ -42,7 +42,7 @@ const MarketPlace = () => {
       // console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(` http://54.177.193.30:5000/businessseller/detail/${user.id}`);
+          const response = await fetch(`http://54.177.193.30:5000/businessseller/detail/${user.id}`);
           const data = await response.json();
           
           setMyBusinessData(Array.isArray(data) ? data : [data]);
@@ -155,7 +155,7 @@ const MarketPlace = () => {
     
           <SimplebarReactClient className="offcanvas-start" style={{marginBottom : "20px", backgroundColor: "#f8f9fa"}}>
           <ProfilePanel links={profilePanelLinksData1} />
-          </SimplebarReactClient>            
+          </SimplebarReactClient>              
         </div>
         <div className="col-md-9" style={{ padding: '2rem' }}>
             <div style={{ 

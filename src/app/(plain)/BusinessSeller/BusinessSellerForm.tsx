@@ -736,15 +736,17 @@ const BusinessSellerForm = () => {
     
     const dataToSend = {
       ...formData,
-      UserId: user?.id
+      UserId: user?.id,
+      OwnerDetails : [user]
     };
-
+console.log("------user for form----------" , user)
     try {
-      const response = await fetch(' http://54.177.193.30:5000/businessseller/create', {
+      const response = await fetch(' http://localhost:5000/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'UserId': user?.id
+          'UserId': user?.id,
+          OwnerDetails : [user]
         },
         body: JSON.stringify(dataToSend)
       });

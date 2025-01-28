@@ -297,7 +297,7 @@ export const ConnectionRequest = () => {
       variant="danger-soft"
       className="mx-1"
       disabled={loading === follower?.requesterDetails?.id}
-      style={{ transition: 'background-color 0.3s' }}
+      style={{ transition: 'background-color 0.3s' , minWidth: '120px' }}
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
       >
@@ -312,7 +312,7 @@ export const ConnectionRequest = () => {
       variant="success-soft"
       className="mx-1"
       disabled={loading === follower?.requesterDetails?.id}
-      style={{ transition: 'background-color 0.3s' }}
+      style={{ transition: 'background-color 0.3s' , minWidth: '120px'}}
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
       >
@@ -724,7 +724,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   {/* Profile Details */}
                   <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
                     <li className="list-inline-item">
-                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation : user.userRole}
+                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation.replace(/^entrepreneur$/i, 'Entrepreneur') : user.userRole.replace(/^entrepreneur$/i, 'Entrepreneur')}
                     </li>
                     <li className="list-inline-item">
                       <BsGeoAlt className="me-1" />{' '}

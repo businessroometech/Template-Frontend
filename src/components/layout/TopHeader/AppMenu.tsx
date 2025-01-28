@@ -76,6 +76,7 @@ const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
       target={item.target}
       style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
     >
+      {item.url==="/settings/ManageConnections"? <><p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:32, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{5}</p> <p className='bg-success px-1 rounded-pill' style={{position:"absolute", top:0 , left:48, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{5}</p> </>:""}
     <div
       style={{
         padding: '8px',
@@ -145,25 +146,26 @@ const AppMenu = () => {
 
   return (
     <ul className={clsx('navbar-nav navbar-nav-scroll ms-auto')}>
+
       {(menuItems ?? []).map((item, idx) => {
         return (
           <Fragment key={item.key + idx}>
             {item.children ? (
               <MenuItemWithChildren
-                item={item}
-                activeMenuItems={activeMenuItems}
-                level={1}
-                itemClassName="nav-item"
-                linkClassName={clsx('nav-link content-none d-flex align-items-center gap-1 justify-content-between', {
-                  active: activeMenuItems.includes(item.key),
-                })}
+              item={item}
+              activeMenuItems={activeMenuItems}
+              level={1}
+              itemClassName="nav-item"
+              linkClassName={clsx('nav-link content-none d-flex align-items-center gap-1 justify-content-between', {
+                active: activeMenuItems.includes(item.key),
+              })}
               />
             ) : (
               <MenuItem
-                item={item}
-                level={1}
-                itemClassName="nav-item"
-                linkClassName={clsx('nav-link', activeMenuItems.includes(item.key) && 'active')}
+              item={item}
+              level={1}
+              itemClassName="nav-item"
+              linkClassName={clsx('nav-link', activeMenuItems.includes(item.key) && 'active')}
               />
             )}
           </Fragment>

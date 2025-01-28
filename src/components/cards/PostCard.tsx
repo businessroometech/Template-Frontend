@@ -9,7 +9,7 @@ import LoadContentButton from '../LoadContentButton';
 import { CircleUserRound } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
-import fallBackAvatar from '../../assets/images/avatar/01.jpg';
+import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
 import VideoPlayer from './components/VideoPlayer';
 import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
@@ -58,6 +58,7 @@ interface GetAllLikesResponse {
 
 
 const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts,profile}) => {
+  // console.log(posts);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -349,7 +350,9 @@ function LikeText(allLikes : Like[]) {
                   </Link>
                   <div style={{flex : 1,flexDirection : 'row'}}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
-                      {userInfo?.userRole ? userInfo?.userRole : null}
+                      {console.log(post,'---userInfo---')}
+                      {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
+                      {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
                       <span className='mx-2'></span>
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>

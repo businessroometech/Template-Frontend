@@ -3,7 +3,7 @@ import { addOrSubtractMinutesFromDate } from '@/utils/date'
 import logo12 from '@/assets/images/logo/12.svg'
 import { Link } from 'react-router-dom'
 
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'
