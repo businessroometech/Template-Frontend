@@ -56,7 +56,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-        const response = await fetch(' http://54.177.193.30:5000/businessseller/getall');
+        const response = await fetch('http://54.177.193.30:5000/businessseller/getall');
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 

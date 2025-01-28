@@ -481,6 +481,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
 import TopBar from '../landing/components/TopBar';
+import defaultavatar from "@/assets/images/avatar/default avatar.png"
 import { 
   Building2, BadgeDollarSign, Users, Briefcase, MapPin, TrendingUp,
   PiggyBank, Calendar, Shield, Target, BarChart, FileText,
@@ -544,6 +545,7 @@ const MarketplaceDetails = () => {
       </div>
     );
   }
+console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
 
   const KeyMetric = ({ icon: Icon, label, value }) => (
     <div className="card" style={{ 
@@ -579,7 +581,7 @@ const MarketplaceDetails = () => {
     <div style={{ height: '100vh' }}>
       {/* Header */}
       <TopHeader></TopHeader>
-      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' ,marginTop:"60px"}}>
+      {/* <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' ,marginTop:"60px"}}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
@@ -599,10 +601,10 @@ const MarketplaceDetails = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content with Profile Panel */}
-      <div style={{ display: 'flex', height: 'calc(100vh - 8rem)'  }}>
+      <div style={{ display: 'flex', height: 'calc(100vh - 8rem)', marginTop:"60px", marginLeft:"20px"}}>
         {/* Profile Panel */}
         <div style={{ width: '280px', borderRight: '1px solid #e5e7eb', backgroundColor: '#f8f9fa', marginTop:"25px"}}>
           <SimplebarReactClient style={{ height: '100%' }}>
@@ -611,7 +613,7 @@ const MarketplaceDetails = () => {
         </div>
 
         {/* Main Content */}
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div style={{ flex: 1,  }}>
           <div style={{ padding: '1.5rem' }}>
             <div className="row">
               <div className="col-8" style={{ paddingRight: '1.5rem' }}>
@@ -747,7 +749,7 @@ const MarketplaceDetails = () => {
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                     <img 
-                      src={profile.profileImgUrl || 'https://via.placeholder.com/60'} 
+                      src={ businessDetails.data.OwnerImage|| defaultavatar} 
                       alt="Profile" 
                       style={{ 
                         width: '60px', 
