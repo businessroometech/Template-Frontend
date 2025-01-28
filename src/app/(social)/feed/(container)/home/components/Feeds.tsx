@@ -497,7 +497,7 @@ const Post3 = () => {
   )
 }
 
-const socket = io('http://54.177.193.30:5000'); 
+// const socket = io('http://54.177.193.30:5000'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
@@ -515,21 +515,21 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [flag, setflag] = useState(false);
   
  
-useEffect(() => {
+// useEffect(() => {
   
-  socket.on('postSent', (data:any) => {
-    if (data.success) {
-      setflag(data.success);
-      console.log('Post was sent successfully:', data.postId);
-    } else {
-      console.log('Failed to send post');
-    }
-  });
+//   socket.on('postSent', (data:any) => {
+//     if (data.success) {
+//       setflag(data.success);
+//       console.log('Post was sent successfully:', data.postId);
+//     } else {
+//       console.log('Failed to send post');
+//     }
+//   });
 
-  return () => {
-    socket.off('postSent');
-  };
-}, [user?.id, flag]);
+//   return () => {
+//     socket.off('postSent');
+//   };
+// }, [user?.id, flag]);
 
   const fetchPosts = async () => {
 
@@ -549,9 +549,15 @@ useEffect(() => {
         return;
       }
       setLoading(false)
-      console.log('Fetched Posts:', res.data);
+      // console.log('Fetched Posts:', res.data);
       // console.log('What is res data',res.data);
-      setPosts(previousPosts => [...previousPosts, ...res.data.posts])
+      setPosts((previousPosts) => {
+        const newPosts = res.data.posts.filter(
+          (newPost) => !previousPosts.some((oldPost) => oldPost.post.Id === newPost.post.Id)
+        );
+        return [...previousPosts, ...newPosts];
+      });
+      // console.log('Posts:', posts);
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
       setError(error.message || 'An unknown error occurred')
@@ -564,7 +570,7 @@ useEffect(() => {
     // Fetch posts on mount
     const fetchUser = async () => {
       try {
-        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch('http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -592,7 +598,7 @@ useEffect(() => {
 
 
     if (!hasMounted.current) {
-      fetchPosts();
+      // fetchPosts();
       fetchUser();
       hasMounted.current = true;
     }
@@ -601,11 +607,11 @@ useEffect(() => {
   useEffect(() => {
     // Refetch posts when `isCreated` changes
     if (isCreated) {
-      setPosts([]); // Reset posts
-      setPage(1); // Reset page to 1
+      // setPosts([]); // Reset posts
+      // setPage(1); // Reset page to 1
       setHasMore(true); // Reset pagination state
-      fetchPosts();
-      setflag(false)
+      // fetchPosts();
+      // setflag(false)
     }
   }, [isCreated]);
 
@@ -712,13 +718,12 @@ const PostSkeleton = () => {
             }
             // Matches the id of the scrollable container
           >
-            
             {posts.map((post, index) => (
               <PostCard
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.id || index}
+                key={post.post.Id}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}
