@@ -497,7 +497,7 @@ const Post3 = () => {
   )
 }
 
-// const socket = io('http://54.177.193.30:5000'); 
+const socket = io('http://54.177.193.30:5000'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
@@ -515,21 +515,21 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [flag, setflag] = useState(false);
 
  
-// useEffect(() => {
+useEffect(() => {
   
-//   socket.on('postSent', (data:any) => {
-//     if (data.success) {
-//       setflag(data.success);
-//       console.log('Post was sent successfully:', data.postId);
-//     } else {
-//       console.log('Failed to send post');
-//     }
-//   });
+  socket.on('postSent', (data:any) => {
+    if (data.success) {
+      setflag(data.success);
+      console.log('Post was sent successfully:', data.postId);
+    } else {
+      console.log('Failed to send post');
+    }
+  });
 
-//   return () => {
-//     socket.off('postSent');
-//   };
-// }, [user?.id, flag]);
+  return () => {
+    socket.off('postSent');
+  };
+}, [user?.id, flag]);
 
 const fetchPosts = async () => {
 
@@ -568,7 +568,7 @@ const fetchPosts = async () => {
     
     const fetchUser = async () => {
       try {
-        const response = await fetch('http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -596,7 +596,7 @@ const fetchPosts = async () => {
 
     
     if (!hasMounted.current) {
-      // fetchPosts();
+      fetchPosts();
       fetchUser();
       hasMounted.current = true;
     }
@@ -644,11 +644,12 @@ const fetchPosts = async () => {
 
   useEffect(() => {
     if(page <= 1 || posts.length >= page * 5) return;
+    // alert(`Page is ${page}`)
     console.log('Page Wala use Effect')
     console.log('Page',page);
     // Fetch the next page of posts when `page` changes
     fetchPosts();
-  }, [page]);
+  }, [fetchPosts, page]);
 
   
   const fetchNextPage = () => {
@@ -750,12 +751,13 @@ const PostSkeleton = () => {
             }
             // Matches the id of the scrollable container
           >
+            
             {posts.map((post, index) => (
               <PostCard
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.post.Id}
+                key={post.id || index}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}
