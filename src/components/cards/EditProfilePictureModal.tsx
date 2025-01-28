@@ -4,6 +4,7 @@ import { FaEdit, FaPlus, FaBorderStyle, FaTrash } from "react-icons/fa";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthContext } from "@/context/useAuthContext";
 import { FileUpload, uploadDoc,GetImageWithUrl } from "@/utils/CustomS3ImageUpload";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -70,10 +71,10 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
     const [awsUrl,setAwsUrl] = useState<string>("");
     const [objectUrl,setObjectUrl] = useState<string>("");
     const [loading,setLoading] = useState<boolean>(false);
-
     // console.log('---awsUrl---',awsUrl);
-
+    const navigate = useNavigate();
     const FinalUpload = async () => {
+      
       setLoading(true);
       const url : string[] | false  = await handleUploadprofile();
       // if (url) {
@@ -112,8 +113,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
         console.error('Error updating profile:', error);
       } finally {
         setLoading(false);
-        window.location.reload();
-        
+        navigate("/");
       }
     }
 

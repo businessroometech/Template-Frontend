@@ -95,7 +95,7 @@ const Home = () => {
           </Col>
 
           <Col sm={6} lg={12} style={{}}>
-            <Card>
+            {/* <Card>
               <CardHeader className="pb-0 border-0">
                 <CardTitle className="mb-0">Businessroom News</CardTitle>
               </CardHeader>
@@ -130,7 +130,7 @@ const Home = () => {
 
                 <LoadContentButton name="View all latest news" />
               </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
       </Col>
