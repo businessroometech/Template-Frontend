@@ -5,7 +5,9 @@ import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Link } from "react-router-dom";
 import { BsPersonCheckFill } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa";
+import { FaUserPlus, FaUserCheck, FaUserFriends, FaUsers } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { FaEye, FaUserAlt } from "react-icons/fa";
 
 export const formatTimestamp = (createdAt: Date): string => {
   const now = Date.now();
@@ -122,59 +124,65 @@ const ProfileVisits = () => {
     <div className="container mt-0">
       <Card>
         <CardBody>
-          <div className="d-flex justify-content-between align-center">
-          <h1 className="mb-1 h5 d-flex align-items-center">Who viewed my Profile 
-          <span className="badge text-success small">{visits.length}</span>
-          </h1>
-          </div>
-          <ListGroup>
-            {visits.length && visits.map((visit, index) => (
-              <ListGroupItem key={index} className="d-flex justify-content-between align-items-center">
-                <Link to={`/profile/feed/${visit.visitor.id}`} className="d-flex align-items-center">
-                  <img
-                    src={visit.visitor.profilePicture || avatar7}
-                    alt="Profile"
-                    className="rounded-circle mx-3"
-                    style={{ width: '50px', height: '50px' }}
-                  />
-                  <div>
-                    <h6 className="mb-0 fw-semibold d-flex">
-                      <span>{visit.visitor.firstName} {visit.visitor.lastName}</span>
-                      <span className="badge  text-success small">{visit.visitCount}</span>
-                    </h6>
-                    <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
-                    <p className="mb-0 text-muted">{visit.visitor.createdAt?formatTimestamp(visit.visitor.createdAt) : "1w"}</p>
-                  </div>
-                </Link>
-                <div>
-                  {visit.connectionStatus === "accepted" ? (
-                    <Link to="/messaging" className="mx-2 btn-primary btn btn-sm">
-                      Message
-                    </Link>
-                  ) : visit.connectionStatus === "none" ? (
-                    <Button
-                      variant={sentStatus[visit.visitor.id] ? 'primary' : 'primary-soft'}
-                      className="rounded-circle icon-md ms-auto flex-centered"
-                      onClick={() => handleUserRequest(visit.visitor.id)}
-                      disabled={loading === visit.visitor.id}
-                    >
-                      {loading === visit.visitor.id ? (
-                        <Loading size={15} loading={true} />
-                      ) : (
-                        <span>{sentStatus[visit.visitor.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
-                      )}
-                    </Button>
-                  ) : (
-                    <Button
-                      className={`mx-2 btn-sm ${visit.connectionStatus === "pending" ? "btn-warning" : "btn-danger"}`}
-                    >
-                      {visit.connectionStatus}
-                    </Button>
-                  )}
-                </div>
-              </ListGroupItem>
-            ))}
-          </ListGroup>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+            <h1 className="h5 mb-0 d-flex align-items-center">
+              <FaEye className="me-2" />
+              Who Viewed My Profile
+              <span className="badge bg-success ms-2">{visits.length}</span>
+            </h1>
+            </div>
+            <ListGroup>
+  {visits.length > 0 && visits.map((visit, index) => (
+    <ListGroupItem key={index} className="d-flex align-items-center justify-content-between py-3 px-4 rounded shadow-sm mb-3">
+      <Link to={`/profile/feed/${visit.visitor.id}`} className="d-flex align-items-center text-decoration-none">
+        <img
+          src={visit.visitor.profilePicture || avatar7}
+          alt="Profile"
+          className="rounded-circle mx-3"
+          style={{ width: '50px', height: '50px' }}
+        />
+        <div>
+          <h6 className="mb-1 fw-semibold d-flex justify-content-between">
+            <span>{visit.visitor.firstName} {visit.visitor.lastName}</span>
+            <span className="badge text-success small">{visit.visitCount}</span>
+          </h6>
+          <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
+          <p className="mb-0 text-muted">
+            {visit.visitor.createdAt ? formatTimestamp(visit.visitor.createdAt) : "1w"}
+          </p>
+        </div>
+      </Link>
+      <div className="d-flex align-items-center">
+        {visit.connectionStatus === "accepted" ? (
+          <Link to="/messaging" className="mx-2 btn btn-primary btn-sm">
+            Message
+          </Link>
+        ) : visit.connectionStatus === "none" ? (
+            <Button
+            variant="primary"
+            size="sm"
+            className="mb-0 me-2"
+            style={{ minWidth: '85px' }}
+            onClick={() => handleUserRequest(visit.visitor.id)}
+            disabled={loading === visit.visitor.id}
+            >
+            {loading === visit.visitor.id ? <Loading size={16} /> : 'Connect'}
+            </Button>
+          ) : (
+            <Button
+              variant={visit.connectionStatus === 'accepted' ? 'outline-success' : visit.connectionStatus === 'rejected' ? 'outline-danger' : 'outline-secondary'}
+              className="ms-sm-2 mb-0"
+              disabled
+              style={{ minWidth: '85px' }}
+            >
+              {visit.connectionStatus === 'pending' && 'Pending' || visit.connectionStatus === 'rejected' && 'Pending'}
+            </Button>
+        )}
+      </div>
+    </ListGroupItem>
+  ))}
+</ListGroup>
+
         </CardBody>
       </Card>
     </div>
@@ -271,67 +279,70 @@ const ProfileVisited = () => {
     <div className="container mt-0">
       <Card>
         <CardBody>
-          <div className="d-flex justify-content-between align-center">
-            <h1 class="mb-1 h5 d-flex align-items-center">
-              Profiles I visited
-                      <span className="badge  text-success small">{visits.length}</span></h1>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+            <h1 className="h5 mb-0 d-flex align-items-center">
+              <FaUserAlt className="me-2" />
+              Profiles I've Viewed
+              <span className="badge bg-success ms-2">{visits.length}</span>
+            </h1>
+            </div>
+            <ListGroup>
+  {visits.length > 0 && visits.map((visit, index) => (
+    <ListGroupItem
+      key={index}
+      className="d-flex align-items-center justify-content-between py-3 px-4 rounded shadow-sm mb-3"
+    >
+      <Link to={`/profile/feed/${visit.profile.id}`} className="d-flex align-items-center text-decoration-none">
+        <img
+          src={visit.profile.profilePicture || avatar7}
+          alt="Profile"
+          className="rounded-circle mx-3"
+          style={{ width: "50px", height: "50px" }}
+        />
+        <div>
+          <h6 className="mb-1 fw-semibold d-flex justify-content-between">
+            <span>
+              {visit.profile.firstName} {visit.profile.lastName}
+            </span>
+            <span className="badge text-success small">{visit.visitCount}</span>
+          </h6>
+          <p className="mb-0 text-muted">{visit.profile.userRole}</p>
+          <p className="mb-0 text-muted">
+            {visit.profile.createdAt ? formatTimestamp(visit.profile.createdAt) : "1w"}
+          </p>
+        </div>
+      </Link>
+      <div className="d-flex align-items-center">
+        {visit.connectionStatus === "accepted" ? (
+          <Link to="/messaging" className="mx-2 btn btn-primary btn-sm">
+            Message
+          </Link>
+        ) : visit.connectionStatus === "none" ? (
+            <Button
+            variant="primary"
+            size="sm"
+            className="mb-0 me-2"
+            style={{ minWidth: '85px' }}
+            onClick={() => handleUserRequest(visit.profile.id)}
+            disabled={loading === visit.profile.id}
+            >
+            {loading === visit.profile.id ? <Loading size={16} /> : 'Connect'}
+            </Button>
+        ) : (
+            <Button
+              variant={visit.connectionStatus === 'accepted' ? 'outline-success' : visit.connectionStatus === 'rejected' ? 'outline-danger' : 'outline-secondary'}
+              className="ms-sm-2 mb-0"
+              disabled
+              style={{ minWidth: '85px' }}
+            >
+              {visit.connectionStatus === 'pending' && 'Pending'|| visit.connectionStatus === 'rejected' && 'Pending'}
+            </Button>
+        )}
+      </div>
+    </ListGroupItem>
+  ))}
+</ListGroup>
 
-            {/* <CardTitle className="bg-info px-3 pt-2 rounded text-white d-flex align-center justify-center">{visits.length}</CardTitle> */}
-          </div>
-          <ListGroup>
-            {visits.length > 0 && visits.map((visit, index) => (
-              <ListGroupItem
-                key={index}
-                className="d-flex rounded justify-content-between align-items-center"
-              >
-                <Link to={`/profile/feed/${visit.profile.id}`} className="d-flex align-items-center">
-                  <img
-                    src={visit.profile.profilePicture || avatar7}
-                    alt="Profile"
-                    className="rounded-circle mx-3"
-                    style={{ width: "50px", height: "50px" }}
-                  />
-                  <div>
-                    <h6 className="mb-0 fw-semibold d-flex">
-                      <span>
-                        {visit.profile.firstName} {visit.profile.lastName}
-                      </span>
-                     
-                      <span className="badge  text-success small">{visit.visitCount}</span>
-                    </h6>
-                    <p className="mb-0 text-muted">{visit.profile.userRole}</p>
-                    <p className="mb-0 text-muted">{visit.profile.createdAt?formatTimestamp(visit.profile.createdAt) : "1w"}</p>
-                  </div>
-                </Link>
-                <div>
-                  {visit.connectionStatus === "accepted" ? (
-                    <Link to="/messaging" className="mx-2 btn-primary btn btn-sm">
-                      Message
-                    </Link>
-                  ) : visit.connectionStatus === "none" ? (
-                    <Button
-                      variant={sentStatus[visit.profile.id] ? 'primary' : 'warning-soft'}
-                      className="rounded-circle icon-md ms-auto flex-centered"
-                      onClick={() => handleUserRequest(visit.profile.id)}
-                      disabled={loading === visit.profile.id}
-                    >
-                      {loading === visit.profile.id ? (
-                        <Loading size={15} loading={true} />
-                      ) : (
-                        <span>{sentStatus[visit.profile.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
-                      )}
-                    </Button>
-                  ) : (
-                    <Button
-                      className={`mx-2 btn-sm ${visit.connectionStatus === "pending" ? "btn-warning" : "btn-danger"}`}
-                    >
-                      {visit.connectionStatus}
-                    </Button>
-                  )}
-                </div>
-              </ListGroupItem>
-            ))}
-          </ListGroup>
         </CardBody>
       </Card>
     </div>
@@ -340,19 +351,49 @@ const ProfileVisited = () => {
 
 
 
+const visitProfile = () => {
+  const [step, setStep] = useState(0);
 
-const Home = () => {
+  const sections = [
+    {
+      title: "Who Viewed My Profile",
+      icon: <FaEye style={{ marginRight: "8px" }} />,
+      component: <ProfileVisits />
+    },
+    {
+      title: "Profiles I've Viewed",
+      icon: <FaUserAlt style={{ marginRight: "8px" }} />,
+      component: <ProfileVisited />
+    }
+  ];
+
+  const setCurrentSection = (index) => {
+    setStep(index);
+  };
 
   return (
-    <>
-      <Col md={8} lg={6}
-        className="vstack gap-4 "
-      >
-        <ProfileVisits />
-        <ProfileVisited />
-      </Col>
-    </>
+    <div className="container">
+      <div className="d-flex justify-content-center mb-4 flex-wrap" >
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            type="button"
+            className="btn mx-2 mb-2 d-flex align-items-center"
+            style={{
+              backgroundColor: step === index ? "#1ea1f2" : "transparent",
+              borderColor: "#1ea1f2",
+              color: step === index ? "white" : "#1ea1f2",
+            }}
+            onClick={() => setCurrentSection(index)}
+          >
+            {section.icon} {section.title}
+          </button>
+        ))}
+      </div>
+      <div>{sections[step].component}</div>
+    </div>
   );
 };
 
-export default Home;
+export default visitProfile;
+
