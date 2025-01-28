@@ -1,7 +1,7 @@
 
 import { Button, Card, Col, Container, Row } from 'react-bootstrap'
 
-import appPlaceholder from '@/assets/images/mockup/app-placeholder3.jpg'
+import appPlaceholder from '@/assets/images/mockup/app-placeholder.jpg'
 import element5 from '@/assets/images/elements/05.svg'
 import { featureData, type FeatureType } from '../data'
 
