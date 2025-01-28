@@ -9,6 +9,7 @@ import { findAllParent, findMenuItem, getAppMenuItems, getMenuItemFromURL } from
 import type { MenuItemType } from '@/types/menu'
 import { io } from 'socket.io-client'
 import { useAuthContext } from '@/context/useAuthContext'
+import { Flag } from 'lucide-react'
 type SubMenus = {
   item: MenuItemType
   itemClassName?: string
@@ -132,13 +133,12 @@ const AppMenu = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    fetchConnections();
     setInterval(() => {
       fetchConnections();
         }
-        , 90000);
+        , 120000);
   }
-  ,[user?.id] );
+  ,[user?.id, Flag] );
      
 
 

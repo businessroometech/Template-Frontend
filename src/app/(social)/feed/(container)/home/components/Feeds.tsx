@@ -513,7 +513,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
   const [flag, setflag] = useState(false);
-  
+
  
 // useEffect(() => {
   
@@ -542,7 +542,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
-
+      
       if(res.message === "No posts found for this user."){
         setHasMore(false);
         console.log('went in');
