@@ -46,6 +46,7 @@ import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
 import { io } from 'socket.io-client';
+import { FaArrowUp } from 'react-icons/fa';
 
 // ----------------- data type --------------------
 interface Post {
@@ -513,7 +514,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [flag, setflag] = useState(false);
   // const [limit,setLimit] = useState<number>(5);
 //  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
-  
+
 const socket = io('http://54.177.193.30:5000'); 
 useEffect(() => {
   
@@ -606,6 +607,7 @@ useEffect(() => {
       setPage(1); // Reset page to 1
       setHasMore(true); // Reset pagination state
       fetchPosts();
+      setflag(false)
     }
   }, [isCreated]);
 
@@ -687,17 +689,17 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag && <Button
-          className="position-fixed start-50 translate-middle-x"
-          onClick={() => fetchPosts()}
-          style={{ zIndex: 9999, top: '2em' }}
+     {flag && <Link to="/feed/home"
+          className="position-fixed start-50 translate-middle-x btn btn-primary"
+          onClick={() => setShowNewPostButton(true)}
+          style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
         >
-          ⬆️ New Posts
-        </Button>}
+          <FaArrowUp color='#fff' /> &nbsp;New posts
+        </Link>}
           <InfiniteScroll
-            dataLength={posts.length} // Total number of posts
-            next={fetchNextPage} // Function to fetch the next page of posts
-            hasMore={hasMore} // Boolean indicating whether more posts are available
+            dataLength={posts.length} 
+            next={fetchNextPage} 
+            hasMore={hasMore} 
             loader={
               <div>
                 {[...Array(5)].map((_, index) => (
@@ -712,23 +714,13 @@ const PostSkeleton = () => {
             }
             // Matches the id of the scrollable container
           >
-            {showNewPostButton && (
-              <Link
-                to="/feed/home#"
-                className="btn-primary"
-                onClick={() => setShowNewPostButton(false)}
-                style={{ zIndex: 99, top: '4em', position: 'fixed', left: '47%' }}
-              >
-                ⬆️ New Posts
-              </Link>
-            )}
-
+            
             {posts.map((post, index) => (
               <PostCard
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.Id || index}
+                key={post.id || index}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}

@@ -31,7 +31,7 @@ const Home = () => {
       socket.emit("userOnline", user.id);
 
       // Log connection status
-      socket.on('connect', () => {
+      socket.on('connections', () => {
           // console.log('Socket connected:', socket.id);
       });
 

@@ -163,7 +163,7 @@ const SuggestedConnections = () => {
         onClick={() => UserRequest(friend.id)}
         disabled={loading === friend.id}
         >
-        {loading === friend.id ? <Loading size={16} /> : 'Connect'}
+        {loading === friend.id ? <Loading size={16} /> : 'connections'}
         </Button>
       </div>
       </div>
