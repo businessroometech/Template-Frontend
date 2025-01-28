@@ -187,7 +187,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   
     if(level < 1) fetchData();
     if(!profile) fetchUser()
-  }, [comment.id]);
+  }, [comment.commenterId, comment.id, commentRefresh, level, profile]);
   
   // console.log('this is replies',replies);
 
@@ -206,9 +206,9 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
         {/* Comment Content */}
         <div
-          className="bg-white rounded p-3 flex-grow-1"
+          className="bg-white rounded p-1 flex-grow-1"
           style={{
-            border: '1px solid #e0e0e0',
+            // border: '1px solid #e0e0e0',
             wordWrap: 'break-word',
             overflowWrap: 'break-word',
             wordBreak: 'break-word',

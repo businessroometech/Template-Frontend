@@ -184,6 +184,7 @@ const ConnectionsStatus = () => {
                                     variant={connection.status === 'accepted' ? 'outline-success' : connection.status === 'rejected' ? 'outline-danger' : 'outline-secondary'}
                                     className="ms-sm-2 mb-0"
                                     disabled
+                                    style={{ minWidth: '120px' }}
                                 >
                                     {connection.status === 'pending' && 'Pending'}
                                 </Button>

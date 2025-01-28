@@ -58,6 +58,7 @@ interface GetAllLikesResponse {
 
 
 const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts,profile}) => {
+  // console.log(posts);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -78,8 +79,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [openComment,setOpenComment] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
-  // // console.log(profile);
-  // // console.log("Profile In PostCard",profile);
+  // console.log(profile);
+  // console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -245,6 +246,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   };
 
   const toggleLike = async () => {
+    setLikeStatus((prev) => !prev);
+    likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
     try {
       const response = await fetch('http://54.177.193.30:5000/api/v1/post/create-like', {
         method: 'POST',
@@ -254,9 +257,13 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
         body: JSON.stringify({ userId: user?.id, postId: post.Id, status: !likeStatus }),
       });
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      setLikeStatus((prev) => !prev);
-      likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
+      if (!response.ok) {
+        setLikeStatus((prev) => !prev);
+        likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount+1);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      
       setRefresh((prev) => prev + 1);
     } catch (error) {
       console.error('Error toggling like:', error);
@@ -305,8 +312,9 @@ function LikeText(allLikes : Like[]) {
 
   {/* Right side with comment count */}
   <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-    <span>{commentCount}</span>
+    
     <MdComment size={16} />
+    <span>{commentCount}</span>
   </span>
 </p>
 }
@@ -342,7 +350,9 @@ function LikeText(allLikes : Like[]) {
                   </Link>
                   <div style={{flex : 1,flexDirection : 'row'}}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
-                      {userInfo?.userRole ? userInfo?.userRole : null}
+                      {console.log(post,'---userInfo---')}
+                      {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
+                      {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
                       <span className='mx-2'></span>
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
@@ -421,6 +431,7 @@ function LikeText(allLikes : Like[]) {
             wordWrap: 'break-word', // Prevent horizontal overflow for long words
             lineHeight: '19px',
             color : 'black',
+            fontSize : '16px',
             maxHeight: isExpanded ? 'none' : '192px',
             overflow: 'hidden',
           }}
@@ -469,12 +480,16 @@ function LikeText(allLikes : Like[]) {
   }}
 >
   <Button
-    variant={likeStatus ? "primary" : "ghost"}
+    variant="ghost" // Always remains ghost
     className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
     onClick={toggleLike}
     style={{ fontSize: "0.8rem" }} // Slightly smaller font size
   >
-    {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
+    {likeStatus ? (
+      <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} /> // Blue icon when liked
+    ) : (
+      <ThumbsUp size={16} style={{ color: "inherit" }} /> // Default color when not liked
+    )}
     {/* <span>Like</span> */}
   </Button>
 
