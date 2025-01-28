@@ -1,7 +1,7 @@
 import React from 'react'
 import { currentYear, developedBy, developedByLink } from '@/context/constants'
 import type { ProfilePanelLink } from '@/types/data'
-import { Button, Card, CardBody, CardFooter } from 'react-bootstrap'
+import { Button, Card, CardBody, CardFooter, Image } from 'react-bootstrap'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import avatar7 from '@/assets/images/avatar/default avatar.png'
@@ -80,23 +80,33 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
   return (
     <>
       <Card className="overflow-hidden h-100">
-        <div className="h-50px">
+        <div className="h-60px">
           {!skeletonLoading ? (
             <div
-              style={{
-                backgroundImage: `url(${profile?.coverImgUrl ? profile.coverImgUrl : bgBannerImg})`,
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                height: '100%',
-              }}
-            />
+            className="h-80px rounded-top"
+            style={{
+              position : 'relative',
+              overflow : 'hidden',
+              backgroundPosition: 'center',
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+            }}
+          >
+            <Image
+            src={profile?.coverImgUrl ? profile?.coverImgUrl : background5} // Replace with your actual image source
+            alt="Profile"
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          />
+          </div>
           ) : (
             <Skeleton height={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
           )}
         </div>
 
-        <CardBody className="pt-0">
+        <CardBody className="pt-0" style={{marginTop : '10px'}}>
           <div className="text-center">
             <Link to={`/profile/feed/${user?.id}`}>
               <div className="avatar avatar-lg mt-n5 mb-3">

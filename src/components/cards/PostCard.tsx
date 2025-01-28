@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link } from 'react-router-dom';
-import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp,Lightbulb as Bulb } from 'lucide-react';
+import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp, Lightbulb as Bulb } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
@@ -57,7 +57,7 @@ interface GetAllLikesResponse {
 }
 
 
-const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts,profile}) => {
+const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, posts, setPosts, profile }) => {
   // console.log(posts);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -71,16 +71,16 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const { setTrue, setFalse } = useToggle();
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount || 0);
-  const [menuVisible,setMenuVisible] = useState<boolean>(false);
-  const [isDeleted,setIsDeleted] = useState<boolean>(false);
-  const [showReactions,setShowReactions] = useState<boolean>(false);
-  const [allLikes,setAllLikes] = useState<Like[]>([]);
-  const [isExpanded,setIsExpanded] = useState<boolean>(false);
-  const [openComment,setOpenComment] = useState<boolean>(false);
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const [showReactions, setShowReactions] = useState<boolean>(false);
+  const [allLikes, setAllLikes] = useState<Like[]>([]);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [openComment, setOpenComment] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
-  console.log("Profile In PostCard",profile);
+  // console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -90,38 +90,38 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   }, [post.likeStatus]);
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
-  // console.log(user);
+  // // console.log(user);
 
-  // console.log('---postId---',post.userI
+  // // console.log('---postId---',post.userI
   // d);
-  // console.log('-----testing-----')
+  // // console.log('-----testing-----')
   const deletePost = async (postId: string): Promise<void> => {
     try {
       // Validate PostId
       if (!postId) {
         throw new Error('PostId is required.');
       }
-  
+
       // Send a DELETE request to the backend
       const response = await fetch(' http://54.177.193.30:5000/api/v1/post/delete-userpost-byPostId', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ PostId: post.Id,userId : user?.id }),
+        body: JSON.stringify({ PostId: post.Id, userId: user?.id }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete post.');
       }
-  
+
       const data = await response.json();
-      // console.log('dl',tlRefresh)
+      // // console.log('dl',tlRefresh)
       setIsDeleted(true);
-     
-      // console.log('dlr',tlRefresh);
-      // console.log('Post deleted successfully:', data.message);
+
+      // // console.log('dlr',tlRefresh);
+      // // console.log('Post deleted successfully:', data.message);
       alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
@@ -134,7 +134,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       console.error('Post ID is required');
       return;
     }
-  
+
     try {
       const response = await fetch('http://54.177.193.30:5000/api/v1/post/get-post-likes-list', {
         method: 'POST',
@@ -143,11 +143,11 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
         },
         body: JSON.stringify({ postId }),
       });
-  
+
       if (response.ok) {
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
-          console.log('Likes fetched successfully:', data.data?.likes);
+          // // console.log('Likes fetched successfully:', data.data?.likes);
           setAllLikes(data.data?.likers);
           // Optionally, update the UI with the likes data
         } else {
@@ -173,12 +173,12 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
   };
 
-  const handleDeletePost = (postId : string) => {
-    console.log(`This is the postId's userID ${post.userId},This is the userId ${user?.id}`)
-    if(post.userId === user?.id) {
-        handleDelete(postId)
+  const handleDeletePost = (postId: string) => {
+    // console.log(`This is the postId's userID ${post.userId},This is the userId ${user?.id}`)
+    if (post.userId === user?.id) {
+      handleDelete(postId)
     }
-    else console.log("id did not match")
+    // else // console.log("id did not match")
   }
 
 
@@ -198,7 +198,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
         if (!response.ok) throw new Error('Failed to fetch comments');
         const data = await response.json();
-        // console.log('comments that are fetched : ',data);
+        // // console.log('comments that are fetched : ',data);
         setComments(data.data.comments || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -211,7 +211,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
     if (post?.Id) fetchComments();
   }, [refresh, post?.Id]);
-  // console.log('---item---',item);
+  // // console.log('---item---',item);
 
   const videoPlayer = useMemo(() => {
     if (isVideo) {
@@ -246,73 +246,80 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   };
 
   const toggleLike = async () => {
+    setLikeStatus((prev) => !prev);
+    likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
     try {
       const response = await fetch('http://54.177.193.30:5000/api/v1/post/create-like', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: user?.id, postId: post.Id, status: !likeStatus }),
+        body: JSON.stringify({ userId: user?.id, postId: post.Id, status: likeStatus }),
       });
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      setLikeStatus((prev) => !prev);
-      likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
+      if (!response.ok) {
+        setLikeStatus((prev) => !prev);
+        likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+
       setRefresh((prev) => prev + 1);
     } catch (error) {
       console.error('Error toggling like:', error);
     }
+    handleGetAllLikesForPost(post.Id)
   };
-  // console.log(allLikes);
 
-function LikeText(allLikes : Like[]) {
-  let str = '';
-  if(allLikes.length === 0) return null;
-  else if(allLikes.length === 1) str =  `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
-  else str =  `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} and ${allLikes.length - 1} others`
+  function LikeText(allLikes: Like[]) {
+    let str = '';
+    if (allLikes.length === 0) return null;
+    else if (allLikes.length === 1) str = `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
+    else str = `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} and ${allLikes.length - 1} others`
 
-  return <p
-  style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "4px 8px",
-    margin: "0",
-  }}
->
-  {/* Left side with like icon and text */}
-  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-    <MdThumbUp size={16} />
-    <span
+    return <p
       style={{
-        marginRight: "6px",
-        cursor: "pointer",
-        transition: "color 0.2s, text-decoration 0.2s",
-      }}
-      onMouseEnter={(e : React.MouseEvent<HTMLSpanElement>) => {
-        const target = e.target as HTMLSpanElement;
-        target.style.color = "#1EA1F2";
-        target.style.textDecoration = "underline";
-      }}
-      onMouseLeave={(e) => {
-        const target = e.target as HTMLSpanElement;
-        target.style.color = "inherit";
-        target.style.textDecoration = "none";
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "4px 8px",
+        margin: "0",
       }}
     >
-      {str}
-    </span>
-  </span>
+      {/* Left side with like icon and text */}
+      <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <MdThumbUp size={16} />
+        <span
+          style={{
+            marginRight: "6px",
+            cursor: "pointer",
+            transition: "color 0.2s, text-decoration 0.2s",
+          }}
+          onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+            const target = e.target as HTMLSpanElement;
+            target.style.color = "#1EA1F2";
+            target.style.textDecoration = "underline";
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLSpanElement;
+            target.style.color = "inherit";
+            target.style.textDecoration = "none";
+          }}
+        >
+          {str}
+        </span>
+      </span>
 
-  {/* Right side with comment count */}
-  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-    <span>{commentCount}</span>
-    <MdComment size={16} />
-  </span>
-</p>
-}
+      {/* Right side with comment count */}
+      <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
 
-  if(isDeleted) return null;
+        <MdComment size={16} />
+        <span>{commentCount}</span>
+      </span>
+    </p>
+  }
+
+  if (isDeleted) return null;
   return (
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
@@ -341,9 +348,9 @@ function LikeText(allLikes : Like[]) {
                   <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
                     {userInfo?.firstName} {userInfo?.lastName}
                   </Link>
-                  <div style={{flex : 1,flexDirection : 'row'}}>
+                  <div style={{ flex: 1, flexDirection: 'row' }}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
-                      {console.log(post,'---userInfo---')}
+                      {console.log(post, '---userInfo---')}
                       {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
                       {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
                       <span className='mx-2'></span>
@@ -351,166 +358,169 @@ function LikeText(allLikes : Like[]) {
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
                       {userInfo?.timestamp}
                       <span
-                      className='nav-item small'
-                      style={{
-                        borderRadius: '100%',
-                        width: '3px', // Adjust size of the dot as needed
-                        height: '3px', // Adjust size of the dot as needed
-                        backgroundColor: '#8b959b',
-                        marginLeft: '8px', // Space between dot and icon
-                      }}
-                    />
-                    <FaGlobe
-                      style={{
-                        color: '#8b959b', // Adjust the color of the globe icon as needed
-                        fontSize: '12px', // Adjust the size of the globe icon as needed
-                        marginLeft: '6px', // Space between dot and icon
-                      }}
-                    />
+                        className='nav-item small'
+                        style={{
+                          borderRadius: '100%',
+                          width: '3px', // Adjust size of the dot as needed
+                          height: '3px', // Adjust size of the dot as needed
+                          backgroundColor: '#8b959b',
+                          marginLeft: '8px', // Space between dot and icon
+                        }}
+                      />
+                      <FaGlobe
+                        style={{
+                          color: '#8b959b', // Adjust the color of the globe icon as needed
+                          fontSize: '12px', // Adjust the size of the globe icon as needed
+                          marginLeft: '6px', // Space between dot and icon
+                        }}
+                      />
                     </span>
                   </div>
                 </h6>
               </div>
             </div>
           </div>
-          
-          {
-              post.userId === user?.id &&
 
-      <div style={{ position: "relative" }}>
-      <button
-        className="btn btn-link p-0 text-dark"
-        style={{ fontSize: "1.5rem", lineHeight: "1" }}
-        onClick={() => setMenuVisible(!menuVisible)}
-      >
-        <BsThreeDots />
-      </button>
-      {menuVisible && (
-        <div
-          className="dropdown-menu show"
-          style={{
-            position: "absolute",
-            top: "100%",
-            right: 0,
-            zIndex: 1000,
-            display: "block",
-            backgroundColor: "white",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            borderRadius: "0.25rem",
-            overflow: "hidden",
-          }}
-        >
-          <button
-            className="dropdown-item text-danger d-flex align-items-center"
-            onClick={() => handleDeletePost(post?.Id)}
-            style={{ gap: "0.5rem" }}
-          >
-            <BsTrash /> Delete Post
-          </button>
-        </div>
-      )}
-      </div>
+          {
+            post.userId === user?.id &&
+
+            <div style={{ position: "relative" }}>
+              <button
+                className="btn btn-link p-0 text-dark"
+                style={{ fontSize: "1.5rem", lineHeight: "1" }}
+                onClick={() => setMenuVisible(!menuVisible)}
+              >
+                <BsThreeDots />
+              </button>
+              {menuVisible && (
+                <div
+                  className="dropdown-menu show"
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    right: 0,
+                    zIndex: 1000,
+                    display: "block",
+                    backgroundColor: "white",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "0.25rem",
+                    overflow: "hidden",
+                  }}
+                >
+                  <button
+                    className="dropdown-item text-danger d-flex align-items-center"
+                    onClick={() => handleDeletePost(post?.Id)}
+                    style={{ gap: "0.5rem" }}
+                  >
+                    <BsTrash /> Delete Post
+                  </button>
+                </div>
+              )}
+            </div>
           }
         </div>
       </CardHeader>
 
       <CardBody>
-      {post?.content && (
-      <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-        <div
-          className="w-full"
+        {post?.content && (
+          <div className="mb-1 p-1 bg-gray-100 rounded-lg">
+            <div
+              className="w-full"
+              style={{
+                whiteSpace: 'pre-wrap', // Preserve line breaks
+                wordWrap: 'break-word', // Prevent horizontal overflow for long words
+                lineHeight: '19px',
+                color: 'black',
+                fontSize: '16px',
+                maxHeight: isExpanded ? 'none' : '192px',
+                overflow: 'hidden',
+              }}
+            >
+              {post.content}
+            </div>
+            {!isExpanded && post.content.length > 230 && (
+              <span
+                className="text-blue-500 mt-1 cursor-pointer"
+                onClick={() => setIsExpanded(true)}
+              >
+                ...read more
+              </span>
+            )}
+          </div>
+        )
+        }
+
+        {media.length > 0 && (
+          isVideo ? (
+            <div
+              style={{
+                position: "relative",
+                marginBottom: "10px",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {videoPlayer}
+            </div>
+          ) : (
+            <ResponsiveGallery media={media} />
+          )
+        )}
+        <div style={{ marginTop: '20px' }}>
+          {allLikes && LikeText(allLikes)}
+        </div>
+        <ButtonGroup
+          className="w-100 border-top border-bottom mb-3"
           style={{
-            whiteSpace: 'pre-wrap', // Preserve line breaks
-            wordWrap: 'break-word', // Prevent horizontal overflow for long words
-            lineHeight: '19px',
-            color : 'black',
-            maxHeight: isExpanded ? 'none' : '192px',
-            overflow: 'hidden',
+            backgroundColor: "white",
+            borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
           }}
         >
-          {post.content}
-        </div>
-        {!isExpanded && post.content.length > 230 && (
-          <span
-            className="text-blue-500 mt-1 cursor-pointer"
-            onClick={() => setIsExpanded(true)}
+          <Button
+            variant="ghost" // Always remains ghost
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            onClick={toggleLike}
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
           >
-            ...read more
-          </span>
-        )}
-      </div>
-    )
-  }
+            {likeStatus ? (
+              <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} /> // Blue icon when liked
+            ) : (
+              <ThumbsUp size={16} style={{ color: "inherit" }} /> // Default color when not liked
+            )}
+            {/* <span>Like</span> */}
+          </Button>
 
-  {media.length > 0 && (
-    isVideo ? (
-      <div
-        style={{
-          position: "relative",
-          marginBottom: "10px",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {videoPlayer}
-      </div>
-    ) : (
-      <ResponsiveGallery media={media} />
-    )
-  )}
-  <div style={{marginTop : '20px'}}>
-    {allLikes && LikeText(allLikes)}
-  </div>
-  <ButtonGroup
-  className="w-100 border-top border-bottom mb-3"
-  style={{
-    backgroundColor: "white",
-    borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
-  }}
->
-  <Button
-    variant={likeStatus ? "primary" : "ghost"}
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    onClick={toggleLike}
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    {likeStatus ? <BsFillHandThumbsUpFill size={16} /> : <ThumbsUp size={16} />}
-    {/* <span>Like</span> */}
-  </Button>
+          <Button
+            variant="ghost"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            onClick={() => setOpenComment(!openComment)}
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            <MessageSquare size={16} />
+            {/* <span>Comment</span> */}
+          </Button>
 
-  <Button
-    variant="ghost"
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    onClick={() => setOpenComment(!openComment)}
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    <MessageSquare size={16} />
-    {/* <span>Comment</span> */}
-  </Button>
+          <Button
+            variant="ghost"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            <Repeat size={16} />
+            {/* <span>Repost</span> */}
+          </Button>
 
-  <Button
-    variant="ghost"
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    <Repeat size={16} />
-    {/* <span>Repost</span> */}
-  </Button>
-
-  <Button
-    variant="ghost"
-    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-  >
-    <Share size={16} />
-    {/* <span>Share</span> */}
-  </Button>
-</ButtonGroup>
-
-
+          <Button
+            variant="ghost"
+            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+          >
+            <Share size={16} />
+            {/* <span>Share</span> */}
+          </Button>
+        </ButtonGroup>
         {openComment && <div className="d-flex mb-4 px-3">
           <div className="avatar avatar-xs me-3">
             <Link to={`/profile/feed/${user?.id}`}>
@@ -524,40 +534,40 @@ function LikeText(allLikes : Like[]) {
               </span>
             </Link>
           </div>
-<form
-  className="nav nav-item w-100 d-flex align-items-center"
-  onSubmit={handleCommentSubmit}
-  style={{ gap: "10px" }}
->
-  <textarea
-    data-autoresize
-    className="form-control"
-    style={{
-      backgroundColor: "#fff",   // Set the input background to white
-      color: "#000",             // Optional: Ensure text color is black for contrast
-      whiteSpace: "nowrap",      // Keep text on a single line
-      overflow: "hidden",        // Hide overflowing content
-      textOverflow: "ellipsis",  // Optional: show ellipsis for overflow
-      textAlign: "left",         // Start text and cursor from the left
-      resize: "none",            // Disable resizing
-      height: "38px",            // Fixed height for a single line
-      flex: 1,                   // Allow textarea to take available space
-      border: "1px solid #ced4da", // Optional: Subtle border for better visibility
-      borderRadius: "4px",       // Rounded corners for a smoother look
-      padding: "5px 10px",       // Add some padding for better UX
-    }}
-    rows={1}
-    placeholder="Add a comment..."
-    value={commentText}
-    onChange={(e) => setCommentText(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter" && !e.shiftKey) { // Submit on Enter, allow Shift+Enter for new lines
-        e.preventDefault(); // Prevent adding a new line
-        handleCommentSubmit(e); // Call the form's submit handler
-      }
-    }}
-  />
-</form>
+          <form
+            className="nav nav-item w-100 d-flex align-items-center"
+            onSubmit={handleCommentSubmit}
+            style={{ gap: "10px" }}
+          >
+            <textarea
+              data-autoresize
+              className="form-control"
+              style={{
+                backgroundColor: "#fff",   // Set the input background to white
+                color: "#000",             // Optional: Ensure text color is black for contrast
+                whiteSpace: "nowrap",      // Keep text on a single line
+                overflow: "hidden",        // Hide overflowing content
+                textOverflow: "ellipsis",  // Optional: show ellipsis for overflow
+                textAlign: "left",         // Start text and cursor from the left
+                resize: "none",            // Disable resizing
+                height: "38px",            // Fixed height for a single line
+                flex: 1,                   // Allow textarea to take available space
+                border: "1px solid #ced4da", // Optional: Subtle border for better visibility
+                borderRadius: "4px",       // Rounded corners for a smoother look
+                padding: "5px 10px",       // Add some padding for better UX
+              }}
+              rows={1}
+              placeholder="Add a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) { // Submit on Enter, allow Shift+Enter for new lines
+                  e.preventDefault(); // Prevent adding a new line
+                  handleCommentSubmit(e); // Call the form's submit handler
+                }
+              }}
+            />
+          </form>
         </div>}
 
         {openComment && (isLoading ? (
@@ -572,8 +582,8 @@ function LikeText(allLikes : Like[]) {
                 level={0}
                 refresh={refresh}
                 setRefresh={setRefresh}
-                commentCount = {commentCount}
-                setCommentCount = {setCommentCount}
+                commentCount={commentCount}
+                setCommentCount={setCommentCount}
               />
             ))}
           </ul>

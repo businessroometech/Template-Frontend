@@ -7,13 +7,16 @@ import { FaChevronDown, FaPlus } from 'react-icons/fa6'
 
 import { findAllParent, findMenuItem, getAppMenuItems, getMenuItemFromURL } from '@/helpers/menu'
 import type { MenuItemType } from '@/types/menu'
-
+import { io } from 'socket.io-client'
+import { useAuthContext } from '@/context/useAuthContext'
+var socket = io('http://54.177.193.30:5000'); 
 type SubMenus = {
   item: MenuItemType
   itemClassName?: string
   linkClassName?: string
   activeMenuItems?: Array<string>
   level: number
+  count?: any
 }
 
 const MenuItemWithChildren = ({ item, activeMenuItems, itemClassName, linkClassName, level }: SubMenus) => {
@@ -46,7 +49,7 @@ const MenuItemWithChildren = ({ item, activeMenuItems, itemClassName, linkClassN
                 })}
               />
             ) : (
-              <MenuItem item={child} level={level + 1} linkClassName={clsx(activeMenuItems?.includes(child.key) && 'active')} />
+              <MenuItem item={child} level={level + 1} linkClassName={clsx(activeMenuItems?.includes(child.key) && 'active')} count={count}/>
             )}
           </Fragment>
         ))}
@@ -55,19 +58,20 @@ const MenuItemWithChildren = ({ item, activeMenuItems, itemClassName, linkClassN
   )
 }
 
-const MenuItem = ({ item, linkClassName, level, itemClassName }: SubMenus) => {
+const MenuItem = ({ item, linkClassName, level, itemClassName , count}: SubMenus) => {
   return item.isDivider ? (
     <DropdownDivider />
   ) : (
     <li className={itemClassName}>
-      <MenuItemLink item={item} linkClassName={linkClassName} level={level + 1} />
+      <MenuItemLink item={item} linkClassName={linkClassName} level={level + 1} count={count}/>
     </li>
   )
 }
 
-const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
+const MenuItemLink = ({ item, linkClassName , count}: SubMenus) => {
   const Icon = item.icon;
   const [about,setAbout] = useState<boolean>(false);
+  
 
   return (
     <DropdownItem
@@ -76,7 +80,7 @@ const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
       target={item.target}
       style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
     >
-      {item.url==="/settings/ManageConnections"? <><p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:32, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{5}</p> <p className='bg-success px-1 rounded-pill' style={{position:"absolute", top:0 , left:48, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{5}</p> </>:""}
+      {item.url==="/settings/ManageConnections"? <><p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:42, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{count}</p></>:""}
     <div
       style={{
         padding: '8px',
@@ -123,10 +127,45 @@ const MenuItemLink = ({ item, linkClassName }: SubMenus) => {
 
 const AppMenu = () => {
   const [activeMenuItems, setActiveMenuItems] = useState<string[]>([])
-
   const menuItems = getAppMenuItems()
-
   const { pathname } = useLocation()
+  const { user} = useAuthContext();
+  const [count, setCount] = useState(0);
+
+
+  useEffect(() => {
+    fetchConnections();
+    try {
+    socket.emit("connections", user?.id);
+    socket.on('connections', () => {
+      fetchConnections();      
+    });
+
+    socket.on('connect_error', (error) => {
+      // console.error('Connection error:', error);
+  });
+} catch (error) {
+  console.error('Error during socket connection:', error);
+}
+  });
+
+
+  const fetchConnections = async () => {
+    try {
+      const response = await fetch(' http://54.177.193.30:5000/api/v1/connection/get-connection-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id }),
+      })
+
+      if (!response.ok) throw new Error('Failed to fetch connection requests.')
+      const data = await response.json()
+      setCount(data.length)
+    } catch (error) {
+      console.error('Error fetching connection requests:', error)
+    }
+  }
+
 
   const activeMenu = useCallback(() => {
     const trimmedURL = pathname?.replaceAll('', '')
@@ -166,6 +205,7 @@ const AppMenu = () => {
               level={1}
               itemClassName="nav-item"
               linkClassName={clsx('nav-link', activeMenuItems.includes(item.key) && 'active')}
+              count={count>0?count:""}
               />
             )}
           </Fragment>
