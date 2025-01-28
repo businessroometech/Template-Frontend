@@ -61,7 +61,7 @@ const handleAcceptedFiles = async (files: File[]): Promise<FileUpload[]> => {
 
 
 
-const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
+const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover = false}) => {
     const [exp,setExp] = useState(0);
     const[zoom,setZoom] = useState(50);
     const [straighten, setStraighten] = useState(50);
@@ -81,7 +81,10 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
       // }
 
       try {
-          const requestBody = {
+          const requestBody = forCover ? {
+            userId: user?.id,
+            bgPictureUploadId: url[0],
+          } : {
             userId: user?.id,
             profilePictureUploadId: url[0],
           };
@@ -171,7 +174,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
           padding: "15px 20px",
         }}
       >
-        <span>Profile Photo</span>
+        <span>{forCover ? 'Cover Photo' : 'Profile Photo'}</span>
         <button
           type="button"
           onClick={() => exp === 0 ? onHide() : handleClose()}
@@ -203,21 +206,36 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
         return (
           <>
             {/* Circular Profile Picture */}
-            <div
-              className="rounded-circle overflow-hidden mx-auto"
-              style={{
-                width: "180px", // Increased size
-                height: "180px",
-                border: "3px solid #ccc",
-                marginBottom: "20px",
-              }}
-            >
-              <img
-                src={src} // Replace with dynamic photo
-                alt="Profile"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
+            {forCover ? <>
+            
+              <div
+                      className="h-200px rounded-top"
+                      style={{
+                        backgroundImage: `url(${src})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    />
+            
+            
+            
+            </> : <div
+                className="rounded-circle overflow-hidden mx-auto"
+                style={{
+                  width: "180px", // Increased size
+                  height: "180px",
+                  border: "3px solid #ccc",
+                  marginBottom: "20px",
+                }}
+              >
+                <img
+                  src={src} // Replace with dynamic photo
+                  alt="Profile"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </div>}
+            
 
             {/* Options Below Profile */}
             <div className="d-flex justify-content-around align-items-center mt-4">
@@ -251,7 +269,36 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
             return (
                 <Modal.Body>
                 <Container className="text-center">
-                  <div
+                  {
+                    forCover ?  <>
+                    
+                    <div
+                      className="h-200px rounded-top"
+                      style={{
+                        overflow: "hidden",
+                        margin: "0 auto",
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                    
+                      }}
+                    >
+                      <Image
+                      src={objectUrl || src} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${zoom / 50}) rotate(${straighten - 50}deg)`,
+                      }}
+                    />
+                    </div>
+                    </> : 
+
+
+
+
+                    <div
                     style={{
                       width: "300px",
                       height: "300px",
@@ -271,6 +318,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
                       }}
                     />
                   </div>
+                  }
                   <div className="mt-4">
                     <h6>Crop</h6>
                     <Form.Label>Zoom</Form.Label>
@@ -302,16 +350,35 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
         case 1 : return (
             <>
             <Modal.Body className="text-center">
-            <h5>{user?.firstName}, help others recognize you!</h5>
-            <Image
+            <h5>{user?.firstName}, {forCover ? "Personalize your cover photo"  : "help others recognize you!"}</h5>
+            {
+              forCover ? <>
+              
+              <div
+                      className="h-200px rounded-top"
+                      style={{
+                        backgroundImage: `url(${src})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                        marginTop : '20px',
+                        marginBottom : '20px'
+                      }}
+                    />
+              
+              
+              </> : 
+
+              <Image
               src={src} // Replace with actual profile image URL
               roundedCircle
               alt="Profile"
               style={{ width: "100px", height: "100px", margin: "20px 0" }}
             />
+            }
             <p>
               On Businessroom, we require members to use their real identities, so take
-              or upload a photo of yourself. Then crop, filter, and adjust it to
+              or upload a {forCover ? 'cover photo' : "photo"} of yourself. Then crop, filter, and adjust it to
               perfection.
             </p>
           </Modal.Body>

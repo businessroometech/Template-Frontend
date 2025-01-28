@@ -24,6 +24,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Image,
   Row,
 } from 'react-bootstrap'
 import {
@@ -345,7 +346,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const skeletonHighlightColor = '#d6d6d6'
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false);
-  const [msg, setMsg] = useState("")
+  const [msg, setMsg] = useState("");
+  const [coverModal,setCoverModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -565,6 +567,13 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           onPhotoUpdate={() => console.log('press')}
           src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
           />
+        <EditProfilePictureModal
+          show={coverModal}
+          onHide={() => setCoverModal(false)}
+          onPhotoUpdate={() => console.log('press')}
+          src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
+          forCover={true}
+          />
           <Row className="g-4">
             {/* Main Profile Section */}
             <Col lg={8} className="vstack gap-4">
@@ -576,14 +585,24 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   ) : (
                     <div
                       className="h-200px rounded-top"
-                      
+                      onClick={() => setCoverModal(true)}
                       style={{
-                        backgroundImage: `url(${profile?.coverImgUrl ? profile?.coverImgUrl : background5})`,
+                        position : 'relative',
+                        overflow : 'hidden',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                       }}
+                    >
+                      <Image
+                      src={profile?.coverImgUrl ? profile?.coverImgUrl : background5} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
                     />
+                    </div>
                   )}
                 </div>
                 <CardBody className="py-0">

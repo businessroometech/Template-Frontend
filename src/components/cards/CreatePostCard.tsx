@@ -188,6 +188,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
+    if(files.length >= 9) {
+      alert('Max Limit Reached');
+      return;
+    }
     console.log('---In handleFileUpload---uploadedFiles----', uploadedFiles)
     console.log('-----files in params----', files)
     setUploadedFiles([...uploadedFiles, ...files])
@@ -395,7 +399,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         <ModalBody>
           <div className="d-flex mb-3 ">
             <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
               <textarea
@@ -432,7 +436,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         <ModalBody>
           <div className="d-flex mb-3">
             <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
               <textarea
@@ -474,7 +478,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         <ModalBody>
           <div className="d-flex mb-3">
             <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
               <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts..." defaultValue={''} />
