@@ -16,19 +16,21 @@ const RepostModal = ({ isOpen, onClose, authorName,item }) => {
   const [hoveredOption, setHoveredOption] = useState(null); // To track which option is hovered
   const [isSubmittingPost,setIsSubmittingPost] = useState(false);
   const {user} = useAuthContext();
-  console.log('item in repost modal',item);
+//   console.log('item in repost modal',item);
 
   const handleRepost = () => {
     if (includeThoughts) {
       console.log('Reposting with thoughts:', thoughts);
+      handlePostClick();
     } else {
       console.log('Simple repost');
+      handlePostClick();
     }
     onClose();
     setIncludeThoughts(false);
   };
 
-  const handlePostClick = async (values: string) => {
+  const handlePostClick = async () => {
     // Check if thoughts is empty
     setIsSubmittingPost(true);
     try {
@@ -39,16 +41,17 @@ const RepostModal = ({ isOpen, onClose, authorName,item }) => {
         url: CREATE_POST,
         data: {
           hashtags: hashtags,
-          repostedFrom : '',
-          userId : '',
-          content : '',   
-          mediaKeys : '',    
+          repostedFrom : item.post.userId,
+          userId : user?.id,
+          content : item.post.content,   
+          mediaKeys : item.post.mediaUrls,    
           repostText : thoughts,
         },
       })
 
       if (response.data) {
-        setThoughts('') 
+        setThoughts('')
+        console.log(response.data);
       }
     } catch (err) {
       console.log('Error in the posting', err)
