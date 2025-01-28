@@ -1,7 +1,7 @@
 import { currentYear, developedBy, developedByLink } from '@/context/constants'
 import type { ProfilePanelLink } from '@/types/data'
 import clsx from 'clsx'
-
+import { useAuthContext } from '@/context/useAuthContext'
 import { Link, useLocation } from 'react-router-dom'
 import {  Card, CardBody, CardFooter } from 'react-bootstrap'
 type settingPanelProps = {
@@ -9,6 +9,7 @@ type settingPanelProps = {
 }
 const SettingPanel = ({ links }: settingPanelProps) => {
   const { pathname } = useLocation()
+  const { user } = useAuthContext()
   return (
     <>
       <Card className="w-100">
@@ -26,7 +27,7 @@ const SettingPanel = ({ links }: settingPanelProps) => {
           </ul>
         </CardBody>
         <CardFooter className="text-center py-2">
-          <Link to="/profile/feed" className="text-secondary btn btn-link btn-sm">
+          <Link to={`/profile/feed/${user.id}`} className="text-secondary btn btn-link btn-sm">
             View Profile
           </Link>
         </CardFooter>

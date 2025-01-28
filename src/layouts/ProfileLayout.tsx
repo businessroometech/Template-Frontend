@@ -9,6 +9,7 @@ import GlightBox from '@/components/GlightBox'
 import { useFetchData } from '@/hooks/useFetchData'
 import type { ChildrenType } from '@/types/component'
 import { RiUserUnfollowFill } from 'react-icons/ri'
+import { Navigate } from 'react-router-dom';
 import clsx from 'clsx'
 import EditProfilePictureModal from "../components/cards/EditProfilePictureModal";
 import {
@@ -73,6 +74,7 @@ import Followers from '@/app/(social)/feed/(container)/home/components/Followers
 import { set } from 'react-hook-form'
 
 const Experience = () => {
+  return null;
   return (
     <Card style={{marginTop : '25px'}}>
       <CardHeader className="d-flex justify-content-between border-0">
@@ -203,7 +205,7 @@ export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
   const [loading, setLoading] = useState<string | null>(null)
-  // const [loading, setLoading] = useState<string | null>(null)
+  const navigate = useNavigate();
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
@@ -227,9 +229,9 @@ export const ConnectionRequest = () => {
   }
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
-    setLoading(userId)
+    setLoadingStates((prev) => ({ ...prev, [userId]: status }));
     try {
-      const response = await fetch(' http://54.177.193.30:5000/api/v1/connection/update-connection-status', {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/connection/update-connection-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -237,102 +239,82 @@ export const ConnectionRequest = () => {
           connectionId: userId,
           status,
         }),
-      })
-      await fetchConnections()
-      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`)
-
-      toast.success(`Connection request ${status} successfully.`)
+      });
+      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
+      toast.success(`Connection request ${status} successfully.`);
+      await fetchConnections();
     } catch (error) {
-      await fetchConnections()
-      console.error(`Error while updating connection status:`, error)
-      toast.error(`Error while trying to ${status} the connection request.`)
+      console.error(`Error while updating connection status:`, error);
+      toast.error(`Error while trying to ${status} the connection request.`);
     } finally {
-      await fetchConnections()
-      // setAllFollowers([])
-      window.location.reload()
-      setLoading(null)
+      setLoadingStates((prev) => ({ ...prev, [userId]: null }));
     }
-  }
-
+  };
+  
   return (
     <Card>
       {allFollowers.length >= 0 && (
-      <>
-      {/* <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
-      <div></div>
-      {allFollowers.length ? (
-        <div className="bg-info p-2 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '30px', height: '30px' }}>
-        <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
-          {allFollowers.length}
-        </p>
-        </div>
-      ) : null}
-      </CardHeader> */}
-    
-      <CardBody>
-      {allFollowers.map((follower, idx) => (
-      <div className="d-flex row col-12 mb-3" key={idx}>
-      {/* Avatar Section */}
-      <div className="col-8 d-flex">
-      <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-      <span role="button">
-      <img
-      className="avatar-img rounded-circle"
-      src={follower.profilePictureUploadUrl || avatar7}
-      alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-      />
-      </span>
-      </div>
-      <div className="overflow-hidden px-2">
-      <Link className="h6 mb-0" to="">
-      {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-      </Link>
-      <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-      </div>
-      </div>
-    
-      {/* Action Buttons */}
-      <div className="col-4 d-flex justify-content-end">
-      <Button
-      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
-      variant="danger-soft"
-      className="mx-1"
-      disabled={loading === follower?.requesterDetails?.id}
-      style={{ transition: 'background-color 0.3s' , minWidth: '120px' }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
-      >
-      {loading === follower?.requesterDetails?.id ? (
-      <Loading size={15} loading={true} />
-      ) : (
-      'Decline'
-      )}
-      </Button>
-      <Button
-      onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
-      variant="success-soft"
-      className="mx-1"
-      disabled={loading === follower?.requesterDetails?.id}
-      style={{ transition: 'background-color 0.3s' , minWidth: '120px'}}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
-      >
-      {loading === follower?.requesterDetails?.id ? (
-      <Loading size={15} loading={true} />
-      ) : (
-      'Approve'
-      )}
-      </Button>
-      </div>
-      </div>
-      ))}
-      </CardBody>
-      </>
+        <>
+          <CardBody>
+            {allFollowers.map((follower, idx) => (
+              <div className="d-flex row col-12 mb-3" key={idx}>
+                <div className="col-8 d-flex">
+                  <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                    <span role="button">
+                      <img
+                        className="avatar-img rounded-circle"
+                        src={follower.profilePictureUploadUrl || avatar7}
+                        alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                      />
+                    </span>
+                  </div>
+                  <div className="overflow-hidden px-2">
+                    <Link className="h6 mb-0" to="">
+                      {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                    </Link>
+                    <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
+                  </div>
+                </div>
+                <div className="col-4 d-flex justify-content-end">
+                  <Button
+                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                    variant="danger-soft"
+                    className="mx-1"
+                    disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'}
+                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+                  >
+                    {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      'Decline'
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                    variant="success-soft"
+                    className="mx-1"
+                    disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'}
+                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+                  >
+                    {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      'Approve'
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardBody>
+        </>
       )}
     </Card>
   );
-  
-}
+};  
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
