@@ -531,37 +531,41 @@ useEffect(() => {
   };
 }, [user?.id, flag]);
 
-  const fetchPosts = async () => {
+const fetchPosts = async () => {
 
-    setError(null);
-    setHasMore(true);
-    console.log('fetching posts');
-    try {
-      const res = await makeApiRequest<{ data: any[] }>({
-        method: 'POST',
-        url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page: page },
-      })
-      
-      if(res.message === "No posts found for this user."){
-        setHasMore(false);
-        console.log('went in');
-        return;
-      }
-      setLoading(false)
-      console.log('Fetched Posts:', res.data);
-      console.log('What is res data',res.data);
-      setPosts(previousPosts => [...previousPosts, ...res.data.posts])
-    } catch (error: any) {
-      console.error('Error fetching posts:', error.message)
-      setError(error.message || 'An unknown error occurred')
-     } finally {
-      setLoading(false)
-     }
-  }
+  setError(null);
+  setHasMore(true);
+  console.log('fetching posts');
+  try {
+    const res = await makeApiRequest<{ data: any[] }>({
+      method: 'POST',
+      url: 'api/v1/post/get-all-post',
+      data: { userId: user?.id, page: page },
+    })
+    
+    if(res.message === "No posts found for this user."){
+      setHasMore(false);
+      console.log('went in');
+      return;
+    }
+    setLoading(false)
+    console.log('Fetched Posts:', res.data);
+    console.log('What is res data',res.data);
+    console.log('---Posts after---',posts);
+    setPosts(previousPosts => [...previousPosts, ...res.data.posts])
+    console.log('---Posts before---',posts);
+  } catch (error: any) {
+    console.error('Error fetching posts:', error.message)
+    setError(error.message || 'An unknown error occurred')
+   } finally {
+    setLoading(false)
+   }
+}
 
   useEffect(() => {
     // Fetch posts on mount
+    console.log('Mount Wala UseEffect')
+    
     const fetchUser = async () => {
       try {
         const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
@@ -590,29 +594,63 @@ useEffect(() => {
       return;
     }
 
-
+    
     if (!hasMounted.current) {
       fetchPosts();
       fetchUser();
       hasMounted.current = true;
     }
-  }, []);
+  }, [fetchPosts, profile, user?.id]);
+
+  // useEffect(() => {
+  //   console.log('is Created Wala UseEffect')
+  //   const fetchPosts = async () => {
+
+  //     setError(null);
+  //     setHasMore(true);
+  //     console.log('fetching posts');
+  //     try {
+  //       const res = await makeApiRequest<{ data: any[] }>({
+  //         method: 'POST',
+  //         url: 'api/v1/post/get-all-post',
+  //         data: { userId: user?.id, page: page },
+  //       })
+        
+  //       if(res.message === "No posts found for this user."){
+  //         setHasMore(false);
+  //         console.log('went in');
+  //         return;
+  //       }
+  //       setLoading(false)
+  //       console.log('Fetched Posts:', res.data);
+  //       console.log('What is res data',res.data);
+  //       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
+  //     } catch (error: any) {
+  //       console.error('Error fetching posts:', error.message)
+  //       setError(error.message || 'An unknown error occurred')
+  //      } finally {
+  //       setLoading(false)
+  //      }
+  //   }
+  //   // Refetch posts when `isCreated` changes
+  //   if (isCreated) {
+  //     setPosts([]); // Reset posts
+  //     setPage(1); // Reset page to 1
+  //     setHasMore(true); // Reset pagination state
+  //     fetchPosts();
+  //     setflag(false)
+  //   }
+  // }, [isCreated, page, user?.id]);
 
   useEffect(() => {
-    // Refetch posts when `isCreated` changes
-    if (isCreated) {
-      setPosts([]); // Reset posts
-      setPage(1); // Reset page to 1
-      setHasMore(true); // Reset pagination state
-      fetchPosts();
-      setflag(false)
-    }
-  }, [isCreated]);
-
-  useEffect(() => {
+    if(page <= 1 || posts.length >= page * 5) return;
+    console.log('Page Wala use Effect')
+    console.log('Page',page);
     // Fetch the next page of posts when `page` changes
     fetchPosts();
   }, [page]);
+
+  
   const fetchNextPage = () => {
     if(!loading && hasMore){
       setPage(page => page + 1);
