@@ -63,19 +63,19 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
     fetchUser()
   }, [])
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    const options = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-    }
-    return date.toLocaleString('en-GB', options).replace(',', ' at')
-  }
+  // const formatDate = (dateString) => {
+  //   const date = new Date(dateString)
+  //   const options = {
+  //     year: 'numeric',
+  //     month: 'short',
+  //     day: 'numeric',
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     second: '2-digit',
+  //     hour12: true,
+  //   }
+  //   return date.toLocaleString('en-GB', options).replace(',', ' at')
+  // }
 
   return (
     <>
@@ -93,7 +93,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             }}
           >
             <Image
-            src={profile?.coverImgUrl ? profile?.coverImgUrl : background5} // Replace with your actual image source
+            src={profile?.coverImgUrl ? profile?.coverImgUrl : bgBannerImg} // Replace with your actual image source
             alt="Profile"
             style={{
               width: "100%",

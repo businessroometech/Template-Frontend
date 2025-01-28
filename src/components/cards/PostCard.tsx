@@ -42,9 +42,9 @@ interface Like {
   userRole: string;
   createdBy: string;
   updatedBy: string;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
-  likerUrl: string; // URL string
+  createdAt: string; 
+  updatedAt: string; 
+  likerUrl: string; 
 }
 
 interface GetAllLikesResponse {
@@ -350,7 +350,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                   </Link>
                   <div style={{ flex: 1, flexDirection: 'row' }}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
-                      {console.log(post, '---userInfo---')}
+                      {/* {console.log(post, '---userInfo---')} */}
                       {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
                       {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
                       <span className='mx-2'></span>
@@ -424,7 +424,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       <CardBody>
         {post?.content && (
           <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-            <div
+            <div   id={post.Id}
               className="w-full"
               style={{
                 whiteSpace: 'pre-wrap', // Preserve line breaks
@@ -584,6 +584,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                 setRefresh={setRefresh}
                 commentCount={commentCount}
                 setCommentCount={setCommentCount}
+                myProfile={profile}
               />
             ))}
           </ul>

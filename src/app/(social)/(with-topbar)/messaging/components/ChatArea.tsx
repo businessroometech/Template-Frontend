@@ -447,7 +447,6 @@
 //     setValue('newMessage', currentMessage + emoji.emoji)
 //     setShowEmojiPicker(false)
 //   }
-
 //   if (!activeChat) {
 //     return (
 //       <div className="d-flex justify-content-center align-items-center h-100">

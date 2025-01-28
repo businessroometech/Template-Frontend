@@ -9,7 +9,6 @@ import { findAllParent, findMenuItem, getAppMenuItems, getMenuItemFromURL } from
 import type { MenuItemType } from '@/types/menu'
 import { io } from 'socket.io-client'
 import { useAuthContext } from '@/context/useAuthContext'
-var socket = io('http://54.177.193.30:5000'); 
 type SubMenus = {
   item: MenuItemType
   itemClassName?: string
@@ -132,22 +131,16 @@ const AppMenu = () => {
   const { user} = useAuthContext();
   const [count, setCount] = useState(0);
 
-
   useEffect(() => {
     fetchConnections();
-    try {
-    socket.emit("connections", user?.id);
-    socket.on('connections', () => {
-      fetchConnections();      
-    });
+    setInterval(() => {
+      fetchConnections();
+    }
+    , 5000);
+  }
+  , );
+     
 
-    socket.on('connect_error', (error) => {
-      // console.error('Connection error:', error);
-  });
-} catch (error) {
-  console.error('Error during socket connection:', error);
-}
-  });
 
 
   const fetchConnections = async () => {
