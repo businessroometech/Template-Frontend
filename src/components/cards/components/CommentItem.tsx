@@ -15,7 +15,7 @@ interface DeleteCommentError {
   error: string;
 }
 
-const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount}: CommentItemProps) => {
+const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount,myProfile = null}: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [reply, setReply] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -27,7 +27,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
   const [profile,setProfile] = useState<boolean>(false);
   // console.log('---comment---',comment);
-
+  console.log('---my profile---',myProfile);
   function formatText(text : string,name : string) : string {
       return  `@${name} ${text}`
   }
@@ -315,7 +315,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
                 <img
                   className="avatar-img rounded-circle"
                   style={{ width: '35px', height: '35px', objectFit: 'cover' }}
-                  src={comment.avatar || fallBackAvatar}
+                  src={(myProfile && myProfile.profileImgUrl) || fallBackAvatar}
                   alt="avatar"
                 />
               </span>
@@ -372,6 +372,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
               parentId={comment.id}
               commentCount = {commentCount}
               setCommentCount = {setCommentCount}
+              myProfile={myProfile}
             />
           ))}
         </ul>

@@ -350,7 +350,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                   </Link>
                   <div style={{ flex: 1, flexDirection: 'row' }}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
-                      {console.log(post, '---userInfo---')}
+                      {/* {console.log(post, '---userInfo---')} */}
                       {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
                       {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
                       <span className='mx-2'></span>
@@ -584,6 +584,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                 setRefresh={setRefresh}
                 commentCount={commentCount}
                 setCommentCount={setCommentCount}
+                myProfile={profile}
               />
             ))}
           </ul>
