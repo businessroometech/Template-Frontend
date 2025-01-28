@@ -9,7 +9,7 @@ import { findAllParent, findMenuItem, getAppMenuItems, getMenuItemFromURL } from
 import type { MenuItemType } from '@/types/menu'
 import { io } from 'socket.io-client'
 import { useAuthContext } from '@/context/useAuthContext'
-var socket = io('http://localhost:5000'); 
+var socket = io('http://54.177.193.30:5000'); 
 type SubMenus = {
   item: MenuItemType
   itemClassName?: string
