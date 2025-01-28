@@ -637,7 +637,7 @@ export default BusinessSellerForm;
 
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, ButtonGroup } from 'react-bootstrap';
 import { 
@@ -654,6 +654,59 @@ import 'react-toastify/dist/ReactToastify.css';
 const BusinessSellerForm = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
+  const [profile , setProfile] = useState({})
+
+
+
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          //profileId: user?.id,
+        }),
+      })
+
+      if (!response.ok) {
+        //  navigate('/not-found')
+        throw new Error('Network response was not ok')
+      }
+      if (response.status === 404) {
+        // navigate('/not-found')
+      }
+      const data = await response.json()
+      
+      setProfile(data?.data)
+      console.log(profile.data)
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+    } 
+  }
+
+  useEffect(() => {
+
+    fetchUser()
+  })
+
+  console.log("OwnerImage iiiiiiiiiii---------" , profile.profileImgUrl )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const [formData, setFormData] = useState({
     // Basic Information
@@ -737,16 +790,19 @@ const BusinessSellerForm = () => {
     const dataToSend = {
       ...formData,
       UserId: user?.id,
-      OwnerDetails : [user]
+      OwnerDetails : [user],
+      OwnerImage : profile.profileImgUrl
     };
 console.log("------user for form----------" , user)
+console.log("----------------datatosend----------" , dataToSend)
     try {
       const response = await fetch(' http://54.177.193.30:5000/businessseller/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'UserId': user?.id,
-          OwnerDetails : [user]
+          OwnerDetails : [user],
+          OwnerImage : profile.profileImgUrl
         },
         body: JSON.stringify(dataToSend)
       });
