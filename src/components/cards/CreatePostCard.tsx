@@ -126,6 +126,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         throw new Error('Network response was not ok')
       }
       const data = await response.json()
+      console.log('data', data)
       setSkeletonLoading(false)
       setProfile(data.data)
     } catch (error) {
@@ -219,7 +220,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         const hashtagRegex = /#\w+/g
         const hashtags = photoQuote.match(hashtagRegex) || []
 
-        console.log('-------------awsIds----------------------------- :', awsIds)
+        // console.log('-------------awsIds----------------------------- :', awsIds)
         // Making the API request
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
@@ -255,15 +256,15 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     try {
       // Wait for handleUpload to complete before proceeding
       const uploadSuccess = await handleUpload()
-      console.log('video upload success', uploadSuccess)
+      // console.log('video upload success', uploadSuccess)
 
       if (uploadSuccess) {
         // Regular expression to match hashtags
         const hashtagRegex = /#\w+/g
         const hashtags = videoQuote.match(hashtagRegex) || []
-        console.log('hashtags match', hashtags)
-        console.log('---videoupload----', videoQuote)
-        console.log('---upload success---', uploadSuccess)
+        // console.log('hashtags match', hashtags)
+        // console.log('---videoupload----', videoQuote)
+        // console.log('---upload success---', uploadSuccess)
         // Making the API request
         const data = {
           userId: user?.id,

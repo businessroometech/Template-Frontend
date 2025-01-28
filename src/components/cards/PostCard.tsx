@@ -58,6 +58,7 @@ interface GetAllLikesResponse {
 
 
 const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,setPosts,profile}) => {
+  // console.log(posts);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -75,6 +76,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [showReactions,setShowReactions] = useState<boolean>(false);
   const [allLikes,setAllLikes] = useState<Like[]>([]);
   const [isExpanded,setIsExpanded] = useState<boolean>(false);
+
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
@@ -341,7 +343,9 @@ function LikeText(allLikes : Like[]) {
                   </Link>
                   <div style={{flex : 1,flexDirection : 'row'}}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
-                      {userInfo?.userRole ? userInfo?.userRole : null}
+                      {console.log(post,'---userInfo---')}
+                      {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
+                      {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
                       <span className='mx-2'></span>
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
