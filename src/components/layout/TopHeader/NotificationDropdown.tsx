@@ -220,7 +220,7 @@ const NotificationDropdown = ({ count }) => {
                   {allNotifications.slice(0, 4).filter((n) => !n.isRead).length} new
                 </span>}
               </h6>
-              {allNotifications.length !== 0 &&<Link className="small" to="#" onClick={handleReadAll}>
+              {allNotifications.length !== 0 && <Link className="small" to="#" onClick={handleReadAll}>
                 Read all
               </Link>}
             </CardHeader>
@@ -277,9 +277,10 @@ const NotificationDropdown = ({ count }) => {
 
                     {allNotifications.length === 0 && (
                       <div className="text-center p-3">
-                        <p className="mb-0">No notifications available.</p>
+                        <Loading loading={true} size={12} />
                       </div>)
                     }
+
                   </ul>
                 </CardBody>
 
@@ -288,7 +289,7 @@ const NotificationDropdown = ({ count }) => {
 
             <CardFooter className="text-center">
               <Link to="/notifications">
-               {allNotifications.length !== 0 && <Button variant="primary-soft" size="sm">
+                {allNotifications.length !== 0 && <Button variant="primary-soft" size="sm">
                   See all incoming activity
                 </Button>}
               </Link>

@@ -135,10 +135,10 @@ const AppMenu = () => {
     fetchConnections();
     setInterval(() => {
       fetchConnections();
-    }
-    , 5000);
+        }
+        , 90000);
   }
-  , );
+  ,[user?.id] );
      
 
 
