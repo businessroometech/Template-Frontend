@@ -19,8 +19,9 @@ import avatar4 from '@/assets/images/avatar/04.jpg'
 import { io, Socket } from "socket.io-client";
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Bell } from 'lucide-react';
+import Loading from '@/components/Loading';
 
-const NotificationDropdown = ({count}) => {
+const NotificationDropdown = ({ count }) => {
   const { user } = useAuthContext();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [allNotifications, setAllNotifications] = useState<any[]>([]);
@@ -102,11 +103,7 @@ const NotificationDropdown = ({count}) => {
     }
   };
 
-
-
   // Fetch notifications when the component mounts
-
-
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
@@ -144,7 +141,6 @@ const NotificationDropdown = ({count}) => {
       const data = await response.json();
       if (data?.success) {
         console.log('All notifications marked as read successfully.');
-
       } else {
         console.error('Failed to mark all notifications as read:', data.message);
       }
@@ -155,143 +151,151 @@ const NotificationDropdown = ({count}) => {
 
   return (
     <div className='position-relative'>
-    {<>
-        <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:24, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{count>0?count:""}</p>
+      {<>
+        <p className='bg-danger px-1 rounded-pill' style={{ position: "absolute", top: 0, left: 24, color: "white", zIndex: 9999, fontSize: 12, fontWeight: "bold" }}>{count > 0 ? count : ""}</p>
       </>
       }
-  
-    <Dropdown as="li" autoClose="outside" className="nav-item" drop="down" align="end" style={{ position: 'relative' }}>
-      
-      <DropdownToggle className="content-none nav-link icon-md btn btn-light p-0"
-        style={{
-          marginRight: '10px',
-          position: 'relative',
-        }}
-      >
-        <div
+
+      <Dropdown as="li" autoClose="outside" className="nav-item" drop="down" align="end" style={{ position: 'relative' }}>
+
+        <DropdownToggle className="content-none nav-link icon-md btn btn-light p-0"
           style={{
-            padding: '8px',
-            borderRadius: '10%',
-            marginLeft: '10px',
-            // background: 'rgba(136, 209, 254, 0.2)',
-            backdropFilter: 'blur(8px)',
-            transition: 'background 0.3s ease',
-          }}
-          about='Label'
-
-          onMouseEnter={(e) => {
-            (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
-            setNotiAbout(true);
-            fetchNotifications()
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget.style.background = 'transparent');
-            setNotiAbout(false);
-            fetchNotifications()
-
+            marginRight: '10px',
+            position: 'relative',
           }}
         >
-
-          {<Bell style={{ color: '#1ea1f2' }} />}
-
-        </div>
-        {notiAbout &&
-          <span
+          <div
             style={{
-              position: 'absolute',
-              marginTop: '40px',
-              marginLeft: '15px',
-              top: '50%',
-              zIndex: 10000,
-              transform: 'translateY(-50%)',
-              background: '#333',
-              color: '#fff',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              whiteSpace: 'nowrap',
+              padding: '8px',
+              borderRadius: '10%',
+              marginLeft: '10px',
+              // background: 'rgba(136, 209, 254, 0.2)',
+              backdropFilter: 'blur(8px)',
+              transition: 'background 0.3s ease',
             }}
-            className="label"
+            about='Label'
+
+            onMouseEnter={(e) => {
+              (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
+              setNotiAbout(true);
+              fetchNotifications()
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget.style.background = 'transparent');
+              setNotiAbout(false);
+              fetchNotifications()
+
+            }}
           >
-            {'Notification'}
-          </span>}
-      </DropdownToggle>
-      <DropdownMenu className="dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
-        <Card>
-          <CardHeader className="d-flex justify-content-between align-items-center">
-            <h6 className="m-0">
-              Notifications
-             {allNotifications.slice(0, 4).filter((n) => !n.isRead).length>0 && <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
-                {allNotifications.slice(0, 4).filter((n) => !n.isRead).length} new
-              </span>}
-            </h6>
-            <Link className="small" to="#" onClick={handleReadAll}>
-              Read all
-            </Link>
-          </CardHeader>
-          <CardBody className="p-0">
-            <ul className="list-group list-group-flush list-unstyled p-2">
-              <CardBody className="p-0">
-                <ul className="list-group list-group-flush list-unstyled p-2">
-                  {allNotifications.slice(0, 4).map((notification) => (
-                    <Link to={notification.navigation} key={notification.id}>
-                      <div
-                        onClick={() => handleOnRead(notification.id)}
-                        className={clsx(
-                          'rounded d-sm-flex border-0 mb-1 p-3 pt-4 position-relative cursor-pointer',
-                          { 'badge-unread': !notification.isRead }
-                        )}
-                      >
-                        <div className="avatar text-center">
-                          <img
-                            className="avatar-img rounded-circle"
-                            src={notification.mediaUrl || avatar7}
-                            alt="Avatar"
-                          />
-                        </div>
 
-                        <div className="ms-3 my-2 my-sm-0  position-relative">
-                          <p className="small mb-2 pb-2 text-secondary">
-                            {notification.message}
-                          </p>
-                          {notification.type === "isFriendRequest" && (
-                            <div className="d-flex mt-2">
-                              <Button variant="primary" size="sm" className="py-1 me-2">
-                                Accept
-                              </Button>
-                              <Button variant="danger-soft" size="sm" className="py-1">
-                                Delete
-                              </Button>
-                            </div>
+            {<Bell style={{ color: '#1ea1f2' }} />}
+
+          </div>
+          {notiAbout &&
+            <span
+              style={{
+                position: 'absolute',
+                marginTop: '40px',
+                marginLeft: '15px',
+                top: '50%',
+                zIndex: 10000,
+                transform: 'translateY(-50%)',
+                background: '#333',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
+              }}
+              className="label"
+            >
+              {'Notification'}
+            </span>}
+        </DropdownToggle>
+        <DropdownMenu className="dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
+          <Card>
+            <CardHeader className="d-flex justify-content-between align-items-center">
+              <h6 className="m-0">
+                Notifications
+                {allNotifications.slice(0, 4).filter((n) => !n.isRead).length > 0 && <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
+                  {allNotifications.slice(0, 4).filter((n) => !n.isRead).length} new
+                </span>}
+              </h6>
+              {allNotifications.length !== 0 &&<Link className="small" to="#" onClick={handleReadAll}>
+                Read all
+              </Link>}
+            </CardHeader>
+            <CardBody className="p-0">
+              <ul className="list-group list-group-flush list-unstyled p-2">
+                <CardBody className="p-0">
+                  <ul className="list-group list-group-flush list-unstyled p-2">
+                    {allNotifications ? (allNotifications.slice(0, 4).map((notification) => (
+                      <Link to={notification.navigation} key={notification.id}>
+                        <div
+                          onClick={() => handleOnRead(notification.id)}
+                          className={clsx(
+                            'rounded d-sm-flex border-0 mb-1 p-3 pt-4 position-relative cursor-pointer',
+                            { 'badge-unread': !notification.isRead }
                           )}
+                        >
+                          <div className="avatar text-center">
+                            <img
+                              className="avatar-img rounded-circle"
+                              src={notification.mediaUrl || avatar7}
+                              alt="Avatar"
+                            />
+                          </div>
+
+                          <div className="ms-3 my-2 my-sm-0  position-relative">
+                            <p className="small mb-2 pb-2 text-secondary">
+                              {notification.message}
+                            </p>
+                            {notification.type === "isFriendRequest" && (
+                              <div className="d-flex mt-2">
+                                <Button variant="primary" size="sm" className="py-1 me-2">
+                                  Accept
+                                </Button>
+                                <Button variant="danger-soft" size="sm" className="py-1">
+                                  Delete
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+
+                          <p className="small text-nowrap " style={{
+                            padding: '10px',
+                            top: '-.5em',
+                            right: '0',
+                            position: 'absolute',
+                          }}>
+                            {formatTimestamp(notification.createdAt)}
+                          </p>
                         </div>
+                      </Link>
+                    ))) : (
+                      <Loading loading={true} size={12} />
+                    )}
 
-                        <p className="small text-nowrap " style={{
-                          padding: '10px',
-                          top: '-.5em',
-                          right: '0',
-                          position: 'absolute',
-                        }}>
-                          {formatTimestamp(notification.createdAt)}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </ul>
-              </CardBody>
+                    {allNotifications.length === 0 && (
+                      <div className="text-center p-3">
+                        <p className="mb-0">No notifications available.</p>
+                      </div>)
+                    }
+                  </ul>
+                </CardBody>
 
-            </ul>
-          </CardBody>
+              </ul>
+            </CardBody>
 
-          <CardFooter className="text-center">
-            <Link to="/notifications">
-              <Button variant="primary-soft" size="sm">
-                See all incoming activity
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
-      </DropdownMenu>
-    </Dropdown>
+            <CardFooter className="text-center">
+              <Link to="/notifications">
+               {allNotifications.length !== 0 && <Button variant="primary-soft" size="sm">
+                  See all incoming activity
+                </Button>}
+              </Link>
+            </CardFooter>
+          </Card>
+        </DropdownMenu>
+      </Dropdown>
     </div>
   );
 };

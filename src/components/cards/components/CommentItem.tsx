@@ -194,7 +194,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   if (isDeleted) return null;
 
   return (
-    <li className="comment-item">
+    <li className="comment-item" id={comment.id}>
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <img
