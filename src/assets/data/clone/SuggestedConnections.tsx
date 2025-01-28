@@ -159,10 +159,11 @@ const SuggestedConnections = () => {
         variant="primary"
         size="sm"
         className="mb-0 me-2"
+        style={{ minWidth: '120px' }}
         onClick={() => UserRequest(friend.id)}
         disabled={loading === friend.id}
         >
-        {loading === friend.id ? <Loading size={16} /> : 'Connect'}
+        {loading === friend.id ? <Loading size={16} /> : 'connections'}
         </Button>
       </div>
       </div>

@@ -8,14 +8,18 @@ import earthImg from '@/assets/images/icon/earth-outline-filled.svg'
 import calendarImg from '@/assets/images/icon/calendar-outline-filled.svg'
 import chatImg from '@/assets/images/icon/chat-outline-filled.svg'
 import notificationImg from '@/assets/images/icon/notification-outlined-filled.svg'
+import briefcase from '@/assets/images/icon/briefcase.svg'
+import analytics from '@/assets/images/icon/analytics.svg'
 import cogImg from '@/assets/images/icon/cog-outline-filled.svg'
 import likeImg from '@/assets/images/icon/like-outline-filled.svg'
+import management from '@/assets/images/icon/management.svg'
 import starImg from '@/assets/images/icon/star-outline-filled.svg'
+import { UserIcon, BriefcaseIcon, BellIcon, ChartBarIcon } from '@heroicons/react/solid';
 import taskDoneImg from '@/assets/images/icon/task-done-outline-filled.svg'
 import arrowBoxedImg from '@/assets/images/icon/arrow-boxed-outline-filled.svg'
 import shieldImg from '@/assets/images/icon/shield-outline-filled.svg'
 import handshakeImg from '@/assets/images/icon/handshake-outline-filled.svg'
-import chatAltImg from '@/assets/images/icon/chat-alt-outline-filled.svg'
+import chatAltImg from '@/assets/images/icon/chat-alt-outline-filled.svg'// Replace with your actual image path
 import trashImg from '@/assets/images/icon/trash-var-outline-filled.svg'
 import { useAuthContext } from '@/context/useAuthContext'
 import logo8 from '@/assets/images/logo/08.svg'
@@ -30,7 +34,6 @@ type ExperienceType = {
 }
 
 
-
 export const profilePanelLinksData1: ProfilePanelLink[] = [
   // {
   //   image: homeImg,
@@ -41,7 +44,7 @@ export const profilePanelLinksData1: ProfilePanelLink[] = [
 
     image : ChartNetwork,
     name: 'Profile Visit Analysis',
-    link: '/profile-visitors',
+    link: '/settings/messaging',
   },
   // {
   //   image: earthImg,
@@ -126,24 +129,25 @@ export const profilePanelLinksData2: ProfilePanelLink[] = [
 
 export const settingPanelLinksData: ProfilePanelLink[] = [
   
+
   {
     image: personImg,
     name: 'Basic Profile',
     link: '/settings/account',
   },
   {
-    image : personImg,
+    image : briefcase,
     name : 'Business Profile',
     link : '/settings/role'
   },
-  {
+  // {
     
-    image : personImg,
-    name : 'View Profile',
-    link : `profile/feed/`
-  },
+  //   image : personImg,
+  //   name : 'View Profile',
+  //   link : `/profile/feed`
+  // },
   {
-    image: notificationImg,
+    image: management,
     name: 'Manage Connections',
     link: '/settings/ManageConnections',
   },
@@ -158,8 +162,8 @@ export const settingPanelLinksData: ProfilePanelLink[] = [
   //   link: '/settings/communication',
   // },
   {
-    image: chatAltImg,
-    name: 'Messaging',
+    image: analytics,
+    name: 'Profile Visit Analysis',
     link: '/settings/messaging',
   },
   // {

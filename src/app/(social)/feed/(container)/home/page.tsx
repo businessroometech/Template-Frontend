@@ -31,7 +31,7 @@ const Home = () => {
       socket.emit("userOnline", user.id);
 
       // Log connection status
-      socket.on('connect', () => {
+      socket.on('connections', () => {
           // console.log('Socket connected:', socket.id);
       });
 
@@ -73,6 +73,7 @@ const Home = () => {
         }}
         className="position-relative vstack gap-4"
       >
+       
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
         <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
       </Col>
@@ -94,7 +95,7 @@ const Home = () => {
           </Col>
 
           <Col sm={6} lg={12} style={{}}>
-            <Card>
+            {/* <Card>
               <CardHeader className="pb-0 border-0">
                 <CardTitle className="mb-0">Businessroom News</CardTitle>
               </CardHeader>
@@ -129,7 +130,7 @@ const Home = () => {
 
                 <LoadContentButton name="View all latest news" />
               </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
       </Col>

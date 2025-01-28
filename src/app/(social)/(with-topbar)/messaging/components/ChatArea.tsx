@@ -302,7 +302,7 @@
 
 //   useEffect(() => {
 //     socket.emit('joinRoom', user.id)
-//     socket.on('connect', () => {
+//     socket.on('connections', () => {
 //       console.log('Socket connected:', socket.id)
 //     })
 
@@ -447,7 +447,6 @@
 //     setValue('newMessage', currentMessage + emoji.emoji)
 //     setShowEmojiPicker(false)
 //   }
-
 //   if (!activeChat) {
 //     return (
 //       <div className="d-flex justify-content-center align-items-center h-100">
@@ -570,6 +569,7 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
 
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
+      
     <div className="flex-shrink-0 avatar avatar-xs me-2">
       {!received && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
     </div>
@@ -634,7 +634,7 @@ const ChatArea = () => {
     // const roomId = `${activeChat.personalDetails.id}-${user.id}`
     // console.log(roomId)
     socket.emit('joinRoom', roomId)
-    socket.on('connect', () => {
+    socket.on('connections', () => {
       console.log('Socket connected:', socket.id)
     })
 

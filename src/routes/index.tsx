@@ -57,6 +57,7 @@ const AccountSetting = lazy(() => import('@/app/(social)/settings/account/page')
 const ManageConnections = lazy(() => import('@/app/(social)/settings/ManageConnections/page'))
 const AccountPrivacy = lazy(() => import('@/app/(social)/settings/privacy/page'))
 const AccountCommunication = lazy(() => import('@/app/(social)/settings/communication/page'))
+const  visitProfile = lazy(() => import('@/components/VisitProfile'))
 const AccountMessaging = lazy(() => import('@/app/(social)/settings/messaging/page'))
 const AccountClose = lazy(() => import('@/app/(social)/settings/close-account/page'))
 const HelpPage = lazy(() => import('@/app/(social)/help/page'))
@@ -230,9 +231,15 @@ export const settingPagesRoutes:RoutesProps[]=[
   },
   {
     path: '/settings/messaging',
-    name: 'Account Messaging',
-    element: <AccountMessaging />,
+    name: 'Profile Visit Analysis',
+    element: <VisitProfile />,
   },
+  // { 
+
+  //   image : ChartNetwork,
+  //   name: 'Profile Visit Analysis',
+  //   link: '/profile-visitors',
+  // },
   {
     path: '/settings/close-account',
     name: 'Account Close',

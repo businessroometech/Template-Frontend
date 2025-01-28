@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install Dependencies
+      run: |
+        npm install
+        npm run build
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v0.1.3
+      with:
+        host: 54.177.193.30
+        username: ubuntu
+        key: ssh -i "dev-server.pem" ubuntu@ec2-54-177-193-30.us-west-1.compute.amazonaws.com
+        port: 22
+        script: |
+          cd /var/www/react-app
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart "react-app"

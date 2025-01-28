@@ -45,6 +45,8 @@ import { Link } from 'react-router-dom'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import { io } from 'socket.io-client';
+import { FaArrowUp } from 'react-icons/fa';
 
 // ----------------- data type --------------------
 interface Post {
@@ -495,6 +497,7 @@ const Post3 = () => {
   )
 }
 
+const socket = io('http://54.177.193.30:5000'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
@@ -509,11 +512,27 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
  const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
-  // const [limit,setLimit] = useState<number>(5);
-//  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  const [flag, setflag] = useState(false);
+
+ 
+useEffect(() => {
   
+  socket.on('postSent', (data:any) => {
+    if (data.success) {
+      setflag(data.success);
+      console.log('Post was sent successfully:', data.postId);
+    } else {
+      console.log('Failed to send post');
+    }
+  });
+
+  return () => {
+    socket.off('postSent');
+  };
+}, [user?.id, flag]);
 
   const fetchPosts = async () => {
+
     setError(null);
     setHasMore(true);
     console.log('fetching posts');
@@ -523,7 +542,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
-
+      
       if(res.message === "No posts found for this user."){
         setHasMore(false);
         console.log('went in');
@@ -531,7 +550,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       }
       setLoading(false)
       console.log('Fetched Posts:', res.data);
-      // console.log('What is res data',res.data);
+      console.log('What is res data',res.data);
       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
@@ -586,6 +605,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       setPage(1); // Reset page to 1
       setHasMore(true); // Reset pagination state
       fetchPosts();
+      setflag(false)
     }
   }, [isCreated]);
 
@@ -649,9 +669,6 @@ const PostSkeleton = () => {
     </div>
   );
 };
-
-
-
   // Conditional rendering
   if (loading) {
     return <div style={{ minHeight: '110vh', padding: '16px' }}>
@@ -665,13 +682,22 @@ const PostSkeleton = () => {
     return <div>Error: {error}</div>
   }
 
+
+
   return (
     <>
-      <div>
+      <div className="position-relative">
+     {flag && <Link to="/feed/home"
+          className="position-fixed start-50 translate-middle-x btn btn-primary"
+          onClick={() => setShowNewPostButton(true)}
+          style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
+        >
+          <FaArrowUp color='#fff' /> &nbsp;New posts
+        </Link>}
           <InfiniteScroll
-            dataLength={posts.length} // Total number of posts
-            next={fetchNextPage} // Function to fetch the next page of posts
-            hasMore={hasMore} // Boolean indicating whether more posts are available
+            dataLength={posts.length} 
+            next={fetchNextPage} 
+            hasMore={hasMore} 
             loader={
               <div>
                 {[...Array(5)].map((_, index) => (
@@ -686,23 +712,13 @@ const PostSkeleton = () => {
             }
             // Matches the id of the scrollable container
           >
-            {showNewPostButton && (
-              <Link
-                to="/feed/home#"
-                className="btn-primary"
-                onClick={() => setShowNewPostButton(false)}
-                style={{ zIndex: 99, top: '4em', position: 'fixed', left: '47%' }}
-              >
-                ⬆️ New Posts
-              </Link>
-            )}
-
+            
             {posts.map((post, index) => (
               <PostCard
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.Id || index}
+                key={post.id || index}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}

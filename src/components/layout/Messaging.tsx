@@ -173,7 +173,7 @@ const Messaging = () => {
     // const roomId = `${activeChat.personalDetails.id}-${user.id}`
     // console.log(roomId)
     socket.emit('joinRoom', roomId)
-    socket.on('connect', () => {
+    socket.on('connections', () => {
       console.log('Socket connected:', socket.id)
     })
 
