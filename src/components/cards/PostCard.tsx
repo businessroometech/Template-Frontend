@@ -43,9 +43,9 @@ interface Like {
   userRole: string;
   createdBy: string;
   updatedBy: string;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
-  likerUrl: string; // URL string
+  createdAt: string; 
+  updatedAt: string; 
+  likerUrl: string; 
 }
 
 interface GetAllLikesResponse {
@@ -428,7 +428,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       <CardBody>
         {post?.content && (
           <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-            <div
+            <div   id={post.Id}
               className="w-full"
               style={{
                 whiteSpace: 'pre-wrap', // Preserve line breaks

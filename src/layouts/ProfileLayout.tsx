@@ -330,6 +330,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const [showModal, setShowModal] = useState(false);
   const [msg, setMsg] = useState("");
   const [coverModal,setCoverModal] = useState<boolean>(false);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -339,7 +340,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   }, [profile?.personalDetails])
 
   useEffect(() => {
-    if (id && user?.id && !msg) {
+    if (id && user?.id && !msg && count === 0) {
       if(id === user?.id){
         return
       }
@@ -362,10 +363,11 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           }),
         }
       );
-
+      
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      setCount(1)
 
       const data = await response.json();
       setMsg(data?.message);
@@ -577,7 +579,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       }}
                     >
                       <Image
-                      src={profile?.coverImgUrl ? profile?.coverImgUrl : background5} // Replace with your actual image source
+                      src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
                       alt="Profile"
                       style={{
                         width: "100%",
