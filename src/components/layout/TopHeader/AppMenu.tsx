@@ -136,7 +136,7 @@ const AppMenu = () => {
   useEffect(() => {
     fetchConnections();
     try {
-    socket.emit("connect", user?.id);
+    socket.emit("connections", user?.id);
     socket.on('connections', () => {
       fetchConnections();      
     });
