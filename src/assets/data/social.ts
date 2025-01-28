@@ -23,7 +23,7 @@ import event3 from '@/assets/images/events/03.jpg'
 import event4 from '@/assets/images/events/04.jpg'
 import event5 from '@/assets/images/events/05.jpg'
 
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'

@@ -64,8 +64,8 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
     key: 'demos',
     label: 'Businessroom Live',
     isTitle: true,
-    icon : TvMinimalPlay , //.....................change icon here.........................//
-    url : "/join-live"
+    icon : TvMinimalPlay , 
+    url : "/join-live",
     // children: [
     //   {
     //     key: 'home-default',

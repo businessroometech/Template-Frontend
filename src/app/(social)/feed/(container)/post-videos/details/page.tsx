@@ -24,7 +24,7 @@ import RelatedVideos from './components/RelatedVideos'
 import UserComments from '@/components/UserComments'
 import { getAllFeeds } from '@/helpers/data'
 
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import PageMetaData from '@/components/PageMetaData'
 import { useFetchData } from '@/hooks/useFetchData'
 

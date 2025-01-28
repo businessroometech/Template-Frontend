@@ -20,14 +20,13 @@ import { io, Socket } from "socket.io-client";
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Bell } from 'lucide-react';
 
-const NotificationDropdown = () => {
+const NotificationDropdown = ({count}) => {
   const { user } = useAuthContext();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [allNotifications, setAllNotifications] = useState<any[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-  const [notiAbout,setNotiAbout] = useState<boolean>(false);
-  const [count, setCount] = useState<number>(0);
-console.log("isConnected",isConnected);
+  const [notiAbout, setNotiAbout] = useState<boolean>(false);
+  // console.log("isConnected", isConnected);
 
   // Request notification permission on component mount
   useEffect(() => {
@@ -35,9 +34,9 @@ console.log("isConnected",isConnected);
       Notification.requestPermission()
         .then((permission) => {
           if (permission === "granted") {
-            console.log("Notification permission granted.");
+            // console.log("Notification permission granted.");
           } else {
-            console.log("Notification permission denied.");
+            // console.log("Notification permission denied.");
           }
         })
         .catch((err) => console.error("Error requesting notification permission:", err));
@@ -75,7 +74,7 @@ console.log("isConnected",isConnected);
       if (Notification.permission === "granted") {
         new Notification(notification.message, {
           body: notification.mediaUrl ? "You have a new media notification." : "Check your notifications!",
-          icon: "/notification-icon.png", 
+          icon: "/notification-icon.png",
         });
       }
     });
@@ -103,31 +102,10 @@ console.log("isConnected",isConnected);
     }
   };
 
-  const fetchNotificationsCount = async () => {
-    try {
-      const response = await fetch(
-        `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
-        { method: "GET", headers: { "Content-Type": "application/json" } }
-      );
 
-      const data = await response.json();
-      console.log("data",count);
-      
-      setCount(data.unreadCount);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    }
-  };
 
   // Fetch notifications when the component mounts
-  useEffect(() => {
-    fetchNotifications();
-  }, [user?.id]);
 
-  setTimeout(() => {
-    fetchNotificationsCount();
-  }
-  , 1);
 
   const handleOnRead = async (notificationId: string) => {
     try {
@@ -138,7 +116,7 @@ console.log("isConnected",isConnected);
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ notificationId:notificationId }),
+          body: JSON.stringify({ notificationId: notificationId }),
         }
       );
       await response.json();
@@ -166,7 +144,7 @@ console.log("isConnected",isConnected);
       const data = await response.json();
       if (data?.success) {
         console.log('All notifications marked as read successfully.');
-        fetchNotifications();
+
       } else {
         console.error('Failed to mark all notifications as read:', data.message);
       }
@@ -176,67 +154,75 @@ console.log("isConnected",isConnected);
   };
 
   return (
-    <Dropdown as="li" autoClose="outside" className="nav-item" drop="down" align="end">
+    <div className='position-relative'>
+    {<>
+        <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:0 , left:24, color:"white", zIndex:9999, fontSize:12 , fontWeight:"bold" }}>{count>0?count:""}</p>
+      </>
+      }
+  
+    <Dropdown as="li" autoClose="outside" className="nav-item" drop="down" align="end" style={{ position: 'relative' }}>
+      
       <DropdownToggle className="content-none nav-link icon-md btn btn-light p-0"
         style={{
-          marginRight : '10px'
+          marginRight: '10px',
+          position: 'relative',
         }}
       >
         <div
           style={{
             padding: '8px',
-            borderRadius : '10%',
-            marginLeft : '10px',
+            borderRadius: '10%',
+            marginLeft: '10px',
             // background: 'rgba(136, 209, 254, 0.2)',
             backdropFilter: 'blur(8px)',
             transition: 'background 0.3s ease',
           }}
           about='Label'
-  
+
           onMouseEnter={(e) => {
             (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
             setNotiAbout(true);
+            fetchNotifications()
           }}
           onMouseLeave={(e) => {
             (e.currentTarget.style.background = 'transparent');
             setNotiAbout(false);
+            fetchNotifications()
+
           }}
         >
-          {<>
-            <Bell style={{ color: '#1ea1f2' }} />
-            <p className='bg-danger px-1 rounded-pill' style={{position:"absolute", top:3 , left:24, color:"white", }}>{count>0?count:""}</p>
-          </>
-          
-          }
+
+          {<Bell style={{ color: '#1ea1f2' }} />}
+
         </div>
-          {notiAbout && 
-            <span
-              style={{
-                position: 'absolute',
-                marginTop : '40px',
-                marginLeft : '15px',
-                top: '50%',
-                zIndex : 10000,
-                transform: 'translateY(-50%)',
-                background: '#333',
-                color: '#fff',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                whiteSpace: 'nowrap',
-              }}
-              className="label"
-            >
-              {'Notification'}
-            </span>}
+        {notiAbout &&
+          <span
+            style={{
+              position: 'absolute',
+              marginTop: '40px',
+              marginLeft: '15px',
+              top: '50%',
+              zIndex: 10000,
+              transform: 'translateY(-50%)',
+              background: '#333',
+              color: '#fff',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              whiteSpace: 'nowrap',
+            }}
+            className="label"
+          >
+            {'Notification'}
+          </span>}
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
         <Card>
           <CardHeader className="d-flex justify-content-between align-items-center">
             <h6 className="m-0">
               Notifications
-              <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
+             {allNotifications.slice(0, 4).filter((n) => !n.isRead).length>0 && <span className="badge bg-danger bg-opacity-10 text-danger ms-2">
                 {allNotifications.slice(0, 4).filter((n) => !n.isRead).length} new
-              </span>
+              </span>}
             </h6>
             <Link className="small" to="#" onClick={handleReadAll}>
               Read all
@@ -258,7 +244,7 @@ console.log("isConnected",isConnected);
                         <div className="avatar text-center">
                           <img
                             className="avatar-img rounded-circle"
-                            src={notification.mediaUrl || avatar7} 
+                            src={notification.mediaUrl || avatar7}
                             alt="Avatar"
                           />
                         </div>
@@ -306,6 +292,7 @@ console.log("isConnected",isConnected);
         </Card>
       </DropdownMenu>
     </Dropdown>
+    </div>
   );
 };
 

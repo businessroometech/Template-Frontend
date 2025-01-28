@@ -27,16 +27,16 @@ const Home = () => {
   useEffect(() => {
     try {
       // Connect to the server
-      console.log('Connecting to socket...');
+      // console.log('Connecting to socket...');
       socket.emit("userOnline", user.id);
 
       // Log connection status
       socket.on('connect', () => {
-          console.log('Socket connected:', socket.id);
+          // console.log('Socket connected:', socket.id);
       });
 
       socket.on('connect_error', (error) => {
-          console.error('Connection error:', error);
+          // console.error('Connection error:', error);
       });
     } catch (error) {
       console.error('Error during socket connection:', error);
@@ -45,7 +45,7 @@ const Home = () => {
 
     return () => {
       try {
-        console.log('Disconnecting socket...');
+        // console.log('Disconnecting socket...');
         socket.disconnect();
       } catch (error) {
         console.error('Error during socket disconnection:', error);
@@ -73,6 +73,7 @@ const Home = () => {
         }}
         className="position-relative vstack gap-4"
       >
+       
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
         <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
       </Col>

@@ -42,7 +42,7 @@ import DropzoneFormInput from '../form/DropzoneFormInput'
 import TextFormInput from '../form/TextFormInput'
 import TextAreaFormInput from '../form/TextAreaFormInput'
 import DateFormInput from '../form/DateFormInput'
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'
@@ -318,7 +318,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   return (
     <>
       <Card className="card-body" style={{ maxHeight: '9em' }}>
-        <div className="d-flex mb-3">
+        <div className="d-flex mb-3" >
           <Link to={`/profile/feed/${user?.id}`}>
             <div className="avatar avatar-s me-2"
               style={{

@@ -16,7 +16,7 @@ import {
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient'
 import Plyr from 'plyr-react'
 
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar12 from '@/assets/images/avatar/12.jpg'
 
 import 'plyr-react/plyr.css'

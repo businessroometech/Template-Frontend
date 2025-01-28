@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
-import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
+import fallBackAvatar from '../../../assets/images/avatar/default avatar.png';
 import axios, { AxiosResponse } from 'axios';
 import { useAuthContext } from '@/context/useAuthContext';
 
@@ -25,8 +25,8 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const [commentRefresh,setCommentRefresh] = useState(0);
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
-
-  //  console.log('---comment---',comment);
+  const [profile,setProfile] = useState<boolean>(false);
+  // console.log('---comment---',comment);
 
   function formatText(text : string,name : string) : string {
       return  `@${name} ${text}`
@@ -53,6 +53,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       if (response.ok) {
         const data: DeleteCommentResponse = await response.json();
         console.log('Comment deleted successfully:', data.message);
+        setCommentCount(()=>commentCount-1);
         setIsDeleted(true);
         // Optionally update the UI
       } else {
@@ -150,6 +151,30 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   };
   
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: comment.commenterId
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json(); 
+        // console.log('Profile Response',data);
+        setProfile(() => data.data); 
+        // console.log('Profile in Home',profile);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
     const fetchData = async () => {
       try {
         const res = await fetchReplies(comment.id);
@@ -161,6 +186,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     };
   
     if(level < 1) fetchData();
+    if(!profile) fetchUser()
   }, [comment.id]);
   
   // console.log('this is replies',replies);
@@ -172,7 +198,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <img
-          src={comment.avatar || fallBackAvatar}
+          src={profile.profileImgUrl || fallBackAvatar}
           alt={`${comment.commenterName || comment.createdBy}-avatar`}
           className="rounded-circle me-3"
           style={{ width: '35px', height: '35px', objectFit: 'cover' }}

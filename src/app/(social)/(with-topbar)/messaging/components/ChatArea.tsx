@@ -570,6 +570,7 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
 
   return (
     <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
+      
     <div className="flex-shrink-0 avatar avatar-xs me-2">
       {!received && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
     </div>

@@ -45,6 +45,7 @@ import { Link } from 'react-router-dom'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import { io } from 'socket.io-client';
 
 // ----------------- data type --------------------
 interface Post {
@@ -509,11 +510,30 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
  const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
+  const [flag, setflag] = useState(false);
   // const [limit,setLimit] = useState<number>(5);
 //  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
   
+const socket = io('http://54.177.193.30:5000'); 
+useEffect(() => {
+  
+  socket.on('postSent', (data:any) => {
+    if (data.success) {
+      setflag(data.success);
+      console.log('Post was sent successfully:', data.postId);
+      // You can update your state/UI here with the new post info
+    } else {
+      console.log('Failed to send post');
+    }
+  });
+
+  return () => {
+    socket.off('postSent');
+  };
+}, []);
 
   const fetchPosts = async () => {
+
     setError(null);
     setHasMore(true);
     console.log('fetching posts');
@@ -560,8 +580,8 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
         }
 
         const data = await response.json(); 
-        console.log('Profile Response',data)
-        setProfile(() => data); 
+        console.log('Profile Response',data);
+        setProfile(() => data.data); 
         console.log('Profile in Home',profile);
       } catch (error) {
         console.error("Error fetching user profile:", error);
@@ -574,6 +594,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
 
     if (!hasMounted.current) {
       fetchPosts();
+      fetchUser();
       hasMounted.current = true;
     }
   }, []);
@@ -648,9 +669,6 @@ const PostSkeleton = () => {
     </div>
   );
 };
-
-
-
   // Conditional rendering
   if (loading) {
     return <div style={{ minHeight: '110vh', padding: '16px' }}>
@@ -664,9 +682,18 @@ const PostSkeleton = () => {
     return <div>Error: {error}</div>
   }
 
+
+
   return (
     <>
-      <div>
+      <div className="position-relative">
+     {flag && <Button
+          className="position-fixed start-50 translate-middle-x"
+          onClick={() => fetchPosts()}
+          style={{ zIndex: 9999, top: '2em' }}
+        >
+          ⬆️ New Posts
+        </Button>}
           <InfiniteScroll
             dataLength={posts.length} // Total number of posts
             next={fetchNextPage} // Function to fetch the next page of posts

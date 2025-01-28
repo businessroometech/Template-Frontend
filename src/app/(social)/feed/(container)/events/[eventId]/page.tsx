@@ -8,7 +8,7 @@ import { getEventById } from '@/helpers/data'
 import { BsGeoAlt, BsHandThumbsUpFill } from 'react-icons/bs'
 
 import event6 from '@/assets/images/events/06.jpg'
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'
 import avatar5 from '@/assets/images/avatar/05.jpg'

@@ -11,9 +11,11 @@ const BusinessSellerForm = () => {
   const [step, setStep] = useState(0);
 
   const sections = [
-    { title: "Request Received", icon: <FaUserFriends style={{ marginRight: '8px' }} />, component: <ConnectionRequest /> },
-    { title: "Request Sent", icon: <FaUserCheck style={{ marginRight: '8px' }} />, component: <ConnectionsStatus /> },
     { title: "My Connections", icon: <FaUserPlus style={{ marginRight: '8px' }} />, component: <MyConnections /> },
+    { title: "Request Sent", icon: <FaUserCheck style={{ marginRight: '8px' }} />, component: <ConnectionsStatus /> },
+    { title: "Request Received", icon: <FaUserFriends style={{ marginRight: '8px' }} />, component: <ConnectionRequest /> },
+   
+   
     { title: "Suggested Connections", icon: <FaUsers style={{ marginRight: '8px' }} />, component: <SuggestedConnections /> },
   ];
 
