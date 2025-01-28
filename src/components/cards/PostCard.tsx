@@ -78,8 +78,8 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   const [openComment,setOpenComment] = useState<boolean>(false);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
-  // console.log(profile);
-  console.log("Profile In PostCard",profile);
+  // // console.log(profile);
+  // // console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -89,11 +89,11 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   }, [post.likeStatus]);
   const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
-  // console.log(user);
+  // // console.log(user);
 
-  // console.log('---postId---',post.userI
+  // // console.log('---postId---',post.userI
   // d);
-  // console.log('-----testing-----')
+  // // console.log('-----testing-----')
   const deletePost = async (postId: string): Promise<void> => {
     try {
       // Validate PostId
@@ -116,11 +116,11 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       }
   
       const data = await response.json();
-      // console.log('dl',tlRefresh)
+      // // console.log('dl',tlRefresh)
       setIsDeleted(true);
      
-      // console.log('dlr',tlRefresh);
-      // console.log('Post deleted successfully:', data.message);
+      // // console.log('dlr',tlRefresh);
+      // // console.log('Post deleted successfully:', data.message);
       alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
@@ -146,7 +146,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       if (response.ok) {
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
-          console.log('Likes fetched successfully:', data.data?.likes);
+          // // console.log('Likes fetched successfully:', data.data?.likes);
           setAllLikes(data.data?.likers);
           // Optionally, update the UI with the likes data
         } else {
@@ -173,11 +173,11 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
   };
 
   const handleDeletePost = (postId : string) => {
-    console.log(`This is the postId's userID ${post.userId},This is the userId ${user?.id}`)
+    // console.log(`This is the postId's userID ${post.userId},This is the userId ${user?.id}`)
     if(post.userId === user?.id) {
         handleDelete(postId)
     }
-    else console.log("id did not match")
+    // else // console.log("id did not match")
   }
 
 
@@ -197,7 +197,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
 
         if (!response.ok) throw new Error('Failed to fetch comments');
         const data = await response.json();
-        // console.log('comments that are fetched : ',data);
+        // // console.log('comments that are fetched : ',data);
         setComments(data.data.comments || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -210,7 +210,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
     }
     if (post?.Id) fetchComments();
   }, [refresh, post?.Id]);
-  // console.log('---item---',item);
+  // // console.log('---item---',item);
 
   const videoPlayer = useMemo(() => {
     if (isVideo) {
@@ -262,7 +262,7 @@ const PostCard = ({ item, isMediaKeys,tlRefresh,setTlRefresh,setIsCreated,posts,
       console.error('Error toggling like:', error);
     }
   };
-  // console.log(allLikes);
+  // // console.log(allLikes);
 
 function LikeText(allLikes : Like[]) {
   let str = '';
