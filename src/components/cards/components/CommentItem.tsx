@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
-import { BsFillHandThumbsUpFill, BsSendFill } from 'react-icons/bs';
-import fallBackAvatar from '../../../assets/images/avatar/01.jpg';
-import axios from 'axios';
+import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
+import fallBackAvatar from '../../../assets/images/avatar/default avatar.png';
+import axios, { AxiosResponse } from 'axios';
 import { useAuthContext } from '@/context/useAuthContext';
 
-const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount}: CommentItemProps) => {
+interface DeleteCommentResponse {
+  message: string;
+}
+
+// Define the structure of the API error
+interface DeleteCommentError {
+  error: string;
+}
+
+const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount,myProfile = null}: CommentItemProps) => {
   const [showReplies, setShowReplies] = useState(false);
   const [reply, setReply] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -14,12 +23,48 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const {user} = useAuthContext();
   const [replies,setReplies] = useState([]);
   const [commentRefresh,setCommentRefresh] = useState(0);
-
+  const [menuVisible,setMenuVisible] = useState<boolean>(false);
+  const [isDeleted,setIsDeleted] = useState<boolean>(false);
+  const [profile,setProfile] = useState<boolean>(false);
   // console.log('---comment---',comment);
-
+  console.log('---my profile---',myProfile);
   function formatText(text : string,name : string) : string {
       return  `@${name} ${text}`
   }
+
+  // console.log('levl',level)
+  const handleDeleteComment = async (commentId: string, level: number, setIsDeleted: (value: boolean) => void): Promise<void> => {
+    if (!commentId) {
+      console.error('Comment ID is required');
+      return;
+    }
+    
+    const endpoint = `http://54.177.193.30:5000/api/v1/post/${level === 0 ? 'comments' : 'nested-comments'}`;
+  
+    try {
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commentId,nestedCommentId : commentId  }),
+      });
+  
+      if (response.ok) {
+        const data: DeleteCommentResponse = await response.json();
+        console.log('Comment deleted successfully:', data.message);
+        setCommentCount(()=>commentCount-1);
+        setIsDeleted(true);
+        // Optionally update the UI
+      } else {
+        const errorData: DeleteCommentError = await response.json();
+        console.error('Error deleting comment:', errorData.error);
+        alert(errorData.error); // Optionally show the error to the user
+      }
+    } catch (error) {
+      console.error('An unknown error occurred:', (error as Error).message);
+    }
+  };
 
   const handleCommentSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -89,7 +134,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ commentId }),
+        body: JSON.stringify({ commentId}),
       });
   
       if (!response.ok) {
@@ -106,6 +151,30 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   };
   
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: comment.commenterId
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json(); 
+        // console.log('Profile Response',data);
+        setProfile(() => data.data); 
+        // console.log('Profile in Home',profile);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
     const fetchData = async () => {
       try {
         const res = await fetchReplies(comment.id);
@@ -117,15 +186,19 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     };
   
     if(level < 1) fetchData();
-  }, [comment.id]);
+    if(!profile) fetchUser()
+  }, [comment.commenterId, comment.id, commentRefresh, level, profile]);
   
   // console.log('this is replies',replies);
+
+  if (isDeleted) return null;
+
   return (
-    <li className="comment-item">
+    <li className="comment-item" id={comment.id}>
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <img
-          src={comment.avatar || fallBackAvatar}
+          src={profile.profileImgUrl || fallBackAvatar}
           alt={`${comment.commenterName || comment.createdBy}-avatar`}
           className="rounded-circle me-3"
           style={{ width: '35px', height: '35px', objectFit: 'cover' }}
@@ -133,8 +206,9 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
         {/* Comment Content */}
         <div
-          className="bg-light rounded p-3 flex-grow-1"
+          className="bg-white rounded p-1 flex-grow-1"
           style={{
+            // border: '1px solid #e0e0e0',
             wordWrap: 'break-word',
             overflowWrap: 'break-word',
             wordBreak: 'break-word',
@@ -142,10 +216,47 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
           }}
         >
           <div className="d-flex justify-content-between">
+            <div style={{display : 'flex'}}>
             <Link to={`/profile/feed/${comment?.id}`}>
               <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
             </Link>
             <small className="ms-2">{comment.timestamp}</small>
+            </div>
+            { user?.id === comment.commenterId && 
+              <div style={{ position: "relative" }}>
+              <button
+                className="btn btn-link p-0 text-dark"
+                style={{ fontSize: "1.5rem", lineHeight: "1" }}
+                onClick={() => setMenuVisible(!menuVisible)}
+              >
+                <BsThreeDots />
+              </button>
+              {menuVisible && (
+                <div
+                  className="dropdown-menu show"
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    right: 0,
+                    zIndex: 1000,
+                    display: "block",
+                    backgroundColor: "white",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "0.25rem",
+                    overflow: "hidden",
+                  }}
+                >
+                  <button
+                    className="dropdown-item text-danger d-flex align-items-center"
+                    onClick={() => handleDeleteComment(comment.id,level,setIsDeleted)}
+                    style={{ gap: "0.5rem" }}
+                  >
+                    <BsTrash /> Delete
+                  </button>
+                </div>
+              )}
+              </div>
+            }
           </div>
 
           <p
@@ -204,53 +315,46 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
                 <img
                   className="avatar-img rounded-circle"
                   style={{ width: '35px', height: '35px', objectFit: 'cover' }}
-                  src={comment.avatar || fallBackAvatar}
+                  src={(myProfile && myProfile.profileImgUrl) || fallBackAvatar}
                   alt="avatar"
                 />
               </span>
             </Link>
           </div>
           <form
-            className="nav nav-item w-100 d-flex align-items-center"
-            onSubmit={handleCommentSubmit}
-            style={{ gap: '10px' }}
-          >
-            <textarea
-              data-autoresize
-              className="form-control bg-light"
-              style={{
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                textAlign: 'left',
-                resize: 'none',
-                height: '38px',
-                flex: 1,
-              }}
-              rows={1}
-              placeholder="Add a reply..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-            />
-            <button
-              className="btn border-0 d-flex align-items-center justify-content-center"
-              type="submit"
-              style={{
-                width: '45px', // Increased size for better visibility
-                height: '40px', // Increased size for better visibility
-                backgroundColor: '#007bff', // Blue background
-                borderRadius: '20%', // Circular button
-                cursor: 'pointer',
-              }}
-            >
-              <BsSendFill 
-                style={{ 
-                  color: '#fff', 
-                  fontSize:'20px' // Larger icon size for better visibility
-                }} 
-              />
-            </button>
-          </form>
+  className="nav nav-item w-100 d-flex align-items-center"
+  onSubmit={handleCommentSubmit}
+  style={{ gap: "10px" }}
+>
+  <textarea
+    data-autoresize
+    className="form-control"
+    style={{
+      backgroundColor: "#fff",   // Set the input background to white
+      color: "#000",             // Optional: Ensure text color is black for contrast
+      whiteSpace: "nowrap",      // Keep text on a single line
+      overflow: "hidden",        // Hide overflowing content
+      textOverflow: "ellipsis",  // Optional: show ellipsis for overflow
+      textAlign: "left",         // Start text and cursor from the left
+      resize: "none",            // Disable resizing
+      height: "38px",            // Fixed height for a single line
+      flex: 1,                   // Allow textarea to take available space
+      border: "1px solid #ced4da", // Optional: Subtle border for better visibility
+      borderRadius: "4px",       // Rounded corners for a smoother look
+      padding: "5px 10px",       // Add some padding for better UX
+    }}
+    rows={1}
+    placeholder="Add a comment..."
+    value={commentText}
+    onChange={(e) => setCommentText(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) { // Submit on Enter, allow Shift+Enter for new lines
+        e.preventDefault(); // Prevent adding a new line
+        handleCommentSubmit(e); // Call the form's submit handler
+      }
+    }}
+  />
+</form>
         </div>
       )}
 
@@ -268,6 +372,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
               parentId={comment.id}
               commentCount = {commentCount}
               setCommentCount = {setCommentCount}
+              myProfile={myProfile}
             />
           ))}
         </ul>

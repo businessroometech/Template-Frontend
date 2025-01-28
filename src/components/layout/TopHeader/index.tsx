@@ -8,56 +8,107 @@ import NotificationDropdown from './NotificationDropdown'
 import ProfileDropdown from './ProfileDropdown'
 import StyledHeader from './StyledHeader'
 import { MessageSquareText, Settings } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useAuthContext } from '@/context/useAuthContext'
 
 const TopHeader = () => {
 
-  const [messageAbout,setMessageAbout] = useState<boolean>(false);
-  const [settingsAbout,setSettingsAbout] = useState<boolean>(false);
-  const [notiAbout,setNotiAbout] = useState<boolean>(false);
+  const { user } = useAuthContext();
+  const [messageAbout, setMessageAbout] = useState<boolean>(false);
+  const [settingsAbout, setSettingsAbout] = useState<boolean>(false);
+  const [notiAbout, setNotiAbout] = useState<boolean>(false);
+  const [Notificount, setNotifiCount] = useState(0);
+
+  useEffect(() => {
+    fetchNotificationsCount();
+    const interval = setInterval(fetchNotificationsCount, 1500);
+    return () => clearInterval(interval);
+  },);
+  useEffect(() => {
+    const interval = setInterval(fetchNotificationsCount, 1500);
+    return () => clearInterval(interval);
+  },);
+
+  const fetchNotificationsCount = async () => {
+    try {
+      const response = await fetch(
+        `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+        { method: "GET", headers: { "Content-Type": "application/json" } }
+      );
+
+      const data = await response.json();
+
+      setNotifiCount(data.unreadCount);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+
+
 
   return (
     <StyledHeader>
-      <div className="container">
-        <LogoBox />
+      <div
+        style={{
+          backgroundColor: 'white',
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center', // Vertically centers all items
+          justifyContent: 'space-between', // Space items evenly between
+          padding: '0px 80px', // Adds padding to the container
+        }}
+      >
+        {/* Left side: Logo and MobileMenu */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LogoBox />
+          <MobileMenuToggle />
+        </div>
 
-        <MobileMenuToggle />
-
+        {/* Center: Collapse Menu */}
         <CollapseMenu isSearch />
 
-        <ul className="nav flex-nowrap align-items-center  list-unstyled">
-          <li className="nav-item">
+        {/* Right side: Navigation Links */}
+        <ul
+          className="nav flex-nowrap align-items-center list-unstyled"
+          style={{
+            display: 'flex', // Make the list items flex container
+            alignItems: 'center', // Vertically center items
+            margin: 0, // Remove default margin
+            padding: 0, // Remove default padding
+          }}
+        >
+          {/* Messaging Link */}
+          <li className="nav-item" style={{ position: 'relative' }}>
             <Link to="/messaging">
-            <div
-              style={{
-                padding: '8px',
-                borderRadius : '10%',
-                marginLeft : '10px',
-                // background: 'rgba(136, 209, 254, 0.2)',
-                backdropFilter: 'blur(8px)',
-                transition: 'background 0.3s ease',
-              }}
-              about='Label'
-      
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
-                setMessageAbout(true);
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.background = 'transparent');
-                setMessageAbout(false);
-              }}
-            >
-              {<MessageSquareText style={{ color: '#1ea1f2' }} />}
-            </div>
-              {messageAbout && 
+              <div
+                style={{
+                  padding: '8px',
+                  borderRadius: '10%',
+                  marginLeft: '10px',
+                  backdropFilter: 'blur(8px)',
+                  transition: 'background 0.3s ease',
+                  cursor: 'pointer', // Add pointer cursor for better UX
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
+                  setMessageAbout(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  setMessageAbout(false);
+                }}
+              >
+                <MessageSquareText style={{ color: '#1ea1f2' }} />
+              </div>
+              {messageAbout && (
                 <span
                   style={{
                     position: 'absolute',
-                    marginTop : '40px',
-                    marginLeft : '15px',
+                    marginTop: '40px',
+                    marginLeft: '15px',
                     top: '50%',
-                    zIndex : 10000,
+                    zIndex: 10000,
                     transform: 'translateY(-50%)',
                     background: '#333',
                     color: '#fff',
@@ -68,42 +119,42 @@ const TopHeader = () => {
                   className="label"
                 >
                   {'Message'}
-                </span>}
+                </span>
+              )}
             </Link>
           </li>
 
-          <li className="nav-item">
+          {/* Settings Link */}
+          <li className="nav-item" style={{ position: 'relative' }}>
             <Link to="/settings/account">
-            <div
-              style={{
-                padding: '8px',
-                borderRadius : '10%',
-                marginLeft : '10px',
-                // background: 'rgba(136, 209, 254, 0.2)',
-                backdropFilter: 'blur(8px)',
-                transition: 'background 0.3s ease',
-              }}
-              about='Label'
-      
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)');
-                setSettingsAbout(true);
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.background = 'transparent');
-                setSettingsAbout(false);
-              }}
-            >
-              {<Settings style={{ color: '#1ea1f2' }} />}
-            </div>
-              {settingsAbout && 
+              <div
+                style={{
+                  padding: '8px',
+                  borderRadius: '10%',
+                  marginLeft: '10px',
+                  backdropFilter: 'blur(8px)',
+                  transition: 'background 0.3s ease',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
+                  setSettingsAbout(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  setSettingsAbout(false);
+                }}
+              >
+                <Settings style={{ color: '#1ea1f2' }} />
+              </div>
+              {settingsAbout && (
                 <span
                   style={{
                     position: 'absolute',
-                    marginTop : '40px',
-                    marginLeft : '15px',
+                    marginTop: '40px',
+                    marginLeft: '15px',
                     top: '50%',
-                    zIndex : 10000,
+                    zIndex: 10000,
                     transform: 'translateY(-50%)',
                     background: '#333',
                     color: '#fff',
@@ -114,16 +165,20 @@ const TopHeader = () => {
                   className="label"
                 >
                   {'Settings'}
-                </span>}
+                </span>
+              )}
             </Link>
           </li>
 
-          <NotificationDropdown />
+          {/* Notification Dropdown */}
+          <NotificationDropdown count={Notificount} />
 
+          {/* Profile Dropdown */}
           <ProfileDropdown />
         </ul>
       </div>
     </StyledHeader>
+
   )
 }
 

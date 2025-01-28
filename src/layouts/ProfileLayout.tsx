@@ -9,6 +9,7 @@ import GlightBox from '@/components/GlightBox'
 import { useFetchData } from '@/hooks/useFetchData'
 import type { ChildrenType } from '@/types/component'
 import { RiUserUnfollowFill } from 'react-icons/ri'
+import { Navigate } from 'react-router-dom';
 import clsx from 'clsx'
 import EditProfilePictureModal from "../components/cards/EditProfilePictureModal";
 import {
@@ -24,6 +25,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Image,
   Row,
 } from 'react-bootstrap'
 import {
@@ -72,6 +74,7 @@ import Followers from '@/app/(social)/feed/(container)/home/components/Followers
 import { set } from 'react-hook-form'
 
 const Experience = () => {
+  return null;
   return (
     <Card style={{marginTop : '25px'}}>
       <CardHeader className="d-flex justify-content-between border-0">
@@ -202,7 +205,7 @@ export const ConnectionRequest = () => {
   const { user } = useAuthContext()
   const [allFollowers, setAllFollowers] = useState([])
   const [loading, setLoading] = useState<string | null>(null)
-  // const [loading, setLoading] = useState<string | null>(null)
+  const navigate = useNavigate();
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
@@ -226,9 +229,9 @@ export const ConnectionRequest = () => {
   }
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
-    setLoading(userId)
+    setLoadingStates((prev) => ({ ...prev, [userId]: status }));
     try {
-      const response = await fetch(' http://54.177.193.30:5000/api/v1/connection/update-connection-status', {
+      const response = await fetch('http://54.177.193.30:5000/api/v1/connection/update-connection-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -236,44 +239,25 @@ export const ConnectionRequest = () => {
           connectionId: userId,
           status,
         }),
-      })
-      await fetchConnections()
-      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`)
-
-      toast.success(`Connection request ${status} successfully.`)
+      });
+      if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
+      toast.success(`Connection request ${status} successfully.`);
+      await fetchConnections();
     } catch (error) {
-      await fetchConnections()
-      console.error(`Error while updating connection status:`, error)
-      toast.error(`Error while trying to ${status} the connection request.`)
+      console.error(`Error while updating connection status:`, error);
+      toast.error(`Error while trying to ${status} the connection request.`);
     } finally {
-      await fetchConnections()
-      // setAllFollowers([])
-      window.location.reload()
-      setLoading(null)
+      setLoadingStates((prev) => ({ ...prev, [userId]: null }));
     }
-  }
-
+  };
+  
   return (
     <Card>
       {allFollowers.length >= 0 && (
         <>
-          <CardHeader className="pb-0 border-0 d-flex align-items-center justify-content-between">
-            <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
-              Connection Requests
-            </CardTitle>
-            {allFollowers.length ? (
-              <div className="bg-info p-2 rounded">
-                <p className="mb-0 text-white" style={{ fontSize: '14px' }}>
-                  {allFollowers.length}
-                </p>
-              </div>
-            ) : null}
-          </CardHeader>
-  
           <CardBody>
             {allFollowers.map((follower, idx) => (
               <div className="d-flex row col-12 mb-3" key={idx}>
-                {/* Avatar Section */}
                 <div className="col-8 d-flex">
                   <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
                     <span role="button">
@@ -291,31 +275,35 @@ export const ConnectionRequest = () => {
                     <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
                   </div>
                 </div>
-  
-                {/* Action Buttons */}
-                <div className="col-3 d-flex">
+                <div className="col-4 d-flex justify-content-end">
                   <Button
                     onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
                     variant="danger-soft"
-                    className="rounded-circle mx-1 flex-centered"
-                    disabled={loading === follower?.requesterDetails?.id}
+                    className="mx-1"
+                    disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'}
+                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
                   >
-                    {loading === follower?.requesterDetails?.id ? (
+                    {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
                       <Loading size={15} loading={true} />
                     ) : (
-                      <RiUserUnfollowFill />
+                      'Decline'
                     )}
                   </Button>
                   <Button
                     onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
                     variant="success-soft"
-                    className="rounded-circle mx-1 flex-centered"
-                    disabled={loading === follower?.requesterDetails?.id}
+                    className="mx-1"
+                    disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'}
+                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
                   >
-                    {loading === follower?.requesterDetails?.id ? (
+                    {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
                       <Loading size={15} loading={true} />
                     ) : (
-                      <FaUserCheck size={19} className="pe-1" />
+                      'Approve'
                     )}
                   </Button>
                 </div>
@@ -326,8 +314,7 @@ export const ConnectionRequest = () => {
       )}
     </Card>
   );
-  
-}
+};  
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
@@ -341,7 +328,9 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const skeletonHighlightColor = '#d6d6d6'
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false);
-  const [msg, setMsg] = useState("")
+  const [msg, setMsg] = useState("");
+  const [coverModal,setCoverModal] = useState<boolean>(false);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -351,7 +340,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   }, [profile?.personalDetails])
 
   useEffect(() => {
-    if (id && user?.id && !msg) {
+    if (id && user?.id && !msg && count === 0) {
       if(id === user?.id){
         return
       }
@@ -374,10 +363,11 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           }),
         }
       );
-
+      
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      setCount(1)
 
       const data = await response.json();
       setMsg(data?.message);
@@ -561,6 +551,13 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           onPhotoUpdate={() => console.log('press')}
           src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
           />
+        <EditProfilePictureModal
+          show={coverModal}
+          onHide={() => setCoverModal(false)}
+          onPhotoUpdate={() => console.log('press')}
+          src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
+          forCover={true}
+          />
           <Row className="g-4">
             {/* Main Profile Section */}
             <Col lg={8} className="vstack gap-4">
@@ -572,14 +569,24 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   ) : (
                     <div
                       className="h-200px rounded-top"
-                      
+                      onClick={() => setCoverModal(true)}
                       style={{
-                        backgroundImage: `url(${profile?.coverImgUrl ? profile?.coverImgUrl : background5})`,
+                        position : 'relative',
+                        overflow : 'hidden',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                       }}
+                    >
+                      <Image
+                      src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
                     />
+                    </div>
                   )}
                 </div>
                 <CardBody className="py-0">
@@ -720,7 +727,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   {/* Profile Details */}
                   <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
                     <li className="list-inline-item">
-                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation : user.userRole}
+                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation.replace(/^entrepreneur$/i, 'Entrepreneur') : user.userRole.replace(/^entrepreneur$/i, 'Entrepreneur')}
                     </li>
                     <li className="list-inline-item">
                       <BsGeoAlt className="me-1" />{' '}

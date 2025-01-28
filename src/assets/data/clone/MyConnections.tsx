@@ -155,7 +155,7 @@ const MyConnections = () => {
 {/* <ToastContainer /> */}
       <Card>
         <CardHeader className="border-0 pb-0">
-          <CardTitle>My Connections</CardTitle>
+          {/* <CardTitle>My Connections</CardTitle> */}
         </CardHeader>
         <CardBody>
         {allConnections && allConnections.map((connection, idx) => (
@@ -205,10 +205,10 @@ const MyConnections = () => {
               {connection?.userId !== user?.id ? (<div className="ms-md-auto d-flex">
                 {(user?.id===id || connection.mutual)?(
                   <> 
-                { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" size="sm" className="mb-0 me-2">
+                { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0 me-2">
                     Remove
                   </Button>}
-                    <Button  onClick={() => navigate('/messaging')} variant="primary-soft" size="sm" className="mb-0">
+                    <Button  onClick={() => navigate('/messaging')} variant="primary-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0">
                       Message
                     </Button>
                   </>):(

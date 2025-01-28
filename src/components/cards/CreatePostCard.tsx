@@ -42,7 +42,7 @@ import DropzoneFormInput from '../form/DropzoneFormInput'
 import TextFormInput from '../form/TextFormInput'
 import TextAreaFormInput from '../form/TextAreaFormInput'
 import DateFormInput from '../form/DateFormInput'
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 import avatar4 from '@/assets/images/avatar/04.jpg'
@@ -126,6 +126,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         throw new Error('Network response was not ok')
       }
       const data = await response.json()
+      console.log('data', data)
       setSkeletonLoading(false)
       setProfile(data.data)
     } catch (error) {
@@ -187,6 +188,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
+    if(files.length >= 9) {
+      alert('Max Limit Reached');
+      return;
+    }
     console.log('---In handleFileUpload---uploadedFiles----', uploadedFiles)
     console.log('-----files in params----', files)
     setUploadedFiles([...uploadedFiles, ...files])
@@ -219,7 +224,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         const hashtagRegex = /#\w+/g
         const hashtags = photoQuote.match(hashtagRegex) || []
 
-        console.log('-------------awsIds----------------------------- :', awsIds)
+        // console.log('-------------awsIds----------------------------- :', awsIds)
         // Making the API request
         const response = await makeApiRequest<ApiResponse<{ url: string }>>({
           method: 'POST',
@@ -255,15 +260,15 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     try {
       // Wait for handleUpload to complete before proceeding
       const uploadSuccess = await handleUpload()
-      console.log('video upload success', uploadSuccess)
+      // console.log('video upload success', uploadSuccess)
 
       if (uploadSuccess) {
         // Regular expression to match hashtags
         const hashtagRegex = /#\w+/g
         const hashtags = videoQuote.match(hashtagRegex) || []
-        console.log('hashtags match', hashtags)
-        console.log('---videoupload----', videoQuote)
-        console.log('---upload success---', uploadSuccess)
+        // console.log('hashtags match', hashtags)
+        // console.log('---videoupload----', videoQuote)
+        // console.log('---upload success---', uploadSuccess)
         // Making the API request
         const data = {
           userId: user?.id,
@@ -317,7 +322,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   return (
     <>
       <Card className="card-body" style={{ maxHeight: '9em' }}>
-        <div className="d-flex mb-3">
+        <div className="d-flex mb-3" >
           <Link to={`/profile/feed/${user?.id}`}>
             <div className="avatar avatar-s me-2"
               style={{
@@ -394,7 +399,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         <ModalBody>
           <div className="d-flex mb-3 ">
             <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
               <textarea
@@ -431,7 +436,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         <ModalBody>
           <div className="d-flex mb-3">
             <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
               <textarea
@@ -473,7 +478,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         <ModalBody>
           <div className="d-flex mb-3">
             <div className="avatar avatar-xs me-2">
-              <img className="avatar-img rounded-circle" src={avatar3} alt="" />
+              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
               <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts..." defaultValue={''} />

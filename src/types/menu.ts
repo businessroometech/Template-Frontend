@@ -17,4 +17,5 @@ export type MenuItemType = {
   children?: MenuItemType[]
   parentKey?: string
   icon?: IconType
+  count : number
 }

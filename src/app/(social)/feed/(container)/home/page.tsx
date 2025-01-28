@@ -1,18 +1,58 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row } from "react-bootstrap";
 import Stories from "./components/Stories";
 import Feeds from "./components/Feeds";
 import Followers from "./components/Followers";
+import { io } from "socket.io-client";
 import CreatePostCard from "@/components/cards/CreatePostCard";
 import { Link, useNavigate } from "react-router-dom";
 import LoadContentButton from "@/components/LoadContentButton";
+import { useAuthContext } from "@/context/useAuthContext";
 import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
+
+
+const socket = io('http://54.177.193.30:5000/', {
+  // path: "/socket.io",
+  transports: ['websocket'],
+})
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const { user} = useAuthContext();
   const navigate = useNavigate();
+  const [profile,setProfile] = useState({});
   console.log('Home reloads')
+
+  useEffect(() => {
+    try {
+      // Connect to the server
+      // console.log('Connecting to socket...');
+      socket.emit("userOnline", user.id);
+
+      // Log connection status
+      socket.on('connections', () => {
+          // console.log('Socket connected:', socket.id);
+      });
+
+      socket.on('connect_error', (error) => {
+          // console.error('Connection error:', error);
+      });
+    } catch (error) {
+      console.error('Error during socket connection:', error);
+    }
+
+
+    return () => {
+      try {
+        // console.log('Disconnecting socket...');
+        socket.disconnect();
+      } catch (error) {
+        console.error('Error during socket disconnection:', error);
+      }
+    };
+  },[]);
+
   
 
   return (
@@ -22,6 +62,7 @@ const Home = () => {
         lg={6}
         id="scrollableDiv"
         style={{
+         
           position: 'sticky', // Ensure the container's position is suitable for scrolling
        // Enables vertical scrolling
            // Sets a height limit for scrolling
@@ -32,8 +73,9 @@ const Home = () => {
         }}
         className="position-relative vstack gap-4"
       >
+       
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated} />
+        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
       </Col>
 
       <Col lg={3} 
@@ -53,7 +95,7 @@ const Home = () => {
           </Col>
 
           <Col sm={6} lg={12} style={{}}>
-            <Card>
+            {/* <Card>
               <CardHeader className="pb-0 border-0">
                 <CardTitle className="mb-0">Businessroom News</CardTitle>
               </CardHeader>
@@ -88,7 +130,7 @@ const Home = () => {
 
                 <LoadContentButton name="View all latest news" />
               </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
       </Col>

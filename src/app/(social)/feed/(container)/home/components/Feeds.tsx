@@ -45,6 +45,8 @@ import { Link } from 'react-router-dom'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import { io } from 'socket.io-client';
+import { FaArrowUp } from 'react-icons/fa';
 
 // ----------------- data type --------------------
 interface Post {
@@ -495,11 +497,12 @@ const Post3 = () => {
   )
 }
 
+const socket = io('http://54.177.193.30:5000'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
    const { user } = useAuthContext();
- 
+  // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
@@ -508,21 +511,38 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [page, setPage] = useState(1);
  const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
-  // const [limit,setLimit] = useState<number>(5);
-//  const {setTrue,setFalse,isTrue : isSpinning} = useToggle();
+  const [profile,setProfile] = useState({});
+  const [flag, setflag] = useState(false);
+
+ 
+useEffect(() => {
   
+  socket.on('postSent', (data:any) => {
+    if (data.success) {
+      setflag(data.success);
+      console.log('Post was sent successfully:', data.postId);
+    } else {
+      console.log('Failed to send post');
+    }
+  });
+
+  return () => {
+    socket.off('postSent');
+  };
+}, [user?.id, flag]);
 
   const fetchPosts = async () => {
+
     setError(null);
     setHasMore(true);
     console.log('fetching posts');
-    try {      
+    try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
-
+      
       if(res.message === "No posts found for this user."){
         setHasMore(false);
         console.log('went in');
@@ -542,8 +562,38 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
 
   useEffect(() => {
     // Fetch posts on mount
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json(); 
+        console.log('Profile Response',data);
+        setProfile(() => data.data); 
+        console.log('Profile in Home',profile);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    if (profile.personalDetails){
+      return;
+    }
+
+
     if (!hasMounted.current) {
       fetchPosts();
+      fetchUser();
       hasMounted.current = true;
     }
   }, []);
@@ -555,6 +605,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       setPage(1); // Reset page to 1
       setHasMore(true); // Reset pagination state
       fetchPosts();
+      setflag(false)
     }
   }, [isCreated]);
 
@@ -567,31 +618,6 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       setPage(page => page + 1);
     }
   }
-
-  // const handleScroll = useCallback(() => {
-  //   const scrollHeight = scrollContainerRef.current.scrollHeight;
-  //   const scrollTop = scrollContainerRef.current.scrollTop;
-  //   const clientHeight = scrollContainerRef.current.clientHeight;
-  //   if (scrollTop + clientHeight >= scrollHeight) {
-  //     setPage((prev) => prev + 1);
-  //   }
-  // },[loading,page]);
-
-  // useEffect(()=>{
-  //   const currentRef = scrollContainerRef.current;
-  //   if (currentRef) {
-  //     currentRef.addEventListener('scroll', handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (currentRef) {
-  //       currentRef.removeEventListener('scroll', handleScroll);
-  //     }
-  //   };
-  // },[handleScroll])
-  
-
-  
 
   const handleDelete = async () => {
     try {
@@ -643,9 +669,6 @@ const PostSkeleton = () => {
     </div>
   );
 };
-
-
-
   // Conditional rendering
   if (loading) {
     return <div style={{ minHeight: '110vh', padding: '16px' }}>
@@ -659,13 +682,22 @@ const PostSkeleton = () => {
     return <div>Error: {error}</div>
   }
 
+
+
   return (
     <>
-      <div>
+      <div className="position-relative">
+     {flag && <Link to="/feed/home"
+          className="position-fixed start-50 translate-middle-x btn btn-primary"
+          onClick={() => setShowNewPostButton(true)}
+          style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
+        >
+          <FaArrowUp color='#fff' /> &nbsp;New posts
+        </Link>}
           <InfiniteScroll
-            dataLength={posts.length} // Total number of posts
-            next={fetchNextPage} // Function to fetch the next page of posts
-            hasMore={hasMore} // Boolean indicating whether more posts are available
+            dataLength={posts.length} 
+            next={fetchNextPage} 
+            hasMore={hasMore} 
             loader={
               <div>
                 {[...Array(5)].map((_, index) => (
@@ -680,29 +712,20 @@ const PostSkeleton = () => {
             }
             // Matches the id of the scrollable container
           >
-            {showNewPostButton && (
-              <Link
-                to="/feed/home#"
-                className="btn-primary"
-                onClick={() => setShowNewPostButton(false)}
-                style={{ zIndex: 99, top: '4em', position: 'fixed', left: '47%' }}
-              >
-                ⬆️ New Posts
-              </Link>
-            )}
-
+            
             {posts.map((post, index) => (
               <PostCard
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.Id || index}
+                key={post.id || index}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}
                 tlRefresh={tlRefresh}
                 setTlRefresh={setTlRefresh}
                 scrollbarWidth="none"
+                profile={profile}
               />
             ))}
           </InfiniteScroll>

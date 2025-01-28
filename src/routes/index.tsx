@@ -54,9 +54,10 @@ const ProfileActivity = lazy(() => import('@/app/(social)/profile/activity/page'
 //account pages
 const CreatePage = lazy(() => import('@/app/(social)/feed/(container)/create-page/page'))
 const AccountSetting = lazy(() => import('@/app/(social)/settings/account/page'))
-const AccountNotifications = lazy(() => import('@/app/(social)/settings/notification/page'))
+const ManageConnections = lazy(() => import('@/app/(social)/settings/ManageConnections/page'))
 const AccountPrivacy = lazy(() => import('@/app/(social)/settings/privacy/page'))
 const AccountCommunication = lazy(() => import('@/app/(social)/settings/communication/page'))
+const  visitProfile = lazy(() => import('@/components/VisitProfile'))
 const AccountMessaging = lazy(() => import('@/app/(social)/settings/messaging/page'))
 const AccountClose = lazy(() => import('@/app/(social)/settings/close-account/page'))
 const HelpPage = lazy(() => import('@/app/(social)/help/page'))
@@ -95,9 +96,6 @@ const initialRoutes: RoutesProps[] = [
 
 // feed with container
 const generalRoutes: RoutesProps[] = [
-
-
-
   {
     path: '/feed/home',
     name: 'Demo Home',
@@ -217,19 +215,14 @@ export const settingPagesRoutes:RoutesProps[]=[
     element: <AccountSetting />,
   },
   {
-    path: '/AccountClone',
-    name: 'Account Clone',
-    element: <AcountSttingClone />,
-  },
-  {
     path : '/settings/role',
     name : 'Role Settings',
     element : <RolePage/>,
   },
   {
-    path: '/settings/notification',
+    path: '/settings/ManageConnections',
     name: 'Account Notification',
-    element: <AccountNotifications />,
+    element: <ManageConnections />,
   },
   {
     path: '/settings/communication',
@@ -238,9 +231,15 @@ export const settingPagesRoutes:RoutesProps[]=[
   },
   {
     path: '/settings/messaging',
-    name: 'Account Messaging',
-    element: <AccountMessaging />,
+    name: 'Profile Visit Analysis',
+    element: <VisitProfile />,
   },
+  // { 
+
+  //   image : ChartNetwork,
+  //   name: 'Profile Visit Analysis',
+  //   link: '/profile-visitors',
+  // },
   {
     path: '/settings/close-account',
     name: 'Account Close',
@@ -255,6 +254,11 @@ export const settingPagesRoutes:RoutesProps[]=[
 
 //social pages with topbar
 export  const socialWithTopbarRoutes: RoutesProps[] = [
+  {
+    path: '/AccountClone',
+    name: 'Account Clone',
+    element: <AcountSttingClone />,
+  },
   {
     path: '/posts',
     name: 'Home Posts',

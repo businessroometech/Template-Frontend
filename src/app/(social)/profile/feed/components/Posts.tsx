@@ -251,13 +251,6 @@ const Posts = ({ isCreated }) => {
             }
           >
 
-        {/* <Button
-          className="position-absolute top-0 start-50 translate-middle-x"
-          onClick={() => fetchPosts()}
-          style={{ zIndex: 9999 }}
-        >
-          ⬆️ New Posts
-        </Button> */}
         {posts.map((post, index) => (
           <PostCard item={post} key={post.Id || index} isMediaKeys={true} />))}
           </InfiniteScroll>

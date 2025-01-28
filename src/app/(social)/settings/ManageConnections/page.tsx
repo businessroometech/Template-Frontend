@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ConnectionRequest } from "@/layouts/ProfileLayout";
-import MyConnections from "./MyConnections";
-import ConnectionsStatus from "./ConnectionsStatus";
-import SuggestedConnections from "./SuggestedConnections";
+import MyConnections from '@/assets/data/clone/MyConnections';
+import ConnectionsStatus from '@/assets/data/clone/ConnectionsStatus';
+import SuggestedConnections from '@/assets/data/clone/SuggestedConnections';
 import { FaUserFriends, FaUserCheck, FaUserPlus, FaUsers } from 'react-icons/fa';
+import PageMetaData from '@/components/PageMetaData';
 
-const BusinessSellerForm = () => {
+const ManageConnections = () => {
 
   const [step, setStep] = useState(0);
 
@@ -14,6 +15,8 @@ const BusinessSellerForm = () => {
     { title: "My Connections", icon: <FaUserPlus style={{ marginRight: '8px' }} />, component: <MyConnections /> },
     { title: "Request Sent", icon: <FaUserCheck style={{ marginRight: '8px' }} />, component: <ConnectionsStatus /> },
     { title: "Request Received", icon: <FaUserFriends style={{ marginRight: '8px' }} />, component: <ConnectionRequest /> },
+ 
+    
     { title: "Suggested Connections", icon: <FaUsers style={{ marginRight: '8px' }} />, component: <SuggestedConnections /> },
   ];
 
@@ -22,9 +25,9 @@ const BusinessSellerForm = () => {
   };
 
   return (
-    <div className="container mt-5">
-
-      <div className="d-flex justify-content-center mb-4 flex-wrap"  style={{marginTop: '100px'}}>
+    <div className="container">
+      <PageMetaData title='ManageConnections'/>
+      <div className="d-flex justify-content-center mb-4 flex-wrap" >
         {sections.map((section, index) => (
           <button
             key={index}
@@ -49,4 +52,4 @@ const BusinessSellerForm = () => {
   );
 };
 
-export default BusinessSellerForm;
+export default ManageConnections;

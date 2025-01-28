@@ -3,7 +3,7 @@ import { addOrSubtractMinutesFromDate } from '@/utils/date'
 import type { ReactNode } from 'react'
 
 import avatar7 from '@/assets/images/avatar/default avatar.png'
-import avatar1 from '@/assets/images/avatar/01.jpg'
+import avatar1 from '@/assets/images/avatar/default avatar.png'
 import avatar2 from '@/assets/images/avatar/02.jpg'
 import avatar3 from '@/assets/images/avatar/03.jpg'
 
