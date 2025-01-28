@@ -513,7 +513,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
   const [flag, setflag] = useState(false);
-  
+
  
 useEffect(() => {
   
@@ -542,7 +542,7 @@ useEffect(() => {
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
-
+      
       if(res.message === "No posts found for this user."){
         setHasMore(false);
         console.log('went in');
@@ -550,7 +550,7 @@ useEffect(() => {
       }
       setLoading(false)
       console.log('Fetched Posts:', res.data);
-      // console.log('What is res data',res.data);
+      console.log('What is res data',res.data);
       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
     } catch (error: any) {
       console.error('Error fetching posts:', error.message)
