@@ -470,7 +470,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
           )
         )}
         <div style={{ marginTop: '20px' }}>
-          {allLikes && LikeText(allLikes)}
+          {(allLikes || commentCount > 0) && LikeText(allLikes)}
         </div>
         <ButtonGroup
           className="w-100 border-top border-bottom mb-3"
@@ -512,14 +512,14 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
             {/* <span>Repost</span> */}
           </Button>
 
-          <Button
+          {/* <Button
             variant="ghost"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
             style={{ fontSize: "0.8rem" }} // Slightly smaller font size
           >
             <Share size={16} />
-            {/* <span>Share</span> */}
-          </Button>
+           
+          </Button> */}
         </ButtonGroup>
         {openComment && <div className="d-flex mb-4 px-3">
           <div className="avatar avatar-xs me-3">

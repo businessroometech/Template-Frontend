@@ -74,6 +74,7 @@ import Followers from '@/app/(social)/feed/(container)/home/components/Followers
 import { set } from 'react-hook-form'
 
 const Experience = () => {
+  return null;
   return (
     <Card style={{marginTop : '25px'}}>
       <CardHeader className="d-flex justify-content-between border-0">
