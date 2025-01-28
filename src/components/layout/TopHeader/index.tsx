@@ -20,29 +20,42 @@ const TopHeader = () => {
   const [Notificount, setNotifiCount] = useState(0);
 
   useEffect(() => {
+    const fetchNotificationsCount = async () => {
+      try {
+        const response = await fetch(
+          `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+          { method: "GET", headers: { "Content-Type": "application/json" } }
+        );
+  
+        const data = await response.json();
+  
+        setNotifiCount(data.unreadCount);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
     fetchNotificationsCount();
-    const interval = setInterval(fetchNotificationsCount, 1500);
+    const interval = setInterval(fetchNotificationsCount, 50000);
     return () => clearInterval(interval);
-  },);
+  },[user?.id]);
+
   useEffect(() => {
-    const interval = setInterval(fetchNotificationsCount, 1500);
-    return () => clearInterval(interval);
-  },);
-
-  const fetchNotificationsCount = async () => {
-    try {
-      const response = await fetch(
-        `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
-        { method: "GET", headers: { "Content-Type": "application/json" } }
-      );
-
-      const data = await response.json();
-
-      setNotifiCount(data.unreadCount);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    }
-  };
+    const fetchNotificationsCount = async () => {
+      try {
+        const response = await fetch(
+          `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+          { method: "GET", headers: { "Content-Type": "application/json" } }
+        );
+  
+        const data = await response.json();
+  
+        setNotifiCount(data.unreadCount);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+    fetchNotificationsCount();
+  },[Notificount])
 
 
 
