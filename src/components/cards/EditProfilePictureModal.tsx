@@ -140,7 +140,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "" }) => {
       if (file && file instanceof File) {
         setUploadedFile(file);
         setObjectUrl(URL.createObjectURL(file));
-        alert(`File uploaded: ${file.name}`);
+        // alert(`File uploaded: ${file.name}`);
         setExp(2);
       } else {
         console.error("Uploaded file is not a valid File.");
