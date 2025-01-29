@@ -565,7 +565,6 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       setLoading(false)
      }
   }
-
   useEffect(() => {
     // Fetch posts on mount
     const fetchUser = async () => {
@@ -583,7 +582,6 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
         const data = await response.json(); 
         console.log('Profile Response',data);
         setProfile(() => data.data); 
