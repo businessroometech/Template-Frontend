@@ -276,7 +276,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
               console.log('clicked')
               toggleLike();
             }}>
-              {commentLike ? <BsFillHandThumbsUpFill size={16} className='me-1'/> : <ThumbsUp size={16} className="me-1" />} Like
+              {commentLike ? <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} className='me-1'/> : <ThumbsUp size={16} className="me-1" />} Like
             </span>
             <span
               role="button"

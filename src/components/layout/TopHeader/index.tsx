@@ -20,6 +20,7 @@ const TopHeader = () => {
   const [Notificount, setNotifiCount] = useState(0);
 
   useEffect(() => {
+    console.log('Notifiction Dropdown useEffect')
     const fetchNotificationsCount = async () => {
       try {
         const response = await fetch(
@@ -37,25 +38,25 @@ const TopHeader = () => {
     fetchNotificationsCount();
     const interval = setInterval(fetchNotificationsCount, 50000);
     return () => clearInterval(interval);
-  },[user?.id]);
+  },[]);
 
-  useEffect(() => {
-    const fetchNotificationsCount = async () => {
-      try {
-        const response = await fetch(
-          `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
-          { method: "GET", headers: { "Content-Type": "application/json" } }
-        );
+  // useEffect(() => {
+  //   const fetchNotificationsCount = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+  //         { method: "GET", headers: { "Content-Type": "application/json" } }
+  //       );
   
-        const data = await response.json();
+  //       const data = await response.json();
   
-        setNotifiCount(data.unreadCount);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
-    fetchNotificationsCount();
-  },[Notificount])
+  //       setNotifiCount(data.unreadCount);
+  //     } catch (error) {
+  //       console.error("Error fetching notifications:", error);
+  //     }
+  //   };
+  //   fetchNotificationsCount();
+  // },[])
 
 
 

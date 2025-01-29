@@ -276,11 +276,21 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   };
 
   function LikeText(allLikes: Like[]) {
-    let str = '';
     if (allLikes.length === 0) return null;
-    else if (allLikes.length === 1) str = `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} liked this post`;
-    else str = `${allLikes[0].id === user?.id ? 'You' : allLikes[0].firstName + ' ' + allLikes[0].lastName} and ${allLikes.length - 1} others`
 
+    const userLike = allLikes.find(like => like.id === user?.id);
+    const otherLikes = allLikes.filter(like => like.id !== user?.id);
+    
+    let str = "Liked by ";
+
+    if (userLike) str += "You";
+    if (otherLikes.length > 0) {
+        if (userLike) str += ", ";
+        str += `${otherLikes[0].firstName}`;
+    }
+    if (otherLikes.length > 1) {
+        str += `, and ${otherLikes.length - 1} others`;
+    }
     return <p
       style={{
         display: "flex",
@@ -291,8 +301,8 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       }}
     >
       {/* Left side with like icon and text */}
-      <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-        <MdThumbUp size={16} />
+      {<span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        {allLikes.length > 0 && <MdThumbUp size={16} />}
         <span
           style={{
             marginRight: "6px",
@@ -312,13 +322,13 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
         >
           {str}
         </span>
-      </span>
+      </span>}
 
       {/* Right side with comment count */}
       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
 
-        <MdComment size={16} />
-        <span>{commentCount}</span>
+        <MdComment size={16} onClick={() => setOpenComment(!openComment)}/>
+        {commentCount !== 0 &&  <span>{commentCount}</span>}
       </span>
     </p>
   }

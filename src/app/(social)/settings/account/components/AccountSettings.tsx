@@ -96,9 +96,14 @@ const [loading, setLoading] = useState(false);
       return false 
     }
   }
+  function addOneDay(isoString : string) {
+    const date = new Date(isoString);
+    date.setUTCDate(date.getUTCDate() + 1); // Add 1 day (UTC-safe)
+    return date.toISOString();
+}
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log('----data----',data)
+    console.log('----data----',(data.dob as Date).toISOString())
     try {
       const profilePhoto = await handleUploadprofile()
       const coverPhoto = await handleUploadprofileBg()
@@ -110,7 +115,7 @@ const [loading, setLoading] = useState(false);
           // bgPictureUploadId: coverPhoto, // Use the cover photo ID after upload
           firstName: data.fName,
           lastName: data.lName,
-          dob: data.dob,
+          dob: addOneDay((data.dob as Date).toISOString()),
           // mobileNumber: data.phoneNo,
           emailAddress: data.email,
           // bio: data.bio,
