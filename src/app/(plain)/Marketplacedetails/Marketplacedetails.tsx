@@ -501,7 +501,7 @@ const MarketplaceDetails = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -526,7 +526,7 @@ const MarketplaceDetails = () => {
   }, [user]);
 
   useEffect(() => {
-    fetch(`http://54.177.193.30:5000/businessseller/detailuuid/${id}`)
+    fetch(`https://strengthholdings.com/api/v1/businessseller/detailuuid/${id}`)
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));
@@ -544,7 +544,7 @@ const MarketplaceDetails = () => {
         </div>
       </div>
     );
-  }
+  } 
 console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
 
   const KeyMetric = ({ icon: Icon, label, value }) => (
@@ -749,7 +749,7 @@ console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                     <img 
-                      src={ businessDetails.data.OwnerImage|| defaultavatar} 
+                      src={businessDetails.data.OwnerImage|| defaultavatar} 
                       alt="Profile" 
                       style={{ 
                         width: '60px', 

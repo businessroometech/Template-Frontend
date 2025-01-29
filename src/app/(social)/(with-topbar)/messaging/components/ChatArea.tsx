@@ -556,7 +556,7 @@ import { io } from 'socket.io-client'
 import TextFormInput from '@/components/form/TextFormInput'
 import Picker from 'emoji-picker-react'
 
-const socket = io('http://54.177.193.30:5000/', {
+const socket = io('wss://strengthholdings.com/', {
   // path: "/socket.io",
   transports: ['websocket'],
 })

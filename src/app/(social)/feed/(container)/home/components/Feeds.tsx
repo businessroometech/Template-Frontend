@@ -497,7 +497,7 @@ const Post3 = () => {
   )
 }
 
-// const socket = io('http://54.177.193.30:5000'); 
+const socket = io('https://strengthholdings.com'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
@@ -515,61 +515,60 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [flag, setflag] = useState(false);
 
  
-// useEffect(() => {
+useEffect(() => {
   
-//   socket.on('postSent', (data:any) => {
-//     if (data.success) {
-//       setflag(data.success);
-//       console.log('Post was sent successfully:', data.postId);
-//     } else {
-//       console.log('Failed to send post');
-//     }
-//   });
+  socket.on('postSent', (data:any) => {
+    if (data.success) {
+      setflag(data.success);
+      console.log('Post was sent successfully:', data.postId);
+    } else {
+      console.log('Failed to send post');
+    }
+  });
 
-//   return () => {
-//     socket.off('postSent');
-//   };
-// }, [user?.id, flag]);
+  return () => {
+    socket.off('postSent');
+  };
+}, [user?.id, flag]);
 
-  const fetchPosts = async () => {
+const fetchPosts = async () => {
 
-    setError(null);
-    setHasMore(true);
-    console.log('fetching posts');
-    try {
-      const res = await makeApiRequest<{ data: any[] }>({
-        method: 'POST',
-        url: 'api/v1/post/get-all-post',
-        data: { userId: user?.id, page: page },
-      })
-      
-      if(res.message === "No posts found for this user."){
-        setHasMore(false);
-        console.log('went in');
-        return;
-      }
-      setLoading(false)
-      // console.log('Fetched Posts:', res.data);
-      // console.log('What is res data',res.data);
-      setPosts((previousPosts) => {
-        const newPosts = res.data.posts.filter(
-          (newPost) => !previousPosts.some((oldPost) => oldPost.post.Id === newPost.post.Id)
-        );
-        return [...previousPosts, ...newPosts];
-      });
-      // console.log('Posts:', posts);
-    } catch (error: any) {
-      console.error('Error fetching posts:', error.message)
-      setError(error.message || 'An unknown error occurred')
-     } finally {
-      setLoading(false)
-     }
-  }
+  setError(null);
+  setHasMore(true);
+  console.log('fetching posts');
+  try {
+    const res = await makeApiRequest<{ data: any[] }>({
+      method: 'POST',
+      url: 'api/v1/post/get-all-post',
+      data: { userId: user?.id, page: page },
+    })
+    
+    if(res.message === "No posts found for this user."){
+      setHasMore(false);
+      console.log('went in');
+      return;
+    }
+    setLoading(false)
+    console.log('Fetched Posts:', res.data);
+    console.log('What is res data',res.data);
+    console.log('---Posts after---',posts);
+    setPosts(previousPosts => [...previousPosts, ...res.data.posts])
+    console.log('---Posts before---',posts);
+  } catch (error: any) {
+    console.error('Error fetching posts:', error.message)
+    setError(error.message || 'An unknown error occurred')
+   } finally {
+    setLoading(false)
+   }
+}
+
   useEffect(() => {
     // Fetch posts on mount
+    console.log('Mount Wala UseEffect')
+    
     const fetchUser = async () => {
       try {
-        const response = await fetch('http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -594,29 +593,64 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
       return;
     }
 
-
+    
     if (!hasMounted.current) {
-      // fetchPosts();
+      fetchPosts();
       fetchUser();
       hasMounted.current = true;
     }
-  }, []);
+  }, [fetchPosts, profile, user?.id]);
+
+  // useEffect(() => {
+  //   console.log('is Created Wala UseEffect')
+  //   const fetchPosts = async () => {
+
+  //     setError(null);
+  //     setHasMore(true);
+  //     console.log('fetching posts');
+  //     try {
+  //       const res = await makeApiRequest<{ data: any[] }>({
+  //         method: 'POST',
+  //         url: 'api/v1/post/get-all-post',
+  //         data: { userId: user?.id, page: page },
+  //       })
+        
+  //       if(res.message === "No posts found for this user."){
+  //         setHasMore(false);
+  //         console.log('went in');
+  //         return;
+  //       }
+  //       setLoading(false)
+  //       console.log('Fetched Posts:', res.data);
+  //       console.log('What is res data',res.data);
+  //       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
+  //     } catch (error: any) {
+  //       console.error('Error fetching posts:', error.message)
+  //       setError(error.message || 'An unknown error occurred')
+  //      } finally {
+  //       setLoading(false)
+  //      }
+  //   }
+  //   // Refetch posts when `isCreated` changes
+  //   if (isCreated) {
+  //     setPosts([]); // Reset posts
+  //     setPage(1); // Reset page to 1
+  //     setHasMore(true); // Reset pagination state
+  //     fetchPosts();
+  //     setflag(false)
+  //   }
+  // }, [isCreated, page, user?.id]);
 
   useEffect(() => {
-    // Refetch posts when `isCreated` changes
-    if (isCreated) {
-      // setPosts([]); // Reset posts
-      // setPage(1); // Reset page to 1
-      setHasMore(true); // Reset pagination state
-      // fetchPosts();
-      // setflag(false)
-    }
-  }, [isCreated]);
-
-  useEffect(() => {
+    if(page <= 1 || posts.length >= page * 5) return;
+    // alert(`Page is ${page}`)
+    console.log('Page Wala use Effect')
+    console.log('Page',page);
     // Fetch the next page of posts when `page` changes
     fetchPosts();
-  }, [page]);
+  }, [fetchPosts, page]);
+
+  
   const fetchNextPage = () => {
     if(!loading && hasMore){
       setPage(page => page + 1);
@@ -691,7 +725,7 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag && <Link to="/feed/home"
+     {flag && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
@@ -716,12 +750,13 @@ const PostSkeleton = () => {
             }
             // Matches the id of the scrollable container
           >
+            
             {posts.map((post, index) => (
               <PostCard
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.post.Id}
+                key={post.id || index}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}

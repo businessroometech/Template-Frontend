@@ -39,7 +39,7 @@ import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
 
-const socket = io('http://54.177.193.30:5000/', {
+const socket = io('wss://strengthholdings.com/', {
   // path: "/socket.io",
   transports: ['websocket'],
 })

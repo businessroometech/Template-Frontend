@@ -18,7 +18,7 @@ const ConnectionsStatus = () => {
     const fetchConnections = async () => {
         setLoading(true);
         try {
-            const res = await fetch(" http://54.177.193.30:5000/api/v1/connection/get-connection-status", {
+            const res = await fetch("https://strengthholdings.com/api/v1/connection/get-connection-status", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -42,10 +42,44 @@ const ConnectionsStatus = () => {
         }
     };
 
+
+    const UserRequest = async (profileId: string) => {
+        // Set loading to true only for the specific profileId
+        setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
+
+        const apiUrl = " https://strengthholdings.com/api/v1/connection/send-connection-request";
+
+        try {
+            const res = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    requesterId: user?.id,
+                    receiverId: profileId,
+                }),
+            });
+
+            if (!res.ok) {
+                throw new Error(`Failed to send connection request.`);
+            }
+            setSentStates((prev) => ({ ...prev, [profileId]: true }));
+            toast.success(`Connection request sent successfully.`);
+        } catch (error) {
+            console.error(`Error while sending connection request:`, error);
+
+            setSentStates((prev) => ({ ...prev, [profileId]: true }));
+            toast.info(`Already sent connection request.`);
+        } finally {
+            setLoadingStates((prev) => ({ ...prev, [profileId]: false }));
+        }
+    };
+
     const handleCancel = async (req: string) => {
         setLoadingStates((prev) => ({ ...prev, [req]: true }));
 
-        const apiUrl = " http://54.177.193.30:5000/api/v1/connection/unsend-connection-request";
+        const apiUrl = " https://strengthholdings.com/api/v1/connection/unsend-connection-request";
         try {
             const res = await fetch(apiUrl, {
                 method: "POST",

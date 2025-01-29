@@ -45,7 +45,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-profile-visit', {
+        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-profile-visit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -79,8 +79,8 @@ const ProfileVisits = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'http://54.177.193.30:5000/api/v1/connection/send-connection-request'
-      : 'http://54.177.193.30:5000/api/v1/connection/unsend-connection-request'
+      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
+      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
 
     try {
       const res = await fetch(apiUrl, {
@@ -208,13 +208,20 @@ const ProfileVisited = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-profile-visited', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId: user?.id, page: 1, limit: 10 }),
-        })
+        const response = await fetch(
+          " https://strengthholdings.com/api/v1/auth/get-profile-visited",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: user?.id,
+              page: 1, 
+              limit: 10,
+             }),
+            
+          }
+        );
 
         if (response.ok) {
           const data = await response.json()
@@ -240,8 +247,8 @@ const ProfileVisited = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'http://54.177.193.30:5000/api/v1/connection/send-connection-request'
-      : 'http://54.177.193.30:5000/api/v1/connection/unsend-connection-request'
+      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
+      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
 
     try {
       const res = await fetch(apiUrl, {
