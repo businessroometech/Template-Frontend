@@ -20,6 +20,7 @@ const TopHeader = () => {
   const [Notificount, setNotifiCount] = useState(0);
 
   useEffect(() => {
+    console.log('Notifiction Dropdown useEffect')
     const fetchNotificationsCount = async () => {
       try {
         const response = await fetch(
@@ -37,7 +38,7 @@ const TopHeader = () => {
     fetchNotificationsCount();
     const interval = setInterval(fetchNotificationsCount, 50000);
     return () => clearInterval(interval);
-  },[user?.id]);
+  },[]);
 
   useEffect(() => {
     const fetchNotificationsCount = async () => {
@@ -55,7 +56,7 @@ const TopHeader = () => {
       }
     };
     fetchNotificationsCount();
-  },[Notificount])
+  },[user?.id])
 
 
 
