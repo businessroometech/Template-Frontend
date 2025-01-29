@@ -48,15 +48,15 @@ const TopHeader = () => {
           { method: "GET", headers: { "Content-Type": "application/json" } }
         );
   
-  //       const data = await response.json();
+        const data = await response.json();
   
-  //       setNotifiCount(data.unreadCount);
-  //     } catch (error) {
-  //       console.error("Error fetching notifications:", error);
-  //     }
-  //   };
-  //   fetchNotificationsCount();
-  // },[])
+        setNotifiCount(data.unreadCount);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+    fetchNotificationsCount();
+  },[user?.id])
 
 
 
