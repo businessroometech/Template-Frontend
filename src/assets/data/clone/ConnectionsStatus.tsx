@@ -1,44 +1,31 @@
 import { getAllUserConnections } from '@/helpers/data'
-import clsx from 'clsx'
-
-import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
-import LoadMoreButton from './components/LoadMoreButton'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import PageMetaData from '@/components/PageMetaData'
-import { useFetchData } from '@/hooks/useFetchData'
-import { toast, ToastContainer } from 'react-toastify'
-import { useAuthContext } from '@/context/useAuthContext'
+import { Button, Card, CardBody, CardHeader } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
-import Loading from '@/components/Loading'
-import { FaTimes, FaUser, FaUserCheck, FaUserPlus, FaUserTimes } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import avatar from '@/assets/images/avatar/default avatar.png'
+import { useAuthContext } from '@/context/useAuthContext'
 
 const ConnectionsStatus = () => {
-    // const allConnections = useFetchData(getAllUserConnections)
     const { user } = useAuthContext();
     const [allConnections, setAllConnections] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [sent, setSent] = useState(false)
     const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
-    const [sentStates, setSentStates] = useState<{ [key: string]: boolean }>({})
-    const [id, setId] = useState(user?.id)
 
-    const [connectionStatus, setConnectionStatus] = useState("pending")
     useEffect(() => {
-
-        fetchConnections()
-    }, [connectionStatus])
+        fetchConnections();
+    }, []);
 
     const fetchConnections = async () => {
         setLoading(true);
         try {
-            const res = await fetch(" http://54.177.193.30:5000/api/v1/connection/get-connection-status", {
+            const res = await fetch("https://strengthholdings.com/api/v1/connection/get-connection-status", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     requesterId: user?.id,
-                    status: connectionStatus
+                    status: "pending"
                 }),
             });
 
@@ -48,10 +35,8 @@ const ConnectionsStatus = () => {
 
             const data = await res.json();
             setAllConnections(data);
-            // toast.info(`Connection list get successfully.`);
         } catch (error) {
             console.error(`Error while fetching connection list:`, error);
-            // toast.error(`Failed to fetch connection list.`);
         } finally {
             setLoading(false);
         }
@@ -62,7 +47,7 @@ const ConnectionsStatus = () => {
         // Set loading to true only for the specific profileId
         setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
 
-        const apiUrl = " http://54.177.193.30:5000/api/v1/connection/send-connection-request";
+        const apiUrl = " https://strengthholdings.com/api/v1/connection/send-connection-request";
 
         try {
             const res = await fetch(apiUrl, {
@@ -92,10 +77,9 @@ const ConnectionsStatus = () => {
     };
 
     const handleCancel = async (req: string) => {
-        // Set loading to true only for the specific profileId
         setLoadingStates((prev) => ({ ...prev, [req]: true }));
 
-        const apiUrl = " http://54.177.193.30:5000/api/v1/connection/unsend-connection-request";
+        const apiUrl = " https://strengthholdings.com/api/v1/connection/unsend-connection-request";
         try {
             const res = await fetch(apiUrl, {
                 method: "POST",
@@ -111,89 +95,82 @@ const ConnectionsStatus = () => {
             if (!res.ok) {
                 throw new Error(`Failed to unsend connection request.`);
             }
-            fetchConnections()
-            setSent(false)
+            fetchConnections();
             toast.success(`Cancel connection request `);
         } catch (error) {
-            fetchConnections()
             console.error(`Error while unsending connection request:`, error);
             toast.error(`Failed to unsend connection request.`);
         } finally {
-            // Set loading to false only for the specific profileId
             setLoadingStates((prev) => ({ ...prev, [req]: false }));
         }
     };
 
-    return (
-        <>
-            <Card>
-                <CardHeader className="border-0 pb-0">
-                    {/* <CardTitle>Connections status</CardTitle> */}
-                    {/* Dropdown for filtering connection status */}
-                    {/* <div className="d-flex justify-content-end">
-                        <select
-                            className="form-select"
-                            onChange={(e) => setConnectionStatus(e.target.value)} 
-                        >
-                            <option value="all">All Connections</option>
-                            <option value="pending">Pending</option>
-                            <option value="accepted">Accepted</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
-                    </div> */}
-                </CardHeader>
-                <CardBody>
-                    {allConnections && allConnections.map((connection, idx) => (
-                        <div className="d-md-flex align-items-center mb-4" key={idx}>
-                            <div className="avatar me-3 mb-3 mb-md-0">
-                                {connection.requester.profilePictureUrl ? (
-                                    <span role="button">
-                                        <img className="avatar-img rounded-circle" src={connection.requester.profilePictureUrl} alt={`${connection.requester.firstName} ${connection.requester.lastName} picture`} />
-                                    </span>
-                                ) : (
-                                    <span
-                                        className="avatar-img rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                        style={{ width: '40px', height: '40px', fontSize: '20px' }}
-                                    >
-                                        {connection.receiver.firstName?.charAt(0).toUpperCase()}
-                                    </span>
-                                )}
-                            </div>
-                            <div className="w-50">
-                                <div className="d-sm-flex align-items-start">
-                                    <h6 className="mb-0">
-                                        <a href={`/profile/feed/${connection.receiver.id}#${connection.receiver.id}`}>
-                                            {`${connection.receiver.firstName} ${connection.receiver.lastName}`}
-                                        </a>
-                                    </h6>
-                                    <p className="small ms-sm-2 mb-0">{connection.receiver.userRole}</p>
+    if (loading) {
+        return (
+            <div 
+            className="d-flex justify-content-center align-items-center bg-light" 
+            style={{ height: '100vh' }}
+          >
+            <div 
+              className="spinner-border text-primary" 
+              role="status" 
+              style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
+            >
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>          
+        );
+    }
 
-                                </div>
-                            </div>
-                            <div className="ms-md-auto d-flex align-items-center">
-                                <Button
-                                    variant="outline-danger"
-                                    className="me-2"
-                                    onClick={() => handleCancel(connection.receiver.id)}
-                                    disabled={loadingStates[connection.receiver.id]}
-                                    style={{ minWidth: '120px' }}
-                                >
-                                    {loadingStates[connection.receiver.id] ? <span>Loading...</span> : "Cancel"}
-                                </Button>
-                                <Button
-                                    variant={connection.status === 'accepted' ? 'outline-success' : connection.status === 'rejected' ? 'outline-danger' : 'outline-secondary'}
-                                    className="ms-sm-2 mb-0"
-                                    disabled
-                                    style={{ minWidth: '120px' }}
-                                >
-                                    {connection.status === 'pending' && 'Pending'}
-                                </Button>
+    return (
+        <Card>
+            <CardHeader className="border-0 pb-0" />
+            <CardBody>
+                {allConnections && allConnections.map((connection, idx) => (
+                    <div className="d-md-flex align-items-center mb-4" key={idx}>
+                        <div className="avatar me-3 mb-3 mb-md-0">
+                            {
+                                <span role="button">
+                                    <img className="avatar-img rounded-circle" src={connection.requester.profilePictureUrl?connection.requester.profilePictureUrl:avatar} alt={`${connection.requester.firstName} ${connection.requester.lastName} picture`} />
+                                </span>
+                            }
+                        </div>
+                        <div className="w-50">
+                            <div className="d-sm-flex align-items-start">
+                                <h6 className="mb-0">
+                                    <a href={`/profile/feed/${connection.receiver.id}#${connection.receiver.id}`}>
+                                        {`${connection.receiver.firstName} ${connection.receiver.lastName}`}
+                                    </a>
+                                </h6>
+                                <p className="small ms-sm-2 mb-0">{connection.receiver.userRole}</p>
                             </div>
                         </div>
-                    ))}
-                </CardBody>
-            </Card>
-        </>
+                        <div className="ms-md-auto d-flex align-items-center">
+                            <Button
+                                variant="danger-soft"
+                                size="sm"
+                                className="mb-0 me-2"
+                                onClick={() => handleCancel(connection.receiver.id)}
+                                disabled={loadingStates[connection.receiver.id]}
+                                style={{ minWidth: '120px' }}
+                            >
+                                {loadingStates[connection.receiver.id] ? <span>Loading...</span> : "Cancel"}
+                            </Button>
+                            <Button
+                                variant="light"
+                                size="sm"
+                                className="ms-sm-2 mb-0"
+                                disabled
+                                style={{ minWidth: '120px', borderColor: 'black', color: 'black' }}
+                            >
+                                {connection.status === 'pending' && 'Pending'}
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+            </CardBody>
+        </Card>
     );
-}
-export default ConnectionsStatus
+};
+
+export default ConnectionsStatus;

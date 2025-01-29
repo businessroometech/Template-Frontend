@@ -1,6 +1,6 @@
 import { getAllUserConnections } from '@/helpers/data'
 import clsx from 'clsx'
-
+import avatar from '@/assets/images/avatar/default avatar.png'
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
 import LoadMoreButton from './components/LoadMoreButton'
 import { Link, useNavigate, useParams } from 'react-router-dom'
@@ -33,7 +33,7 @@ const MyConnections = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await fetch(" http://54.177.193.30:5000/api/v1/connection/get-connection-list", {
+      const res = await fetch("https://strengthholdings.com/api/v1/connection/get-connection-list", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const MyConnections = () => {
     // Set loading to true only for the specific profileId
     setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
   
-    const apiUrl = " http://54.177.193.30:5000/api/v1/connection/send-connection-request";
+    const apiUrl = "https://strengthholdings.com/api/v1/connection/send-connection-request";
   
     try {
       const res = await fetch(apiUrl, {
@@ -95,7 +95,7 @@ const MyConnections = () => {
 
   const handleCancel = async () => {
     setLoading(true);
-    const apiUrl = " http://54.177.193.30:5000/api/v1/connection/unsend-connection-request";
+    const apiUrl = "https://strengthholdings.com/api/v1/connection/unsend-connection-request";
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -122,7 +122,7 @@ const MyConnections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-    const apiUrl = "http://54.177.193.30:5000/api/v1/connection/remove-connection";
+    const apiUrl = "https://strengthholdings.com/api/v1/connection/remove-connection";
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -148,6 +148,22 @@ const MyConnections = () => {
       setLoading(false);
     }
   }
+  if (loading) {
+    return (
+      <div 
+      className="d-flex justify-content-center align-items-center bg-light" 
+      style={{ height: '100vh' }}
+    >
+      <div 
+        className="spinner-border text-primary" 
+        role="status" 
+        style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
+      >
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>    
+    );
+}
 
   return (
     <>
@@ -161,18 +177,11 @@ const MyConnections = () => {
         {allConnections && allConnections.map((connection, idx) => (
             <div className="d-md-flex align-items-center mb-4" key={idx}>
               <div className="avatar me-3 mb-3 mb-md-0">
-                {connection.profilePictureUrl ? (
+                {
                   <span role="button">
-                    <img className="avatar-img rounded-circle" src={connection.profilePictureUrl} alt={`${connection.firstName} ${connection.lastName} picture`} />
+                    <img className="avatar-img rounded-circle" src={connection.profilePictureUrl?connection.profilePictureUrl:avatar} alt={`${connection.firstName} ${connection.lastName} picture`} />
                   </span>
-                ) : (
-                  <span
-                    className="avatar-img rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                    style={{ width: '40px', height: '40px', fontSize: '20px' }}
-                  >
-                    {connection.firstName?.charAt(0).toUpperCase()}/{connection.lastName?.charAt(0).toUpperCase()}
-                  </span>
-                )}
+                }
               </div>
               <div className="w-100">
                 <div className="d-sm-flex align-items-start">

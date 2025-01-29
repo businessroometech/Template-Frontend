@@ -10,4 +10,11 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),
     },
   },
+  base: '/', // Ensures correct base path
+  server: {
+    port: 5173, // You can customize this if needed
+  },
+  build: {
+    outDir: 'dist', // Ensures the output directory is correct
+  }
 })

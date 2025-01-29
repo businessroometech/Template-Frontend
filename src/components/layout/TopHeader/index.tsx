@@ -24,7 +24,7 @@ const TopHeader = () => {
     const fetchNotificationsCount = async () => {
       try {
         const response = await fetch(
-          `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+          `https://strengthholdings.com/api/v1/socket-notifications/get-count?userId=${user?.id}`,
           { method: "GET", headers: { "Content-Type": "application/json" } }
         );
   
@@ -40,13 +40,13 @@ const TopHeader = () => {
     return () => clearInterval(interval);
   },[]);
 
-  // useEffect(() => {
-  //   const fetchNotificationsCount = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `http://54.177.193.30:5000/api/v1/socket-notifications/get-count?userId=${user?.id}`,
-  //         { method: "GET", headers: { "Content-Type": "application/json" } }
-  //       );
+  useEffect(() => {
+    const fetchNotificationsCount = async () => {
+      try {
+        const response = await fetch(
+          `https://strengthholdings.com/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+          { method: "GET", headers: { "Content-Type": "application/json" } }
+        );
   
   //       const data = await response.json();
   

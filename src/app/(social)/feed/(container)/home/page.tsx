@@ -11,7 +11,7 @@ import { useAuthContext } from "@/context/useAuthContext";
 import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
 
 
-const socket = io('http://54.177.193.30:5000/', {
+const socket = io('https://strengthholdings.com/', {
   // path: "/socket.io",
   transports: ['websocket'],
 })

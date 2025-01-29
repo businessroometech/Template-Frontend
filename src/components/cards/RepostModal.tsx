@@ -52,6 +52,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item }) => {
       if (response.data) {
         setThoughts('')
         console.log(response.data);
+        
       }
     } catch (err) {
       console.log('Error in the posting', err)

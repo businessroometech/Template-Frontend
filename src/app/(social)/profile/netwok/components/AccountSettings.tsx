@@ -108,7 +108,7 @@ const AccountSettings = () => {
         console.log('Request body:', requestBody);
 
         const response = await fetch(
-          ' http://54.177.193.30:5000/api/v1/auth/update-or-create-Profile',
+          ' https://strengthholdings.com/api/v1/auth/update-or-create-Profile',
           {
             method: 'POST',
             headers: {
@@ -147,7 +147,7 @@ const AccountSettings = () => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          ' http://54.177.193.30:5000/api/v1/auth/get-user-Profile',
+          ' https://strengthholdings.com/api/v1/auth/get-user-Profile',
           {
             method: 'POST',
             headers: {

@@ -497,7 +497,7 @@ const Post3 = () => {
   )
 }
 
-const socket = io('http://54.177.193.30:5000'); 
+const socket = io('https://strengthholdings.com'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
@@ -568,7 +568,7 @@ const fetchPosts = async () => {
     
     const fetchUser = async () => {
       try {
-        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -581,7 +581,6 @@ const fetchPosts = async () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
         const data = await response.json(); 
         console.log('Profile Response',data);
         setProfile(() => data.data); 
@@ -726,7 +725,7 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag && <Link to="/feed/home"
+     {flag && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}

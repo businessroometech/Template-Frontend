@@ -174,7 +174,7 @@ const Friends = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('http://54.177.193.30:5000/api/v1/connection/get-connection-suggest', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,36 +202,39 @@ const Friends = () => {
 }
 
 export const ConnectionRequest = () => {
-  const { user } = useAuthContext()
-  const [allFollowers, setAllFollowers] = useState([])
-  const [loading, setLoading] = useState<string | null>(null)
+  const { user } = useAuthContext();
+  const [allFollowers, setAllFollowers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // For global loading state
   const navigate = useNavigate();
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
-    fetchConnections()
-  }, [allFollowers])
+    fetchConnections();
+  }, [user]);
 
   const fetchConnections = async () => {
+    setLoading(true); // Start loading
     try {
-      const response = await fetch(' http://54.177.193.30:5000/api/v1/connection/get-connection-request', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),
-      })
+      });
 
-      if (!response.ok) throw new Error('Failed to fetch connection requests.')
-      const data = await response.json()
-      setAllFollowers(data)
+      if (!response.ok) throw new Error('Failed to fetch connection requests.');
+      const data = await response.json();
+      setAllFollowers(data);
     } catch (error) {
-      console.error('Error fetching connection requests:', error)
+      console.error('Error fetching connection requests:', error);
+    } finally {
+      setLoading(false); // End loading
     }
-  }
+  };
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
     try {
-      const response = await fetch('http://54.177.193.30:5000/api/v1/connection/update-connection-status', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/update-connection-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -250,71 +253,106 @@ export const ConnectionRequest = () => {
       setLoadingStates((prev) => ({ ...prev, [userId]: null }));
     }
   };
-  
+
+  // Conditional loading spinner
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center bg-light"
+        style={{ height: '100vh' }}
+      >
+        <div
+          className="spinner-border text-primary"
+          role="status"
+          style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Card>
-      {allFollowers.length >= 0 && (
-        <>
-          <CardBody>
-            {allFollowers.map((follower, idx) => (
-              <div className="d-flex row col-12 mb-3" key={idx}>
-                <div className="col-8 d-flex">
-                  <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                    <span role="button">
-                      <img
-                        className="avatar-img rounded-circle"
-                        src={follower.profilePictureUploadUrl || avatar7}
-                        alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-                      />
-                    </span>
-                  </div>
-                  <div className="overflow-hidden px-2">
-                    <Link className="h6 mb-0" to="">
-                      {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                    </Link>
-                    <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                  </div>
+      {allFollowers.length === 0 ? (
+       <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+       <div className="text-center">
+         <p
+           className="mb-0"
+           style={{
+             fontSize: '1.25rem',
+             fontWeight: '600',
+             color: '#6c757d',
+             opacity: '0.8',
+           }}
+         >
+           No connection requests found
+         </p>
+         <p className="small text-muted">
+           It looks like you have no new connection requests at the moment.
+         </p>
+       </div>
+     </div>
+      ) : (
+        <CardBody>
+          {allFollowers.map((follower, idx) => (
+            <div className="d-flex row col-12 mb-3" key={idx}>
+              <div className="col-8 d-flex">
+                <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                  <span role="button">
+                    <img
+                      className="avatar-img rounded-circle"
+                      src={follower.profilePictureUploadUrl || avatar7}
+                      alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                    />
+                  </span>
                 </div>
-                <div className="col-4 d-flex justify-content-end">
-                  <Button
-                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
-                    variant="danger-soft"
-                    className="mx-1"
-                    disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'}
-                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
-                  >
-                    {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
-                      <Loading size={15} loading={true} />
-                    ) : (
-                      'Decline'
-                    )}
-                  </Button>
-                  <Button
-                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
-                    variant="success-soft"
-                    className="mx-1"
-                    disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'}
-                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
-                  >
-                    {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
-                      <Loading size={15} loading={true} />
-                    ) : (
-                      'Approve'
-                    )}
-                  </Button>
+                <div className="overflow-hidden px-2">
+                  <Link className="h6 mb-0" to="">
+                    {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                  </Link>
+                  <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
                 </div>
               </div>
-            ))}
-          </CardBody>
-        </>
+              <div className="col-4 d-flex justify-content-end">
+                <Button
+                  onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                  variant="danger-soft"
+                  className="mx-1"
+                  disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'}
+                  style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+                >
+                  {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
+                    <Loading size={15} loading={true} />
+                  ) : (
+                    'Decline'
+                  )}
+                </Button>
+                <Button
+                  onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                  variant="success-soft"
+                  className="mx-1"
+                  disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'}
+                  style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+                >
+                  {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
+                    <Loading size={15} loading={true} />
+                  ) : (
+                    'Approve'
+                  )}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </CardBody>
       )}
     </Card>
   );
-};  
+};
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
@@ -351,7 +389,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const recordProfileVisit = async () => {
     try {
       const response = await fetch(
-        "http://54.177.193.30:5000/api/v1/auth/recored-visit",
+        "https://strengthholdings.com/api/v1/auth/recored-visit",
         {
           method: "POST",
           headers: {
@@ -397,7 +435,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const fetchUser = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -427,7 +465,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const UserRequest = async () => {
     setLoading(true)
-    const apiUrl = 'http://54.177.193.30:5000/api/v1/connection/send-connection-request'
+    const apiUrl = 'https://strengthholdings.com/api/v1/connection/send-connection-request'
     try {
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -458,7 +496,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const handleCancel = async () => {
     setLoading(true)
-    const apiUrl = 'http://54.177.193.30:5000/api/v1/connection/unsend-connection-request'
+    const apiUrl = 'https://strengthholdings.com/api/v1/connection/unsend-connection-request'
 
     try {
       const res = await fetch(apiUrl, {
