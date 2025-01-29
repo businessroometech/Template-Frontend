@@ -526,7 +526,7 @@ const MarketplaceDetails = () => {
   }, [user]);
 
   useEffect(() => {
-    fetch(`https://strengthholdings.com/api/v1businessseller/detailuuid/${id}`)
+    fetch(`https://strengthholdings.com/api/v1/businessseller/detailuuid/${id}`)
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));
