@@ -542,6 +542,8 @@ useEffect(() => {
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: page },
       })
+      console.log("page****", page);
+      
       
       if(res.message === "No posts found for this user."){
         setHasMore(false);

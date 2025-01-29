@@ -44,47 +44,53 @@ const NotificationDropdown = ({ count }) => {
     }
   }, []);
 
-  // Establish the Socket.IO connection
-  useEffect(() => {
-    if (!user?.id) return;
+  /// Establish the Socket.IO connection
+useEffect(() => {
+  if (!user?.id) return;
 
-    const socketConnection = io("http://54.177.193.30:5000", {
-      query: { userId: user.id },
-    });
+  const socketConnection = io("http://54.177.193.30:5000", {
+    query: { userId: user.id },
+  });
 
-    setSocket(socketConnection);
+  setSocket(socketConnection);
 
-    // Handle connection status
-    socketConnection.on("connect", () => {
-      console.log("Socket.IO connected");
-      setIsConnected(true);
-    });
+  // Handle connection status
+  socketConnection.on("connect", () => {
+    console.log("Socket.IO connected");
+    setIsConnected(true);
+  });
 
-    // Handle disconnection
-    socketConnection.on("disconnect", () => {
-      console.log("Socket.IO disconnected");
-      setIsConnected(false);
-    });
+  socketConnection.on("disconnect", () => {
+    console.log("Socket.IO disconnected");
+    setIsConnected(false);
+  });
 
-    // Listen for new notifications
-    socketConnection.on("notifications", (notification: any) => {
-      console.log("New notification received:", notification);
-      setAllNotifications((prev) => [notification, ...prev]);
+  // Listen for new notifications
+  const handleNotification = (notification: any) => {
+    console.log("New notification received:", notification);
+    setAllNotifications((prev) => [notification, ...prev]);
 
-      // Show browser notification
-      if (Notification.permission === "granted") {
-        new Notification(notification.message, {
-          body: notification.mediaUrl ? "You have a new media notification." : "Check your notifications!",
-          icon: "/notification-icon.png",
-        });
-      }
-    });
+    // Show browser notification if permission is granted
+    if (Notification.permission === "granted") {
+      new Notification(notification.message, {
+        body: notification.mediaUrl
+          ? "You have a new media notification."
+          : "Check your notifications!",
+        icon: "/notification-icon.png",
+      });
+    }
+  };
 
-    // Clean up on component unmount
-    return () => {
-      socketConnection.disconnect();
-    };
-  }, [user?.id]);
+  socketConnection.on("notifications", handleNotification);
+
+  // Clean up on component unmount
+  return () => {
+    socketConnection.off("notifications", handleNotification);
+    socketConnection.disconnect();
+    socket?.off("notifications", handleNotification);
+  };
+}, [user?.id]);
+
 
   // Fetch existing notifications
   const fetchNotifications = async () => {

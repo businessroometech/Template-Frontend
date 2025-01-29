@@ -139,9 +139,6 @@ const AppMenu = () => {
         , 120000);
   }
   ,[user?.id, Flag] );
-     
-
-
 
   const fetchConnections = async () => {
     try {
