@@ -306,7 +306,7 @@ const Messaging = () => {
   //   setShowEmojiPicker(false)
   // }
   const {onlineUsers} = useOnlineUsers(); 
-  const status = onlineUsers?.includes(selectedUser.userId) ? 'online' : 'offline';
+  const status = onlineUsers?.includes(selectedUser?.userId) ? 'online' : 'offline';
 
   return (
     <>
