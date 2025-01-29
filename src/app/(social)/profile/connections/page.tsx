@@ -32,7 +32,7 @@ const Connections = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://54.177.193.30:5000/api/v1/connection/get-connection-list", {
+      const res = await fetch("https://strengthholdings.com/api/v1/connection/get-connection-list", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const Connections = () => {
     // Set loading to true only for the specific profileId
     setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
   
-    const apiUrl = " http://54.177.193.30:5000/api/v1/connection/send-connection-request";
+    const apiUrl = " https://strengthholdings.com/api/v1/connection/send-connection-request";
   
     try {
       const res = await fetch(apiUrl, {
@@ -94,7 +94,7 @@ const Connections = () => {
 
   const handleCancel = async () => {
     setLoading(true);
-    const apiUrl = " http://54.177.193.30:5000/api/v1/connection/unsend-connection-request";
+    const apiUrl = " https://strengthholdings.com/api/v1/connection/unsend-connection-request";
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -121,7 +121,7 @@ const Connections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-    const apiUrl = " http://54.177.193.30:5000/api/v1/connection/remove-connection";
+    const apiUrl = " https://strengthholdings.com/api/v1/connection/remove-connection";
     try {
       const res = await fetch(apiUrl, {
         method: "POST",

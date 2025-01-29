@@ -93,7 +93,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
           console.log('Request body:', requestBody);
   
           const response = await fetch(
-            ' http://54.177.193.30:5000/api/v1/auth/update-or-create-Profile',
+            ' https://strengthholdings.com/api/v1/auth/update-or-create-Profile',
             {
               method: 'POST',
               headers: {

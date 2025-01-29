@@ -142,7 +142,7 @@ const AppMenu = () => {
 
   const fetchConnections = async () => {
     try {
-      const response = await fetch(' http://54.177.193.30:5000/api/v1/connection/get-connection-request', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),

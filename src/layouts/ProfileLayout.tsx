@@ -174,7 +174,7 @@ const Friends = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('http://54.177.193.30:5000/api/v1/connection/get-connection-suggest', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ export const ConnectionRequest = () => {
 
   const fetchConnections = async () => {
     try {
-      const response = await fetch(' http://54.177.193.30:5000/api/v1/connection/get-connection-request', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),
@@ -231,7 +231,7 @@ export const ConnectionRequest = () => {
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
     try {
-      const response = await fetch('http://54.177.193.30:5000/api/v1/connection/update-connection-status', {
+      const response = await fetch('https://strengthholdings.com/api/v1/connection/update-connection-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -351,7 +351,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const recordProfileVisit = async () => {
     try {
       const response = await fetch(
-        "http://54.177.193.30:5000/api/v1/auth/recored-visit",
+        "https://strengthholdings.com/api/v1/auth/recored-visit",
         {
           method: "POST",
           headers: {
@@ -397,7 +397,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const fetchUser = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -427,7 +427,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const UserRequest = async () => {
     setLoading(true)
-    const apiUrl = 'http://54.177.193.30:5000/api/v1/connection/send-connection-request'
+    const apiUrl = 'https://strengthholdings.com/api/v1/connection/send-connection-request'
     try {
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -458,7 +458,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const handleCancel = async () => {
     setLoading(true)
-    const apiUrl = 'http://54.177.193.30:5000/api/v1/connection/unsend-connection-request'
+    const apiUrl = 'https://strengthholdings.com/api/v1/connection/unsend-connection-request'
 
     try {
       const res = await fetch(apiUrl, {

@@ -49,7 +49,7 @@ const ProfileDropdown = () => {
     const fetchUser = async () => {
       try {
         setSkeletonLoading(true)
-        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

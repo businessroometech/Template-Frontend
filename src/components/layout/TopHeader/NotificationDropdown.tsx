@@ -48,7 +48,7 @@ const NotificationDropdown = ({ count }) => {
 useEffect(() => {
   if (!user?.id) return;
 
-  const socketConnection = io("http://54.177.193.30:5000", {
+  const socketConnection = io("https://strengthholdings.com", {
     query: { userId: user.id },
   });
 
@@ -96,7 +96,7 @@ useEffect(() => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://54.177.193.30:5000/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `https://strengthholdings.com/api/v1/socket-notifications/get?userId=${user?.id}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
@@ -113,7 +113,7 @@ useEffect(() => {
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'http://54.177.193.30:5000/api/v1/socket-notifications/mark-read',
+        'https://strengthholdings.com/api/v1/socket-notifications/mark-read',
         {
           method: 'POST',
           headers: {
@@ -135,7 +135,7 @@ useEffect(() => {
       allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        'http://54.177.193.30:5000/api/v1/socket-notifications/mark-all-read',
+        'https://strengthholdings.com/api/v1/socket-notifications/mark-all-read',
         {
           method: 'POST',
           headers: {

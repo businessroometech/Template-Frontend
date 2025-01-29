@@ -497,7 +497,7 @@ const Post3 = () => {
   )
 }
 
-const socket = io('http://54.177.193.30:5000'); 
+const socket = io('https://strengthholdings.com'); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
@@ -568,7 +568,7 @@ const fetchPosts = async () => {
     
     const fetchUser = async () => {
       try {
-        const response = await fetch(' http://54.177.193.30:5000/api/v1/auth/get-user-Profile', {
+        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
