@@ -20,7 +20,7 @@ import { io, Socket } from "socket.io-client";
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Bell } from 'lucide-react';
 import Loading from '@/components/Loading';
-import { LIVE_URL } from '@/utils/api';
+import { LIVE_URL, SOCKET_URL } from '@/utils/api';
 
 const NotificationDropdown = ({ count }) => {
   const { user } = useAuthContext();
@@ -49,7 +49,7 @@ const NotificationDropdown = ({ count }) => {
 useEffect(() => {
   if (!user?.id) return;
 
-  const socketConnection = io(`${LIVE_URL}`, {
+  const socketConnection = io(`${SOCKET_URL}`, {
     query: { userId: user.id },
   });
 
