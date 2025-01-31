@@ -273,7 +273,7 @@ useEffect(() => {
                             right: '0',
                             position: 'absolute',
                           }}>
-                            {formatTimestamp(notification.createdAt)}
+                            {notification.created}
                           </p>
                         </div>
                       </Link>
@@ -283,7 +283,7 @@ useEffect(() => {
 
                     {allNotifications.length === 0 && (
                       <div className="text-center p-3">
-                        <Loading loading={true} size={12} />
+                        <div>You have no notifications</div>
                       </div>)
                     }
 

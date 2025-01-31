@@ -39,7 +39,7 @@ import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
 
-const socket = io('https://strengthholdings.com/', {
+const socket = io('wss://strengthholdings.com/', {
   // path: "/socket.io",
   transports: ['websocket'],
 })
@@ -306,7 +306,7 @@ const Messaging = () => {
   //   setShowEmojiPicker(false)
   // }
   const {onlineUsers} = useOnlineUsers(); 
-  const status = onlineUsers?.includes(selectedUser.userId) ? 'online' : 'offline';
+  const status = onlineUsers?.includes(selectedUser?.userId) ? 'online' : 'offline';
 
   return (
     <>

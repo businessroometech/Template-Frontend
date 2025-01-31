@@ -581,7 +581,6 @@ const fetchPosts = async () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
         const data = await response.json(); 
         console.log('Profile Response',data);
         setProfile(() => data.data); 
@@ -726,7 +725,7 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag && <Link to="/feed/home"
+     {flag && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}

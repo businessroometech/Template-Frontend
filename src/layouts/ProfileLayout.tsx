@@ -76,7 +76,7 @@ import { set } from 'react-hook-form'
 const Experience = () => {
   return null;
   return (
-    <Card style={{marginTop : '25px'}}>
+    <Card style={{ marginTop: '25px' }}>
       <CardHeader className="d-flex justify-content-between border-0">
         <h5 className="card-title">Suggested Pages</h5>
         <Button variant="primary-soft" size="sm">
@@ -202,31 +202,34 @@ const Friends = () => {
 }
 
 export const ConnectionRequest = () => {
-  const { user } = useAuthContext()
-  const [allFollowers, setAllFollowers] = useState([])
-  const [loading, setLoading] = useState<string | null>(null)
+  const { user } = useAuthContext();
+  const [allFollowers, setAllFollowers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // For global loading state
   const navigate = useNavigate();
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
-    fetchConnections()
-  }, [allFollowers])
+    fetchConnections();
+  }, [user]);
 
   const fetchConnections = async () => {
+    setLoading(true); // Start loading
     try {
       const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),
-      })
+      });
 
-      if (!response.ok) throw new Error('Failed to fetch connection requests.')
-      const data = await response.json()
-      setAllFollowers(data)
+      if (!response.ok) throw new Error('Failed to fetch connection requests.');
+      const data = await response.json();
+      setAllFollowers(data);
     } catch (error) {
-      console.error('Error fetching connection requests:', error)
+      console.error('Error fetching connection requests:', error);
+    } finally {
+      setLoading(false); // End loading
     }
-  }
+  };
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
@@ -250,71 +253,106 @@ export const ConnectionRequest = () => {
       setLoadingStates((prev) => ({ ...prev, [userId]: null }));
     }
   };
-  
+
+  // Conditional loading spinner
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center bg-light"
+        style={{ height: '100vh' }}
+      >
+        <div
+          className="spinner-border text-primary"
+          role="status"
+          style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Card>
-      {allFollowers.length >= 0 && (
-        <>
-          <CardBody>
-            {allFollowers.map((follower, idx) => (
-              <div className="d-flex row col-12 mb-3" key={idx}>
-                <div className="col-8 d-flex">
-                  <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                    <span role="button">
-                      <img
-                        className="avatar-img rounded-circle"
-                        src={follower.profilePictureUploadUrl || avatar7}
-                        alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
-                      />
-                    </span>
-                  </div>
-                  <div className="overflow-hidden px-2">
-                    <Link className="h6 mb-0" to="">
-                      {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
-                    </Link>
-                    <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
-                  </div>
+      {allFollowers.length === 0 ? (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+          <div className="text-center">
+            <p
+              className="mb-0"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                color: '#6c757d',
+                opacity: '0.8',
+              }}
+            >
+              No connection requests found
+            </p>
+            <p className="small text-muted">
+              It looks like you have no new connection requests at the moment.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <CardBody>
+          {allFollowers.map((follower, idx) => (
+            <div className="d-flex row col-12 mb-3" key={idx}>
+              <div className="col-8 d-flex">
+                <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                  <span role="button">
+                    <img
+                      className="avatar-img rounded-circle"
+                      src={follower.profilePictureUploadUrl || avatar7}
+                      alt={`${follower?.requesterDetails?.firstName} ${follower?.requesterDetails?.lastName}`}
+                    />
+                  </span>
                 </div>
-                <div className="col-4 d-flex justify-content-end">
-                  <Button
-                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
-                    variant="danger-soft"
-                    className="mx-1"
-                    disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'}
-                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
-                  >
-                    {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
-                      <Loading size={15} loading={true} />
-                    ) : (
-                      'Decline'
-                    )}
-                  </Button>
-                  <Button
-                    onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
-                    variant="success-soft"
-                    className="mx-1"
-                    disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'}
-                    style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
-                  >
-                    {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
-                      <Loading size={15} loading={true} />
-                    ) : (
-                      'Approve'
-                    )}
-                  </Button>
+                <div className="overflow-hidden px-2">
+                  <Link className="h6 mb-0" to="">
+                    {follower?.requesterDetails?.firstName} {follower?.requesterDetails?.lastName}
+                  </Link>
+                  <p className="mb-0 small text-truncate">{follower?.requesterDetails?.userRole}</p>
                 </div>
               </div>
-            ))}
-          </CardBody>
-        </>
+              <div className="col-4 d-flex justify-content-end">
+                <Button
+                  onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'rejected')}
+                  variant="danger-soft"
+                  className="mx-1"
+                  disabled={loadingStates[follower?.requesterDetails?.id] === 'rejected'}
+                  style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8d7da')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+                >
+                  {loadingStates[follower?.requesterDetails?.id] === 'rejected' ? (
+                    <Loading size={15} loading={true} />
+                  ) : (
+                    'Decline'
+                  )}
+                </Button>
+                <Button
+                  onClick={() => handleStatusUpdate(follower?.requesterDetails?.id, 'accepted')}
+                  variant="success-soft"
+                  className="mx-1"
+                  disabled={loadingStates[follower?.requesterDetails?.id] === 'accepted'}
+                  style={{ transition: 'background-color 0.3s', minWidth: '120px' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#d4edda')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+                >
+                  {loadingStates[follower?.requesterDetails?.id] === 'accepted' ? (
+                    <Loading size={15} loading={true} />
+                  ) : (
+                    'Approve'
+                  )}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </CardBody>
       )}
     </Card>
   );
-};  
+};
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
@@ -329,7 +367,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false);
   const [msg, setMsg] = useState("");
-  const [coverModal,setCoverModal] = useState<boolean>(false);
+  const [coverModal, setCoverModal] = useState<boolean>(false);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -340,15 +378,19 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   }, [profile?.personalDetails])
 
   useEffect(() => {
-    if (id && user?.id && !msg && count === 0) {
-      if(id === user?.id){
-        return
+    if (!skeletonLoading && !msg && count === 0) {
+      if (id !== user?.id) {
+        recordProfileVisit(); 
+        setCount(1)
       }
-      recordProfileVisit();
+      return
     }
-  }, [id, user?.id]);
+  }, [id, user?.id, msg, count, skeletonLoading]); 
 
+  console.log("count", count);
+  
   const recordProfileVisit = async () => {
+    setCount(1)
     try {
       const response = await fetch(
         "https://strengthholdings.com/api/v1/auth/recored-visit",
@@ -359,15 +401,14 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           },
           body: JSON.stringify({
             visitorId: user?.id,
-            visitedId: id,
+            visitedId:  id,
           }),
         }
       );
-      
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      setCount(1)
 
       const data = await response.json();
       setMsg(data?.message);
@@ -377,6 +418,36 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       setSkeletonLoading(false);
     }
   };
+
+  // const sendNotification = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       "https://strengthholdings.com/api/api/v1/notifications/create",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           userId: user?.id,
+  //           receiverId: id,
+  //           message: "You have a new connection request",
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+
+  //     const data = await response.json();
+  //     setMsg(data?.message);
+  //   } catch (error) {
+  //     console.error("Error sending notification:", error);
+  //   } finally {
+  //     setSkeletonLoading(false);
+  //   }
+  // }
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString)
@@ -545,18 +616,18 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       </Suspense>
       <main>
         <Container>
-        <EditProfilePictureModal
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          onPhotoUpdate={() => console.log('press')}
-          src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+          <EditProfilePictureModal
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            onPhotoUpdate={() => console.log('press')}
+            src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
           />
-        <EditProfilePictureModal
-          show={coverModal}
-          onHide={() => setCoverModal(false)}
-          onPhotoUpdate={() => console.log('press')}
-          src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
-          forCover={true}
+          <EditProfilePictureModal
+            show={coverModal}
+            onHide={() => setCoverModal(false)}
+            onPhotoUpdate={() => console.log('press')}
+            src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
+            forCover={true}
           />
           <Row className="g-4">
             {/* Main Profile Section */}
@@ -571,21 +642,21 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       className="h-200px rounded-top"
                       onClick={() => setCoverModal(true)}
                       style={{
-                        position : 'relative',
-                        overflow : 'hidden',
+                        position: 'relative',
+                        overflow: 'hidden',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                       }}
                     >
                       <Image
-                      src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    />
+                        src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
                     </div>
                   )}
                 </div>
@@ -762,10 +833,10 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 {/* About Card */}
 
                 {/* <Col md={6} lg={12}> */}
-                  {/* <Card> */}
-                  {/* <CardHeader className="border-0 pb-0"> <CardTitle>View My Business Profile</CardTitle></CardHeader> */}
+                {/* <Card> */}
+                {/* <CardHeader className="border-0 pb-0"> <CardTitle>View My Business Profile</CardTitle></CardHeader> */}
 
-                  {/* <CardBody className="position-relative pt-0">
+                {/* <CardBody className="position-relative pt-0">
                       <Button
                         className="w-100"
                         style={{
@@ -779,7 +850,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       </Button>
 
                       {/* <p>{profile?.personalDetails?.bio}</p> */}
-                  {/* <p>
+                {/* <p>
                         {profile?.personalDetails?.bio}
                       </p>
                       <ul className="list-unstyled mt-3 mb-0">
@@ -796,7 +867,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         </li>
                       </ul>
                     </CardBody> */}
-                  {/* </Card> */}
+                {/* </Card> */}
                 {/* </Col> */}
 
                 {/* <ConnectionRequest /> */}
