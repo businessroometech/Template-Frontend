@@ -10,6 +10,7 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),  // This alias is fine, keeps your imports clean
     },
   },
+  base: '/', 
   server: {
     port: 5173, // You can customize this if needed
   },
