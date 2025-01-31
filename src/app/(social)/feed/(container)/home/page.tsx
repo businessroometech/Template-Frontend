@@ -12,7 +12,7 @@ import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
 import { LIVE_URL } from "@/utils/api";
 
 
-const socket = io(`${LIVE_URL}`, {
+const socket = io(`${SOCKET_URL}`, {
   // path: "/socket.io",
   transports: ['websocket'],
 })
