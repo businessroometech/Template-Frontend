@@ -154,6 +154,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
       console.log('Thoughts cannot be empty.')
+      alert('Thoughts cannot be empty.');
       return
     }
     setIsSubmittingPost(true);
@@ -188,7 +189,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
-    if(files.length >= 9) {
+    if(uploadedFiles.length >= 9) {
       alert('Max Limit Reached');
       return;
     }
@@ -212,6 +213,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
+    if(uploadedFiles.length === 0) {
+      alert('You must add a Photo');
+      return;
+    }
     setIsSubmittingPhoto(true);
     const uploadSuccess = await handleUpload()
     
@@ -256,6 +261,9 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handleVideoSubmit = async () => {
+    if(uploadedFiles.length === 0) {
+      alert('You must add a Video');
+    }
     setIsSubmittingVideo(true);
     try {
       // Wait for handleUpload to complete before proceeding

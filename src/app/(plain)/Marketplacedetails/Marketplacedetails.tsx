@@ -485,7 +485,12 @@ import defaultavatar from "@/assets/images/avatar/default avatar.png"
 import { 
   Building2, BadgeDollarSign, Users, Briefcase, MapPin, TrendingUp,
   PiggyBank, Calendar, Shield, Target, BarChart, FileText,
-  Globe, Mail, Phone, Clock, DollarSign, Award, ChevronRight, User
+  Globe, Mail, Phone, Clock, DollarSign, Award, ChevronRight, User,
+  BookOpen,
+  Scale,
+  Settings,
+  BriefcaseBusiness,
+  MailIcon
 } from 'lucide-react';
 import title from "@/assets/title 02.png"
 import { profilePanelLinksData1 } from '@/assets/data/layout';
@@ -546,7 +551,7 @@ const MarketplaceDetails = () => {
       </div>
     );
   } 
-console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
+console.log("Business Details________________" ,businessDetails)
 
   const KeyMetric = ({ icon: Icon, label, value }) => (
     <div className="card" style={{ 
@@ -579,7 +584,7 @@ console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
   );
 
   return (
-    <div style={{ height: '100vh' }}>
+    <div style={{ height: '100vh', marginLeft:"60px" }}>
       {/* Header */}
       <TopHeader></TopHeader>
       {/* <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' ,marginTop:"60px"}}>
@@ -679,6 +684,51 @@ console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
                   </div>
                 </div>
 
+{/* Business Details */}
+
+
+<div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+    <div style={{ backgroundColor: '#e6f0ff', padding: '0.75rem', borderRadius: '8px' }}>
+      <BookOpen style={{ width: '1.5rem', height: '1.5rem', color: '#2563eb' }} />
+    </div>
+    <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Business Details</h2>
+  </div>
+  <div className="row g-3">
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Property Status</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.businessModel
+        }</p>
+      </div>
+    </div>
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Lease Terms</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.leaseTerm || 'N/A'}</p>
+      </div>
+    </div>
+    <div className="col-12">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Intellectual Property</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.hasIntellectualProperty
+        }</p>
+      </div>
+    </div>
+    {/* <div className="col-12">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Contracts & Agreements</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.contractsAgreements}</p>
+      </div>
+    </div> */}
+    <div className="col-12">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Legal Issues</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.hasLegalIssues || 'No ongoing legal issues'}</p>
+      </div>
+    </div>
+  </div>
+</div>
                 {/* Financial Overview */}
                 <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -735,17 +785,97 @@ console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
                     </div>
                   </div>
                 </div>
+
+
+
+{/* Business Operations */}
+<div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+    <div style={{ backgroundColor: '#e6f0ff', padding: '0.75rem', borderRadius: '8px' }}>
+      <Settings style={{ width: '1.5rem', height: '1.5rem', color: '#2563eb' }} />
+    </div>
+    <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Business Operations</h2>
+  </div>
+  <div className="row g-3">
+    <div className="col-12">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Key Operations & Systems</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.operationSystems
+        }</p>
+      </div>
+    </div>
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Support & Training</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.offerTraining
+        }</p>
+      </div>
+    </div>
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Key Personnel Retention</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.keyPersonnelRetention}</p>
+      </div>
+    </div>
+    <div className="col-12">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Ideal Buyer Profile</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.idealBuyerProfile}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{/* Valuation and Sale Process */}
+<div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+    <div style={{ backgroundColor: '#e6f0ff', padding: '0.75rem', borderRadius: '8px' }}>
+      <Scale style={{ width: '1.5rem', height: '1.5rem', color: '#2563eb' }} />
+    </div>
+    <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Valuation & Sale Process</h2>
+  </div>
+  <div className="row g-3">
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Product Services</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.productsServices ? 'Completed' : 'Not Available'}</p>
+      </div>
+    </div>
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Price Negotiation</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.priceNegotiation}</p>
+      </div>
+    </div>
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Financing Options</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.sellerFinancing}</p>
+      </div>
+    </div>
+    <div className="col-6">
+      <div style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Post-Sale Involvement</h3>
+        <p style={{ color: '#6b7280', margin: 0 }}>{businessDetails.data.offerTraining}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
               </div>
 
               {/* Right Sidebar */}
               <div className="col-4">
                 {/* Owner Details */}
-                <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div className="card mb-4" style={{ padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', width:"355px"}} >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                     <div style={{ backgroundColor: '#e6f0ff', padding: '0.75rem', borderRadius: '8px' }}>
                       <User style={{ width: '1.5rem', height: '1.5rem', color: '#2563eb' }} />
                     </div>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Owner Details</h2>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>Owner and Business Details</h2>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -777,15 +907,38 @@ console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <Globe style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
+                      <BriefcaseBusiness style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
                       <div>
-                        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Location</div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Business Name</div>
                         <div style={{ color: '#111827' }}>
-                          {businessDetails.data.OwnerDetails[0].country}, {businessDetails.data.OwnerDetails[0].location}
+                          {businessDetails.data.businessName}
                         </div>
                       </div>
                     </div>
                   </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <MailIcon style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
+                      <div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>E mail</div>
+                        <div style={{ color: '#111827' }}>
+                           {businessDetails.data.OwnerDetails[0].emailAddress}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <Globe style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
+                      <div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Location</div>
+                        <div style={{ color: '#111827' }}>
+                          {businessDetails.data.OwnerDetails[0].country} 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
                 </div>
 
                 {/* Contact Card */}
@@ -793,7 +946,9 @@ console.log("OWNER IMAGE________________" ,businessDetails.data.OwnerImage)
                   background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                   borderRadius: '0.5rem',
                   padding: '1.5rem',
-                  color: 'white'
+                  color: 'white',
+                  marginTop:"90px",
+                  width:"355px"
                 }}>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.75rem' }}>Interested?</h3>
                   <p style={{ color: '#bfdbfe', fontSize: '0.875rem', marginBottom: '1rem' }}>

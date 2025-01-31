@@ -1217,7 +1217,7 @@ const EntrepreneurForm = () => {
                     type="radio" 
                     name="ComRadio" 
                     id="ComRadio2"
-                    value="business-acquirer"
+                    value="founder"
                     onChange={handleRoleChange}
                     checked={selectedRole === 'business-acquirer'}
                   />
@@ -1250,8 +1250,9 @@ const EntrepreneurForm = () => {
                     value="business-acquirer"
                     onChange={handleRoleChange}
                     checked={selectedRole === 'business-acquirer'}
+                    
                   />
-                  <label className="form-check-label" htmlFor="ComRadio2">
+                  <label className="form-check-label" htmlFor="ComRadio2" >
                   Entrepreneur (Interested in Acquiring a Startup.)
                   </label>
                 </div>

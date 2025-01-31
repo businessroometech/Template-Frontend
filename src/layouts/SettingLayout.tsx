@@ -15,15 +15,15 @@ const SettingLayout = ({ children }: ChildrenType) => {
   const { width } = useViewPort()
   const { startOffcanvas } = useLayoutContext()
   return (
-    <>
+   <div style={{marginLeft:"70px"}}>
       <Suspense fallback={<FallbackLoading />}>
         <TopHeader />
       </Suspense>
       <main>
-        <Container>
+        
           <Row>
             <Col lg={3}>
-              <div className="d-flex align-items-center mb-4 d-lg-none">
+              <div className="d-flex align-items-center mb-4 d-lg-none" >
                 <button
                   onClick={startOffcanvas.toggle}
                   className="border-0 bg-transparent"
@@ -55,16 +55,16 @@ const SettingLayout = ({ children }: ChildrenType) => {
               </nav>
             </Col>
             <Col lg={6} className="vstack gap-4">
-              <div className="tab-content py-0 mb-0">
+              <div className="tab-content py-0 mb-0" style={{marginRight:"60px"}}>
                 <Suspense fallback={<Preloader/>}>
                   {children}
                 </Suspense>
               </div>
             </Col>
           </Row>
-        </Container>
+        
       </main>
-    </>
+      </div>
   )
 }
 export default SettingLayout

@@ -811,7 +811,7 @@ const BusinessPreferencesForm = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-start mb-4">Business Preferences</h2>
+      <h2 className="text-start mb-4">Entrepreneur (Interested in Acquiring a Startup.)</h2>
 
       <div className="d-flex justify-content-center mb-4">
         {sections.map((section, index) => (

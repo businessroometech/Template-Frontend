@@ -110,10 +110,10 @@ const Followers = () => {
 
   const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
   return (
-    <>
+    <div style={{width:"360px", marginLeft:"10px"}} >
       {/* <ConnectionRequest /> */}
       <br />
-      <Card style={{ marginTop: '-22px' }}>
+      <Card style={{ marginTop: '-22px'   }}>
         <CardHeader className="pb-0 border-0">
           <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
             Suggested Connections
@@ -176,7 +176,7 @@ const Followers = () => {
           </CardBody>
         )}
       </Card>
-    </>
+      </div>
   )
 }
 export default Followers

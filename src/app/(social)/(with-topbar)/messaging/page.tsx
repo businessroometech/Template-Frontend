@@ -11,14 +11,14 @@ const Messaging = () => {
   return (
     <>
     <PageMetaData title='Messaging'/>
-    <main>
-      <Container>
+    <main style={{width:"108%"}}>
+      <div style={{width:"95%", marginLeft:"80px"}} >
         <Row className="gx-0">
           <Col lg={4} xxl={3}>
-            <div className="d-flex align-items-center mb-4 d-lg-none">
+            <div className="d-flex align-items-center mb-4 d-lg-none" >
               <ChatToggler />
             </div>
-            <Card className="card-body border-end-0 border-bottom-0 rounded-bottom-0">
+            <Card className="card-body border-end-0 border-bottom-0 rounded-bottom-0"  >
               <div className=" d-flex justify-content-between align-items-center">
                 <h1 className="h5 mb-0">
                   Active chats <span className="badge bg-success bg-opacity-10 text-success">{totalChats}</span>
@@ -35,7 +35,7 @@ const Messaging = () => {
             <ChatArea />
           </Col>
         </Row>
-      </Container>
+      </div>
     </main>
     </>
   )

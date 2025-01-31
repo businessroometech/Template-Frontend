@@ -72,7 +72,7 @@ const Followers =  () => {
   const allFollowers =useFetchData(getAllUsers) 
   const filteredFollowers = allFollowers?.filter(follower => user?.id !== follower.id);
   return (
-    <Card>
+    <Card  >
       <CardHeader className="pb-0 border-0">
         <CardTitle className="mb-0">Suggested Connections</CardTitle>
       </CardHeader>
