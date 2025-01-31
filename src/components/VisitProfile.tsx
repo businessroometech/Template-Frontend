@@ -210,7 +210,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          `${LIVE_URL}api/v1/auth/get-profile-visited`,
+          "https://strengthholdings.com/api/api/v1/auth/get-profile-visited",
           {
             method: "POST",
             headers: {

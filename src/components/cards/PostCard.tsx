@@ -265,7 +265,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       });
 
       if (!response.ok) {
-        setLikeStatus((prev) => !prev);
+        setLikeStatus(likeStatus);
         likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
