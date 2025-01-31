@@ -98,7 +98,8 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
                   <div className="d-flex flex-column">
                     {searchResults.length > 0 ? (
                       searchResults.map((result) => (
-                        <div 
+                        <a
+                        href={`/profile/feed/${result.id}`}
                         role="button" 
                         tabIndex={0} 
                         onClick={() => handleNavigation(result.id)}
@@ -112,7 +113,7 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
                           <small className="text-muted">{result.userRole}</small>
 
                           </div>
-                        </div>
+                        </a>
                       ))
                     ) : (
                       <ListGroup.Item className="text-muted text-center">No results found</ListGroup.Item>
