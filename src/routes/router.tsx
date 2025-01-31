@@ -18,6 +18,7 @@ import Founderforms from '@/app/(plain)/Founderform/Founderform'
 import AccountSettings from '@/assets/data/clone/accountClone'
 import MarketplaceDetails from '@/app/(plain)/Marketplacedetails/Marketplacedetails'
 import VisitProfile from '@/components/VisitProfile'
+import PleaseWaitPage from '@/components/Coming'
 
 
 const AppRouter = (props: RouteProps) => {
@@ -106,6 +107,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
+      <Route path='/coming-soon' element={<PleaseWaitPage/>}></Route>
     </Routes>
   )
 }
