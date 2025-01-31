@@ -110,7 +110,7 @@ const Followers = () => {
 
   const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
   return (
-    <div style={{width:"420px", marginLeft:"310px"}} >
+    <div style={{width:"360px", marginLeft:"10px"}} >
       {/* <ConnectionRequest /> */}
       <br />
       <Card style={{ marginTop: '-22px'   }}>

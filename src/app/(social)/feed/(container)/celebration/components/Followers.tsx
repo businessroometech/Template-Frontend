@@ -11,7 +11,7 @@ const Followers =  () => {
   const allFollowers = useFetchData(getAllUsers)
   
   return (
-    <Card>
+    <Card >
       <CardHeader className="pb-0 border-0">
       <CardTitle className="mb-0" style={{ fontSize: '2px' }}>Suggested Connections</CardTitle>
       </CardHeader>
