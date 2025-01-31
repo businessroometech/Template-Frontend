@@ -11,8 +11,8 @@ const Messaging = () => {
   return (
     <>
     <PageMetaData title='Messaging'/>
-    <main style={{width:"108%"}}>
-      <div style={{width:"100%", marginLeft:"80px"}} >
+    <main style={{width:"100%", marginLeft:"5%"}}>
+      <div style={{width:"100%"}} >
         <Row className="gx-0">
           <Col lg={4} xxl={3}>
             <div className="d-flex align-items-center mb-4 d-lg-none" >
