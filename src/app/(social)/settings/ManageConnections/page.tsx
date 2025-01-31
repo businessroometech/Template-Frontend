@@ -25,9 +25,11 @@ const ManageConnections = () => {
   };
 
   return (
-    <div className="container">
+    <div style={{padding:"0px 80px", marginRight:""}}>
+      <div>
       <PageMetaData title='ManageConnections'/>
-      <div className="d-flex justify-content-center mb-4 flex-wrap" >
+      
+      <div className="d-flex justify-content-center mb-4 flex-wrap"   >
         {sections.map((section, index) => (
           <button
             key={index}
@@ -45,9 +47,10 @@ const ManageConnections = () => {
         ))}
       </div>
 
-      <div>
+      <div style={{width:"106%"}}>
         {sections[step].component}
       </div>
+    </div>
     </div>
   );
 };

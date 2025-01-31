@@ -576,7 +576,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   ]
 
   return (
-    <>
+   <div style={{marginRight:"360px"}} >
       <ToastContainer />
       <Suspense fallback={<Preloader />}>
         <TopHeader />
@@ -598,8 +598,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           />
           <Row className="g-4">
             {/* Main Profile Section */}
-            <Col lg={8} className="vstack gap-4">
-              <Card>
+            <Col lg={8} className="vstack gap-4" >
+              <Card style={{width:"1000px"}}>
                 {/* Profile Cover Image */}
                 <div className="h-200px rounded-top position-relative">
                   {skeletonLoading ? (
@@ -779,7 +779,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     </li> */}
                   </ul>
                 </CardBody>
-                <CardFooter className="card-footer mt-3 pt-2 pb-0">
+                <CardFooter className="card-footer mt-3 pt-2 pb-0" >
                   <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
                     {PROFILE_MENU_ITEMS.map((item, idx) => (
                       <li className="nav-item" key={idx}>
@@ -856,7 +856,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           </Row>
         </Container>
       </main>
-    </>
+      </div>
   )
 }
 export default ProfileLayout
