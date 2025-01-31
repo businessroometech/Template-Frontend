@@ -22,7 +22,7 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
 
   const fetchUsers = async (query: string) => {
     try {
-      const response = await fetch('http://localhost:5000/v1/auth/get-users', {
+      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
