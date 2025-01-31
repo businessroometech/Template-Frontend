@@ -76,7 +76,7 @@ import { set } from 'react-hook-form'
 const Experience = () => {
   return null;
   return (
-    <Card style={{marginTop : '25px'}}>
+    <Card style={{ marginTop: '25px' }}>
       <CardHeader className="d-flex justify-content-between border-0">
         <h5 className="card-title">Suggested Pages</h5>
         <Button variant="primary-soft" size="sm">
@@ -275,24 +275,24 @@ export const ConnectionRequest = () => {
   return (
     <Card>
       {allFollowers.length === 0 ? (
-       <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
-       <div className="text-center">
-         <p
-           className="mb-0"
-           style={{
-             fontSize: '1.25rem',
-             fontWeight: '600',
-             color: '#6c757d',
-             opacity: '0.8',
-           }}
-         >
-           No connection requests found
-         </p>
-         <p className="small text-muted">
-           It looks like you have no new connection requests at the moment.
-         </p>
-       </div>
-     </div>
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+          <div className="text-center">
+            <p
+              className="mb-0"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                color: '#6c757d',
+                opacity: '0.8',
+              }}
+            >
+              No connection requests found
+            </p>
+            <p className="small text-muted">
+              It looks like you have no new connection requests at the moment.
+            </p>
+          </div>
+        </div>
       ) : (
         <CardBody>
           {allFollowers.map((follower, idx) => (
@@ -367,7 +367,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false);
   const [msg, setMsg] = useState("");
-  const [coverModal,setCoverModal] = useState<boolean>(false);
+  const [coverModal, setCoverModal] = useState<boolean>(false);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -378,15 +378,19 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   }, [profile?.personalDetails])
 
   useEffect(() => {
-    if (id && user?.id && !msg && count === 0) {
-      if(id === user?.id){
-        return
+    if (!skeletonLoading && !msg && count === 0) {
+      if (id !== user?.id) {
+        recordProfileVisit(); 
+        setCount(1)
       }
-      recordProfileVisit();
+      return
     }
-  }, [id, user?.id]);
+  }, [id, user?.id, msg, count, skeletonLoading]); 
 
+  console.log("count", count);
+  
   const recordProfileVisit = async () => {
+    setCount(1)
     try {
       const response = await fetch(
         "https://strengthholdings.com/api/v1/auth/recored-visit",
@@ -397,15 +401,14 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           },
           body: JSON.stringify({
             visitorId: user?.id,
-            visitedId: id,
+            visitedId:  id,
           }),
         }
       );
-      
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      setCount(1)
 
       const data = await response.json();
       setMsg(data?.message);
@@ -415,6 +418,36 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       setSkeletonLoading(false);
     }
   };
+
+  // const sendNotification = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       "https://strengthholdings.com/api/api/v1/notifications/create",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           userId: user?.id,
+  //           receiverId: id,
+  //           message: "You have a new connection request",
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+
+  //     const data = await response.json();
+  //     setMsg(data?.message);
+  //   } catch (error) {
+  //     console.error("Error sending notification:", error);
+  //   } finally {
+  //     setSkeletonLoading(false);
+  //   }
+  // }
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString)
@@ -583,18 +616,18 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       </Suspense>
       <main>
         <Container>
-        <EditProfilePictureModal
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          onPhotoUpdate={() => console.log('press')}
-          src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+          <EditProfilePictureModal
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            onPhotoUpdate={() => console.log('press')}
+            src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
           />
-        <EditProfilePictureModal
-          show={coverModal}
-          onHide={() => setCoverModal(false)}
-          onPhotoUpdate={() => console.log('press')}
-          src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
-          forCover={true}
+          <EditProfilePictureModal
+            show={coverModal}
+            onHide={() => setCoverModal(false)}
+            onPhotoUpdate={() => console.log('press')}
+            src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
+            forCover={true}
           />
           <Row className="g-4">
             {/* Main Profile Section */}
@@ -609,21 +642,21 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       className="h-200px rounded-top"
                       onClick={() => setCoverModal(true)}
                       style={{
-                        position : 'relative',
-                        overflow : 'hidden',
+                        position: 'relative',
+                        overflow: 'hidden',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                       }}
                     >
                       <Image
-                      src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    />
+                        src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
                     </div>
                   )}
                 </div>
@@ -800,10 +833,10 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 {/* About Card */}
 
                 {/* <Col md={6} lg={12}> */}
-                  {/* <Card> */}
-                  {/* <CardHeader className="border-0 pb-0"> <CardTitle>View My Business Profile</CardTitle></CardHeader> */}
+                {/* <Card> */}
+                {/* <CardHeader className="border-0 pb-0"> <CardTitle>View My Business Profile</CardTitle></CardHeader> */}
 
-                  {/* <CardBody className="position-relative pt-0">
+                {/* <CardBody className="position-relative pt-0">
                       <Button
                         className="w-100"
                         style={{
@@ -817,7 +850,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       </Button>
 
                       {/* <p>{profile?.personalDetails?.bio}</p> */}
-                  {/* <p>
+                {/* <p>
                         {profile?.personalDetails?.bio}
                       </p>
                       <ul className="list-unstyled mt-3 mb-0">
@@ -834,7 +867,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         </li>
                       </ul>
                     </CardBody> */}
-                  {/* </Card> */}
+                {/* </Card> */}
                 {/* </Col> */}
 
                 {/* <ConnectionRequest /> */}

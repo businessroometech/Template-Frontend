@@ -273,7 +273,7 @@ useEffect(() => {
                             right: '0',
                             position: 'absolute',
                           }}>
-                            {formatTimestamp(notification.createdAt)}
+                            {notification.created}
                           </p>
                         </div>
                       </Link>
