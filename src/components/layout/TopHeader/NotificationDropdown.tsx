@@ -284,7 +284,7 @@ useEffect(() => {
 
                     {allNotifications.length === 0 && (
                       <div className="text-center p-3">
-                        <div>You have no notifications</div>
+                       <Loading loading={true} size={12} />
                       </div>)
                     }
 
