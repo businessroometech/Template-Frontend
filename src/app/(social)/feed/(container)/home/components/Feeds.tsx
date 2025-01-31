@@ -562,10 +562,9 @@ const fetchPosts = async () => {
    }
 }
 
+//   don't comment this useEffect 🙏🏻 
   useEffect(() => {
-    // Fetch posts on mount
-    // console.log('Mount Wala UseEffect')
-    
+  
     const fetchUser = async () => {
       try {
         const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
