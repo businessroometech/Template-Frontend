@@ -675,6 +675,7 @@ import { FaMapMarkerAlt, FaBuilding, FaMoneyBillWave, FaToolbox, FaClock, FaBala
 import { useAuthContext } from '@/context/useAuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LIVE_URL } from '@/utils/api';
 
 const BusinessPreferencesForm = () => {
   const { user } = useAuthContext();
@@ -712,7 +713,7 @@ const BusinessPreferencesForm = () => {
     e.preventDefault();
     toast.success("Form submitted successfully!");
     try {
-      fetch('https://strengthholdings.com/business-buyer/create', {
+      fetch(`${LIVE_URL}business-buyer/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

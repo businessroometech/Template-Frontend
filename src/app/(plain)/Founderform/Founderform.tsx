@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import {ToastContainer , toast} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import { LIVE_URL } from "@/utils/api";
 const Founderforms = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -64,7 +65,7 @@ const Founderforms = () => {
     try {
       console.log(formData , user?.id);
   
-      const response = await fetch(" https://strengthholdings.com/entrepreneur/create", {
+      const response = await fetch(`${LIVE_URL}entrepreneur/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

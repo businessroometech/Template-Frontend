@@ -20,6 +20,7 @@ import { io, Socket } from "socket.io-client";
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import { Bell } from 'lucide-react';
 import Loading from '@/components/Loading';
+import { LIVE_URL } from '@/utils/api';
 
 const NotificationDropdown = ({ count }) => {
   const { user } = useAuthContext();
@@ -48,7 +49,7 @@ const NotificationDropdown = ({ count }) => {
 useEffect(() => {
   if (!user?.id) return;
 
-  const socketConnection = io("https://strengthholdings.com", {
+  const socketConnection = io(`${LIVE_URL}`, {
     query: { userId: user.id },
   });
 
@@ -96,7 +97,7 @@ useEffect(() => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `https://strengthholdings.com/api/v1/socket-notifications/get?userId=${user?.id}`,
+        `${LIVE_URL}api/v1/socket-notifications/get?userId=${user?.id}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
@@ -113,7 +114,7 @@ useEffect(() => {
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'https://strengthholdings.com/api/v1/socket-notifications/mark-read',
+        `${LIVE_URL}api/v1/socket-notifications/mark-read`, 
         {
           method: 'POST',
           headers: {
@@ -135,7 +136,7 @@ useEffect(() => {
       allNotifications.map((notification) => notification.id);
 
       const response = await fetch(
-        'https://strengthholdings.com/api/v1/socket-notifications/mark-all-read',
+        `${LIVE_URL}api/v1/socket-notifications/mark-all-read`,
         {
           method: 'POST',
           headers: {

@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/context/useAuthContext";
+import { LIVE_URL } from "@/utils/api";
 import { DollarSign, Heart, MapPin, PiggyBank, Trash2, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
@@ -11,7 +12,7 @@ const MarketplaceCard = ({business, isMyBusiness, isMyWishlist}) => {
     console.log(user?.id)
 
     const fetchWishlist = async() => {
-        const response = await fetch(`https://strengthholdings.com/api/v1/wishlists/getall/${user?.id}`)
+        const response = await fetch(`${LIVE_URL}api/v1/wishlists/getall/${user?.id}`)
         const result = await response.json();
         setWishlists(result)
         
@@ -35,7 +36,7 @@ const MarketplaceCard = ({business, isMyBusiness, isMyWishlist}) => {
 const [WishlistDeleted , setWishlistDeleted] = useState(false)
 
     const handleWishlistDelete = async () => {
-        const response = await fetch(`https://strengthholdings.com/api/v1/wishlists/delete/${Wishlists.data[0].id}`, {
+        const response = await fetch(`${LIVE_URL}api/v1/wishlists/delete/${Wishlists.data[0].id}`, {
             method: "DELETE",
         });
         console.log(await response.json())
@@ -52,7 +53,7 @@ const [WishlistDeleted , setWishlistDeleted] = useState(false)
             };
             console.log("---Payload----" , payload)
             
-            const response = await fetch("https://strengthholdings.com/api/v1/wishlists/create" , {
+            const response = await fetch(`${LIVE_URL}api/v1/wishlists/create` , {
                 method : "POST",
                 headers : {
                     'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ const [WishlistDeleted , setWishlistDeleted] = useState(false)
     const handledelete = async() => {
         try {
             if (user?.id == business.UserId) {
-                const response = await fetch(`https://strengthholdings.com/api/v1/businessseller/delete/${business.id}`, {
+                const response = await fetch(`${LIVE_URL}api/v1/businessseller/delete/${business.id}`, {
                     method: "DELETE",
                 });
                 console.log(await response.json())

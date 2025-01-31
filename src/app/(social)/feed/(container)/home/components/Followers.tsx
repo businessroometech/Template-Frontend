@@ -1,6 +1,7 @@
 import avatar from '@/assets/images/avatar/default avatar.png'
 import Loading from '@/components/Loading'
 import { useAuthContext } from '@/context/useAuthContext'
+import { LIVE_URL } from '@/utils/api'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
@@ -34,7 +35,7 @@ const Followers = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
+      const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-suggest`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,8 +69,8 @@ const Followers = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-      : ' https://strengthholdings.com/api/v1/connection/unsend-connection-request'
+      ? `${LIVE_URL}api/v1/connection/send-connection-request`
+      : `${LIVE_URL}api/v1/connection/unsend-connection-request`
 
     try {
       const res = await fetch(apiUrl, {

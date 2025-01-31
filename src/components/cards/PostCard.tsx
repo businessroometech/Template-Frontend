@@ -17,6 +17,7 @@ import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
 import { FaGlobe } from 'react-icons/fa';
 import RepostModal from './RepostModal';
+import { LIVE_URL } from '@/utils/api';
 
 interface Like {
   id: string;
@@ -105,7 +106,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       }
 
       // Send a DELETE request to the backend
-      const response = await fetch('https://strengthholdings.com/api/v1/post/delete-userpost-byPostId', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +139,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     }
 
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/post/get-post-likes-list', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/get-post-likes-list`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +191,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     const fetchComments = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(' https://strengthholdings.com/api/v1/post/get-comments', {
+        const response = await fetch(`${LIVE_URL}api/v1/post/get-comments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -227,7 +228,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     if (!commentText.trim()) return;
 
     try {
-      const response = await fetch(' https://strengthholdings.com/api/v1/post/create-comment', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -253,7 +254,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     setLikeStatus((prev) => !prev);
     likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/post/create-like', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

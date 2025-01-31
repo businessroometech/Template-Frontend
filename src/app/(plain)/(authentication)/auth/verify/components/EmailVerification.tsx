@@ -7,6 +7,7 @@ import { Button, Card, FormCheck } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../../components/AuthLayout';
 import Loading from '@/components/Loading';
+import { LIVE_URL } from '@/utils/api';
 
 const EmailVerification = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const EmailVerification = () => {
     e.preventDefault();
     setLoading(true)
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/auth/send-verify-email', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/send-verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

@@ -12,6 +12,7 @@ import { uploadDoc } from '@/utils/CustomS3ImageUpload';
 import { Button, CardBody, Col } from 'react-bootstrap';
 import avatar7 from '@/assets/images/avatar/06.jpg';
 import bgBannerImg from '@/assets/images/bg/01.jpg';
+import { LIVE_URL } from '@/utils/api';
 
 const UserModel = () => {
     const [show, setShow] = useState(true);
@@ -102,7 +103,7 @@ const UserModel = () => {
                     },
                 };
 
-                const response = await fetch('https://strengthholdings.com/api/v1/auth/update-or-create-Profile', {
+                const response = await fetch(`${LIVE_URL}api/v1/auth/update-or-create-Profile`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody),

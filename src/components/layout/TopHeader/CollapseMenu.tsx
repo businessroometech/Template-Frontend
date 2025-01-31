@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { useAuthContext } from '@/context/useAuthContext';
 import { ListGroup, Image } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { LIVE_URL } from '@/utils/api';
 
 const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
   const {
@@ -22,7 +23,7 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
 
   const fetchUsers = async (query: string) => {
     try {
-      const response = await fetch('http://localhost:5000/v1/auth/get-users', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/get-users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,8 +59,10 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
   console.log('searchResults:', searchResults);
 
   const handleNavigation = (id: string) => {
-    navigate(`/app/profile/${id}`);
-    setSearchResults([])
+    console.log('Navigating to:', id);
+    
+    navigate(`/profile/feed/${id}`);
+    // setSearchResults([])
     setSearchQuery('')
   };
   
@@ -79,8 +82,11 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setShowDropdown(true)}
-                  onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-                />
+                  onBlur={(e) => {
+                    if (!e.relatedTarget || !e.relatedTarget.closest('.search-result-item')) {
+                      setTimeout(() => setShowDropdown(false), 3000);
+                    }
+                  }} />
                 <button className="btn bg-transparent px-2 py-0 position-absolute top-50 start-0 translate-middle-y" type="submit">
                   <BsSearch className="fs-5" />
                 </button>
@@ -89,28 +95,34 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
               {/* Search Results Dropdown */}
               {showDropdown && (
                 <div className="position-absolute bg-white shadow rounded w-100 mt-1" style={{ zIndex: 1000, maxHeight: '300px', overflowY: 'auto' }}>
-                  <ListGroup variant="" >
+                  <div className="d-flex flex-column">
                     {searchResults.length > 0 ? (
                       searchResults.map((result) => (
-                        <ListGroup.Item onClick={()=>handleNavigation(result?.id)} key={result?.id}  className="d-flex align-items-center p-2">
-                         
-                          <Image src={result.profileImgUrl?result.profileImgUrl: avatar7} alt={`${result.firstName} ${result.lastName}`} roundedCircle width={40} height={40} className="me-3" />
+                        <div 
+                        role="button" 
+                        tabIndex={0} 
+                        onClick={() => handleNavigation(result.id)}
+                        key={result?.id} 
+                        className="d-flex align-items-center p-2 cursor-pointer"
+                      >
+                          <Image src={result.profileImgUrl ? result.profileImgUrl : avatar7} alt={`${result.firstName} ${result.lastName}`} roundedCircle width={40} height={35} className="me-3" />
                           <div>
-                            <h6 className="mb-0">{`${result.firstName} ${result.lastName}`}</h6>
-                            <small className="text-muted">{result.userRole}</small>
+                          <h6 className="mb-0">{`${result.firstName} ${result.lastName}`}  <span className="badge bg-success bg-opacity-10 text-success small">{result.mutualConnectionCount>0?result.mutualConnectionCount:""}</span></h6>
+                         
+                          <small className="text-muted">{result.userRole}</small>
+
                           </div>
-                       
-                        </ListGroup.Item>
+                        </div>
                       ))
                     ) : (
                       <ListGroup.Item className="text-muted text-center">No results found</ListGroup.Item>
                     )}
-                    {searchResults.length > 0 && (
+                    {/* {searchResults.length > 0 && (
                       <ListGroup.Item action className="text-center text-primary">
                         See all results
                       </ListGroup.Item>
-                    )}
-                  </ListGroup>
+                    )} */}
+                  </div>
                 </div>
               )}
             </div>

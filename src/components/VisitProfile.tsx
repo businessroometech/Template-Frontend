@@ -8,6 +8,7 @@ import { FaPlus } from 'react-icons/fa'
 import { FaUserPlus, FaUserCheck, FaUserFriends, FaUsers } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { FaEye, FaUserAlt } from 'react-icons/fa'
+import { LIVE_URL } from '@/utils/api'
 
 export const formatTimestamp = (createdAt: Date): string => {
   console.log('createdAt:', createdAt)
@@ -45,7 +46,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-profile-visit', {
+        const response = await fetch(`${LIVE_URL}api/v1/auth/get-profile-visit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -79,8 +80,8 @@ const ProfileVisits = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
+      ? `${LIVE_URL}api/v1/connection/send-connection-request` : 
+      `${LIVE_URL}api/v1/connection/unsend-connection-request`;
 
     try {
       const res = await fetch(apiUrl, {
@@ -155,7 +156,7 @@ const ProfileVisits = () => {
                         <span className="badge text-success small">{visit.visitCount}</span>
                       </h6>
                       <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
-                      <p className="mb-0 text-muted">{visit.visitor.createdAt ? formatTimestamp(visit.visitor.createdAt) : '1w'}</p>
+                      <p className="mb-0 text-muted">{visit.visitor.visitedAt}</p>
                     </div>
                   </Link>
                   <div className="d-flex align-items-center">
@@ -209,7 +210,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          " https://strengthholdings.com/api/v1/auth/get-profile-visited",
+          `${LIVE_URL}api/v1/auth/get-profile-visited`,
           {
             method: "POST",
             headers: {
@@ -247,8 +248,8 @@ const ProfileVisited = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
+      ? `${LIVE_URL}api/v1/connection/send-connection-request`
+      : `${LIVE_URL}api/v1/connection/unsend-connection-request`;
 
     try {
       const res = await fetch(apiUrl, {
@@ -319,7 +320,7 @@ const ProfileVisited = () => {
                         <span className="badge text-success small">{visit.visitCount}</span>
                       </h6>
                       <p className="mb-0 text-muted">{visit.profile.userRole}</p>
-                      <p className="mb-0 text-muted">{visit.profile.createdAt ? formatTimestamp(visit.profile.createdAt) : '1w'}</p>
+                      <p className="mb-0 text-muted">{visit.profile.visitedAt}</p>
                     </div>
                   </Link>
                   <div className="d-flex align-items-center">
