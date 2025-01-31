@@ -340,11 +340,11 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
 
   return (
     <>
-    {post.repostedFrom &&
+    {/* {post.repostedFrom &&
       <div style={{width : '100%',height : '50px',backgroundColor : 'lavender',marginBottom : '-2px',zIndex : 100}}>
 
       </div>
-    }
+    } */}
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
@@ -357,7 +357,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                   <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                 )}
               </Link>
-              {post.repostedFrom && <p>This is a repost</p>}
+              {/* {post.repostedFrom && <p>This is a repost</p>} */}
             </div>
             <div>
               <div className="nav nav-divider">
