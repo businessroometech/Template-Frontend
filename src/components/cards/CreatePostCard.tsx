@@ -54,7 +54,7 @@ import { Link } from 'react-router-dom'
 import { SendHorizontal } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
-import { CREATE_POST, LIVE_URL } from '@/utils/api'
+import { CREATE_POST } from '@/utils/api'
 import { FileUpload, uploadDoc, uploadMulti } from '@/utils/CustomS3ImageUpload'
 import { FileType } from '@/hooks/useFileUploader'
 const skeletonBaseColor = '#e3e3e3'
@@ -112,7 +112,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   const fetchUser = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
+      const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +154,6 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
       console.log('Thoughts cannot be empty.')
-      alert('Thoughts cannot be empty.');
       return
     }
     setIsSubmittingPost(true);
@@ -189,7 +188,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
-    if(uploadedFiles.length >= 9) {
+    if(files.length >= 9) {
       alert('Max Limit Reached');
       return;
     }
@@ -213,10 +212,6 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
-    if(uploadedFiles.length === 0) {
-      alert('You must add a Photo');
-      return;
-    }
     setIsSubmittingPhoto(true);
     const uploadSuccess = await handleUpload()
     
@@ -261,9 +256,6 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handleVideoSubmit = async () => {
-    if(uploadedFiles.length === 0) {
-      alert('You must add a Video');
-    }
     setIsSubmittingVideo(true);
     try {
       // Wait for handleUpload to complete before proceeding

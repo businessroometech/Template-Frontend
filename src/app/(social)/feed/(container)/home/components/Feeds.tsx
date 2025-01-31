@@ -513,8 +513,8 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
   const [flag, setflag] = useState(false);
+  
 
- 
 useEffect(() => {
   
   socket.on('postSent', (data:any) => {
@@ -601,45 +601,45 @@ const fetchPosts = async () => {
     }
   }, [fetchPosts, profile, user?.id]);
 
-  // useEffect(() => {
-  //   console.log('is Created Wala UseEffect')
-  //   const fetchPosts = async () => {
+  useEffect(() => {
+    console.log('is Created Wala UseEffect')
+    const fetchPosts = async () => {
 
-  //     setError(null);
-  //     setHasMore(true);
-  //     console.log('fetching posts');
-  //     try {
-  //       const res = await makeApiRequest<{ data: any[] }>({
-  //         method: 'POST',
-  //         url: 'api/v1/post/get-all-post',
-  //         data: { userId: user?.id, page: page },
-  //       })
+      setError(null);
+      setHasMore(true);
+      console.log('fetching posts');
+      try {
+        const res = await makeApiRequest<{ data: any[] }>({
+          method: 'POST',
+          url: 'api/v1/post/get-all-post',
+          data: { userId: user?.id, page: page },
+        })
         
-  //       if(res.message === "No posts found for this user."){
-  //         setHasMore(false);
-  //         console.log('went in');
-  //         return;
-  //       }
-  //       setLoading(false)
-  //       console.log('Fetched Posts:', res.data);
-  //       console.log('What is res data',res.data);
-  //       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
-  //     } catch (error: any) {
-  //       console.error('Error fetching posts:', error.message)
-  //       setError(error.message || 'An unknown error occurred')
-  //      } finally {
-  //       setLoading(false)
-  //      }
-  //   }
-  //   // Refetch posts when `isCreated` changes
-  //   if (isCreated) {
-  //     setPosts([]); // Reset posts
-  //     setPage(1); // Reset page to 1
-  //     setHasMore(true); // Reset pagination state
-  //     fetchPosts();
-  //     setflag(false)
-  //   }
-  // }, [isCreated, page, user?.id]);
+        if(res.message === "No posts found for this user."){
+          setHasMore(false);
+          console.log('went in');
+          return;
+        }
+        setLoading(false)
+        console.log('Fetched Posts:', res.data);
+        console.log('What is res data',res.data);
+        setPosts(previousPosts => [...previousPosts, ...res.data.posts])
+      } catch (error: any) {
+        console.error('Error fetching posts:', error.message)
+        setError(error.message || 'An unknown error occurred')
+       } finally {
+        setLoading(false)
+       }
+    }
+    // Refetch posts when `isCreated` changes
+    if (isCreated) {
+      setPosts([]); // Reset posts
+      setPage(1); // Reset page to 1
+      setHasMore(true); // Reset pagination state
+      fetchPosts();
+      setflag(false)
+    }
+  }, [isCreated, page, user?.id]);
 
   useEffect(() => {
     if(page <= 1 || posts.length >= page * 5) return;
@@ -727,11 +727,10 @@ const PostSkeleton = () => {
   }
 
 
-
   return (
     <>
       <div className="position-relative">
-     {flag && <Link to="/"
+     {flag  && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
