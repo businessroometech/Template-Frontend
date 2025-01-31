@@ -25,8 +25,8 @@ const ManageConnections = () => {
   };
 
   return (
-    <div style={{padding:"0px 80px", marginRight:""}}>
-      <div>
+    <div style={{padding:"0px", marginRight:""}}>
+      
       <PageMetaData title='ManageConnections'/>
       
       <div className="d-flex justify-content-center mb-4 flex-wrap"   >
@@ -50,7 +50,7 @@ const ManageConnections = () => {
       <div style={{width:"106%"}}>
         {sections[step].component}
       </div>
-    </div>
+    
     </div>
   );
 };
