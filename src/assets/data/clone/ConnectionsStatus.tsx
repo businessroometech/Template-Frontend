@@ -124,6 +124,29 @@ const ConnectionsStatus = () => {
     }
 
     return (
+
+        <>
+        {allConnections.length === 0 ? (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+          <div className="text-center">
+            <p
+              className="mb-0"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                color: '#6c757d',
+                opacity: '0.8',
+              }}
+            >
+              No connection requests found
+            </p>
+            <p className="small text-muted">
+              It looks like you have no new connection requests at the moment.
+            </p>
+          </div>
+        </div>
+      ) : (
+        
         <Card>
             <CardHeader className="border-0 pb-0" />
             <CardBody>
@@ -171,6 +194,8 @@ const ConnectionsStatus = () => {
                 ))}
             </CardBody>
         </Card>
+        )}
+        </>
     );
 };
 

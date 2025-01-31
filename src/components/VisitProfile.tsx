@@ -140,7 +140,8 @@ const ProfileVisits = () => {
           ) : (
             <ListGroup>
               {visits.map((visit, index) => (
-                <ListGroupItem key={index} className="d-flex align-items-center justify-content-between py-3 px-4 rounded shadow-sm mb-3">
+                <a href={`/profile/feed/${visit.visitor.id}`} key={index}>
+                <ListGroupItem  className="d-flex align-items-center justify-content-between py-3 px-4 rounded shadow-sm mb-3">
                   <Link to={`/profile/feed/${visit.visitor.id}`} className="d-flex align-items-center text-decoration-none">
                     <img
                       src={visit.visitor.profilePicture || avatar7}
@@ -191,6 +192,7 @@ const ProfileVisits = () => {
                     )}
                   </div>
                 </ListGroupItem>
+                </a>
               ))}
             </ListGroup>
           )}
@@ -304,6 +306,7 @@ const ProfileVisited = () => {
           {visits.length > 0 ? (
             <ListGroup>
               {visits.map((visit, index) => (
+                <a href={`/profile/feed/${visit.profile.id}`} key={index}>
                 <ListGroupItem key={index} className="d-flex align-items-center justify-content-between py-3 px-4 rounded shadow-sm mb-3">
                   <Link to={`/profile/feed/${visit.profile.id}`} className="d-flex align-items-center text-decoration-none">
                     <img
@@ -355,6 +358,7 @@ const ProfileVisited = () => {
                     )}
                   </div>
                 </ListGroupItem>
+                </a>
               ))}
             </ListGroup>
           ) : (

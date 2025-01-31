@@ -69,8 +69,8 @@ const SuggestedConnections = () => {
     setLoading(userId);
 
     const apiUrl = isSending
-      ? `${LIVE_URL}connection/send-connection-request`
-      : `${LIVE_URL}api/v1/connection/unsend-connection-request`;
+      ? `${LIVE_URL}/api/v1/connection/send-connection-request`
+      : `${LIVE_URL}/api/v1/connection/unsend-connection-request`;
 
     try {
       const res = await fetch(apiUrl, {
@@ -83,8 +83,9 @@ const SuggestedConnections = () => {
           receiverId: userId,
         }),
       });
-
+      
       if (!res.ok) throw new Error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`);
+      fetchConnectionSuggestions()
 
       toast.success(`Connection request ${isSending ? 'sent' : 'unsent'} successfully.`);
     } catch (error) {
@@ -150,7 +151,8 @@ const SuggestedConnections = () => {
             scrollableTarget="scrollableDiv"
           >
             {filteredFollowers.map((friend, idx) => (
-              <div className="d-md-flex align-items-center mb-4" key={idx}>
+              
+              <div  className="d-md-flex align-items-center mb-4" key={idx}>
                 <div className="avatar me-3 mb-3 mb-md-0">
                   {friend.profilePictureUrl ? (
                     <img className="avatar-img rounded-circle" src={friend.profilePictureUrl} alt={`${friend.firstName} ${friend.lastName}'s profile`} />
@@ -161,7 +163,7 @@ const SuggestedConnections = () => {
                 <div className="w-100">
                   <div className="d-sm-flex align-items-start">
                     <h6 className="mb-0">
-                      <Link to="#">{`${friend.firstName} ${friend.lastName}`}</Link>
+                      <Link to={`/profile/feed/${friend.id}`}>{`${friend.firstName} ${friend.lastName}`}</Link>
                     </h6>
                     <p className="small ms-sm-2 mb-0 text-muted">{friend.userRole}</p>
                     {friend.mutual && (
@@ -175,8 +177,8 @@ const SuggestedConnections = () => {
                   </ul>
                 </div>
                 <div className="ms-md-auto d-flex">
-                  <Button variant="primary" size="sm" className="mb-0 me-2" style={{ minWidth: '120px' }} onClick={() => UserRequest(friend.id)} disabled={loading === friend.id}>
-                    {loading === friend.id ? <Loading size={16} /> : 'Connect'}
+                  <Button variant="primary" size="sm" className="mb-0 me-2" style={{ minWidth: '120px' }} onClick={() => UserRequest(friend?.id)} disabled={loading === friend.id}>
+                    {loading === friend.id ? <Loading loading={true} size={16} /> : 'Connect'}
                   </Button>
                 </div>
               </div>

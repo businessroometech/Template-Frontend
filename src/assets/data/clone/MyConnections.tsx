@@ -170,12 +170,33 @@ const MyConnections = () => {
     <>
       <PageMetaData title='Connections' />
 {/* <ToastContainer /> */}
+{allConnections.length === 0 ? (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+          <div className="text-center">
+            <p
+              className="mb-0"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                color: '#6c757d',
+                opacity: '0.8',
+              }}
+            >
+              No connection requests found
+            </p>
+            <p className="small text-muted">
+              It looks like you have no new connection requests at the moment.
+            </p>
+          </div>
+        </div>
+      ) : (
       <Card>
         <CardHeader className="border-0 pb-0">
           {/* <CardTitle>My Connections</CardTitle> */}
         </CardHeader>
         <CardBody>
         {allConnections && allConnections.map((connection, idx) => (
+          <a href={`/profile/feed/${connection.userId}#${connection.userId}`} key={idx} className='text-decoration-none'>
             <div className="d-md-flex align-items-center mb-4" key={idx}>
               <div className="avatar me-3 mb-3 mb-md-0">
                 {
@@ -275,12 +296,15 @@ const MyConnections = () => {
                  </Link>
               )}
             </div>
+            </a>
           ))}
           <div className="d-grid">
             {/* <LoadMoreButton /> */}
           </div>
         </CardBody>
       </Card>
+      )
+    }
     </>
   )
 }
