@@ -639,7 +639,7 @@ export default BusinessSellerForm;
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, ButtonGroup } from 'react-bootstrap';
+import { Card, ButtonGroup, Button } from 'react-bootstrap';
 import { 
   FaRegLightbulb, FaInfoCircle, FaBusinessTime, FaMoneyBillWave, 
   FaHandshake, FaChartLine, FaClipboardList, FaUser, FaBuilding, 
@@ -656,6 +656,42 @@ const BusinessSellerForm = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const [profile , setProfile] = useState({})
+
+
+
+  const countries = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", 
+    "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", 
+    "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", 
+    "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", 
+    "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", 
+    "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", 
+    "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", 
+    "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", 
+    "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, North", "Korea, South", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", 
+    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", 
+    "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", 
+    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", 
+    "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", 
+    "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", 
+    "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", 
+    "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", 
+    "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", 
+    "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", 
+    "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", 
+    "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", 
+    "Yemen", "Zambia", "Zimbabwe"
+  ];
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -834,7 +870,16 @@ console.log("----------------datatosend----------" , dataToSend)
     const formSections = {
       0: [ // Basic Information
         { id: 'businessName', name: 'businessName', label: 'Business Name', icon: <FaBuilding />, required: true },
-        { id: 'businessLocation', name: 'businessLocation', label: 'Business Location', icon: <FaMapMarkerAlt />, required: true }
+        { 
+          id: 'businessLocation', 
+          name: 'businessLocation', 
+          label: 'Business Location', 
+          icon: <FaMapMarkerAlt />, 
+          type: 'select', 
+          options: countries,
+          required: true ,
+          style: { width: '150px', fontSize: '0.875rem', padding: '4px',}
+        }
       ],
       1: [ // Business Overview
         { id: 'businessType', name: 'businessType', label: 'What type of business are you selling?', icon: <FaBriefcase />, type: 'select', options: ['SaaS', 'Content', 'Marketplace', 'Agency', 'Mobile App', 'Shopify App', 'Main Street', 'Ecommerce', 'Other'], required: true },
@@ -958,7 +1003,7 @@ console.log("----------------datatosend----------" , dataToSend)
 
   return (
     <div className="container mt-5">
-      <h2 className="text-start mb-4">Business Seller Form</h2>
+      <h2 className="text-start mb-4">Entrepreneur (Intrested in Selling a Startup)</h2>
 
       <div className="d-flex justify-content-center mb-4 flex-wrap">
         {sections.map((section, index) => (
@@ -982,13 +1027,19 @@ console.log("----------------datatosend----------" , dataToSend)
         {renderStep()}
         
         <div className="d-flex justify-content-between mt-4">
-          <button 
+        <Button onClick={() => {
+            navigate("/settings/account")
+          }}>Back</Button>
+          <button style={{marginRight:"830px"}} 
             type="button" 
             className="btn btn-outline-danger"
             onClick={handleSkip}
           >
             Skip
           </button>
+
+
+      
           
           <ButtonGroup>
             {step > 0 && (
@@ -1019,6 +1070,9 @@ console.log("----------------datatosend----------" , dataToSend)
                 Submit
               </button>
             )}
+
+
+
           </ButtonGroup>
         </div>
       </form>
