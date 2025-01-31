@@ -10,7 +10,6 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),  // This alias is fine, keeps your imports clean
     },
   },
-  base: '/businessroom/', // Ensure the app works under the /businessroom/ sub-path
   server: {
     port: 5173, // You can customize this if needed
   },
