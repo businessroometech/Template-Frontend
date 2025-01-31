@@ -80,6 +80,8 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
+  console.log('---post---',post);
+  console.log('---item---',item);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
@@ -335,7 +337,14 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   }
 
   if (isDeleted) return null;
+
   return (
+    <>
+    {post.repostedFrom &&
+      <div style={{width : '100%',height : '50px',backgroundColor : 'lavender',marginBottom : '-2px',zIndex : 100}}>
+
+      </div>
+    }
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
@@ -348,6 +357,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                   <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                 )}
               </Link>
+              {post.repostedFrom && <p>This is a repost</p>}
             </div>
             <div>
               <div className="nav nav-divider">
@@ -622,6 +632,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
         )
       )}
     </Card>
+    </>
   );
 };
 

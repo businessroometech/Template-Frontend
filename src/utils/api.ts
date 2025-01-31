@@ -39,3 +39,4 @@ export const RENDER_URL = ' http://13.216.146.100/'
 export const LIVE_URL = RENDER_URL;
 export const IS_RENDER_URL = false;
 export const CREATE_REPLY_URL = LIVE_URL + '/api/v1/post/'
+export const SOCKET_URL = 'http://13.216.146.100/'

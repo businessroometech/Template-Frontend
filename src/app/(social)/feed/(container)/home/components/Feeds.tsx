@@ -43,7 +43,7 @@ import postImg4 from '@/assets/images/post/3by2/03.jpg'
 import PostCard from '@/components/cards/PostCard'
 import { Link } from 'react-router-dom'
 import makeApiRequest from '@/utils/apiServer'
-import { LIVE_URL } from '@/utils/api'
+import { LIVE_URL, SOCKET_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
 import { io } from 'socket.io-client';
 import { FaArrowUp } from 'react-icons/fa';
@@ -497,7 +497,7 @@ const Post3 = () => {
   )
 }
 
-const socket = io(`${LIVE_URL}`); 
+const socket = io(`${SOCKET_URL}`); 
 // poll
 const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
  
