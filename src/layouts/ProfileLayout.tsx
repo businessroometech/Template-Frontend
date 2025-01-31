@@ -879,7 +879,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 {/* <Col md={6} lg={12}>
                   <Photos />
                 </Col> */}
-                <Col md={6} lg={12} style={{marginLeft:"360px"}}>
+                <Col md={6} lg={12} style={{marginLeft:"90%"}}>
                   <Followers />
                 </Col>
                 <Col md={6} lg={12}>
