@@ -650,6 +650,7 @@ import {
 import { useAuthContext } from '@/context/useAuthContext';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { LIVE_URL } from '@/utils/api';
 
 const BusinessSellerForm = () => {
   const { user } = useAuthContext();
@@ -660,7 +661,7 @@ const BusinessSellerForm = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -796,7 +797,7 @@ const BusinessSellerForm = () => {
 console.log("------user for form----------" , user)
 console.log("----------------datatosend----------" , dataToSend)
     try {
-      const response = await fetch(' https://strengthholdings.com/api/v1/businessseller/create', {
+      const response = await fetch(`${LIVE_URL}api/v1/businessseller/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

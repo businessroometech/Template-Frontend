@@ -23,6 +23,7 @@ import { BsImages } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { UserType } from '@/types/data';
 import DropdownFormInput from '@/components/form/DropdownForm';
+import { LIVE_URL } from '@/utils/api';
 
 const AccountSettings = () => {
   const [profile, setProfile] = useState({});
@@ -146,7 +147,7 @@ const [loading, setLoading] = useState(false);
 
        
      
-      const response = await fetch(' https://strengthholdings.com/api/v1/auth/update-or-create-Profile', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/update-or-create-Profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -187,7 +188,7 @@ const [loading, setLoading] = useState(false);
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          'https://strengthholdings.com/api/v1/auth/get-user-Profile',
+          `${LIVE_URL}api/v1/auth/get-user-Profile`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { useAuthContext } from '@/context/useAuthContext';
 import { ListGroup, Image } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { LIVE_URL } from '@/utils/api';
 
 const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
   const {
@@ -22,7 +23,7 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
 
   const fetchUsers = async (query: string) => {
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-users', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/get-users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,6 +11,7 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import Loading from '@/components/Loading'
 import { FaTimes, FaUser, FaUserCheck, FaUserPlus, FaUserTimes } from 'react-icons/fa'
+import { LIVE_URL } from '@/utils/api'
 
 const MyConnections = () => {
   // const allConnections = useFetchData(getAllUserConnections)
@@ -33,7 +34,7 @@ const MyConnections = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://strengthholdings.com/api/v1/connection/get-connection-list", {
+      const res = await fetch(`${LIVE_URL}api/v1/connection/get-connection-list`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +65,7 @@ const MyConnections = () => {
     // Set loading to true only for the specific profileId
     setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
   
-    const apiUrl = "https://strengthholdings.com/api/v1/connection/send-connection-request";
+    const apiUrl = `${LIVE_URL}api/v1/connection/send-connection-request`;
   
     try {
       const res = await fetch(apiUrl, {
@@ -95,7 +96,7 @@ const MyConnections = () => {
 
   const handleCancel = async () => {
     setLoading(true);
-    const apiUrl = "https://strengthholdings.com/api/v1/connection/unsend-connection-request";
+    const apiUrl = `${LIVE_URL}api/v1/connection/unsend-connection-request`;
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -122,7 +123,7 @@ const MyConnections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-    const apiUrl = "https://strengthholdings.com/api/v1/connection/remove-connection";
+    const apiUrl = `${LIVE_URL}api/v1/connection/remove-connection`;
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
