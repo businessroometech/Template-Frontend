@@ -8,6 +8,7 @@ import { FaPlus } from 'react-icons/fa'
 import { FaUserPlus, FaUserCheck, FaUserFriends, FaUsers } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { FaEye, FaUserAlt } from 'react-icons/fa'
+import { LIVE_URL } from '@/utils/api'
 
 export const formatTimestamp = (createdAt: Date): string => {
   console.log('createdAt:', createdAt)
@@ -45,7 +46,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-profile-visit', {
+        const response = await fetch(`${LIVE_URL}api/v1/auth/get-profile-visit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -79,8 +80,8 @@ const ProfileVisits = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
+      ? `${LIVE_URL}api/v1/connection/send-connection-request` : 
+      `${LIVE_URL}api/v1/connection/unsend-connection-request`;
 
     try {
       const res = await fetch(apiUrl, {
@@ -247,8 +248,8 @@ const ProfileVisited = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request';
+      ? `${LIVE_URL}api/v1/connection/send-connection-request`
+      : `${LIVE_URL}api/v1/connection/unsend-connection-request`;
 
     try {
       const res = await fetch(apiUrl, {

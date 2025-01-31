@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { Diamond, Gem, Globe, Map, MapPin } from 'lucide-react'
 import { useLayoutContext } from '@/context/useLayoutContext'
 import { set } from 'react-hook-form'
+import { LIVE_URL } from '@/utils/api'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
@@ -33,7 +34,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
     const fetchUser = async () => {
       setSkeletonLoading(true)
       try {
-        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+        const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

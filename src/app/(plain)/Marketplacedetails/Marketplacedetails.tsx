@@ -492,6 +492,7 @@ import { profilePanelLinksData1 } from '@/assets/data/layout';
 import ProfilePanel from '@/components/layout/ProfilePanel';
 import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
 import TopHeader from '@/components/layout/TopHeader';
+import { LIVE_URL } from '@/utils/api';
 
 const MarketplaceDetails = () => {
   const [profile, setProfile] = useState({});
@@ -501,7 +502,7 @@ const MarketplaceDetails = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -526,7 +527,7 @@ const MarketplaceDetails = () => {
   }, [user]);
 
   useEffect(() => {
-    fetch(`https://strengthholdings.com/api/v1/businessseller/detailuuid/${id}`)
+    fetch(`${LIVE_URL}api/v1/businessseller/detailuuid/${id}`)
       .then(response => response.json())
       .then(data => setBusinessDetails(data))
       .catch(error => console.error('Error:', error));

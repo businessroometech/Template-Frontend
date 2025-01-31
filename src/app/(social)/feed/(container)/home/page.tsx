@@ -9,9 +9,10 @@ import { Link, useNavigate } from "react-router-dom";
 import LoadContentButton from "@/components/LoadContentButton";
 import { useAuthContext } from "@/context/useAuthContext";
 import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
+import { LIVE_URL } from "@/utils/api";
 
 
-const socket = io('https://strengthholdings.com/', {
+const socket = io(`${LIVE_URL}`, {
   // path: "/socket.io",
   transports: ['websocket'],
 })

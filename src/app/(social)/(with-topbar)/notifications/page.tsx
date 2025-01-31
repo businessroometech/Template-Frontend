@@ -29,6 +29,7 @@ import {
 import { timeSince } from '@/utils/date';
 import { Link } from 'react-router-dom';
 import Loading from '@/components/Loading';
+import { LIVE_URL } from '@/utils/api';
 
 const Notifications = () => {
   const { user } = useAuthContext();
@@ -38,7 +39,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `https://strengthholdings.com/api/v1/notifications/fetch`,
+        `${LIVE_URL}api/v1/notifications/fetch`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -62,7 +63,7 @@ body: JSON.stringify({ userId: user?.id }),
   // Mark a single notification as read
   const handleOnRead = async (notificationId:string) => {
     try {
-      await fetch('https://strengthholdings.com/api/v1/socket-notifications/mark-read', {
+      await fetch(`${LIVE_URL}api/v1/socket-notifications/mark-read`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationId }),
@@ -77,7 +78,7 @@ body: JSON.stringify({ userId: user?.id }),
   const handleReadAll = async () => {
     try {
       const response = await fetch(
-        'https://strengthholdings.com/api/v1/socket-notifications/mark-all-read',
+        `${LIVE_URL}api/v1/socket-notifications/mark-all-read`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
