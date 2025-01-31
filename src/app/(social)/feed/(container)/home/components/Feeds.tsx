@@ -564,7 +564,7 @@ const fetchPosts = async () => {
 
   useEffect(() => {
     // Fetch posts on mount
-    console.log('Mount Wala UseEffect')
+    // console.log('Mount Wala UseEffect')
     
     const fetchUser = async () => {
       try {
@@ -649,6 +649,12 @@ const fetchPosts = async () => {
     // Fetch the next page of posts when `page` changes
     fetchPosts();
   }, [fetchPosts, page]);
+
+  useEffect(() => {
+    setPage(1);
+    setPosts([]);
+    fetchPosts();
+  },[isCreated])
 
   
   const fetchNextPage = () => {
