@@ -35,7 +35,7 @@ const AppRouter = (props: RouteProps) => {
         key={idx + route.name} 
         path={route.path} 
         element={isAuthenticated ? (
-          <FeedLayout {...props}>{route.element}</FeedLayout>
+          <PleaseWaitPage/>
         ) : (
           <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
         )
@@ -47,7 +47,7 @@ const AppRouter = (props: RouteProps) => {
           key={idx + route.name}
           path={route.path}
           element={isAuthenticated ? (
-            <SocialLayout {...props}>{route.element}</SocialLayout>
+            <PleaseWaitPage/>
           ) :
             (
               <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -60,7 +60,7 @@ const AppRouter = (props: RouteProps) => {
         key={idx + route.name} 
         path={route.path} 
         element={isAuthenticated ? (
-          <ProfileLayout {...props}>{route.element}</ProfileLayout>
+          <PleaseWaitPage/>
         ) :
           (
             <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -75,7 +75,7 @@ const AppRouter = (props: RouteProps) => {
         key={idx + route.name} 
         path={route.path} 
         element={isAuthenticated ? (
-          <SettingLayout {...props}>{route.element}</SettingLayout>
+          <PleaseWaitPage/>
         ) :
           (
             <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -88,7 +88,7 @@ const AppRouter = (props: RouteProps) => {
           key={idx + route.name}
           path={route.path}
           element={isAuthenticated ? (
-            <OtherLayout {...props}>{route.element}</OtherLayout>
+            <PleaseWaitPage/>
           ) :
             (
               <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
