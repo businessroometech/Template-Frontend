@@ -113,7 +113,7 @@ useEffect(() => {
   const handleOnRead = async (notificationId: string) => {
     try {
       const response = await fetch(
-        'https://strengthholdings.com/api/v1/socket-notifications/mark-read',
+        'https://strengthholdings.com/api/v1/socket-notifications/mark-read', 
         {
           method: 'POST',
           headers: {
