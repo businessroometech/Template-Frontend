@@ -45,7 +45,7 @@ const ProfileVisits = () => {
   useEffect(() => {
     const fetchProfileVisits = async () => {
       try {
-        const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-profile-visit', {
+        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-profile-visit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ const ProfileVisits = () => {
                         <span className="badge text-success small">{visit.visitCount}</span>
                       </h6>
                       <p className="mb-0 text-muted">{visit.visitor.userRole}</p>
-                      <p className="mb-0 text-muted">{visit.visitor.createdAt ? formatTimestamp(visit.visitor.createdAt) : '1w'}</p>
+                      <p className="mb-0 text-muted">{visit.visitor.visitedAt}</p>
                     </div>
                   </Link>
                   <div className="d-flex align-items-center">
@@ -209,7 +209,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          " https://strengthholdings.com/api/v1/auth/get-profile-visited",
+          "https://strengthholdings.com/api/v1/auth/get-profile-visited",
           {
             method: "POST",
             headers: {
@@ -319,7 +319,7 @@ const ProfileVisited = () => {
                         <span className="badge text-success small">{visit.visitCount}</span>
                       </h6>
                       <p className="mb-0 text-muted">{visit.profile.userRole}</p>
-                      <p className="mb-0 text-muted">{visit.profile.createdAt ? formatTimestamp(visit.profile.createdAt) : '1w'}</p>
+                      <p className="mb-0 text-muted">{visit.profile.visitedAt}</p>
                     </div>
                   </Link>
                   <div className="d-flex align-items-center">
