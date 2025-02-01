@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link } from 'react-router-dom';
-import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp, Lightbulb as Bulb } from 'lucide-react';
+import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp, Lightbulb as Bulb, X } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
@@ -18,6 +18,7 @@ import axios from 'axios';
 import { FaGlobe } from 'react-icons/fa';
 import RepostModal from './RepostModal';
 import { LIVE_URL } from '@/utils/api';
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 
 interface Like {
   id: string;
@@ -49,6 +50,38 @@ interface Like {
   likerUrl: string; 
 }
 
+interface Post {
+  Id: string;
+  userId: string;
+  title: string | null;
+  content: string;
+  hashtags: string[];
+  mediaUrls: string[];
+  mediaKeys: string[];
+  likeCount: number;
+  commentCount: number;
+  reactions: Record<string, number>; // Assuming reactions are stored as { emoji: count }
+  userReaction: string | null;
+  isRepost: boolean;
+  repostedFrom?: string;
+  repostText?: string;
+}
+
+export interface UserDetails {
+  postedId: string;
+  firstName: string;
+  lastName: string;
+  timestamp: string;
+  userRole: string;
+  avatar: string;
+}
+
+export interface PostSchema {
+  post: Post;
+  userDetails: UserDetails;
+  comments: any[]; // Define a more specific type if comments have a structure
+}
+
 interface GetAllLikesResponse {
   status: "success" | "error";
   message: string;
@@ -59,8 +92,17 @@ interface GetAllLikesResponse {
 }
 
 
-const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, posts, setPosts, profile }) => {
-  // console.log(posts);
+const PostCard = ({ 
+  item, 
+  isMediaKeys,  
+  profile 
+} :
+{
+  item : PostSchema;
+  isMediaKeys  : boolean;
+  profile : UserProfile
+}) => {
+  //  console.log('---profile in post card---',profile);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +110,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   const [refresh, setRefresh] = useState(0);
   const [likeStatus, setLikeStatus] = useState();
   const [loadMore, setLoadMore] = useState(false);
-  const post = item?.post;
+  const post : Post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
   const [commentCount, setCommentCount] = useState<number>(post.commentCount || 0);
@@ -76,10 +118,13 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const [showReactions, setShowReactions] = useState<boolean>(false);
+  const hasMount = useRef(false);
   const [allLikes, setAllLikes] = useState<Like[]>([]);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
+  const [repostProfile,setRepostProfile] = useState<UserProfile>({});
+  const [close,setClose] = useState<boolean>(true);
   // console.log('---post---',post);
   // console.log('---item---',item);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
@@ -93,13 +138,11 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       setLikeStatus(false);
     }
   }, [post.likeStatus]);
-  const media = isMediaKeys ? post?.mediaKeys : post?.mediaUrls;
+  const media = post.repostedFrom ? post?.mediaUrls : post?.mediaUrls;
+  if(post.repostedFrom !== null) console.log('---media keys---',post.mediaKeys)
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
-  // // console.log(user);
 
-  // // console.log('---postId---',post.userI
-  // d);
-  // // console.log('-----testing-----')
+
   const deletePost = async (postId: string): Promise<void> => {
     try {
       // Validate PostId
@@ -185,7 +228,39 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     }
     // else // console.log("id did not match")
   }
-
+  useEffect(() => {
+      if(hasMount.current) return;
+      if(Object.keys(repostProfile).length !== 0) return;
+      hasMount.current = true;
+      const fetchUser = async () => {
+        try {
+          const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: post.repostedFrom,
+              //profileId: user?.id,
+            }),
+          })
+    
+          if (!response.ok) {
+            //  navigate('/not-found')
+            throw new Error('Network response was not ok')
+          }
+          if (response.status === 404) {
+            // navigate('/not-found')
+          }
+          const data = await response.json()
+          
+          setRepostProfile(data?.data);
+        } catch (error) {
+          console.error('Error fetching user profile:', error)
+        } 
+      }
+      fetchUser();
+    },[])
 
 
   useEffect(() => {
@@ -261,11 +336,12 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: user?.id, postId: post.Id, status: likeStatus }),
+        body: JSON.stringify({ userId: user?.id, postId: post.Id, status: !likeStatus }),
       });
 
       if (!response.ok) {
         setLikeStatus(likeStatus);
+        alert('Like not sent')
         likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -347,12 +423,77 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     } */}
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
+        {(post.repostedFrom && close ) &&  
+          <>
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "8px 12px",
+    }}
+  >
+    {/* Left Section: Avatar and Name */}
+    <div style={{ display: "flex", alignItems: "center", gap: "8px",marginTop : '-10px'}}>
+      {/* Avatar */}
+      <Link to={`/profile/feed/${post?.userId}`} role="button">
+        <img
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+          src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
+          alt={userInfo?.firstName || "avatar"}
+        />
+      </Link>
+
+      {/* Name and Repost Text */}
+      <p
+        style={{
+          margin: 0,
+          display: "flex",
+          alignItems: "center",
+          lineHeight: "1.2",
+        }}
+      >
+        <Link
+          to={`/profile/feed/${post?.userId}`}
+          style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}
+        >
+          {userInfo?.firstName} {userInfo?.lastName}
+        </Link>
+        <span style={{ marginLeft: "6px", color: "#555" }}>Reposted This</span>
+      </p>
+    </div>
+
+    {/* Close Button */}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        width: "32px",
+        height: "32px",
+      }}
+      onClick={() => setClose(false)}
+    >
+      <X />
+    </div>
+  </div>
+</>
+
+          
+        }
+       {post.repostedFrom && close &&  <div style={{height : '1px', width : '100%',backgroundColor : '#F2F2F2', marginTop : '-5px',marginBottom : '10px'}}/>}
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
-              <Link to={`/profile/feed/${post?.userId}`} role="button">
+              <Link to={`/profile/feed/${post.repostedFrom ? repostProfile?.personalDetails?.id : post?.userId}`} role="button">
                 {userInfo?.avatar ? (
-                  <img className="avatar-img rounded-circle" src={userInfo.avatar} alt={userInfo.firstName} />
+                  <img className="avatar-img rounded-circle" src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar  : userInfo.avatar? userInfo.avatar : fallBackAvatar} />
                 ) : (
                   <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                 )}
@@ -371,13 +512,13 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                   }}
                 >
                   <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
-                    {userInfo?.firstName} {userInfo?.lastName}
+                    {post.repostedFrom ? repostProfile?.personalDetails?.firstName  : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}
                   </Link>
                   <div style={{ flex: 1, flexDirection: 'row' }}>
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
                       {/* {console.log(post, '---userInfo---')} */}
                       {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
-                      {userInfo?.userRole ? userInfo?.userRole : user?.occupation}
+                      {post.repostedFrom ? repostProfile?.personalDetails?.userRole  : userInfo?.userRole}
                       <span className='mx-2'></span>
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
@@ -412,7 +553,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
             <div style={{ position: "relative" }}>
               <button
                 className="btn btn-link p-0 text-dark"
-                style={{ fontSize: "1.5rem", lineHeight: "1" }}
+                style={{ fontSize: "1.5rem", lineHeight: "1",marginTop : '-25px',marginRight : '15px'}}
                 onClick={() => setMenuVisible(!menuVisible)}
               >
                 <BsThreeDots />
@@ -475,7 +616,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
         )
         }
 
-        {media.length > 0 && (
+        {media?.length > 0 && (
           isVideo ? (
             <div
               style={{

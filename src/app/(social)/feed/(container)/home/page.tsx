@@ -6,9 +6,47 @@ import { io } from "socket.io-client";
 import CreatePostCard from "@/components/cards/CreatePostCard";
 import {  useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/useAuthContext";
-import {  SOCKET_URL } from "@/utils/api";
+import {  LIVE_URL, SOCKET_URL } from "@/utils/api";
 
 
+export interface PersonalDetails {
+  id: string;
+  occupation: string | null;
+  password: string;
+  country: string;
+  profilePictureUploadId: string;
+  bgPictureUploadId: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  mobileNumber: string | null;
+  emailAddress: string;
+  bio: string | null;
+  gender: string;
+  preferredLanguage: string;
+  socialMediaProfile: string;
+  height: string;
+  weight: string;
+  permanentAddress: string | null;
+  currentAddress: string | null;
+  aadharNumberUploadId: string | null;
+  panNumberUploadId: string | null;
+  userRole: string;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+export interface UserProfile {
+  personalDetails: PersonalDetails;
+  profileImgUrl: string;
+  coverImgUrl: string;
+  connectionsCount: number;
+  postsCount: number;
+  likeCount: number;
+  connectionsStatus: "pending" | "accepted" | "rejected" | "none"; // Assuming possible statuses
+}
 const socket = io(`${SOCKET_URL}`, {
   // path: "/socket.io",
   transports: ['websocket'],
@@ -17,6 +55,9 @@ const socket = io(`${SOCKET_URL}`, {
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const { user} = useAuthContext();
+  const [profile,setProfile] = useState<UserProfile>({});
+
+
 
   useEffect(() => {
     try {
@@ -47,7 +88,36 @@ const Home = () => {
     };
   },[]);
 
-  console.log("setIsCreated", setIsCreated);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            //profileId: user?.id,
+          }),
+        })
+  
+        if (!response.ok) {
+          //  navigate('/not-found')
+          throw new Error('Network response was not ok')
+        }
+        if (response.status === 404) {
+          // navigate('/not-found')
+        }
+        const data = await response.json()
+        
+        setProfile(data?.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      } 
+    }
+    fetchUser();
+  },[])
   
 
   return (
@@ -72,7 +142,7 @@ const Home = () => {
 
        
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={isCreated}  setIsCreated={setIsCreated}/>
+        <Feeds isCreated={isCreated}  setIsCreated={setIsCreated} profile={profile}/>
       </Col>
 
       <Col lg={3} 
