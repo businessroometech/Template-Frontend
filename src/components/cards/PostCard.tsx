@@ -80,8 +80,8 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
-  console.log('---post---',post);
-  console.log('---item---',item);
+  // console.log('---post---',post);
+  // console.log('---item---',item);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
@@ -127,7 +127,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
 
       // // console.log('dlr',tlRefresh);
       // // console.log('Post deleted successfully:', data.message);
-      alert('Post deleted successfully!');
+      // alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
     }

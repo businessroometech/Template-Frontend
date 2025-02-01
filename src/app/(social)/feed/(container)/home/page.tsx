@@ -1,15 +1,12 @@
 import React, { useState,useEffect } from "react";
-import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row } from "react-bootstrap";
-import Stories from "./components/Stories";
+import { Col, Row } from "react-bootstrap";
 import Feeds from "./components/Feeds";
 import Followers from "./components/Followers";
 import { io } from "socket.io-client";
 import CreatePostCard from "@/components/cards/CreatePostCard";
-import { Link, useNavigate } from "react-router-dom";
-import LoadContentButton from "@/components/LoadContentButton";
+import {  useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/useAuthContext";
-import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
-import { LIVE_URL, SOCKET_URL } from "@/utils/api";
+import {  SOCKET_URL } from "@/utils/api";
 
 
 const socket = io(`${SOCKET_URL}`, {
@@ -19,11 +16,7 @@ const socket = io(`${SOCKET_URL}`, {
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const { user} = useAuthContext();
-  const navigate = useNavigate();
-  const [profile,setProfile] = useState({});
-  console.log('Home reloads')
 
   useEffect(() => {
     try {
@@ -76,7 +69,7 @@ const Home = () => {
       >
        
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
+        <Feeds isCreated={isCreated}  setIsCreated={setIsCreated}/>
       </Col>
 
       <Col lg={3} 

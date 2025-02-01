@@ -499,21 +499,70 @@ const Post3 = () => {
 
 const socket = io(`${SOCKET_URL}`); 
 // poll
-const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAction<boolean>>) => {
+interface FeedsProps {
+  isCreated: boolean;
+  setIsCreated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+
+const Feeds = ({isCreated,setIsCreated} : FeedsProps) => {
  
-   const { user } = useAuthContext();
+  const { user } = useAuthContext();
   // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
+  const [runsOnce,setRunsOnce] = useState(false); // That Use Effect doesn't run on mount
   const [tlRefresh, setTlRefresh] = useState<number>();
   const [page, setPage] = useState(1);
- const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
   const [flag, setflag] = useState(false);
+  const fetchPosts = async (pageNumber: number) => {
+    setError(null);
+    setHasMore(true);
+    console.log('fetching posts');
+    try {
+      const res = await makeApiRequest<{ data: any[] }>({
+        method: 'POST',
+        url: 'api/v1/post/get-all-post',
+        data: { userId: user?.id, page: pageNumber },
+      });
+  
+      if (res.message === "No posts found for this user.") {
+        setHasMore(false);
+        console.log('No posts found');
+        return;
+      }
+  
+      if (pageNumber === 1) {
+        setPosts([...res.data.posts]);
+      } else {
+        setPosts((previousPosts) => [...previousPosts, ...res.data.posts]);
+      }
+    } catch (error: any) {
+      console.error('Error fetching posts:', error.message);
+      setError(error.message || 'An unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {    
+    // alert(`Fetching Post of Page, ${page}`)
+    fetchPosts(page);
+  },[page]);
 
+  useEffect(() => {
+    if(!hasMounted.current) {
+      hasMounted.current = true
+      return;
+    }
+    // alert('Posts reset');
+    setPage(1);
+    fetchPosts(1);
+  }, [isCreated]);
  
 useEffect(() => {
   
@@ -531,132 +580,6 @@ useEffect(() => {
   };
 }, [user?.id, flag]);
 
-const fetchPosts = async () => {
-
-  setError(null);
-  setHasMore(true);
-  console.log('fetching posts');
-  try {
-    const res = await makeApiRequest<{ data: any[] }>({
-      method: 'POST',
-      url: 'api/v1/post/get-all-post',
-      data: { userId: user?.id, page: page },
-    })
-    
-    if(res.message === "No posts found for this user."){
-      setHasMore(false);
-      console.log('went in');
-      return;
-    }
-    setLoading(false)
-    console.log('Fetched Posts:', res.data);
-    console.log('What is res data',res.data);
-    console.log('---Posts after---',posts);
-    setPosts(previousPosts => [...previousPosts, ...res.data.posts])
-    console.log('---Posts before---',posts);
-  } catch (error: any) {
-    console.error('Error fetching posts:', error.message)
-    setError(error.message || 'An unknown error occurred')
-   } finally {
-    setLoading(false)
-   }
-}
-
-  useEffect(() => {
-    // Fetch posts on mount
-    // console.log('Mount Wala UseEffect')
-    
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: user?.id
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json(); 
-        console.log('Profile Response',data);
-        setProfile(() => data.data); 
-        console.log('Profile in Home',profile);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-    if (profile.personalDetails){
-      return;
-    }
-
-    
-    if (!hasMounted.current) {
-      fetchPosts();
-      fetchUser();
-      hasMounted.current = true;
-    }
-  }, [fetchPosts, profile, user?.id]);
-
-  // useEffect(() => {
-  //   console.log('is Created Wala UseEffect')
-  //   const fetchPosts = async () => {
-
-  //     setError(null);
-  //     setHasMore(true);
-  //     console.log('fetching posts');
-  //     try {
-  //       const res = await makeApiRequest<{ data: any[] }>({
-  //         method: 'POST',
-  //         url: 'api/v1/post/get-all-post',
-  //         data: { userId: user?.id, page: page },
-  //       })
-        
-  //       if(res.message === "No posts found for this user."){
-  //         setHasMore(false);
-  //         console.log('went in');
-  //         return;
-  //       }
-  //       setLoading(false)
-  //       console.log('Fetched Posts:', res.data);
-  //       console.log('What is res data',res.data);
-  //       setPosts(previousPosts => [...previousPosts, ...res.data.posts])
-  //     } catch (error: any) {
-  //       console.error('Error fetching posts:', error.message)
-  //       setError(error.message || 'An unknown error occurred')
-  //      } finally {
-  //       setLoading(false)
-  //      }
-  //   }
-  //   // Refetch posts when `isCreated` changes
-  //   if (isCreated) {
-  //     setPosts([]); // Reset posts
-  //     setPage(1); // Reset page to 1
-  //     setHasMore(true); // Reset pagination state
-  //     fetchPosts();
-  //     setflag(false)
-  //   }
-  // }, [isCreated, page, user?.id]);
-
-  useEffect(() => {
-    if(page <= 1 || posts.length >= page * 5) return;
-    // alert(`Page is ${page}`)
-    console.log('Page Wala use Effect')
-    console.log('Page',page);
-    // Fetch the next page of posts when `page` changes
-    fetchPosts();
-  }, [fetchPosts, page]);
-
-  useEffect(() => {
-    setPage(1);
-    setPosts([]);
-    fetchPosts();
-  },[isCreated])
-
-  
   const fetchNextPage = () => {
     if(!loading && hasMore){
       setPage(page => page + 1);
@@ -680,11 +603,7 @@ const fetchPosts = async () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
       const data = await response.json();
-      console.log(tlRefresh) // Assuming the response is JSON
-      setTlRefresh(tlRefresh+1 || 1);
-      console.log(tlRefresh)
       console.log(data);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -762,7 +681,7 @@ const PostSkeleton = () => {
                 item={post}
                 posts={posts}
                 setPosts={setPosts}
-                key={post.id || index}
+                key={post.post.Id}
                 isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={isCreated}
