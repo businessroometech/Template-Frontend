@@ -45,6 +45,7 @@ import { Link } from 'react-router-dom'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL, SOCKET_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import { useOnlineUsers } from '@/context/OnlineUser.';
 import { io } from 'socket.io-client';
 import { FaArrowUp } from 'react-icons/fa';
 import { UserProfile } from '../page';
@@ -520,11 +521,13 @@ const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
+  // const [profile,setProfile] = useState({});
+  const {fetchOnlineUsers} = useOnlineUsers();
   const [flag, setflag] = useState(false);
   const fetchPosts = async (pageNumber: number) => {
     setError(null);
     setHasMore(true);
-    console.log('fetching posts');
+    // console.log('fetching posts');
     try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
@@ -605,7 +608,7 @@ useEffect(() => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error Deleting post:', error.message);
@@ -650,7 +653,7 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag  && <Link to="/"
+     {flag && !isCreated && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}

@@ -118,6 +118,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       setCommentLike((prev) => !prev);
+      setCommentRefresh((prev) => prev + 1);
     } catch (error) {
       console.error('Error toggling like:', error);
     }

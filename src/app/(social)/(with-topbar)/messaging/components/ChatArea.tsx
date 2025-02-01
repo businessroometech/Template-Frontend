@@ -235,10 +235,10 @@ const ChatArea = () => {
   const status = onlineUsers?.includes(activeChat.personalDetails.id) ? 'online' : 'offline'
 
   return (
-    <Card className="card-chat rounded-0 border-0 shadow-lg" style={{ minHeight: '595px',width:"900px", margin: '0 auto', borderRadius: '15px' }}>
-  <CardBody className="d-flex flex-column h-100 p-0">
+    <Card className="card-chat rounded-0 border-0 mx-5" >
+  <CardBody className="d-flex flex-column h-100 p-0 ">
     {/* Header */}
-    <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white sticky-top" style={{ top: 0, zIndex: 1, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
+    <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white sticky-top" style={{ top: 0, zIndex: 1, borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
       <div className="d-flex align-items-center">
         <img className="avatar-img rounded-circle me-2" src={profileImgUrl || avatar} alt={firstName} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
         <div>

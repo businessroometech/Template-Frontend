@@ -4,7 +4,9 @@ import Feeds from "./components/Feeds";
 import Followers from "./components/Followers";
 import { io } from "socket.io-client";
 import CreatePostCard from "@/components/cards/CreatePostCard";
-import {  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useOnlineUsers } from "@/context/OnlineUser.";
+import LoadContentButton from "@/components/LoadContentButton";
 import { useAuthContext } from "@/context/useAuthContext";
 import {  LIVE_URL, SOCKET_URL } from "@/utils/api";
 
@@ -55,69 +57,26 @@ const socket = io(`${SOCKET_URL}`, {
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const { user} = useAuthContext();
+  const {fetchOnlineUsers} = useOnlineUsers();
+  const navigate = useNavigate();
+  // const [profile,setProfile] = useState({});
+  console.log('Home reloads')
+
   const [profile,setProfile] = useState<UserProfile>({});
 
 
 
   useEffect(() => {
-    try {
-      // Connect to the server
-      // console.log('Connecting to socket...');
-      socket.emit("userOnline", user.id);
+    const interval = setInterval(() => {
+      // console.log("running fetchOnlineUsers");
+      fetchOnlineUsers();
+    }, 15000);
 
-      // Log connection status
-      socket.on('connections', () => {
-          // console.log('Socket connected:', socket.id);
-      });
-
-      socket.on('connect_error', (error) => {
-          // console.error('Connection error:', error);
-      });
-    } catch (error) {
-      console.error('Error during socket connection:', error);
-    }
+    return () => clearInterval(interval);
+  }, [fetchOnlineUsers]);
 
 
-    return () => {
-      try {
-        // console.log('Disconnecting socket...');
-        socket.disconnect();
-      } catch (error) {
-        console.error('Error during socket disconnection:', error);
-      }
-    };
-  },[]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: user?.id,
-            //profileId: user?.id,
-          }),
-        })
-  
-        if (!response.ok) {
-          //  navigate('/not-found')
-          throw new Error('Network response was not ok')
-        }
-        if (response.status === 404) {
-          // navigate('/not-found')
-        }
-        const data = await response.json()
-        
-        setProfile(data?.data);
-      } catch (error) {
-        console.error('Error fetching user profile:', error)
-      } 
-    }
-    fetchUser();
-  },[])
   
 
   return (

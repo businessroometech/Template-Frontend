@@ -1,77 +1,79 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import avatar from '@/assets/images/avatar/default avatar.png'
 
 import { Card, CardHeader, CardBody, CardTitle, Row, Col, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import clsx from 'clsx';
-import Skeleton from 'react-loading-skeleton';
-import { useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { FaUserPlus, FaUserCheck, FaUserTimes } from 'react-icons/fa';
-import { BsPersonAdd } from 'react-icons/bs';
-import { useAuthContext } from '@/context/useAuthContext';
-import Loading from '@/components/Loading';
+import { Link } from 'react-router-dom'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import clsx from 'clsx'
+import Skeleton from 'react-loading-skeleton'
+import { useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { FaUserPlus, FaUserCheck, FaUserTimes } from 'react-icons/fa'
+import { BsPersonAdd } from 'react-icons/bs'
+import { useAuthContext } from '@/context/useAuthContext'
+import Loading from '@/components/Loading'
 import { LIVE_URL } from '@/utils/api';
 
 
 const SuggestedConnections = () => {
-  const { user } = useAuthContext();
-  const [allFollowers, setAllFollowers] = useState<any[]>([]);
-  const [limit, setLimit] = useState(10);
-  const [skeletonLoading, setSkeletonLoading] = useState(true);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [sentStatus, setSentStatus] = useState<{ [key: string]: boolean }>({});
-  const [loading, setLoading] = useState<string | null>(null);
-
+  const { user } = useAuthContext()
+  const [allFollowers, setAllFollowers] = useState<any[]>([])
+  const [limit, setLimit] = useState(10)
+  const [skeletonLoading, setSkeletonLoading] = useState(false)
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [page, setPage] = useState(1)
+  const [sentStatus, setSentStatus] = useState<{ [key: string]: boolean }>({})
+  const [loading, setLoading] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchConnectionSuggestions();
-  }, []);
+    const fetchConnectionSuggestions = async () => {
+      try {
+        // setSkeletonLoading(true);
+        const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            page: 1,
+            limit: 10,
+          }),
+        })
 
-  const fetchConnectionSuggestions = async () => {
-    try {
-      setSkeletonLoading(true);
-      const response = await fetch(`${LIVE_URL}/api/v1/connection/get-connection-suggest`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          page: 1,
-          limit: limit,
-        }),
-      });
+        if (!response.ok) throw new Error('Failed to fetch connection suggestions')
 
-      if (!response.ok) throw new Error('Failed to fetch connection suggestions');
+        const data = await response.json()
+        setAllFollowers((prevFollowers) => {
+          // Avoid duplicates by checking user IDs
+          const newUsers = data.data.filter((newUser: any) => !prevFollowers.some((existing) => existing.id === newUser.id))
 
-      const data = await response.json();
-      setAllFollowers(data.data);
-      setTotalUsers(data.total);
-    } catch (error) {
-      console.error('Error fetching connection suggestions:', error);
-    } finally {
-      setSkeletonLoading(false);
+          return [...prevFollowers, ...newUsers]
+        })
+        setTotalUsers(data.total)
+      } catch (error) {
+        console.error('Error fetching connection suggestions:', error)
+      } finally {
+        // setSkeletonLoading(false);
+      }
     }
-  };
+
+    fetchConnectionSuggestions()
+  }, [page, user?.id])
 
   const fetchMoreData = () => {
-    if (allFollowers.length < totalUsers) {
-      setLimit((prev) => prev + 10);
-      fetchConnectionSuggestions();
-    }
-  };
+    setPage(page + 1)
+  }
 
   const UserRequest = async (userId: string) => {
-    const isSending = !sentStatus[userId];
-    const updatedStatus = { ...sentStatus, [userId]: isSending };
-    setSentStatus(updatedStatus);
-    setLoading(userId);
+    const isSending = !sentStatus[userId]
+    const updatedStatus = { ...sentStatus, [userId]: isSending }
+    setSentStatus(updatedStatus)
+    setLoading(userId)
 
     const apiUrl = isSending
-      ? `${LIVE_URL}/api/v1/connection/send-connection-request`
-      : `${LIVE_URL}/api/v1/connection/unsend-connection-request`;
+      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
+      : 'https://strengthholdings.com/api/v1/connection/unsend-connection-request'
 
     try {
       const res = await fetch(apiUrl, {
@@ -83,80 +85,66 @@ const SuggestedConnections = () => {
           requesterId: user?.id,
           receiverId: userId,
         }),
-      });
-      
-      if (!res.ok) throw new Error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`);
-      fetchConnectionSuggestions()
+      })
 
-      toast.success(`Connection request ${isSending ? 'sent' : 'unsent'} successfully.`);
+      if (!res.ok) throw new Error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`)
+
+      toast.success(`Connection request ${isSending ? 'sent' : 'unsent'} successfully.`)
     } catch (error) {
-      console.error(`Error while trying to ${isSending ? 'send' : 'unsend'} connection request:`, error);
-      const revertedStatus = { ...updatedStatus, [userId]: !isSending };
-      setSentStatus(revertedStatus);
-      toast.error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`);
+      console.error(`Error while trying to ${isSending ? 'send' : 'unsend'} connection request:`, error)
+      const revertedStatus = { ...updatedStatus, [userId]: !isSending }
+      setSentStatus(revertedStatus)
+      toast.error(`Failed to ${isSending ? 'send' : 'unsend'} connection request.`)
     } finally {
-      setLoading(null);
+      setLoading(null)
     }
-  };
+  }
 
-//   if (loading) {
-//     return (
-//       <div 
-//       className="d-flex justify-content-center align-items-center bg-light" 
-//       style={{ height: '100vh' }}
-//     >
-//       <div 
-//         className="spinner-border text-primary" 
-//         role="status" 
-//         style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
-//       >
-//         <span className="visually-hidden">Loading...</span>
-//       </div>
-//     </div>    
-//     );
-// }
-
-  const filteredFollowers = allFollowers.filter((follower) => user?.id !== follower.id);
+    if (loading) {
+      return (
+        <div
+        className="d-flex justify-content-center align-items-center bg-light"
+        style={{ height: '100vh' }}
+      >
+        <div
+          className="spinner-border text-primary"
+          role="status"
+          style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      );
+  }
 
   return (
     <Card>
-      <CardHeader className="border-0 pb-0">
-        {/* <CardTitle>Suggested Connections</CardTitle> */}
-      </CardHeader>
+      <CardHeader className="border-0 pb-0">{/* <CardTitle>Suggested Connections</CardTitle> */}</CardHeader>
       <CardBody>
         {skeletonLoading ? (
-          <div 
-                className="d-flex justify-content-center align-items-center bg-light" 
-                style={{ height: '100vh' }}
-              >
-                <div 
-                  className="spinner-border text-primary" 
-                  role="status" 
-                  style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
-                >
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-              </div>    
+          <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: '100vh' }}>
+            <div className="spinner-border text-primary" role="status" style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}>
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
         ) : (
           <InfiniteScroll
-            dataLength={filteredFollowers.length}
+            dataLength={allFollowers.length}
             next={fetchMoreData}
-            hasMore={filteredFollowers.length < totalUsers}
-            loader={<Loading loading={filteredFollowers.length !== totalUsers} size={16} />}
+            hasMore={false}
+            loader={<Loading loading={allFollowers.length !== totalUsers} size={16} />}
             style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-            endMessage={
-              <Button disabled style={{ textAlign: 'center' }}>
-                <b>No more suggested connections</b>
-              </Button>
-            }
-            scrollableTarget="scrollableDiv"
-          >
-            {filteredFollowers.map((friend, idx) => (
-              
-              <div  className="d-md-flex align-items-center mb-4" key={idx}>
+            endMessage={<b>No more suggested connections</b>}
+            scrollableTarget="scrollableDiv">
+            {allFollowers.map((friend, idx) => (
+              <div className="d-md-flex align-items-center mb-4" key={idx}>
                 <div className="avatar me-3 mb-3 mb-md-0">
                   {friend.profilePictureUrl ? (
-                    <img className="avatar-img rounded-circle" src={friend.profilePictureUrl} alt={`${friend.firstName} ${friend.lastName}'s profile`} />
+                    <img
+                      className="avatar-img rounded-circle"
+                      src={friend.profilePictureUrl}
+                      alt={`${friend.firstName} ${friend.lastName}'s profile`}
+                    />
                   ) : (
                     <img className="avatar-img rounded-circle" src={avatar} alt={`${friend.firstName} ${friend.lastName}'s profile`} />
                   )}
@@ -178,8 +166,14 @@ const SuggestedConnections = () => {
                   </ul>
                 </div>
                 <div className="ms-md-auto d-flex">
-                  <Button variant="primary" size="sm" className="mb-0 me-2" style={{ minWidth: '120px' }} onClick={() => UserRequest(friend?.id)} disabled={loading === friend.id}>
-                    {loading === friend.id ? <Loading loading={true} size={16} /> : 'Connect'}
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="mb-0 me-2"
+                    style={{ minWidth: '120px' }}
+                    onClick={() => UserRequest(friend.id)}
+                    disabled={loading === friend.id}>
+                    {loading === friend.id ? <Loading size={16} /> : 'Connect'}
                   </Button>
                 </div>
               </div>
@@ -188,7 +182,7 @@ const SuggestedConnections = () => {
         )}
       </CardBody>
     </Card>
-  );
-};
+  )
+}
 
-export default SuggestedConnections;
+export default SuggestedConnections
