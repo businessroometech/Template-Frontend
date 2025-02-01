@@ -527,7 +527,7 @@ const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
   const fetchPosts = async (pageNumber: number) => {
     setError(null);
     setHasMore(true);
-    console.log('fetching posts');
+    // console.log('fetching posts');
     try {
       const res = await makeApiRequest<{ data: any[] }>({
         method: 'POST',
@@ -608,7 +608,7 @@ useEffect(() => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error Deleting post:', error.message);

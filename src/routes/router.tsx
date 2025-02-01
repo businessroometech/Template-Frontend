@@ -46,7 +46,7 @@ const AppRouter = (props: RouteProps) => {
           console.error('Error during socket disconnection:', error);
         }
       };
-    }, []);
+    }, [user]);
 
   return (
     <Routes>
