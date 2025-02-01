@@ -63,7 +63,37 @@ const Home = () => {
   console.log('Home reloads')
 
   const [profile,setProfile] = useState<UserProfile>({});
-
+  // Theek se merge karo isse mat hatao please 🙏
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            //profileId: user?.id,
+          }),
+        })
+  
+        if (!response.ok) {
+          //  navigate('/not-found')
+          throw new Error('Network response was not ok')
+        }
+        if (response.status === 404) {
+          // navigate('/not-found')
+        }
+        const data = await response.json()
+        
+        setProfile(data?.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      } 
+    }
+    fetchUser();
+  },[])
 
 
   useEffect(() => {
