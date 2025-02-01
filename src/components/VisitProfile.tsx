@@ -121,7 +121,7 @@ const ProfileVisits = () => {
   }
 
   return (
-    <div className="container mt-0">
+    <div className="container mt-0" style={{width:"103%"}}>
       <Card>
         <CardBody>
           <div className="d-flex justify-content-between align-items-center mb-3">
@@ -294,7 +294,7 @@ const ProfileVisited = () => {
 
   return (
     <div className="container mt-0">
-      <Card>
+      <Card >
         <CardBody>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="h5 mb-0 d-flex align-items-center">

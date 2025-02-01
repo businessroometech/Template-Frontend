@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { MessageCircleMore } from 'lucide-react'
+import { Check, MessageCircleMore } from 'lucide-react'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 const TopHeader = lazy(() => import('@/components/layout/TopHeader'))
@@ -704,7 +704,12 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         )}
                       </p>
                     </div>
-
+                    <div style={{ marginTop: "18px", marginLeft: "390px" }}>
+      <Button style={{ backgroundColor: "green", color: "white" }}>
+        <Check size={16} style={{ marginRight: "8px" }} />
+        Get Verified
+      </Button>
+    </div>
                     {/* Action Buttons */}
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
                       {user?.id === id ? (
