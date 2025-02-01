@@ -25,7 +25,7 @@ const ManageConnections = () => {
   };
 
   return (
-    <div style={{padding:"0px", marginRight:""}}>
+    <div style={{padding:"0px", marginRight:"6%"}}>
       
       <PageMetaData title='ManageConnections'/>
       
