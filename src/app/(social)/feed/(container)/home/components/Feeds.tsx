@@ -47,6 +47,7 @@ import { LIVE_URL, SOCKET_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
 import { io } from 'socket.io-client';
 import { FaArrowUp } from 'react-icons/fa';
+import { UserProfile } from '../page';
 
 // ----------------- data type --------------------
 interface Post {
@@ -502,10 +503,11 @@ const socket = io(`${SOCKET_URL}`);
 interface FeedsProps {
   isCreated: boolean;
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>;
+  profile : UserProfile
 }
 
 
-const Feeds = ({isCreated,setIsCreated} : FeedsProps) => {
+const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
  
   const { user } = useAuthContext();
   // console.log('profile in feed',profile)
@@ -518,7 +520,6 @@ const Feeds = ({isCreated,setIsCreated} : FeedsProps) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
-  const [profile,setProfile] = useState({});
   const [flag, setflag] = useState(false);
   const fetchPosts = async (pageNumber: number) => {
     setError(null);
@@ -683,7 +684,7 @@ const PostSkeleton = () => {
                 key={post.post.Id}
                 isMediaKeys={false}
                 onDelete={handleDelete}
-                setIsCreated={isCreated}
+                setIsCreated={setIsCreated}
                 tlRefresh={tlRefresh}
                 setTlRefresh={setTlRefresh}
                 scrollbarWidth="none"
