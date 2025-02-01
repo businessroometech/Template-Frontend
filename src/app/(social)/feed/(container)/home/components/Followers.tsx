@@ -1,6 +1,7 @@
 import avatar from '@/assets/images/avatar/default avatar.png'
 import Loading from '@/components/Loading'
 import { useAuthContext } from '@/context/useAuthContext'
+import { LIVE_URL } from '@/utils/api'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
@@ -34,7 +35,7 @@ const Followers = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
+      const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-suggest`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,8 +69,8 @@ const Followers = () => {
     setLoading(userId)
 
     const apiUrl = isSending
-      ? 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-      : ' https://strengthholdings.com/api/v1/connection/unsend-connection-request'
+      ? `${LIVE_URL}api/v1/connection/send-connection-request`
+      : `${LIVE_URL}api/v1/connection/unsend-connection-request`
 
     try {
       const res = await fetch(apiUrl, {
@@ -109,10 +110,10 @@ const Followers = () => {
 
   const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
   return (
-    <>
+    <div style={{width:"360px", marginLeft:"10px"}} >
       {/* <ConnectionRequest /> */}
       <br />
-      <Card style={{ marginTop: '-22px' }}>
+      <Card style={{ marginTop: '-22px'   }}>
         <CardHeader className="pb-0 border-0">
           <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
             Suggested Connections
@@ -175,7 +176,7 @@ const Followers = () => {
           </CardBody>
         )}
       </Card>
-    </>
+      </div>
   )
 }
 export default Followers

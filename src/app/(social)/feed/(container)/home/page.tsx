@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row } from "react-bootstrap";
-import Stories from "./components/Stories";
+import { Col, Row } from "react-bootstrap";
 import Feeds from "./components/Feeds";
 import Followers from "./components/Followers";
 import { io } from "socket.io-client";
@@ -9,13 +8,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useOnlineUsers } from "@/context/OnlineUser.";
 import LoadContentButton from "@/components/LoadContentButton";
 import { useAuthContext } from "@/context/useAuthContext";
-import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
+import {  SOCKET_URL } from "@/utils/api";
 
 
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const { user} = useAuthContext();
   const {fetchOnlineUsers} = useOnlineUsers();
   const navigate = useNavigate();
@@ -54,9 +52,11 @@ const Home = () => {
         }}
         className="position-relative vstack gap-4"
       >
+
+
        
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={setIsCreated}  setIsCreated={setIsCreated}/>
+        <Feeds isCreated={isCreated}  setIsCreated={setIsCreated}/>
       </Col>
 
       <Col lg={3} 

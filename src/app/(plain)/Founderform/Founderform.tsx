@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuthContext';
 import {ToastContainer , toast} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import { LIVE_URL } from "@/utils/api";
 const Founderforms = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -64,7 +65,7 @@ const Founderforms = () => {
     try {
       console.log(formData , user?.id);
   
-      const response = await fetch(" https://strengthholdings.com/entrepreneur/create", {
+      const response = await fetch(`${LIVE_URL}entrepreneur/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -869,7 +870,7 @@ const Founderforms = () => {
   return (
     <div>
       {/* Styled Tabs */}
-      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Founder Profile</h2>
+      <h2 className="text-start mb-4" style={{ marginRight: '20px' }}>Entrepreneur (Exploring Business Ideas - Industry Connections)</h2>
 
       <div className="d-flex justify-content-center mb-4">
         {sections.map((title, index) => (
@@ -894,7 +895,17 @@ const Founderforms = () => {
   
         {/* Navigation Buttons */}
         <div className="d-flex justify-content-between mt-4">
-          <div>
+     
+          <div >
+            <Button
+             onClick={() => {
+              navigate("settings/account")
+             }}
+            >
+              Back
+            </Button>
+          </div>
+          <div style={{marginRight:"900px"}}>
             <Button
               variant="btn btn-danger"
               type="button"
@@ -903,7 +914,6 @@ const Founderforms = () => {
               Skip
             </Button>
           </div>
-          
           <div>
             <ButtonGroup>
               <Button

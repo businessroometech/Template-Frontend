@@ -38,8 +38,9 @@ import TextFormInput from '../form/TextFormInput'
 import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
+import { SOCKET_URL } from '@/utils/api'
 
-const socket = io('http://13.216.146.100/', {
+const socket = io(`${SOCKET_URL}`, {
   // path: "/socket.io",
   transports: ['websocket'],
 })

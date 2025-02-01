@@ -11,6 +11,7 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import Loading from '@/components/Loading'
 import { FaTimes, FaUser, FaUserCheck, FaUserPlus, FaUserTimes } from 'react-icons/fa'
+import { LIVE_URL } from '@/utils/api'
 
 const MyConnections = () => {
   // const allConnections = useFetchData(getAllUserConnections)
@@ -33,7 +34,7 @@ const MyConnections = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://strengthholdings.com/api/v1/connection/get-connection-list", {
+      const res = await fetch(`${LIVE_URL}api/v1/connection/get-connection-list`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +65,7 @@ const MyConnections = () => {
     // Set loading to true only for the specific profileId
     setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
   
-    const apiUrl = "https://strengthholdings.com/api/v1/connection/send-connection-request";
+    const apiUrl = `${LIVE_URL}api/v1/connection/send-connection-request`;
   
     try {
       const res = await fetch(apiUrl, {
@@ -95,7 +96,7 @@ const MyConnections = () => {
 
   const handleCancel = async () => {
     setLoading(true);
-    const apiUrl = "https://strengthholdings.com/api/v1/connection/unsend-connection-request";
+    const apiUrl = `${LIVE_URL}api/v1/connection/unsend-connection-request`;
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -122,7 +123,7 @@ const MyConnections = () => {
   };
 
   const handleRemove = async (connectionId:string) =>{
-    const apiUrl = "https://strengthholdings.com/api/v1/connection/remove-connection";
+    const apiUrl = `${LIVE_URL}api/v1/connection/remove-connection`;
     try {
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -169,12 +170,33 @@ const MyConnections = () => {
     <>
       <PageMetaData title='Connections' />
 {/* <ToastContainer /> */}
+{allConnections.length === 0 ? (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+          <div className="text-center">
+            <p
+              className="mb-0"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                color: '#6c757d',
+                opacity: '0.8',
+              }}
+            >
+              No connection requests found
+            </p>
+            <p className="small text-muted">
+              It looks like you have no new connection requests at the moment.
+            </p>
+          </div>
+        </div>
+      ) : (
       <Card>
         <CardHeader className="border-0 pb-0">
           {/* <CardTitle>My Connections</CardTitle> */}
         </CardHeader>
         <CardBody>
         {allConnections && allConnections.map((connection, idx) => (
+          <a href={`/profile/feed/${connection.userId}#${connection.userId}`} key={idx} className='text-decoration-none'>
             <div className="d-md-flex align-items-center mb-4" key={idx}>
               <div className="avatar me-3 mb-3 mb-md-0">
                 {
@@ -274,12 +296,15 @@ const MyConnections = () => {
                  </Link>
               )}
             </div>
+            </a>
           ))}
           <div className="d-grid">
             {/* <LoadMoreButton /> */}
           </div>
         </CardBody>
       </Card>
+      )
+    }
     </>
   )
 }

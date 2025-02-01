@@ -17,6 +17,7 @@ import ResponsiveGallery from './components/MediaGallery';
 import axios from 'axios';
 import { FaGlobe } from 'react-icons/fa';
 import RepostModal from './RepostModal';
+import { LIVE_URL } from '@/utils/api';
 
 interface Like {
   id: string;
@@ -79,6 +80,8 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
+  // console.log('---post---',post);
+  // console.log('---item---',item);
   // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
   // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
   // console.log(profile);
@@ -105,7 +108,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       }
 
       // Send a DELETE request to the backend
-      const response = await fetch('https://strengthholdings.com/api/v1/post/delete-userpost-byPostId', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +127,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
 
       // // console.log('dlr',tlRefresh);
       // // console.log('Post deleted successfully:', data.message);
-      alert('Post deleted successfully!');
+      // alert('Post deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting post:', error.message);
     }
@@ -138,7 +141,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     }
 
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/post/get-post-likes-list', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/get-post-likes-list`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +193,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     const fetchComments = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(' https://strengthholdings.com/api/v1/post/get-comments', {
+        const response = await fetch(`${LIVE_URL}api/v1/post/get-comments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -227,7 +230,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     if (!commentText.trim()) return;
 
     try {
-      const response = await fetch(' https://strengthholdings.com/api/v1/post/create-comment', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -253,7 +256,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
     setLikeStatus((prev) => !prev);
     likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/post/create-like', {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,7 +265,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
       });
 
       if (!response.ok) {
-        setLikeStatus((prev) => !prev);
+        setLikeStatus(likeStatus);
         likeStatus ? setLikeCount(() => likeCount - 1) : setLikeCount(() => likeCount + 1);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -334,7 +337,14 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
   }
 
   if (isDeleted) return null;
+
   return (
+    <>
+    {/* {post.repostedFrom &&
+      <div style={{width : '100%',height : '50px',backgroundColor : 'lavender',marginBottom : '-2px',zIndex : 100}}>
+
+      </div>
+    } */}
     <Card className="mb-4">
       <CardHeader className="border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
@@ -347,6 +357,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
                   <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                 )}
               </Link>
+              {/* {post.repostedFrom && <p>This is a repost</p>} */}
             </div>
             <div>
               <div className="nav nav-divider">
@@ -621,6 +632,7 @@ const PostCard = ({ item, isMediaKeys, tlRefresh, setTlRefresh, setIsCreated, po
         )
       )}
     </Card>
+    </>
   );
 };
 

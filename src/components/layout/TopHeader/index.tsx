@@ -10,6 +10,7 @@ import StyledHeader from './StyledHeader'
 import { MessageSquareText, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthContext } from '@/context/useAuthContext'
+import { LIVE_URL } from '@/utils/api'
 
 const TopHeader = () => {
 
@@ -24,7 +25,7 @@ const TopHeader = () => {
     const fetchNotificationsCount = async () => {
       try {
         const response = await fetch(
-          `https://strengthholdings.com/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+          `${LIVE_URL}api/v1/socket-notifications/get-count?userId=${user?.id}`,
           { method: "GET", headers: { "Content-Type": "application/json" } }
         );
   
@@ -44,7 +45,7 @@ const TopHeader = () => {
     const fetchNotificationsCount = async () => {
       try {
         const response = await fetch(
-          `https://strengthholdings.com/api/v1/socket-notifications/get-count?userId=${user?.id}`,
+          `${LIVE_URL}api/v1/socket-notifications/get-count?userId=${user?.id}`,
           { method: "GET", headers: { "Content-Type": "application/json" } }
         );
   

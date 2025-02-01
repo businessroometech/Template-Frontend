@@ -11,11 +11,11 @@ const Feed = () => {
   const  currentUser = useParams()
   const isUser = user?.id === currentUser.id
   return (
-    <>
+    <div style={{width:"1000px"}}>
       <PageMetaData title='Feed'/>
       {isUser?(<CreatePostCard setIsCreated={setIsCreated}/>):(<></>)}
       <Posts isCreated={isCreated}/>
-    </>
+      </div>
   )
 }
 export default Feed

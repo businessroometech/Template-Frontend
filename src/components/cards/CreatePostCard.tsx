@@ -61,6 +61,7 @@ const skeletonBaseColor = '#e3e3e3'
 const skeletonHighlightColor = '#f2f2f2'
 
 interface CreatePostCardProps {
+  isCreated : boolean,
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
@@ -126,7 +127,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
         throw new Error('Network response was not ok')
       }
       const data = await response.json()
-      console.log('data', data)
+      // console.log('data', data)
       setSkeletonLoading(false)
       setProfile(data.data)
     } catch (error) {
@@ -256,6 +257,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handleVideoSubmit = async () => {
+    if(uploadedFiles.length === 0) {
+      alert('You must add a Video');
+      return;
+    }
     setIsSubmittingVideo(true);
     try {
       // Wait for handleUpload to complete before proceeding
@@ -285,9 +290,9 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
 
         if (response.data) {
           setThoughts('') // Reset thoughts after successful post
-          toggleVideoModel()
+          
           console.log('isCreated before',isCreated)
-        setIsCreated(() => !isCreated) 
+         
         console.log('isCreated after',isCreated)
         }
       } else {
@@ -298,6 +303,8 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     }
     finally{
       setIsSubmittingVideo(false);
+      toggleVideoModel();
+      setIsCreated(() => !isCreated)
     }
   }
   // console.log("profile", profile);

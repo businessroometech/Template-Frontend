@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthContext } from "@/context/useAuthContext";
 import { FileUpload, uploadDoc,GetImageWithUrl } from "@/utils/CustomS3ImageUpload";
 import { useNavigate } from "react-router-dom";
+import { LIVE_URL } from "@/utils/api";
 
 
 
@@ -93,7 +94,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
           console.log('Request body:', requestBody);
   
           const response = await fetch(
-            ' https://strengthholdings.com/api/v1/auth/update-or-create-Profile',
+            `${LIVE_URL}api/v1/auth/update-or-create-Profile`,
             {
               method: 'POST',
               headers: {

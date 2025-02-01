@@ -129,6 +129,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
+      <Route path='/coming-soon' element={<PreRegisterPage/>}></Route>
     </Routes>
   )
 }

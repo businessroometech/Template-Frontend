@@ -24,7 +24,7 @@ const BusinessSellerForm = () => {
   return (
     <div className="container mt-5">
 
-      <div className="d-flex justify-content-center mb-4 flex-wrap"  style={{marginTop: '100px'}}>
+      <div className="d-flex justify-content-center mb-4 flex-wrap"  style={{marginTop: '100px', }}>
         {sections.map((section, index) => (
           <button
             key={index}

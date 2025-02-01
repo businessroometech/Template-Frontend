@@ -14,6 +14,7 @@ import { toSentenceCase } from '@/utils/change-casing'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { LIVE_URL } from '@/utils/api'
 
 type ThemeModeType = {
   theme: ThemeType
@@ -49,7 +50,7 @@ const ProfileDropdown = () => {
     const fetchUser = async () => {
       try {
         setSkeletonLoading(true)
-        const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+        const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

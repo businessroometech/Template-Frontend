@@ -72,6 +72,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import Loading from '@/components/Loading'
 import Followers from '@/app/(social)/feed/(container)/home/components/Followers'
 import { set } from 'react-hook-form'
+import { LIVE_URL } from '@/utils/api';
 
 const Experience = () => {
   return null;
@@ -174,7 +175,7 @@ const Friends = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-suggest', {
+      const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-suggest`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -215,7 +216,7 @@ export const ConnectionRequest = () => {
   const fetchConnections = async () => {
     setLoading(true); // Start loading
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/connection/get-connection-request', {
+      const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id }),
@@ -234,7 +235,7 @@ export const ConnectionRequest = () => {
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
     try {
-      const response = await fetch('https://strengthholdings.com/api/v1/connection/update-connection-status', {
+      const response = await fetch(`${LIVE_URL}api/v1/connection/update-connection-status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -393,7 +394,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
     setCount(1)
     try {
       const response = await fetch(
-        "https://strengthholdings.com/api/v1/auth/recored-visit",
+        `${LIVE_URL}api/v1/auth/recored-visit`,
         {
           method: "POST",
           headers: {
@@ -468,7 +469,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const fetchUser = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch('https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -498,8 +499,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const UserRequest = async () => {
     setLoading(true)
-    const apiUrl = 'https://strengthholdings.com/api/v1/connection/send-connection-request'
-    try {
+    const apiUrl = `${LIVE_URL}api/v1/connection/send-connection-request`
+        try {
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -529,7 +530,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
 
   const handleCancel = async () => {
     setLoading(true)
-    const apiUrl = 'https://strengthholdings.com/api/v1/connection/unsend-connection-request'
+    const apiUrl = `${LIVE_URL}api/v1/connection/unsend-connection-request`
 
     try {
       const res = await fetch(apiUrl, {
@@ -609,7 +610,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   ]
 
   return (
-    <>
+   <div style={{marginRight:"21%"}} >
       <ToastContainer />
       <Suspense fallback={<Preloader />}>
         <TopHeader />
@@ -631,8 +632,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           />
           <Row className="g-4">
             {/* Main Profile Section */}
-            <Col lg={8} className="vstack gap-4">
-              <Card>
+            <Col lg={8} className="vstack gap-4" >
+              <Card style={{width:"1000px"}}>
                 {/* Profile Cover Image */}
                 <div className="h-200px rounded-top position-relative">
                   {skeletonLoading ? (
@@ -812,7 +813,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     </li> */}
                   </ul>
                 </CardBody>
-                <CardFooter className="card-footer mt-3 pt-2 pb-0">
+                <CardFooter className="card-footer mt-3 pt-2 pb-0" >
                   <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
                     {PROFILE_MENU_ITEMS.map((item, idx) => (
                       <li className="nav-item" key={idx}>
@@ -878,7 +879,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 {/* <Col md={6} lg={12}>
                   <Photos />
                 </Col> */}
-                <Col md={6} lg={12}>
+                <Col md={6} lg={12} style={{marginLeft:"360px"}}>
                   <Followers />
                 </Col>
                 <Col md={6} lg={12}>
@@ -889,7 +890,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           </Row>
         </Container>
       </main>
-    </>
+      </div>
   )
 }
 export default ProfileLayout

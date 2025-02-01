@@ -8,6 +8,7 @@ import SimplebarReactClient from '@/components/wrappers/SimplebarReactClient';
 import axios from 'axios';
 import MarketplaceCard from './MarketplaceCard';
 import TopHeader from '@/components/layout/TopHeader';
+import { LIVE_URL } from '@/utils/api';
 
 
 // eslint-disable-next-line no-sparse-arrays
@@ -42,7 +43,7 @@ const MarketPlace = () => {
       // console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(`https://strengthholdings.com/api/v1/businessseller/detail/${user.id}`);
+          const response = await fetch(`${LIVE_URL}api/v1/businessseller/detail/${user.id}`);
           const data = await response.json();
           
           setMyBusinessData(Array.isArray(data) ? data : [data]);
@@ -56,7 +57,7 @@ const MarketPlace = () => {
 
     const fetchAllBusiness = async () => {
       try {
-        const response = await fetch('https://strengthholdings.com/api/v1/businessseller/getall');
+        const response = await fetch(`${LIVE_URL}api/v1/businessseller/getall`);
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           const validBusinesses = result.data.filter(business => 
@@ -73,7 +74,7 @@ const MarketPlace = () => {
 
 
  const fetchWishlist = async() => {
-  const response = await fetch(`https://strengthholdings.com/api/v1/wishlists/getall/${user?.id}`)
+  const response = await fetch(`${LIVE_URL}api/v1/wishlists/getall/${user?.id}`)
   const result = await response.json();
   setWishlists(result)
   console.log("-------WISHLISTS-------" , Wishlists)

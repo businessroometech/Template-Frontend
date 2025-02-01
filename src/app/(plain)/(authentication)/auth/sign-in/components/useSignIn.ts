@@ -58,7 +58,7 @@ const useSignIn = () => {
 
     const verifyEmail = async () => {
       try {
-        const res = await fetch(`https://strengthholdings.com/api/v1/auth/verify-email?token=${token}`,
+        const res = await fetch(`${LIVE_URL}api/v1/auth/verify-email?token=${token}`,
           {
             method: "POST",
             headers: {

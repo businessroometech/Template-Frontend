@@ -12,6 +12,8 @@ import { FaUserPlus, FaUserCheck, FaUserTimes } from 'react-icons/fa'
 import { BsPersonAdd } from 'react-icons/bs'
 import { useAuthContext } from '@/context/useAuthContext'
 import Loading from '@/components/Loading'
+import { LIVE_URL } from '@/utils/api';
+
 
 const SuggestedConnections = () => {
   const { user } = useAuthContext()
@@ -150,7 +152,7 @@ const SuggestedConnections = () => {
                 <div className="w-100">
                   <div className="d-sm-flex align-items-start">
                     <h6 className="mb-0">
-                      <Link to="#">{`${friend.firstName} ${friend.lastName}`}</Link>
+                      <Link to={`/profile/feed/${friend.id}`}>{`${friend.firstName} ${friend.lastName}`}</Link>
                     </h6>
                     <p className="small ms-sm-2 mb-0 text-muted">{friend.userRole}</p>
                     {friend.mutual && (
