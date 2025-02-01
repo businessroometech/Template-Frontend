@@ -196,7 +196,7 @@ const PostCard = ({
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
           // // console.log('Likes fetched successfully:', data.data?.likes);
-          setAllLikes(data.data?.likers);
+          setAllLikes(data.data?.likers || []);
           // Optionally, update the UI with the likes data
         } else {
           console.error('Error fetching likes:', data.message);
@@ -208,6 +208,7 @@ const PostCard = ({
         setAllLikes([]);
       }
     } catch (error) {
+      setAllLikes([]);
       console.error('An unknown error occurred:', (error as Error).message);
     }
   };
@@ -355,8 +356,6 @@ const PostCard = ({
   };
 
   function LikeText(allLikes: Like[]) {
-    if (allLikes.length === 0) return null;
-
     const userLike = allLikes.find(like => like.id === user?.id);
     const otherLikes = allLikes.filter(like => like.id !== user?.id);
     
@@ -370,6 +369,7 @@ const PostCard = ({
     if (otherLikes.length > 1) {
         str += `, and ${otherLikes.length - 1} others`;
     }
+    if(allLikes.length === 0) str = ""
     return <p
       style={{
         display: "flex",
@@ -636,7 +636,7 @@ const PostCard = ({
           )
         )}
         <div style={{ marginTop: '20px' }}>
-          {(allLikes || commentCount > 0) && LikeText(allLikes)}
+          {LikeText(allLikes)}
         </div>
         <ButtonGroup
           className="w-100 border-top border-bottom mb-3"
