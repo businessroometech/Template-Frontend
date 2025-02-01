@@ -48,6 +48,7 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { useOnlineUsers } from '@/context/OnlineUser.';
 import { io } from 'socket.io-client';
 import { FaArrowUp } from 'react-icons/fa';
+import { UserProfile } from '../page';
 
 // ----------------- data type --------------------
 interface Post {
@@ -503,10 +504,11 @@ const socket = io(`${SOCKET_URL}`);
 interface FeedsProps {
   isCreated: boolean;
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>;
+  profile : UserProfile
 }
 
 
-const Feeds = ({isCreated,setIsCreated} : FeedsProps) => {
+const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
  
   const { user } = useAuthContext();
   // console.log('profile in feed',profile)
@@ -519,7 +521,7 @@ const Feeds = ({isCreated,setIsCreated} : FeedsProps) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
-  const [profile,setProfile] = useState({});
+  // const [profile,setProfile] = useState({});
   const {fetchOnlineUsers} = useOnlineUsers();
   const [flag, setflag] = useState(false);
   const fetchPosts = async (pageNumber: number) => {
@@ -651,7 +653,7 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag  && <Link to="/"
+     {flag && !isCreated && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
@@ -685,7 +687,7 @@ const PostSkeleton = () => {
                 key={post.post.Id}
                 isMediaKeys={false}
                 onDelete={handleDelete}
-                setIsCreated={isCreated}
+                setIsCreated={setIsCreated}
                 tlRefresh={tlRefresh}
                 setTlRefresh={setTlRefresh}
                 scrollbarWidth="none"

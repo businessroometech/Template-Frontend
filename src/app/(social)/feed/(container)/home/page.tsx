@@ -8,17 +8,62 @@ import { Link, useNavigate } from "react-router-dom";
 import { useOnlineUsers } from "@/context/OnlineUser.";
 import LoadContentButton from "@/components/LoadContentButton";
 import { useAuthContext } from "@/context/useAuthContext";
-import {  SOCKET_URL } from "@/utils/api";
+import {  LIVE_URL, SOCKET_URL } from "@/utils/api";
 
 
+export interface PersonalDetails {
+  id: string;
+  occupation: string | null;
+  password: string;
+  country: string;
+  profilePictureUploadId: string;
+  bgPictureUploadId: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  mobileNumber: string | null;
+  emailAddress: string;
+  bio: string | null;
+  gender: string;
+  preferredLanguage: string;
+  socialMediaProfile: string;
+  height: string;
+  weight: string;
+  permanentAddress: string | null;
+  currentAddress: string | null;
+  aadharNumberUploadId: string | null;
+  panNumberUploadId: string | null;
+  userRole: string;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+export interface UserProfile {
+  personalDetails: PersonalDetails;
+  profileImgUrl: string;
+  coverImgUrl: string;
+  connectionsCount: number;
+  postsCount: number;
+  likeCount: number;
+  connectionsStatus: "pending" | "accepted" | "rejected" | "none"; // Assuming possible statuses
+}
+const socket = io(`${SOCKET_URL}`, {
+  // path: "/socket.io",
+  transports: ['websocket'],
+})
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
   const { user} = useAuthContext();
   const {fetchOnlineUsers} = useOnlineUsers();
   const navigate = useNavigate();
-  const [profile,setProfile] = useState({});
+  // const [profile,setProfile] = useState({});
   console.log('Home reloads')
+
+  const [profile,setProfile] = useState<UserProfile>({});
+
 
 
   useEffect(() => {
@@ -56,7 +101,7 @@ const Home = () => {
 
        
       <CreatePostCard setIsCreated={setIsCreated} isCreated={isCreated} />       
-        <Feeds isCreated={isCreated}  setIsCreated={setIsCreated}/>
+        <Feeds isCreated={isCreated}  setIsCreated={setIsCreated} profile={profile}/>
       </Col>
 
       <Col lg={3} 
