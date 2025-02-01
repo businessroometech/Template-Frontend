@@ -12,10 +12,6 @@ import { useAuthContext } from "@/context/useAuthContext";
 import RoleSelectionModal from "@/components/cards/RoleSelectionModal";
 
 
-const socket = io('https://strengthholdings.com/', {
-  // path: "/socket.io",
-  transports: ['websocket'],
-})
 
 const Home = () => {
   const [isCreated, setIsCreated] = useState(false);
@@ -26,20 +22,10 @@ const Home = () => {
   const [profile,setProfile] = useState({});
   console.log('Home reloads')
 
-  useEffect(() => {
-      socket.emit("userOnline", user.id);
-    return () => {
-      try {
-        socket.emit("userOffline", user.id);
-      } catch (error) {
-        console.error('Error during socket disconnection:', error);
-      }
-    };
-  },[]);
-
 
   useEffect(() => {
     const interval = setInterval(() => {
+      // console.log("running fetchOnlineUsers");
       fetchOnlineUsers();
     }, 60000);
 

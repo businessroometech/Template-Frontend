@@ -18,10 +18,33 @@ import Founderforms from '@/app/(plain)/Founderform/Founderform'
 import AccountSettings from '@/assets/data/clone/accountClone'
 import MarketplaceDetails from '@/app/(plain)/Marketplacedetails/Marketplacedetails'
 import VisitProfile from '@/components/VisitProfile'
+import { io } from 'socket.io-client'
+import { useEffect } from 'react'
+import { LIVE_URL } from '@/utils/api'
+const socket = io(LIVE_URL, {
+  // path: "/socket.io",
+  transports: ['websocket'],
+})
 
 
 const AppRouter = (props: RouteProps) => {
+  const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
+   useEffect(() => {
+      if (user) {
+        socket.emit("userOnline", user.id);
+        // console.log('userOnline', user.id)
+      }
+      return () => {
+        try {
+          if (user) {
+            socket.emit("userOffline", user.id);
+          }
+        } catch (error) {
+          console.error('Error during socket disconnection:', error);
+        }
+      };
+    }, [user]);
 
   return (
     <Routes>
