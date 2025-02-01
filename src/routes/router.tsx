@@ -32,21 +32,42 @@ const AppRouter = (props: RouteProps) => {
   })
   const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
-   useEffect(() => {
-      if (user) {
-        socket.emit("userOnline", user.id);
-        // console.log('userOnline', user.id)
-      }
-      return () => {
-        try {
-          if (user) {
-            socket.emit("userOffline", user.id);
-          }
-        } catch (error) {
-          console.error('Error during socket disconnection:', error);
-        }
-      };
-    }, [user]);
+  //  useEffect(() => {
+  //     if (user) {
+  //       socket.emit("userOnline", user.id);
+  //       // console.log('userOnline', user.id)
+  //     }
+  //     return () => {
+  //       try {
+  //         if (user) {
+  //           socket.emit("userOffline", user.id);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error during socket disconnection:', error);
+  //       }
+  //     };
+  //   }, [user]);
+  useEffect(() => {
+    // Mark user as online when component mounts
+    socket.emit("userOnline", user.id); // Replace 'user123' with dynamic user info
+
+    // Define the handler for the 'beforeunload' event to mark user offline
+    const handleBeforeUnload = () => {
+      socket.emit("userOffline", user.id); // Mark user as offline
+    };
+
+    // Add 'beforeunload' event listener to handle tab closure
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Cleanup event listener when component unmounts
+    return () => {
+      // Emit useroffline on unmount as well (in case the user navigates away)
+      socket.emit("userOffline", user.id);
+      
+      // Remove event listener to avoid memory leaks
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <Routes>
