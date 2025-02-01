@@ -20,14 +20,16 @@ import MarketplaceDetails from '@/app/(plain)/Marketplacedetails/Marketplacedeta
 import VisitProfile from '@/components/VisitProfile'
 import { io } from 'socket.io-client'
 import { useEffect } from 'react'
-import { LIVE_URL } from '@/utils/api'
-const socket = io(LIVE_URL, {
-  // path: "/socket.io",
-  transports: ['websocket'],
-})
+import { SOCKET_URL } from '@/utils/api'
+
+
 
 
 const AppRouter = (props: RouteProps) => {
+  const socket = io(SOCKET_URL, {
+    // path: "/socket.io",
+    transports: ['websocket'],
+  })
   const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
    useEffect(() => {
@@ -129,7 +131,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
-      <Route path='/coming-soon' element={<PreRegisterPage/>}></Route>
+      {/* <Route path='/coming-soon' element={<PreRegisterPage/>}></Route> */}
     </Routes>
   )
 }
