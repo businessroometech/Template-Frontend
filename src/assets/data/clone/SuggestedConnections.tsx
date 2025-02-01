@@ -14,6 +14,7 @@ import { useAuthContext } from '@/context/useAuthContext';
 import Loading from '@/components/Loading';
 import { LIVE_URL } from '@/utils/api';
 
+
 const SuggestedConnections = () => {
   const { user } = useAuthContext();
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
@@ -31,7 +32,7 @@ const SuggestedConnections = () => {
   const fetchConnectionSuggestions = async () => {
     try {
       setSkeletonLoading(true);
-      const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-suggest`, {
+      const response = await fetch(`${LIVE_URL}/api/v1/connection/get-connection-suggest`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
