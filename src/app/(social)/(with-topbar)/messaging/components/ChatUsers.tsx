@@ -13,6 +13,7 @@ import { BsSearch } from 'react-icons/bs'
 const ChatItem = ({ userId,connectionId, profilePictureUrl, lastMessage, firstName, lastName, isStory }: UserType) => {
   const { changeActiveChat, activeChat } = useChatContext()
  const { onlineUsers } = useOnlineUsers()
+ console.log("onlineUsers",onlineUsers)
  const status = onlineUsers?.includes(userId) ? 'online' : 'offline'
   const handleChange = () => {
     changeActiveChat(userId)

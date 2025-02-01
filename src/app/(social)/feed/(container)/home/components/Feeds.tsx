@@ -45,6 +45,7 @@ import { Link } from 'react-router-dom'
 import makeApiRequest from '@/utils/apiServer'
 import { LIVE_URL } from '@/utils/api'
 import { useAuthContext } from '@/context/useAuthContext'
+import { useOnlineUsers } from '@/context/OnlineUser.';
 import { io } from 'socket.io-client';
 import { FaArrowUp } from 'react-icons/fa';
 
@@ -512,6 +513,7 @@ const Feeds = (isCreated: boolean,setIsCreated : React.Dispatch<React.SetStateAc
  const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   const [profile,setProfile] = useState({});
+  const {fetchOnlineUsers} = useOnlineUsers();
   const [flag, setflag] = useState(false);
 
  
@@ -530,6 +532,7 @@ useEffect(() => {
     socket.off('postSent');
   };
 }, [user?.id, flag]);
+
 
 const fetchPosts = async () => {
 

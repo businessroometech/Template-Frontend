@@ -463,9 +463,9 @@ const Messaging = () => {
                       value={messageMap[chatUser?.userId] || ''} // Ensures separate messages per chat
                       onChange={(e) => {
                         const newMessage = e.target.value
-                        console.log('newMessage', newMessage)
+                        // console.log('newMessage', newMessage)
                         setSelectedUser(chatUser) // Set selected user for message
-                        console.log('chatUser', chatUser)
+                        // console.log('chatUser', chatUser)
                         setMessageMap((prev) => ({
                           ...prev,
                           [chatUser?.userId]: newMessage,
