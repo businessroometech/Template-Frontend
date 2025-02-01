@@ -108,7 +108,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
   const toggleLike = async () => {
     try {
-      const response = await fetch(`${LIVE_URL}api/v1/post/create-like`, {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-comment-like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

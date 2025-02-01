@@ -3,6 +3,7 @@ import { CREATE_POST } from '@/utils/api';
 import makeApiRequest from '@/utils/apiServer';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { PostSchema } from './PostCard';
 
 
 interface ApiResponse<T> {
@@ -44,7 +45,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item }) => {
           repostedFrom : item.post.userId,
           userId : user?.id,
           content : item.post.content,   
-          mediaKeys : item.post.mediaUrls,    
+          mediaKeys : (item as PostSchema).post.mediaKeys,    
           repostText : thoughts,
         },
       })
