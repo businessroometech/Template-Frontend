@@ -14,6 +14,7 @@ const ChatItem = ({ userId,connectionId, profilePictureUrl, lastMessage, firstNa
   const { changeActiveChat, activeChat } = useChatContext()
  const { onlineUsers } = useOnlineUsers()
  const status = onlineUsers?.includes(userId) ? 'online' : 'offline'
+ 
   const handleChange = () => {
     changeActiveChat(userId)
   }
