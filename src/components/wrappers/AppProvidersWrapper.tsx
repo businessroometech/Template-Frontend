@@ -40,7 +40,17 @@ const AppProvidersWrapper = ({ children }: ChildrenType) => {
           <ChatProvider>
             <NotificationProvider>
               {children}
-              <ToastContainer theme="colored" />
+              <ToastContainer theme="colored" 
+               position="bottom-right"
+               autoClose={1000}
+               hideProgressBar={true}
+               newestOnTop={true}
+               closeOnClick
+               rtl={false}
+               pauseOnFocusLoss
+               draggable
+               pauseOnHover
+              />
             </NotificationProvider>
           </ChatProvider>
         </HelmetProvider>

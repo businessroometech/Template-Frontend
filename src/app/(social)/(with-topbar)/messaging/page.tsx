@@ -18,7 +18,7 @@ const Messaging = () => {
             <div className="d-flex align-items-center mb-4 d-lg-none" >
               <ChatToggler />
             </div>
-            <Card className="card-body border-end-0 border-bottom-0 rounded-bottom-0"  >
+            <Card className="card-body "  >
               <div className=" d-flex justify-content-between align-items-center">
                 <h1 className="h5 mb-0">
                   Active chats <span className="badge bg-success bg-opacity-10 text-success">{totalChats}</span>
