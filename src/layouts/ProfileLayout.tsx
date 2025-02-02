@@ -1,10 +1,11 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react'
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Check, MessageCircleMore } from 'lucide-react'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-const TopHeader = lazy(() => import('@/components/layout/TopHeader'))
+const TopHeader = lazy(() => import('@/components/layout/TopHeader'));
+
 import GlightBox from '@/components/GlightBox'
 import { useFetchData } from '@/hooks/useFetchData'
 import type { ChildrenType } from '@/types/component'
@@ -370,6 +371,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const [msg, setMsg] = useState("");
   const [coverModal, setCoverModal] = useState<boolean>(false);
   const [count, setCount] = useState(0);
+  const hasMount = useRef(false);
 
   useEffect(() => {
     if (profile?.coverImgUrl || profile?.personalDetails) {
@@ -386,9 +388,14 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       }
       return
     }
-  }, [id, user?.id, msg, count, skeletonLoading]); 
+  }, [user?.id, msg, count, skeletonLoading]); 
 
-  console.log("count", count);
+  
+
+  // useEffect(() => {
+  //   if(hasMount.current)  {window.location.reload()}
+  //   hasMount.current = true
+  // },[id])
   
   const recordProfileVisit = async () => {
     setCount(1)
@@ -419,36 +426,6 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       setSkeletonLoading(false);
     }
   };
-
-  // const sendNotification = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       "https://strengthholdings.com/api/api/v1/notifications/create",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           userId: user?.id,
-  //           receiverId: id,
-  //           message: "You have a new connection request",
-  //         }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-
-  //     const data = await response.json();
-  //     setMsg(data?.message);
-  //   } catch (error) {
-  //     console.error("Error sending notification:", error);
-  //   } finally {
-  //     setSkeletonLoading(false);
-  //   }
-  // }
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString)
@@ -610,52 +587,47 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   ]
 
   return (
-   <div style={{ width:"79%"}} >
-      <ToastContainer />
-      <Suspense fallback={<Preloader />}>
-        <TopHeader />
-      </Suspense>
-      <main>
-        <Container>
-          <EditProfilePictureModal
-            show={showModal}
-            onHide={() => setShowModal(false)}
-            onPhotoUpdate={() => console.log('press')}
-            src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-          />
-          <EditProfilePictureModal
-            show={coverModal}
-            onHide={() => setCoverModal(false)}
-            onPhotoUpdate={() => console.log('press')}
-            src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
-            forCover={true}
-          />
-          <Row className="g-4">
-            {/* Main Profile Section */}
-            <Col lg={8} className="vstack gap-4" >
-              <Card style={{width:"1000px"}}>
-                {/* Profile Cover Image */}
-                <div className="h-200px rounded-top position-relative">
+    <div style={{}}>
+    <ToastContainer />
+    <Suspense fallback={<Preloader />}>
+      <TopHeader />
+    </Suspense>
+    
+    <main className="bg-pink px-3 px-md-5" style={{marginRight : '2%'}}>
+      <EditProfilePictureModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onPhotoUpdate={() => console.log('press')}
+        src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+      />
+      <EditProfilePictureModal
+        show={coverModal}
+        onHide={() => setCoverModal(false)}
+        onPhotoUpdate={() => console.log('press')}
+        src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
+        forCover={true}
+      />
+      
+      <Row className="g-4">
+        {/* Main Profile Section */}
+        <Col md={12} lg={9} className="vstack gap-4" style={{ paddingRight : '50px',paddingLeft : '30px'}}>
+          <Card style={{}}>
+           {/* Profile Cover Image */}
+           <div className="h-200px rounded-top position-relative">
                   {skeletonLoading ? (
-                    <Skeleton width="100%" height="200px" baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                    <Skeleton width="100%" height="20px" baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                   ) : (
                     <div
                       className="h-200px rounded-top"
-                      onClick={() => setCoverModal(true)}
-                      style={{
-                        position: 'relative',
-                        overflow: 'hidden',
-                        backgroundPosition: 'center',
-                        backgroundSize: 'cover',
-                        backgroundRepeat: 'no-repeat',
-                      }}
+                      onClick={() => {if(user?.id === id)setCoverModal(true)}}
                     >
                       <Image
                         src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
-                        alt="Profile"
+                        alt="Profile Cover"
                         style={{
                           width: "100%",
                           height: "100%",
+                          objectFit: 'contain',
                         }}
                       />
                     </div>
@@ -671,7 +643,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           <Skeleton circle width={120} height={120} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         ) : (
                           <img
-                            onClick={() => setShowModal(true)}
+                            onClick={() => {if(user?.id === id)setShowModal(true)}}
                             className="avatar-img rounded-circle border border-white border-3"
                             src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
                             alt="avatar"
@@ -696,7 +668,6 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         &nbsp;
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
-        
                       <p>
                         {!skeletonLoading ? (
                           `${profile.connectionsCount} connections`
@@ -704,30 +675,10 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           <Skeleton width={80} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         )}
                       </p>
-                      <button 
-  className="btn d-flex align-items-center justify-content-center gap-2"
-  style={{
-    marginLeft: "240%", 
-     marginTop: "-60px",
-    // marginBottom:"", 
-    height:"45px",
-    width: "160px",
-    backgroundColor: "#e6ffe6",
-    border: "1px solid #99ff99",
-    borderRadius: "15px",
-  }}
->
-  <Check size={16} color="#28a745" />
-  Get Verified
-</button>
                     </div>
-                    
-                    <div style={{ marginTop: "18px", marginLeft: "390px" }}>
-     
-    </div>
+
                     {/* Action Buttons */}
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
-                      
                       {user?.id === id ? (
                         <Button variant="danger-soft" className="me-2" type="button" onClick={() => navigate('/settings/account')}>
                           <BsPencilFill size={19} className="pe-1" />
@@ -789,7 +740,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           )}
                         </Button>
                       )}
-                      
+
                       <Dropdown>
                         <DropdownToggle
                           as="a"
@@ -834,7 +785,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     </li> */}
                   </ul>
                 </CardBody>
-                <CardFooter className="card-footer mt-3 pt-2 pb-0" >
+                <CardFooter className="card-footer mt-3 pt-2 pb-0">
                   <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
                     {PROFILE_MENU_ITEMS.map((item, idx) => (
                       <li className="nav-item" key={idx}>
@@ -845,73 +796,26 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     ))}
                   </ul>
                 </CardFooter>
-              </Card>
-              {<Suspense fallback={<FallbackLoading />}>{children}</Suspense>}
+          </Card>
+          <div className="w-100" style={{}}>
+            <Suspense fallback={<FallbackLoading />}>{children}</Suspense>
+          </div>
+        </Col>
+  
+        {/* Sidebar Section */}
+        <Col md={12} lg={3}>
+          <Row>
+            <Col md={6} lg={12}>
+              <Followers />
             </Col>
-
-            {/* Sidebar Section */}
-            <Col lg={4}>
-              <Row>
-                {/* About Card */}
-
-                {/* <Col md={6} lg={12}> */}
-                {/* <Card> */}
-                {/* <CardHeader className="border-0 pb-0"> <CardTitle>View My Business Profile</CardTitle></CardHeader> */}
-
-                {/* <CardBody className="position-relative pt-0">
-                      <Button
-                        className="w-100"
-                        style={{
-                          backgroundColor: '#1ea1f3',
-                          color: 'white',
-                        }}
-                        onClick={() => {
-                          navigate('/feed/groups')
-                        }}>
-                        View My Business Profile
-                      </Button>
-
-                      {/* <p>{profile?.personalDetails?.bio}</p> */}
-                {/* <p>
-                        {profile?.personalDetails?.bio}
-                      </p>
-                      <ul className="list-unstyled mt-3 mb-0">
-                        <li className="mb-2">
-                          <BsCalendarDate size={18} className="fa-fw pe-1" /> Born:{' '}
-                          <strong>{profile?.personalDetails?.dob}</strong>
-                        </li>
-                        <li className="mb-2">
-                          {(profile?.personalDetails?.gender !== "male" || profile?.personalDetails?.gender !== "Male") ? <BsGenderFemale size={18} className="fa-fw pe-1" /> : <BsGenderMale size={18} className="fa-fw pe-1" />} Gender: <strong>{profile?.personalDetails?.gender}</strong>
-                        </li>
-                        <li>
-                          <BsEnvelope size={18} className="fa-fw pe-1" /> Email:{' '}
-                          <strong>{profile?.personalDetails?.emailAddress}</strong>
-                        </li>
-                      </ul>
-                    </CardBody> */}
-                {/* </Card> */}
-                {/* </Col> */}
-
-                {/* <ConnectionRequest /> */}
-                {/* Additional Components */}
-                {/* <Col md={6} lg={12}>
-                  <Friends />
-                </Col> */}
-                {/* <Col md={6} lg={12}>
-                  <Photos />
-                </Col> */}
-                <Col md={6} lg={12} style={{marginLeft:"90%"}}>
-                  <Followers />
-                </Col>
-                <Col md={6} lg={12}>
-                  <Experience />
-                </Col>
-              </Row>
+            <Col md={6} lg={12}>
+              <Experience />
             </Col>
           </Row>
-        </Container>
-      </main>
-      </div>
+        </Col>
+      </Row>
+    </main>
+  </div>
   )
 }
 export default ProfileLayout

@@ -235,7 +235,10 @@ const Posts = ({ isCreated }) => {
       <div
         className="position-relative"
         // ref={scrollContainerRef}
-        style={{ maxHeight: '500px' }}><InfiniteScroll
+        style={{ 
+          maxHeight: '500px', 
+          paddingTop : '24px'
+        }}><InfiniteScroll
             dataLength={posts.length}
             next={fetchNextPage}
             hasMore={hasMore}

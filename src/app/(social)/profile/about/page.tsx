@@ -80,7 +80,7 @@ const About = () => {
 
 
   return (
-    <div style={{width:"130%"}}>
+    <div>
     <PageMetaData title='About'/>
       <Card>
         <CardHeader className="border-0 pb-0">
