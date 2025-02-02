@@ -183,6 +183,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     }
     finally {
       setIsSubmittingPost(false);
+      setUploadedFiles([]);
     }
   }
 
@@ -246,9 +247,6 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
           console.log('went inside')
           setThoughts('') // Reset thoughts after successful post
           togglePhotoModel()
-          setTimeout(() => {
-            setIsCreated(() => !isCreated)
-          }, 1000)
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -257,7 +255,9 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
       console.log('Error in the posting', err)
     }
     finally {
+      setIsCreated(() => !isCreated)
       setIsSubmittingPhoto(false);
+      setUploadedFiles([]);
     }
   }
 
@@ -309,6 +309,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     finally{
       setIsSubmittingVideo(false);
       toggleVideoModel();
+      setUploadedFiles([]);
       setIsCreated(() => !isCreated)
     }
   }
