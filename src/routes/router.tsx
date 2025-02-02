@@ -50,6 +50,7 @@ const AppRouter = (props: RouteProps) => {
   useEffect(() => {
     // Mark user as online when component mounts
     socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
+    console.log('userOnline', user?.id)
 
     // Define the handler for the 'beforeunload' event to mark user offline
     const handleBeforeUnload = () => {

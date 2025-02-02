@@ -247,10 +247,10 @@ const PostCard = ({
             },
             body: JSON.stringify({
               userId: post.repostedFrom,
-              //profileId: user?.id,
+              // profileId: user?.id,
             }),
           })
-    
+
           if (!response.ok) {
             //  navigate('/not-found')
             throw new Error('Network response was not ok')
@@ -259,6 +259,7 @@ const PostCard = ({
             // navigate('/not-found')
           }
           const data = await response.json()
+          // console.log('---repost profile---',data?.data);
           
           setRepostProfile(data?.data);
         } catch (error) {
