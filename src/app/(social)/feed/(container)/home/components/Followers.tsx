@@ -114,7 +114,7 @@ const Followers = () => {
   const navigate = useNavigate()
   const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
   return (
-    <div style={{width:"360px", marginLeft:"10px"}} >
+    <div style={{width:"98%", marginLeft:"3%"}} >
       {/* <ConnectionRequest /> */}
       <br />
       <Card style={{ marginTop: '-22px'   }}>

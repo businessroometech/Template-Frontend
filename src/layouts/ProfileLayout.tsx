@@ -610,7 +610,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   ]
 
   return (
-   <div style={{marginRight:"21%"}} >
+   <div style={{ width:"79%"}} >
       <ToastContainer />
       <Suspense fallback={<Preloader />}>
         <TopHeader />
