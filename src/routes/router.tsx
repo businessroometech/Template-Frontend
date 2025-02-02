@@ -49,11 +49,11 @@ const AppRouter = (props: RouteProps) => {
   //   }, [user]);
   useEffect(() => {
     // Mark user as online when component mounts
-    socket.emit("userOnline", user.id); // Replace 'user123' with dynamic user info
+    socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
 
     // Define the handler for the 'beforeunload' event to mark user offline
     const handleBeforeUnload = () => {
-      socket.emit("userOffline", user.id); // Mark user as offline
+      socket.emit("userOffline", user?.id); // Mark user as offline
     };
 
     // Add 'beforeunload' event listener to handle tab closure
@@ -62,7 +62,7 @@ const AppRouter = (props: RouteProps) => {
     // Cleanup event listener when component unmounts
     return () => {
       // Emit useroffline on unmount as well (in case the user navigates away)
-      socket.emit("userOffline", user.id);
+      socket.emit("userOffline", user?.id);
       
       // Remove event listener to avoid memory leaks
       window.removeEventListener('beforeunload', handleBeforeUnload);
