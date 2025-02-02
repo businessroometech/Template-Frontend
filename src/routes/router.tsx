@@ -68,7 +68,7 @@ const AppRouter = (props: RouteProps) => {
       // Remove event listener to avoid memory leaks
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [user.id]);
 
   return (
     <Routes>
