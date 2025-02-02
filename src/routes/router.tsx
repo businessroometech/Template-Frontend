@@ -85,9 +85,14 @@ const AppRouter = (props: RouteProps) => {
     // Mark user as online when component mounts
     socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
     socket.on('newMessage', async () => {
-      // if (user?.id) {
+      if (user?.id) {
         await fetchUnreadMessages();
-      // }
+      }
+    });
+    socket.on('messageRead', async () => {
+      if (user?.id) {
+        await fetchUnreadMessages();
+      }
     });
     const handleBeforeUnload = () => {
       socket.emit("userOffline", user?.id); // Mark user as offline

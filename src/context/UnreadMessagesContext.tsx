@@ -36,6 +36,7 @@ export const UnreadMessagesProvider = ({ children }: { children: React.ReactNode
         senderId: msg.senderId,
         messageCount: msg.messageCount,
       })) || [];
+      // console.log("senderData",senderData)
       
       // Remove duplicates and merge counts if necessary
       const uniqueSenderData = senderData.reduce((acc, current) => {
