@@ -9,6 +9,7 @@ import LoadContentButton from '../LoadContentButton';
 import { CircleUserRound } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
+import { getLinkPreview } from "link-preview-js";
 import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
 import VideoPlayer from './components/VideoPlayer';
 import GlightBox from '../GlightBox';
@@ -114,6 +115,8 @@ const PostCard = ({
   const [refresh, setRefresh] = useState(0);
   const [likeStatus, setLikeStatus] = useState();
   const [loadMore, setLoadMore] = useState(false);
+  const [preview, setPreview] = useState<any>();
+  const [url, setUrl] = useState("");
   const post : Post = item?.post;
   const userInfo = item?.userDetails;
   const { setTrue, setFalse } = useToggle();
@@ -144,6 +147,36 @@ const PostCard = ({
   function isRepost() {
     return post.repostedFrom !== null && post.repostedFrom !== undefined
   }
+
+  // LINK Part
+  // const extractFirstUrl = (text: string): string | null => {
+  //   const urlRegex = /(https?:\/\/[^\s]+)/; // Regular expression to match URLs
+  //   const match = text.match(urlRegex); // Extract first URL
+  //   return match ? match[0] : null;  // Fixed spacing issue
+  // };
+  
+  // useEffect(() => {
+  //   const fetchPreview = async () => {
+  //     if (!post?.content) return; // Ensure post content is available
+  
+  //     const firstUrl = extractFirstUrl(post.content); // Extract URL from input
+  //     if (!firstUrl) {
+  //       console.error("No valid URL found in the input.");
+  //       return;
+  //     }
+  
+  //     try {
+  //       const data = await getLinkPreview(firstUrl); // Fetch preview for the first URL
+  //       console.log('Extracted preview:', data);
+  //       // setPreview(data);
+  //     } catch (error) {
+  //       console.error("Error fetching link preview:", error);
+  //     }
+  //   };
+  
+  //   fetchPreview();
+  // }, [post]); // Use post instead of post?.content
+
   function isRepostWithText() {
     return isRepost() && (post.repostText?.trim() !== "" || post.repostText !== null)
   }

@@ -21,10 +21,12 @@ import VisitProfile from '@/components/VisitProfile'
 import { io } from 'socket.io-client'
 import { useEffect } from 'react'
 import { SOCKET_URL } from '@/utils/api'
+import { LIVE_URL } from '@/utils/api'
 import { useOnlineUsers } from '@/context/OnlineUser.'
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 
 
-
+//api/v1/chat/get-messages-unread
 
 const AppRouter = (props: RouteProps) => {
   const socket = io(SOCKET_URL, {
@@ -34,6 +36,27 @@ const AppRouter = (props: RouteProps) => {
   const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
   const {fetchOnlineUsers} = useOnlineUsers()
+  const {fetchUnreadMessages} = useUnreadMessages()
+
+
+  
+    // useEffect(() => {
+    //   if (!user) return
+  
+    //   socket.on('newMessage',user?.id)
+    //   console.log('newMessage', user?.id)
+  
+    //   return () => {
+    //     // socket.emit('leaveRoom', roomId)
+    //     socket.off('newMessage',) // Properly remove listener
+    //   }
+    // }, [user?.id])
+  
+    useEffect(()=>{
+      if(user){
+        fetchUnreadMessages(user.id)
+      }
+    },[])
 
   
   useEffect(() => {
@@ -61,9 +84,11 @@ const AppRouter = (props: RouteProps) => {
   useEffect(() => {
     // Mark user as online when component mounts
     socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
-    console.log('userOnline', user?.id)
-
-    // Define the handler for the 'beforeunload' event to mark user offline
+    socket.on('newMessage', async () => {
+      if (user?.id) {
+        await fetchUnreadMessages(user.id);
+      }
+    });
     const handleBeforeUnload = () => {
       socket.emit("userOffline", user?.id); // Mark user as offline
     };

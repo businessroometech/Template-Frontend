@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BsChatLeftTextFill, BsGearFill } from 'react-icons/bs'
-
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 import LogoBox from '@/components/LogoBox'
 import CollapseMenu from './CollapseMenu'
 import MobileMenuToggle from './MobileMenuToggle'
@@ -13,15 +13,19 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { LIVE_URL } from '@/utils/api'
 
 const TopHeader = () => {
-
   const { user } = useAuthContext();
   const [messageAbout, setMessageAbout] = useState<boolean>(false);
   const [settingsAbout, setSettingsAbout] = useState<boolean>(false);
   const [notiAbout, setNotiAbout] = useState<boolean>(false);
   const [Notificount, setNotifiCount] = useState(0);
+  const [messageCount, setMessageCount] = useState(0);
+  const { unreadMessages } = useUnreadMessages(); // 🔥 Getting unread messages from context
+  useEffect(() => {
+    setMessageCount(unreadMessages.length);
+  },[unreadMessages]);
 
   useEffect(() => {
-    console.log('Notifiction Dropdown useEffect')
+    console.log('Notification Dropdown useEffect');
     const fetchNotificationsCount = async () => {
       try {
         const response = await fetch(
@@ -30,7 +34,6 @@ const TopHeader = () => {
         );
   
         const data = await response.json();
-  
         setNotifiCount(data.unreadCount);
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -39,7 +42,7 @@ const TopHeader = () => {
     fetchNotificationsCount();
     const interval = setInterval(fetchNotificationsCount, 50000);
     return () => clearInterval(interval);
-  },[]);
+  }, []);
 
   useEffect(() => {
     const fetchNotificationsCount = async () => {
@@ -50,17 +53,13 @@ const TopHeader = () => {
         );
   
         const data = await response.json();
-  
         setNotifiCount(data.unreadCount);
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     };
     fetchNotificationsCount();
-  },[user?.id])
-
-
-
+  }, [user?.id]);
 
   return (
     <StyledHeader>
@@ -69,9 +68,9 @@ const TopHeader = () => {
           backgroundColor: 'white',
           width: '100%',
           display: 'flex',
-          alignItems: 'center', // Vertically centers all items
-          justifyContent: 'space-between', // Space items evenly between
-          padding: '0px 80px', // Adds padding to the container
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0px 80px',
         }}
       >
         {/* Left side: Logo and MobileMenu */}
@@ -87,23 +86,22 @@ const TopHeader = () => {
         <ul
           className="nav flex-nowrap align-items-center list-unstyled"
           style={{
-            display: 'flex', // Make the list items flex container
-            alignItems: 'center', // Vertically center items
-            margin: 0, // Remove default margin
-            padding: 0, // Remove default padding
+            display: 'flex',
+            alignItems: 'center',
+            margin: 0,
+            padding: 0,
           }}
         >
-          {/* Messaging Link */}
+         
           <li className="nav-item" style={{ position: 'relative' }}>
             <Link to="/messaging">
               <div
                 style={{
-                  padding: '8px',
-                  borderRadius: '10%',
-                  marginLeft: '10px',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'background 0.3s ease',
-                  cursor: 'pointer', // Add pointer cursor for better UX
+                  position: "relative",
+                  padding: "8px",
+                  borderRadius: "10%",
+                  marginLeft: "10px",
+                  cursor: "pointer",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
@@ -114,7 +112,30 @@ const TopHeader = () => {
                   setMessageAbout(false);
                 }}
               >
-                <MessageSquareText style={{ color: '#1ea1f2' }} />
+                <MessageSquareText style={{ color: '#1ea1f2', fontSize: '24px' }} />
+                {'count', console.log(messageCount)}
+                {messageCount >= 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "-5px",
+                      right: "-5px",
+                      background: "red",
+                      color: "white",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      borderRadius: "50%",
+                      width: "18px",
+                      height: "18px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      zIndex: 9999,
+                    }}
+                  >
+                    {messageCount}
+                  </span>
+                )}
               </div>
               {messageAbout && (
                 <span
@@ -147,8 +168,6 @@ const TopHeader = () => {
                   padding: '8px',
                   borderRadius: '10%',
                   marginLeft: '10px',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'background 0.3s ease',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
@@ -185,16 +204,16 @@ const TopHeader = () => {
             </Link>
           </li>
 
-          {/* Notification Dropdown */}
+          {/* 🔔 Notification Dropdown */}
           <NotificationDropdown count={Notificount} />
 
-          {/* Profile Dropdown */}
+          {/* 👤 Profile Dropdown */}
           <ProfileDropdown />
         </ul>
       </div>
     </StyledHeader>
+  );
+};
 
-  )
-}
+export default TopHeader;
 
-export default TopHeader
