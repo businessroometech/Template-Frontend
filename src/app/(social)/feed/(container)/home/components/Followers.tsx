@@ -9,7 +9,7 @@ import { BsPersonCheckFill } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const Followers = () => {
@@ -31,6 +31,8 @@ const Followers = () => {
     }
     fetchConnectionSuggestions()
   }, [allFollowers])
+
+const navigate = useNavigate()
 
   const fetchConnectionSuggestions = async () => {
     try {
@@ -141,10 +143,18 @@ const Followers = () => {
                         </span>
                       )}
                     </div>
-                    <div className="overflow-hidden">
-                      <Link className="h6 mb-0" to={`/profile/feed/${follower.id}`}>
+                    <div className="overflow-hidden"  onClick={(e) =>
+                    {
+                      const id = follower.id
+                    navigate(`/profile/feed/${id}`) 
+                    }
+                  }
+      style={{ cursor: "pointer" }}
+      
+      >
+                      
                         {follower.firstName} {follower.lastName}
-                      </Link>
+                      
                       <p className="mb-0 small text-truncate">{follower.userRole}</p>
                     </div>
                     <Button

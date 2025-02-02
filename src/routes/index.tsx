@@ -4,6 +4,7 @@ import { Navigate, type RouteProps } from 'react-router-dom'
 import AcountSttingClone from '@/assets/data/clone/accountClone'
 import VisitProfile from '@/components/VisitProfile'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
+import path from 'path'
 
 // profiles for seller //
 //const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))

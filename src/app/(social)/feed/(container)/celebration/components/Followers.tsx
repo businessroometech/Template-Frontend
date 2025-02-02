@@ -26,7 +26,7 @@ const Followers =  () => {
             </div>
 
             <div className="overflow-hidden">
-              <Link className="h6 mb-0" to="">
+              <Link className="h6 mb-0" to={`profile/feed/${follower.id}`}>
                 {follower.name}
               </Link>
               <p className="mb-0 small text-truncate">{follower.role}</p>

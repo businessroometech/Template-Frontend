@@ -75,24 +75,24 @@ const AppRouter = (props: RouteProps) => {
         <Route key={idx + route.name} path={route.path} element={<OtherLayout {...props}>{route.element}</OtherLayout>} />
       ))}
 
-      {(feedRoutes || []).map((route, idx) => (
+{(feedRoutes || []).map((route, idx) => (
         <Route 
         key={idx + route.name} 
         path={route.path} 
         element={isAuthenticated ? (
-          <PleaseWaitPage/>
+          <FeedLayout {...props}>{route.element}</FeedLayout>
         ) : (
           <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
         )
         } />
       ))}
     
-      {(socialWithTopbarRoutes || []).map((route, idx) => (
+    {(socialWithTopbarRoutes || []).map((route, idx) => (
         <Route
           key={idx + route.name}
           path={route.path}
           element={isAuthenticated ? (
-            <PleaseWaitPage/>
+            <SocialLayout {...props}>{route.element}</SocialLayout>
           ) :
             (
               <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -100,12 +100,12 @@ const AppRouter = (props: RouteProps) => {
           } />
       ))}
 
-      {(profilePagesRoutes || []).map((route, idx) => (
+{(profilePagesRoutes || []).map((route, idx) => (
         <Route 
         key={idx + route.name} 
         path={route.path} 
         element={isAuthenticated ? (
-          <PleaseWaitPage/>
+          <ProfileLayout {...props}>{route.element}</ProfileLayout>
         ) :
           (
             <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -114,13 +114,12 @@ const AppRouter = (props: RouteProps) => {
           )
         } />
       ))}
-
-      {(settingPagesRoutes || []).map((route, idx) => (
+     {(settingPagesRoutes || []).map((route, idx) => (
         <Route 
         key={idx + route.name} 
         path={route.path} 
         element={isAuthenticated ? (
-          <PleaseWaitPage/>
+          <SettingLayout {...props}>{route.element}</SettingLayout>
         ) :
           (
             <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -128,12 +127,12 @@ const AppRouter = (props: RouteProps) => {
         } />
       ))}
 
-      {(appRoutes || []).map((route, idx) => (
+{(appRoutes || []).map((route, idx) => (
         <Route
           key={idx + route.name}
           path={route.path}
           element={isAuthenticated ? (
-            <PleaseWaitPage/>
+            <OtherLayout {...props}>{route.element}</OtherLayout>
           ) :
             (
               <Navigate to={{ pathname: '/auth/sign-in', search: 'redirectTo=' + route.path, }} />
@@ -152,7 +151,6 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
-      {/* <Route path='/coming-soon' element={<PreRegisterPage/>}></Route> */}
     </Routes>
   )
 }
