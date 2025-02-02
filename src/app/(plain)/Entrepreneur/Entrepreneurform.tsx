@@ -1209,7 +1209,7 @@ const EntrepreneurForm = () => {
                    <label className="form-check-label" htmlFor="ComRadio3">
                     Entrepreneur (Exploring Business Ideas - Industry Connections)
                   </label>
-                  
+                        
                 </div>
                 <div className="form-check">
                   <input 

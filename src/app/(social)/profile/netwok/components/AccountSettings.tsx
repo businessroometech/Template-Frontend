@@ -174,9 +174,9 @@ const AccountSettings = () => {
   }, [user?.id]);
 
   return (
-    <Card>
+    <Card style={{marginRight:"20px", }}>
       <CardHeader>
-        <h5 className="card-title">Basic Profile</h5>
+        <h5 className="card-title" >Basic Profile</h5>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit(onSubmit)} className="row g-3">
