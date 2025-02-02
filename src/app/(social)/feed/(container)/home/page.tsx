@@ -93,7 +93,7 @@ const Home = () => {
       } 
     }
     fetchUser();
-  },[])
+  },[user.id])
 
   useEffect(() => {
     const interval = setInterval(() => {
