@@ -10,7 +10,7 @@ import { BsPersonCheckFill } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { Link, useLocation, useNavigate, useNavigation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const Followers = () => {
@@ -34,7 +34,7 @@ const Followers = () => {
     fetchConnectionSuggestions()
   }, [allFollowers])
 
-const navigate = useNavigate()
+
 
   const fetchConnectionSuggestions = async () => {
     try {
