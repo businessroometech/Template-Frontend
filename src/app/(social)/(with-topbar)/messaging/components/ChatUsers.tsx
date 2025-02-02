@@ -3,17 +3,20 @@ import { useChatContext } from '@/context/useChatContext'
 import type { UserType } from '@/types/data'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import clsx from 'clsx'
+import { useAuthContext } from '@/context/useAuthContext'
 import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 import { useOnlineUsers } from '@/context/OnlineUser.'
 import { useState, useEffect } from 'react'
 //import { io } from 'socket.io-client'
 import { Card, Spinner } from 'react-bootstrap'
+import { LIVE_URL } from '@/utils/api'
 import { BsSearch } from 'react-icons/bs'
 
 
 const ChatItem = ({ userId, connectionId, profilePictureUrl, lastMessage, firstName, lastName, isStory }: UserType) => {
   const { changeActiveChat, activeChat } = useChatContext();
   const { onlineUsers } = useOnlineUsers();
+  const { user } = useAuthContext();
   const { unreadMessages } = useUnreadMessages();
   
   const status = onlineUsers?.includes(userId) ? 'online' : 'offline';
@@ -21,9 +24,23 @@ const ChatItem = ({ userId, connectionId, profilePictureUrl, lastMessage, firstN
   // Find unread message count for this specific user
   const unreadMessageData = unreadMessages.find((msg) => msg.senderId === userId);
   const unreadCount = unreadMessageData ? unreadMessageData.messageCount : 0;
+  // console.log('senderId', userId, 'receiverId', user?.id)
 
-  const handleChange = () => {
-    changeActiveChat(userId);
+  const handleChange = async () => {
+    try {
+      changeActiveChat(userId);
+      console.log("senderId",userId,"receiverId",user?.id)
+      await fetch(`${LIVE_URL}/api/v1/chat/mark-as-read`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ senderId: userId , receiverId:user?.id}),
+      });
+  
+    } catch (error) {
+      console.error("Failed to mark messages as read:", error);
+    }
   };
 
   return (
