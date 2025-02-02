@@ -143,7 +143,7 @@ const MarketPlace = () => {
 <TopHeader></TopHeader>
 
 
-    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' , marginTop: "50px" }}>
+    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' , marginTop: "50px",  width:"94.5%", marginLeft:"43px"}}>
      
       <div className="container-fluid">
         <div className="row">

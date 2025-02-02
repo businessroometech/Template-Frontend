@@ -75,7 +75,7 @@ interface ApiResponse<T> {
 const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPhoto, toggle: togglePhotoModel } = useToggle()
   const { isTrue: isOpenVideo, toggle: toggleVideoModel } = useToggle()
-  const [modelTime, setModelTime] = useState(false)
+  const [modelTime, setModelTime] = useState(false) 
   const { user } = useAuthContext();
   const [isSubmittingPost, setIsSubmittingPost] = useState(false);
   const [isSubmittingPhoto, setIsSubmittingPhoto] = useState(false);

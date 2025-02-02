@@ -3,13 +3,14 @@ import Loading from '@/components/Loading'
 import { useAuthContext } from '@/context/useAuthContext'
 import { LIVE_URL } from '@/utils/api'
 import clsx from 'clsx'
+import { timeStamp } from 'console'
 import { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
 import { BsPersonCheckFill } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate, } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const Followers = () => {
@@ -25,12 +26,15 @@ const Followers = () => {
   const [loading, setLoading] = useState<string | null>(null) // Track loading state by user ID
   const skeletonBaseColor = '#e3e3e3'
   const skeletonHighlightColor = '#f2f2f2'
+
   useEffect(() => {
     if (allFollowers.length > 0) {
       return
     }
     fetchConnectionSuggestions()
   }, [allFollowers])
+
+
 
   const fetchConnectionSuggestions = async () => {
     try {
@@ -107,7 +111,7 @@ const Followers = () => {
     setLimit(limit + 3)
     fetchConnectionSuggestions()
   }
-
+  const navigate = useNavigate()
   const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
   return (
     <div style={{width:"360px", marginLeft:"10px"}} >
@@ -142,9 +146,18 @@ const Followers = () => {
                       )}
                     </div>
                     <div className="overflow-hidden">
-                      <Link className="h6 mb-0" to={`/profile/feed/${follower.id}`}>
-                        {follower.firstName} {follower.lastName}
-                      </Link>
+                    <Link 
+  className="h6 mb-0" 
+  to={`/profile/feed/${follower.id}`}
+  onClick={(e) => {
+    e.preventDefault();
+    navigate(`/profile/feed/${follower.id}`);
+    window.location.reload();
+  }}
+>
+  {follower.firstName} {follower.lastName}
+</Link>
+
                       <p className="mb-0 small text-truncate">{follower.userRole}</p>
                     </div>
                     <Button

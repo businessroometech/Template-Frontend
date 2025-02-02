@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { MessageCircleMore } from 'lucide-react'
+import { Check, MessageCircleMore } from 'lucide-react'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 const TopHeader = lazy(() => import('@/components/layout/TopHeader'))
@@ -696,6 +696,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         &nbsp;
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
+        
                       <p>
                         {!skeletonLoading ? (
                           `${profile.connectionsCount} connections`
@@ -703,10 +704,30 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           <Skeleton width={80} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         )}
                       </p>
+                      <button 
+  className="btn d-flex align-items-center justify-content-center gap-2"
+  style={{
+    marginLeft: "240%", 
+     marginTop: "-60px",
+    // marginBottom:"", 
+    height:"45px",
+    width: "160px",
+    backgroundColor: "#e6ffe6",
+    border: "1px solid #99ff99",
+    borderRadius: "15px",
+  }}
+>
+  <Check size={16} color="#28a745" />
+  Get Verified
+</button>
                     </div>
-
+                    
+                    <div style={{ marginTop: "18px", marginLeft: "390px" }}>
+     
+    </div>
                     {/* Action Buttons */}
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
+                      
                       {user?.id === id ? (
                         <Button variant="danger-soft" className="me-2" type="button" onClick={() => navigate('/settings/account')}>
                           <BsPencilFill size={19} className="pe-1" />
@@ -768,7 +789,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           )}
                         </Button>
                       )}
-
+                      
                       <Dropdown>
                         <DropdownToggle
                           as="a"
@@ -879,7 +900,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                 {/* <Col md={6} lg={12}>
                   <Photos />
                 </Col> */}
-                <Col md={6} lg={12} style={{marginLeft:"360px"}}>
+                <Col md={6} lg={12} style={{marginLeft:"90%"}}>
                   <Followers />
                 </Col>
                 <Col md={6} lg={12}>

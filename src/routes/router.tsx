@@ -112,7 +112,7 @@ const AppRouter = (props: RouteProps) => {
         <Route key={idx + route.name} path={route.path} element={<OtherLayout {...props}>{route.element}</OtherLayout>} />
       ))}
 
-      {(feedRoutes || []).map((route, idx) => (
+{(feedRoutes || []).map((route, idx) => (
         <Route 
         key={idx + route.name} 
         path={route.path} 
@@ -124,7 +124,7 @@ const AppRouter = (props: RouteProps) => {
         } />
       ))}
     
-      {(socialWithTopbarRoutes || []).map((route, idx) => (
+    {(socialWithTopbarRoutes || []).map((route, idx) => (
         <Route
           key={idx + route.name}
           path={route.path}
@@ -137,7 +137,7 @@ const AppRouter = (props: RouteProps) => {
           } />
       ))}
 
-      {(profilePagesRoutes || []).map((route, idx) => (
+{(profilePagesRoutes || []).map((route, idx) => (
         <Route 
         key={idx + route.name} 
         path={route.path} 
@@ -151,8 +151,7 @@ const AppRouter = (props: RouteProps) => {
           )
         } />
       ))}
-
-      {(settingPagesRoutes || []).map((route, idx) => (
+     {(settingPagesRoutes || []).map((route, idx) => (
         <Route 
         key={idx + route.name} 
         path={route.path} 
@@ -165,7 +164,7 @@ const AppRouter = (props: RouteProps) => {
         } />
       ))}
 
-      {(appRoutes || []).map((route, idx) => (
+{(appRoutes || []).map((route, idx) => (
         <Route
           key={idx + route.name}
           path={route.path}
@@ -189,7 +188,6 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
-      {/* <Route path='/coming-soon' element={<PreRegisterPage/>}></Route> */}
     </Routes>
   )
 }
