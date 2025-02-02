@@ -35,6 +35,7 @@ import { FaCheck, FaCheckDouble, FaCircle, FaFaceSmile, FaPaperclip, FaXmark } f
 import * as yup from 'yup'
 import { io } from 'socket.io-client'
 import TextFormInput from '../form/TextFormInput'
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
@@ -99,15 +100,21 @@ const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; t
 }
 
 const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const { onlineUsers } = useOnlineUsers()
-  const status = onlineUsers?.includes(user.userId) ? 'online' : 'offline'
-  // console.log(user)
+  const [isLoading, setIsLoading] = useState(true);
+  const { onlineUsers } = useOnlineUsers();
+  const { unreadMessages } = useUnreadMessages();
+  
+  const status = onlineUsers?.includes(user.userId) ? "online" : "offline";
+
+  // Find unread message count for this specific user
+  const unreadMessageData = unreadMessages.find((msg) => msg.senderId === user.userId);
+  const unreadCount = unreadMessageData ? unreadMessageData.messageCount : 0;
+
   useEffect(() => {
     if (user) {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [user])
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -115,33 +122,61 @@ const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }
         <Spinner animation="border" size="sm" className="ms-auto" />
         <span className="ms-2">Loading user...</span>
       </li>
-    )
+    );
   }
 
   return (
     <li
-      onClick={() => {
-        openToast()
-      }}
+      onClick={openToast}
       className="mt-3 hstack gap-3 align-items-center position-relative toast-btn"
-      data-target="chatToast">
-      <div className={clsx(`avatar status-${status}`, { 'avatar-story': user.isStory })}>
-        {user.profilePictureUrl ? (
-          <img className="avatar-img rounded-circle" src={user.profilePictureUrl} alt="avatar" />
-        ) : (
-          <img className="avatar-img rounded-circle" src={avatar} alt="avatar" />
+      data-target="chatToast"
+    >
+      {/* Profile Picture with Status Indicator */}
+      <div className={clsx(`avatar status-${status}`, { "avatar-story": user.isStory })}>
+        <img
+          className="avatar-img rounded-circle"
+          src={user.profilePictureUrl || avatar}
+          alt="avatar"
+        />
+      </div>
+
+      {/* User Details and Unread Count */}
+      <div 
+        className="flex-grow-1" 
+        style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      >
+        <div style={{ maxWidth: "180px" }}>
+          <Link className="h6 mb-0 stretched-link" to="">
+            {`${user.firstName} ${user.lastName}`}
+          </Link>
+          <div className="small text-secondary text-truncate">{user.lastMessage}</div>
+        </div>
+
+        {/* Unread Message Count - Rightmost Side */}
+        {unreadCount > 0 && (
+          <span 
+            className="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center"
+            style={{
+              background: "#FF3B30",
+              color: "#fff",
+              fontSize: "12px",
+              fontWeight: "bold",
+              borderRadius: "12px",
+              padding: "4px 8px",
+              minWidth: "22px",
+              textAlign: "center",
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+              marginLeft: "auto", // Pushes to the rightmost side
+            }}
+          >
+            {unreadCount}
+          </span>
         )}
       </div>
-      <div className="overflow-hidden">
-        <Link className="h6 mb-0 stretched-link" to="">
-          {`${user.firstName} ${user.lastName}`}
-        </Link>
-        <div className="small text-secondary text-truncate">{user.lastMessage}</div>
-      </div>
-      {/* <div className="small ms-auto text-nowrap">{timeSince(user.lastActivity)}</div> */}
     </li>
-  )
-}
+  );
+};
+
 
 const Messaging = () => {
   const [hasMore, setHasMore] = useState(true)
