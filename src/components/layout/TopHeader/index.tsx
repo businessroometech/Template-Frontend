@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BsChatLeftTextFill, BsGearFill } from 'react-icons/bs'
-
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 import LogoBox from '@/components/LogoBox'
 import CollapseMenu from './CollapseMenu'
 import MobileMenuToggle from './MobileMenuToggle'
@@ -13,54 +13,53 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { LIVE_URL } from '@/utils/api'
 
 const TopHeader = () => {
-
-  const { user } = useAuthContext();
-  const [messageAbout, setMessageAbout] = useState<boolean>(false);
-  const [settingsAbout, setSettingsAbout] = useState<boolean>(false);
-  const [notiAbout, setNotiAbout] = useState<boolean>(false);
-  const [Notificount, setNotifiCount] = useState(0);
+  const { user } = useAuthContext()
+  const [messageAbout, setMessageAbout] = useState<boolean>(false)
+  const [settingsAbout, setSettingsAbout] = useState<boolean>(false)
+  const [notiAbout, setNotiAbout] = useState<boolean>(false)
+  const [Notificount, setNotifiCount] = useState(0)
+  const [messageCount, setMessageCount] = useState(0)
+  const { unreadMessages } = useUnreadMessages() // 🔥 Getting unread messages from context
+  useEffect(() => {
+    setMessageCount(unreadMessages.length)
+  }, [unreadMessages])
 
   useEffect(() => {
-    console.log('Notifiction Dropdown useEffect')
+    console.log('Notification Dropdown useEffect')
     const fetchNotificationsCount = async () => {
       try {
-        const response = await fetch(
-          `${LIVE_URL}api/v1/socket-notifications/get-count?userId=${user?.id}`,
-          { method: "GET", headers: { "Content-Type": "application/json" } }
-        );
-  
-        const data = await response.json();
-  
-        setNotifiCount(data.unreadCount);
+        const response = await fetch(`${LIVE_URL}api/v1/socket-notifications/get-count?userId=${user?.id}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        })
+
+        const data = await response.json()
+        setNotifiCount(data.unreadCount)
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        console.error('Error fetching notifications:', error)
       }
-    };
-    fetchNotificationsCount();
-    const interval = setInterval(fetchNotificationsCount, 50000);
-    return () => clearInterval(interval);
-  },[]);
+    }
+    fetchNotificationsCount()
+    const interval = setInterval(fetchNotificationsCount, 50000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const fetchNotificationsCount = async () => {
       try {
-        const response = await fetch(
-          `${LIVE_URL}api/v1/socket-notifications/get-count?userId=${user?.id}`,
-          { method: "GET", headers: { "Content-Type": "application/json" } }
-        );
-  
-        const data = await response.json();
-  
-        setNotifiCount(data.unreadCount);
+        const response = await fetch(`${LIVE_URL}api/v1/socket-notifications/get-count?userId=${user?.id}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        })
+
+        const data = await response.json()
+        setNotifiCount(data.unreadCount)
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        console.error('Error fetching notifications:', error)
       }
-    };
-    fetchNotificationsCount();
-  },[user?.id])
-
-
-
+    }
+    fetchNotificationsCount()
+  }, [user?.id])
 
   return (
     <StyledHeader>
@@ -69,11 +68,10 @@ const TopHeader = () => {
           backgroundColor: 'white',
           width: '100%',
           display: 'flex',
-          alignItems: 'center', // Vertically centers all items
-          justifyContent: 'space-between', // Space items evenly between
-          padding: '0px 80px', // Adds padding to the container
-        }}
-      >
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0px 80px',
+        }}>
         {/* Left side: Logo and MobileMenu */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <LogoBox />
@@ -87,52 +85,75 @@ const TopHeader = () => {
         <ul
           className="nav flex-nowrap align-items-center list-unstyled"
           style={{
-            display: 'flex', // Make the list items flex container
-            alignItems: 'center', // Vertically center items
-            margin: 0, // Remove default margin
-            padding: 0, // Remove default padding
-          }}
-        >
-          {/* Messaging Link */}
+            display: 'flex',
+            alignItems: 'center',
+            margin: 0,
+            padding: 0,
+          }}>
           <li className="nav-item" style={{ position: 'relative' }}>
             <Link to="/messaging">
               <div
                 style={{
+                  position: 'relative',
                   padding: '8px',
-                  borderRadius: '10%',
+                  borderRadius: '50%', // Rounded shape like the bell icon
                   marginLeft: '10px',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'background 0.3s ease',
-                  cursor: 'pointer', // Add pointer cursor for better UX
+                  cursor: 'pointer',
+                  transition: 'background 0.2s ease-in-out',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
-                  setMessageAbout(true);
+                  e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)'
+                  setMessageAbout(true)
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  setMessageAbout(false);
-                }}
-              >
-                <MessageSquareText style={{ color: '#1ea1f2' }} />
+                  e.currentTarget.style.background = 'transparent'
+                  setMessageAbout(false)
+                }}>
+                {/* Message Icon */}
+                <MessageSquareText style={{ color: '#1ea1f2', fontSize: '24px' }} />
+
+                {/* Notification Badge */}
+                {messageCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-2px', // Adjusted for better alignment
+                      right: '-2px',
+                      background: '#b30000',
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 9999,
+                      border: '2px solid white', // Adds the subtle white outline like in the bell icon
+                      boxShadow: '0 0 4px rgba(0, 0, 0, 0.2)', // Slight shadow for depth
+                    }}>
+                    {messageCount}
+                  </span>
+                )}
               </div>
               {messageAbout && (
                 <span
                   style={{
                     position: 'absolute',
-                    marginTop: '40px',
-                    marginLeft: '15px',
-                    top: '50%',
+                    top: '100%', // Positions it right below the parent element
+                    left: '50%', // Centers it horizontally
+                    transform: 'translateX(-50%)', // Adjusts for perfect centering
                     zIndex: 10000,
-                    transform: 'translateY(-50%)',
-                    background: '#333',
+                    background: 'rgba(0, 0, 0, 0.85)', // Slight transparency for a smoother effect
                     color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
+                    padding: '6px 12px', // Increased padding for better visibility
+                    borderRadius: '6px', // Slightly larger border radius for a modern feel
                     whiteSpace: 'nowrap',
+                    fontSize: '14px', // Improved readability
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', // Adds a subtle shadow effect
                   }}
-                  className="label"
-                >
+                  className="label">
                   {'Message'}
                 </span>
               )}
@@ -147,19 +168,16 @@ const TopHeader = () => {
                   padding: '8px',
                   borderRadius: '10%',
                   marginLeft: '10px',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'background 0.3s ease',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)';
-                  setSettingsAbout(true);
+                  e.currentTarget.style.background = 'rgba(30, 161, 242, 0.4)'
+                  setSettingsAbout(true)
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  setSettingsAbout(false);
-                }}
-              >
+                  e.currentTarget.style.background = 'transparent'
+                  setSettingsAbout(false)
+                }}>
                 <Settings style={{ color: '#1ea1f2' }} />
               </div>
               {settingsAbout && (
@@ -177,23 +195,21 @@ const TopHeader = () => {
                     borderRadius: '4px',
                     whiteSpace: 'nowrap',
                   }}
-                  className="label"
-                >
+                  className="label">
                   {'Settings'}
                 </span>
               )}
             </Link>
           </li>
 
-          {/* Notification Dropdown */}
+          {/* 🔔 Notification Dropdown */}
           <NotificationDropdown count={Notificount} />
 
-          {/* Profile Dropdown */}
+          {/* 👤 Profile Dropdown */}
           <ProfileDropdown />
         </ul>
       </div>
     </StyledHeader>
-
   )
 }
 

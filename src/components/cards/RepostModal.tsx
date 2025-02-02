@@ -11,7 +11,16 @@ interface ApiResponse<T> {
     data: T
 }
 
-const RepostModal = ({ isOpen, onClose, authorName,item }) => {
+const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated } 
+: 
+{
+  isOpen : boolean;
+  onClose : () => void;
+  authorName : string;
+  item : PostSchema;
+  setIsCreated  : React.Dispatch<React.SetStateAction<boolean>>;
+  isCreated  : boolean;
+}) => {
   const [includeThoughts, setIncludeThoughts] = useState(false);
   const [thoughts, setThoughts] = useState('');
   const [hoveredOption, setHoveredOption] = useState(null); // To track which option is hovered
@@ -42,7 +51,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item }) => {
         url: CREATE_POST,
         data: {
           hashtags: hashtags,
-          repostedFrom : item.post.userId,
+          repostedFrom : item.post.repostedFrom ? item.post.repostedFrom : item.post.userId,
           userId : user?.id,
           content : item.post.content,   
           mediaKeys : (item as PostSchema).post.mediaKeys,    
@@ -60,6 +69,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item }) => {
     }
     finally {
       setIsSubmittingPost(false);
+      setIsCreated(() => !isCreated)
     }
   }
 

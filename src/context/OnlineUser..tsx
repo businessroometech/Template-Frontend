@@ -14,7 +14,7 @@ export const OnlineUsersProvider: React.FC<React.PropsWithChildren<{}>> = ({ chi
     const {user} = useAuthContext()
     const fetchOnlineUsers = async () => {
         
-        if (!user.id) {
+        if (!user?.id) {
             console.error('No userId found in localStorage.');
             return;
         }

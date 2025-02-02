@@ -103,6 +103,7 @@ const ChatArea = () => {
     // console.log(roomId)
     socket.emit('joinRoom', roomId)
     socket.on('connections', () => {
+
       console.log('Socket connected:', socket.id)
     })
 
@@ -111,6 +112,7 @@ const ChatArea = () => {
     })
 
     socket.on('newMessage', (message) => {
+      
       if (
         (message.senderId === user.id && message.receiverId === activeChat.personalDetails.id) ||
         (message.receiverId === user.id && message.senderId === activeChat.personalDetails.id)

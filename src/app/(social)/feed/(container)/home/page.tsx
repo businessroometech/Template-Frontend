@@ -93,17 +93,8 @@ const Home = () => {
       } 
     }
     fetchUser();
-  },[])
-
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // console.log("running fetchOnlineUsers");
-      fetchOnlineUsers();
-    }, 15000);
-
-    return () => clearInterval(interval);
-  }, [fetchOnlineUsers]);
+  },[user.id])
+;
 
 
 

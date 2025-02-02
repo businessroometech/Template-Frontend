@@ -21,9 +21,12 @@ import VisitProfile from '@/components/VisitProfile'
 import { io } from 'socket.io-client'
 import { useEffect } from 'react'
 import { SOCKET_URL } from '@/utils/api'
+import { LIVE_URL } from '@/utils/api'
+import { useOnlineUsers } from '@/context/OnlineUser.'
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 
 
-
+//api/v1/chat/get-messages-unread
 
 const AppRouter = (props: RouteProps) => {
   const socket = io(SOCKET_URL, {
@@ -32,6 +35,37 @@ const AppRouter = (props: RouteProps) => {
   })
   const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
+  const {fetchOnlineUsers} = useOnlineUsers()
+  const {fetchUnreadMessages} = useUnreadMessages()
+
+
+  
+    // useEffect(() => {
+    //   if (!user) return
+  
+    //   socket.on('newMessage',user?.id)
+    //   console.log('newMessage', user?.id)
+  
+    //   return () => {
+    //     // socket.emit('leaveRoom', roomId)
+    //     socket.off('newMessage',) // Properly remove listener
+    //   }
+    // }, [user?.id])
+  
+    useEffect(()=>{
+      if(user){
+        fetchUnreadMessages()
+      }
+    },[])
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchOnlineUsers();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [fetchOnlineUsers])
   //  useEffect(() => {
   //     if (user) {
   //       socket.emit("userOnline", user.id);
@@ -49,11 +83,14 @@ const AppRouter = (props: RouteProps) => {
   //   }, [user]);
   useEffect(() => {
     // Mark user as online when component mounts
-    socket.emit("userOnline", user.id); // Replace 'user123' with dynamic user info
-
-    // Define the handler for the 'beforeunload' event to mark user offline
+    socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
+    socket.on('newMessage', async () => {
+      // if (user?.id) {
+        await fetchUnreadMessages();
+      // }
+    });
     const handleBeforeUnload = () => {
-      socket.emit("userOffline", user.id); // Mark user as offline
+      socket.emit("userOffline", user?.id); // Mark user as offline
     };
 
     // Add 'beforeunload' event listener to handle tab closure
@@ -62,12 +99,12 @@ const AppRouter = (props: RouteProps) => {
     // Cleanup event listener when component unmounts
     return () => {
       // Emit useroffline on unmount as well (in case the user navigates away)
-      socket.emit("userOffline", user.id);
+      socket.emit("userOffline", user?.id);
       
       // Remove event listener to avoid memory leaks
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [user?.id]);
 
   return (
     <Routes>
