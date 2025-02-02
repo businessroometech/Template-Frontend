@@ -196,7 +196,7 @@ const PostCard = ({
         const data: GetAllLikesResponse = await response.json();
         if (data.status === 'success') {
           // // console.log('Likes fetched successfully:', data.data?.likes);
-          setAllLikes(data.data?.likers);
+          setAllLikes(data.data?.likers || []);
           // Optionally, update the UI with the likes data
         } else {
           console.error('Error fetching likes:', data.message);
@@ -208,6 +208,7 @@ const PostCard = ({
         setAllLikes([]);
       }
     } catch (error) {
+      setAllLikes([]);
       console.error('An unknown error occurred:', (error as Error).message);
     }
   };
@@ -355,8 +356,6 @@ const PostCard = ({
   };
 
   function LikeText(allLikes: Like[]) {
-    if (allLikes.length === 0) return null;
-
     const userLike = allLikes.find(like => like.id === user?.id);
     const otherLikes = allLikes.filter(like => like.id !== user?.id);
     
@@ -370,6 +369,7 @@ const PostCard = ({
     if (otherLikes.length > 1) {
         str += `, and ${otherLikes.length - 1} others`;
     }
+    if(allLikes.length === 0) str = ""
     return <p
       style={{
         display: "flex",
@@ -469,19 +469,49 @@ const PostCard = ({
     </div>
 
     {/* Close Button */}
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        width: "32px",
-        height: "32px",
-      }}
-      onClick={() => setClose(false)}
-    >
-      <X />
-    </div>
+    {
+            
+
+            <div style={{ position: "relative" }}>
+              <button
+                className="btn btn-link p-0 text-dark"
+                style={{ fontSize: "1.5rem", lineHeight: "1"}}
+                onClick={() => setMenuVisible(!menuVisible)}
+              >
+                <BsThreeDots />
+              </button>
+              {menuVisible && (
+                <div
+                  className="dropdown-menu show"
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    right: 0,
+                    zIndex: 1000,
+                    display: "block",
+                    backgroundColor: "white",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "0.25rem",
+                    overflow: "hidden",
+                  }}
+                >
+                 {post.userId === user?.id && <button
+                    className="dropdown-item text-danger d-flex align-items-center"
+                    onClick={() => handleDeletePost(post?.Id)}
+                    style={{ gap: "0.5rem" }}
+                  >
+                    <BsTrash /> Delete Post
+                  </button>}
+                  <div
+                    className="dropdown-item text-danger d-flex align-items-center"
+                    onClick={() => setClose(false)}
+                  >
+                    <X size={14}/> <span style={{marginLeft : '5px'}}>Hide Header</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          }
   </div>
 </>
 
@@ -548,7 +578,7 @@ const PostCard = ({
           </div>
 
           {
-            post.userId === user?.id &&
+            post.userId === user?.id && !post.repostedFrom &&
 
             <div style={{ position: "relative" }}>
               <button
@@ -636,7 +666,7 @@ const PostCard = ({
           )
         )}
         <div style={{ marginTop: '20px' }}>
-          {(allLikes || commentCount > 0) && LikeText(allLikes)}
+          {LikeText(allLikes)}
         </div>
         <ButtonGroup
           className="w-100 border-top border-bottom mb-3"

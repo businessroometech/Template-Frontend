@@ -199,13 +199,14 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     <li className="comment-item" id={comment.id}>
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
+        <Link to={`/profile/feed/${comment?.commenterId}`}>
         <img
           src={profile.profileImgUrl || fallBackAvatar}
           alt={`${comment.commenterName || comment.createdBy}-avatar`}
           className="rounded-circle me-3"
           style={{ width: '35px', height: '35px', objectFit: 'cover' }}
         />
-
+        </Link>
         {/* Comment Content */}
         <div
           className="bg-white rounded p-1 flex-grow-1"
@@ -219,7 +220,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
         >
           <div className="d-flex justify-content-between">
             <div style={{display : 'flex'}}>
-            <Link to={`/profile/feed/${comment?.id}`}>
+            <Link to={`/profile/feed/${comment?.commenterId}`}>
               <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
             </Link>
             <small className="ms-2">{comment.timestamp}</small>

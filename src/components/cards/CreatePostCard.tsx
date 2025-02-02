@@ -155,6 +155,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
       console.log('Thoughts cannot be empty.')
+      alert('Thoughts cannot be empty.')
       return
     }
     setIsSubmittingPost(true);
@@ -213,6 +214,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
+    if(uploadedFiles.length === 0) {
+      alert('No Photos are Uploaded');
+      return;
+    }
     setIsSubmittingPhoto(true);
     const uploadSuccess = await handleUpload()
     
