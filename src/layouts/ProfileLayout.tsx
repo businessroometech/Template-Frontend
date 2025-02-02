@@ -707,10 +707,10 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                       <button 
   className="btn d-flex align-items-center justify-content-center gap-2"
   style={{
-    marginLeft: "220%", 
+    marginLeft: "240%", 
      marginTop: "-60px",
     // marginBottom:"", 
-    height:"65px",
+    height:"45px",
     width: "160px",
     backgroundColor: "#e6ffe6",
     border: "1px solid #99ff99",
