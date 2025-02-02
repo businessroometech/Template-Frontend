@@ -469,19 +469,49 @@ const PostCard = ({
     </div>
 
     {/* Close Button */}
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        width: "32px",
-        height: "32px",
-      }}
-      onClick={() => setClose(false)}
-    >
-      <X />
-    </div>
+    {
+            
+
+            <div style={{ position: "relative" }}>
+              <button
+                className="btn btn-link p-0 text-dark"
+                style={{ fontSize: "1.5rem", lineHeight: "1"}}
+                onClick={() => setMenuVisible(!menuVisible)}
+              >
+                <BsThreeDots />
+              </button>
+              {menuVisible && (
+                <div
+                  className="dropdown-menu show"
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    right: 0,
+                    zIndex: 1000,
+                    display: "block",
+                    backgroundColor: "white",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "0.25rem",
+                    overflow: "hidden",
+                  }}
+                >
+                 {post.userId === user?.id && <button
+                    className="dropdown-item text-danger d-flex align-items-center"
+                    onClick={() => handleDeletePost(post?.Id)}
+                    style={{ gap: "0.5rem" }}
+                  >
+                    <BsTrash /> Delete Post
+                  </button>}
+                  <div
+                    className="dropdown-item text-danger d-flex align-items-center"
+                    onClick={() => setClose(false)}
+                  >
+                    <X size={14}/> <span style={{marginLeft : '5px'}}>Hide Header</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          }
   </div>
 </>
 
@@ -548,7 +578,7 @@ const PostCard = ({
           </div>
 
           {
-            post.userId === user?.id &&
+            post.userId === user?.id && !post.repostedFrom &&
 
             <div style={{ position: "relative" }}>
               <button
