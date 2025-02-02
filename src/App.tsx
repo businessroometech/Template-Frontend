@@ -16,7 +16,6 @@ function App() {
         <UnreadMessagesProvider>
           <AppRouter />
         </UnreadMessagesProvider>
-        <AppRouter />
       </OnlineUsersProvider>
     </AppProvidersWrapper>
   )
