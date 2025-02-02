@@ -62,7 +62,7 @@ const AppRouter = (props: RouteProps) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchOnlineUsers();
-    }, 10000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [fetchOnlineUsers])
