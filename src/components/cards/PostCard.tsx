@@ -14,14 +14,14 @@ import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
 import VideoPlayer from './components/VideoPlayer';
 import GlightBox from '../GlightBox';
 import { mixed } from 'yup';
-import ResponsiveGallery from './components/MediaGallery';
+import ResponsiveGallery, { UtilType } from './components/MediaGallery';
 import axios from 'axios';
 import { FaGlobe } from 'react-icons/fa';
 import RepostModal from './RepostModal';
 import { LIVE_URL } from '@/utils/api';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 
-interface Like {
+export interface Like {
   id: string;
   occupation: string;
   password: string;
@@ -51,7 +51,7 @@ interface Like {
   likerUrl: string; 
 }
 
-interface Post {
+export interface Post {
   Id: string;
   userId: string;
   title: string | null;
@@ -66,8 +66,8 @@ interface Post {
   isRepost: boolean;
   repostedFrom?: string;
   repostText?: string;
+  likeStatus : boolean;
 }
-
 export interface UserDetails {
   postedId: string;
   firstName: string;
@@ -83,7 +83,7 @@ export interface PostSchema {
   comments: any[]; // Define a more specific type if comments have a structure
 }
 
-interface GetAllLikesResponse {
+export interface GetAllLikesResponse {
   status: "success" | "error";
   message: string;
   data?: {
@@ -94,26 +94,24 @@ interface GetAllLikesResponse {
 
 
 const PostCard = ({ 
-  item, 
-  isMediaKeys,  
+  item,   
   profile,
   isCreated,
   setIsCreated
 } :
 {
   item : PostSchema;
-  isMediaKeys  : boolean;
   profile : UserProfile;
   isCreated : boolean;
   setIsCreated  : React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   //  console.log('---profile in post card---',profile);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<[]>([]);
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuthContext();
   const [refresh, setRefresh] = useState(0);
-  const [likeStatus, setLikeStatus] = useState();
+  const [likeStatus, setLikeStatus] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState(false);
   const [preview, setPreview] = useState<any>();
   const [url, setUrl] = useState("");
@@ -133,6 +131,16 @@ const PostCard = ({
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
   const [repostProfile,setRepostProfile] = useState<UserProfile>({});
   const [close,setClose] = useState<boolean>(true);
+  const utils : UtilType = {
+    comments : comments,
+    setComments : setComments,
+    setLikeStatus : setLikeStatus,
+    likeStatus : likeStatus,
+    allLikes : allLikes,
+    setAllLikes : setAllLikes,
+    likeCount : likeCount,
+    setLikeCount: setLikeCount,
+  }
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -141,8 +149,9 @@ const PostCard = ({
     }
   }, [post.likeStatus]);
   const media = post.repostedFrom ? post?.mediaUrls : post?.mediaUrls;
-  if(post.repostedFrom !== null) console.log('---media keys---',post.mediaKeys)
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
+
+
 
   function isRepost() {
     return post.repostedFrom !== null && post.repostedFrom !== undefined
@@ -180,6 +189,7 @@ const PostCard = ({
   function isRepostWithText() {
     return isRepost() && (post.repostText?.trim() !== "" || post.repostText !== null)
   }
+  
 
   const deletePost = async (postId: string): Promise<void> => {
     try {
@@ -271,6 +281,7 @@ const PostCard = ({
       if(hasMount.current) return;
       if(Object.keys(repostProfile).length !== 0) return;
       hasMount.current = true;
+      
       const fetchUser = async () => {
         try {
           const response = await fetch(`${LIVE_URL}api/v1/auth/get-user-Profile`, {
@@ -483,7 +494,7 @@ const PostCard = ({
                     <span className="small mx-3" style={{ color: "#8b959b" }}>
                       {/* {console.log(post, '---userInfo---')} */}
                       {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
-                      {post.repostedFrom ? repostProfile?.personalDetails?.userRole  : userInfo?.userRole}
+                      {userInfo?.userRole && userInfo?.userRole}
                       <span className='mx-2'></span>
                     </span>
                     <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
@@ -584,7 +595,7 @@ const PostCard = ({
             <div className="d-flex align-items-center">
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post?.repostedFrom}`} role="button">
-                    <img className="avatar-img rounded-circle" src={repostProfile.profileImgUrl ? repostProfile.profileImgUrl : fallBackAvatar} />
+                    <img className="avatar-img rounded-circle" src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} />
                 </Link>
 
               </div>
@@ -681,7 +692,13 @@ const PostCard = ({
               {videoPlayer}
             </div>
           ) : (
-            <ResponsiveGallery media={media} />
+            <ResponsiveGallery 
+              media={media} 
+              item={item} 
+              profile={profile}
+              setShowRepostOp={setShowRepostOp}
+              utils={utils}
+            />
           )
         )}
         
@@ -1060,7 +1077,13 @@ const PostCard = ({
               {videoPlayer}
             </div>
           ) : (
-            <ResponsiveGallery media={media} />
+            <ResponsiveGallery
+              media={media} 
+              item={item} 
+              profile={profile}
+              setShowRepostOp={setShowRepostOp}
+              utils={utils}
+            />
           )
         )}
         <div style={{ marginTop: '20px' }}>
