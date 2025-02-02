@@ -18,11 +18,68 @@ import Founderforms from '@/app/(plain)/Founderform/Founderform'
 import AccountSettings from '@/assets/data/clone/accountClone'
 import MarketplaceDetails from '@/app/(plain)/Marketplacedetails/Marketplacedetails'
 import VisitProfile from '@/components/VisitProfile'
-import PreRegisterPage from '@/components/Coming'
+import { io } from 'socket.io-client'
+import { useEffect } from 'react'
+import { SOCKET_URL } from '@/utils/api'
+import { useOnlineUsers } from '@/context/OnlineUser.'
+
+
 
 
 const AppRouter = (props: RouteProps) => {
+  const socket = io(SOCKET_URL, {
+    // path: "/socket.io",
+    transports: ['websocket'],
+  })
+  const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
+  const {fetchOnlineUsers} = useOnlineUsers()
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchOnlineUsers();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [fetchOnlineUsers])
+  //  useEffect(() => {
+  //     if (user) {
+  //       socket.emit("userOnline", user.id);
+  //       // console.log('userOnline', user.id)
+  //     }
+  //     return () => {
+  //       try {
+  //         if (user) {
+  //           socket.emit("userOffline", user.id);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error during socket disconnection:', error);
+  //       }
+  //     };
+  //   }, [user]);
+  useEffect(() => {
+    // Mark user as online when component mounts
+    socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
+    console.log('userOnline', user?.id)
+
+    // Define the handler for the 'beforeunload' event to mark user offline
+    const handleBeforeUnload = () => {
+      socket.emit("userOffline", user?.id); // Mark user as offline
+    };
+
+    // Add 'beforeunload' event listener to handle tab closure
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Cleanup event listener when component unmounts
+    return () => {
+      // Emit useroffline on unmount as well (in case the user navigates away)
+      socket.emit("userOffline", user?.id);
+      
+      // Remove event listener to avoid memory leaks
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [user?.id]);
 
   return (
     <Routes>
@@ -107,7 +164,7 @@ const AppRouter = (props: RouteProps) => {
       <Route path='/founder' element={<Founderforms></Founderforms>} />
       <Route path='/marketplacedetails/:id' element={<MarketplaceDetails/>}></Route>
       <Route path='/profile-visitors' element={<VisitProfile/>}></Route>
-      <Route path='/coming-soon' element={<PreRegisterPage/>}></Route>
+      {/* <Route path='/coming-soon' element={<PreRegisterPage/>}></Route> */}
     </Routes>
   )
 }

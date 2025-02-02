@@ -155,6 +155,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
       console.log('Thoughts cannot be empty.')
+      alert('Thoughts cannot be empty.')
       return
     }
     setIsSubmittingPost(true);
@@ -182,6 +183,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     }
     finally {
       setIsSubmittingPost(false);
+      setUploadedFiles([]);
     }
   }
 
@@ -213,6 +215,10 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
   }
 
   const handlePhotoSubmit = async () => {
+    if(uploadedFiles.length === 0) {
+      alert('No Photos are Uploaded');
+      return;
+    }
     setIsSubmittingPhoto(true);
     const uploadSuccess = await handleUpload()
     
@@ -241,9 +247,6 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
           console.log('went inside')
           setThoughts('') // Reset thoughts after successful post
           togglePhotoModel()
-          setTimeout(() => {
-            setIsCreated(() => !isCreated)
-          }, 1000)
         }
       } else {
         console.log('Upload failed. Post not submitted.')
@@ -252,7 +255,9 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
       console.log('Error in the posting', err)
     }
     finally {
+      setIsCreated(() => !isCreated)
       setIsSubmittingPhoto(false);
+      setUploadedFiles([]);
     }
   }
 
@@ -304,6 +309,7 @@ const CreatePostCard = ({ setIsCreated,isCreated }: CreatePostCardProps) => {
     finally{
       setIsSubmittingVideo(false);
       toggleVideoModel();
+      setUploadedFiles([]);
       setIsCreated(() => !isCreated)
     }
   }

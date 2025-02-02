@@ -5,9 +5,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { basePath } from './context/constants'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // <StrictMode>
+  <StrictMode>
     <BrowserRouter basename={basePath}>
       <App />
     </BrowserRouter>
-//   </StrictMode>,
+  </StrictMode>,
 )
