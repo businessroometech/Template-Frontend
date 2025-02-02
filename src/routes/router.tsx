@@ -21,6 +21,7 @@ import VisitProfile from '@/components/VisitProfile'
 import { io } from 'socket.io-client'
 import { useEffect } from 'react'
 import { SOCKET_URL } from '@/utils/api'
+import { useOnlineUsers } from '@/context/OnlineUser.'
 
 
 
@@ -32,6 +33,16 @@ const AppRouter = (props: RouteProps) => {
   })
   const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
+  const {fetchOnlineUsers} = useOnlineUsers()
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchOnlineUsers();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [fetchOnlineUsers])
   //  useEffect(() => {
   //     if (user) {
   //       socket.emit("userOnline", user.id);

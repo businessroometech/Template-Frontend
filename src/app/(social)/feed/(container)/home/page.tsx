@@ -94,14 +94,7 @@ const Home = () => {
     }
     fetchUser();
   },[user.id])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchOnlineUsers();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [fetchOnlineUsers]);
+;
 
 
 
