@@ -125,6 +125,7 @@ const PostCard = ({
   const hasMount = useRef(false);
   const [allLikes, setAllLikes] = useState<Like[]>([]);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isExpandedRe, setIsExpandedRe] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
   const [repostProfile,setRepostProfile] = useState<UserProfile>({});
@@ -527,16 +528,16 @@ const PostCard = ({
                 lineHeight: '19px',
                 color: 'black',
                 fontSize: '16px',
-                maxHeight: isExpanded ? 'none' : '192px',
+                maxHeight: isExpandedRe ? 'none' : '192px',
                 overflow: 'hidden',
               }}
             >
               {post.repostText}
             </div>
-            {!isExpanded && post.repostText.length > 230 && (
+            {!isExpandedRe && post.repostText.length > 230 && (
               <span
                 className="text-blue-500 mt-1 cursor-pointer"
-                onClick={() => setIsExpanded(true)}
+                onClick={() => setIsExpandedRe(true)}
               >
                 ...read more
               </span>
