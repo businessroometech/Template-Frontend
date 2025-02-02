@@ -95,12 +95,16 @@ interface GetAllLikesResponse {
 const PostCard = ({ 
   item, 
   isMediaKeys,  
-  profile 
+  profile,
+  isCreated,
+  setIsCreated
 } :
 {
   item : PostSchema;
   isMediaKeys  : boolean;
-  profile : UserProfile
+  profile : UserProfile;
+  isCreated : boolean;
+  setIsCreated  : React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   //  console.log('---profile in post card---',profile);
   const [comments, setComments] = useState([]);
@@ -125,12 +129,6 @@ const PostCard = ({
   const [showRepostOp,setShowRepostOp] = useState<boolean>(false);
   const [repostProfile,setRepostProfile] = useState<UserProfile>({});
   const [close,setClose] = useState<boolean>(true);
-  // console.log('---post---',post);
-  // console.log('---item---',item);
-  // const [commentCount,setCommentCount] = useState<number>(post.commentCount || 0);
-  // const [likeCount,setLikeCount] = useState<number>(post.likeCount || 0);
-  // console.log(profile);
-  // console.log("Profile In PostCard",profile);
   useEffect(() => {
     if (post?.likeStatus !== undefined) {
       setLikeStatus(post.likeStatus);
@@ -698,7 +696,14 @@ const PostCard = ({
             {/* <span>Repost</span> */}
           </Button>
             {
-              <RepostModal isOpen={showRepostOp} onClose={() => setShowRepostOp(false)} authorName={userInfo?.firstName} item={item} />
+              <RepostModal 
+                isOpen={showRepostOp} 
+                onClose={() => setShowRepostOp(false)} 
+                authorName={userInfo?.firstName} 
+                item={item} 
+                isCreated={isCreated}
+                setIsCreated={setIsCreated}
+              />
             }
           {/* <Button
             variant="ghost"
@@ -1067,8 +1072,14 @@ const PostCard = ({
             {/* <span>Repost</span> */}
           </Button>
             {
-              <RepostModal isOpen={showRepostOp} onClose={() => setShowRepostOp(false)} authorName={userInfo?.firstName} item={item} />
-            }
+              <RepostModal 
+                isOpen={showRepostOp} 
+                onClose={() => setShowRepostOp(false)} 
+                authorName={userInfo?.firstName} 
+                item={item} 
+                isCreated={isCreated}
+                setIsCreated={setIsCreated}
+              />            }
           {/* <Button
             variant="ghost"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"

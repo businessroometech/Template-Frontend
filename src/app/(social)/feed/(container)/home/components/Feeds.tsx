@@ -685,12 +685,11 @@ const PostSkeleton = () => {
                 posts={posts}
                 setPosts={setPosts}
                 key={post.post.Id}
-                isMediaKeys={false}
                 onDelete={handleDelete}
                 setIsCreated={setIsCreated}
                 tlRefresh={tlRefresh}
                 setTlRefresh={setTlRefresh}
-                scrollbarWidth="none"
+                isCreated={isCreated}
                 profile={profile}
               />
             ))}
