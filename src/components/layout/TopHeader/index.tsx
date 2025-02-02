@@ -23,6 +23,7 @@ const TopHeader = () => {
   useEffect(() => {
     setMessageCount(unreadMessages.length)
   }, [unreadMessages])
+  console.log('TopHeader',unreadMessages)
 
   useEffect(() => {
     console.log('Notification Dropdown useEffect')

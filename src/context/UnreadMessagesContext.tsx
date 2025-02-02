@@ -31,6 +31,7 @@ export const UnreadMessagesProvider = ({ children }: { children: React.ReactNode
       }
 
       const data = await response.json();
+      console.log("--------data----------",data);
       const senderIds = data?.data?.result?.map((msg: any) => msg.senderId) || [];
 
       if (senderIds.length > 0) {
