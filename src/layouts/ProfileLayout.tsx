@@ -696,6 +696,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         &nbsp;
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
+        
                       <p>
                         {!skeletonLoading ? (
                           `${profile.connectionsCount} connections`
@@ -703,15 +704,30 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           <Skeleton width={80} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         )}
                       </p>
+                      <button 
+  className="btn d-flex align-items-center justify-content-center gap-2"
+  style={{
+    marginLeft: "220%", 
+     marginTop: "-60px",
+    // marginBottom:"", 
+    height:"65px",
+    width: "160px",
+    backgroundColor: "#e6ffe6",
+    border: "1px solid #99ff99",
+    borderRadius: "15px",
+  }}
+>
+  <Check size={16} color="#28a745" />
+  Get Verified
+</button>
                     </div>
+                    
                     <div style={{ marginTop: "18px", marginLeft: "390px" }}>
-      <Button style={{ backgroundColor: "green", color: "white" }}>
-        <Check size={16} style={{ marginRight: "8px" }} />
-        Get Verified
-      </Button>
+     
     </div>
                     {/* Action Buttons */}
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
+                      
                       {user?.id === id ? (
                         <Button variant="danger-soft" className="me-2" type="button" onClick={() => navigate('/settings/account')}>
                           <BsPencilFill size={19} className="pe-1" />
@@ -773,7 +789,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           )}
                         </Button>
                       )}
-
+                      
                       <Dropdown>
                         <DropdownToggle
                           as="a"

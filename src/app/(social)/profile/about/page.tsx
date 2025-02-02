@@ -5,6 +5,8 @@ import PageMetaData from '@/components/PageMetaData'
 import { BsBriefcase, BsCalendarDate, BsEnvelope, BsGeoAlt, BsHeart, BsPencilSquare, BsPlusCircleDotted, BsThreeDots, BsTrash } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import InvestorCards from './AboutInvestor'
+import AboutBusinessBuyer from './AboutBusinessBuyer'
+import AboutFounder from './AboutFounder'
 
 const Interests = () => {
   return (
@@ -85,7 +87,9 @@ const About = () => {
           <CardTitle>Business Profile Info</CardTitle>
         </CardHeader>
         <CardBody>
-<InvestorCards></InvestorCards>
+{/* <InvestorCards></InvestorCards> */}
+{/* <AboutBusinessBuyer></AboutBusinessBuyer> */}
+<AboutFounder></AboutFounder>
         </CardBody>
       </Card>
       <Interests />
