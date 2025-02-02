@@ -6,6 +6,7 @@ import Messaging from '@/components/layout/Messaging'
 import ProfilePanel from '@/components/layout/ProfilePanel'
 import { useLayoutContext } from '@/context/useLayoutContext'
 import useViewPort from '@/hooks/useViewPort'
+import { useUnreadMessages } from "@/context/UnreadMessagesContext"
 import type { ChildrenType } from '@/types/component'
 import {
   Col,
@@ -41,6 +42,8 @@ import Preloader from "@/components/Preloader"
 
 const FeedLayout = ({ children }: ChildrenType) => {
   const { messagingOffcanvas, startOffcanvas } = useLayoutContext()
+  const { unreadMessages } = useUnreadMessages()
+  const count = unreadMessages.length;
   const { width } = useViewPort()
   return (
     <>
@@ -99,6 +102,11 @@ const FeedLayout = ({ children }: ChildrenType) => {
           className="icon-md btn btn-primary position-fixed end-0 bottom-0 mb-5"
           role="button"
           aria-controls="offcanvasChat">
+            {count > 0 && (
+              <span className="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle" style={{ padding: '0.5em', width: '1.5em', height: '1.5em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {count}
+              </span>
+            )}
           <span>
             <BsChatLeftTextFill />
           </span>
@@ -184,3 +192,5 @@ const FeedLayout = ({ children }: ChildrenType) => {
 }
 
 export default FeedLayout
+
+
