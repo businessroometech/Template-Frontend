@@ -682,13 +682,13 @@ const BusinessPreferencesForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessType: '',
-    location: '',
+    businesslocation: '',
     businessModel: '',
     budget: '',
     renovationInvestment: '',
     timeline: '',
-    growthPreference: '',
-    supportTraining: '',
+    growthOrStableCashFlow: '',
+    supportAfterPurchase: '',
     ndaAgreement: '',
     additionalInfo: '',
   });
@@ -706,25 +706,61 @@ const BusinessPreferencesForm = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+      UserId: user?.id
+
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    if (!user?.id) {
+      toast.error("User ID is missing. Please log in again.");
+      return;
+    }
+  
     toast.success("Form submitted successfully!");
+  
     try {
-      fetch(`${LIVE_URL}business-buyer/create`, {
+      const response1 = await fetch(`http://13.216.146.100/api/v1/businessbuyer/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...formData, userId: user?.id }),
-      }).then(() => navigate('/'));
+        body: JSON.stringify({ ...formData }),
+      });
+  
+      if (!response1.ok) {
+        throw new Error("Failed to submit business buyer data");
+      }
+  
+      try {
+        const response2 = await fetch(`http://13.216.146.100/api/v1/subrole/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            UserId: user?.id,
+            SubRole: "BusinessBuyer"
+          }),
+        });
+  
+        if (!response2.ok) {
+          throw new Error("Failed to submit subrole data");
+        }
+  
+        navigate('/');
+      } catch (error) {
+        console.error("Error in second request:", error);
+        toast.error("An error occurred while submitting the subrole data.");
+      }
+  
     } catch (error) {
-      console.log(error);
+      console.error("Error in first request:", error);
+      toast.error("An error occurred while submitting the form.");
     }
   };
-
   const handleSkip = () => {
     navigate('/');
   };

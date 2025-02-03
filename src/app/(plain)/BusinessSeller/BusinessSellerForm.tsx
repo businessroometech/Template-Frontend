@@ -823,39 +823,67 @@ const BusinessSellerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     const dataToSend = {
       ...formData,
       UserId: user?.id,
-      OwnerDetails : [user],
-      OwnerImage : profile.profileImgUrl
+      OwnerDetails: [user], // Ensuring array format
+      OwnerImage: profile.profileImgUrl
     };
-console.log("------user for form----------" , user)
-console.log("----------------datatosend----------" , dataToSend)
+  
+    console.log("------user for form----------", user);
+    console.log("----------------datatosend----------", dataToSend);
+  
     try {
       const response = await fetch(`${LIVE_URL}api/v1/businessseller/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'UserId': user?.id,
-          OwnerDetails : [user],
-          OwnerImage : profile.profileImgUrl
+          'UserId': user?.id // Only send simple values in headers
         },
         body: JSON.stringify(dataToSend)
       });
-
+  
       if (!response.ok) {
+        const errorMessage = await response.text();
+        console.error("Error response from API:", errorMessage);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const responseData = await response.json();
       toast.success("Form submitted successfully!");
+      console.log("Response Data:", responseData);
       navigate('/');
-      console.log(responseData)
-    } catch (error) {
-      console.error("Error details:", error);
-      toast.error("There was an error submitting the form.");
-    }
+
+
+      
+        const response2 = await fetch(`http://13.216.146.100/api/v1/subrole/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            UserId: user?.id,
+            SubRole: "BusinessSeller"
+          }),
+        });
+  
+        if (!response2.ok) {
+          const errorText = await response2.text();
+          throw new Error(`Failed to submit subrole data: ${errorText}`);
+        }
+  
+        console.log("SubRole successfully submitted");
+        navigate('/');
+      }
+    
+  
+      // Only attempt subrole creation if the error is related to missing subrole
+     catch (error) {
+        console.error("Error in second request:", error);
+        toast.error("An error occurred while submitting the subrole or Business data.");
+      }
+    
   };
 
   const handleSkip = () => {

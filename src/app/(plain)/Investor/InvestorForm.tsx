@@ -1966,6 +1966,7 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
+import { toast } from 'react-toastify';
 //import {ToastContainer , Toast} from 'react-bootstrap';
 //import { toast } from 'react-toastify';
 
@@ -2014,35 +2015,61 @@ const InvestorForm = () => {
   const handleInputChange = (name, value) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
-
+      [name]: value,
+      UserId : user?.id
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://13.216.146.100/api/v1/investor/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...formData, UserId: user?.id })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit form');
+   const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+    
+      if (!user?.id) {
+        toast.error("User ID is missing. Please log in again.");
+        return;
       }
-
-      //setToastMessage('Profile created successfully!');
-      //setShowToast(true);
-      setTimeout(() => navigate('/'), 2000);
-    } catch (error) {
-      console.error(error);
-     // setToastMessage('Error creating profile. Please try again.');
-     // setShowToast(true);
-    }
-  };
+    
+      toast.success("Form submitted successfully!");
+    
+      try {
+        const response1 = await fetch(`http://13.216.146.100/api/v1/investor/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...formData }),
+        });
+    
+        if (!response1.ok) {
+          throw new Error("Failed to submit business buyer data");
+        }
+    
+        try {
+          const response2 = await fetch(`http://13.216.146.100/api/v1/subrole/create`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              UserId: user?.id,
+              SubRole: "Investor"
+            }),
+          });
+    
+          if (!response2.ok) {
+            throw new Error("Failed to submit subrole data");
+          }
+    
+          navigate('/');
+        } catch (error) {
+          console.error("Error in second request:", error);
+          toast.error("An error occurred while submitting the subrole data.");
+        }
+    
+      } catch (error) {
+        console.error("Error in first request:", error);
+        toast.error("An error occurred while submitting the form.");
+      }
+    };
 
   const handleSkip = () => navigate('/');
   const nextStep = () => setStep(step + 1);
