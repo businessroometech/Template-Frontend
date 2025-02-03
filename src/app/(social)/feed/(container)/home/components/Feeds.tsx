@@ -499,31 +499,33 @@ const Post3 = () => {
   )
 }
 
-const socket = io(`${SOCKET_URL}`); 
+const socket = io(`${SOCKET_URL}`);
 // poll
 interface FeedsProps {
   isCreated: boolean;
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>;
-  profile : UserProfile
+  profile: UserProfile
 }
 
 
-const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
-  console.log('Profile in Feed',profile)
+const Feeds = ({ isCreated, setIsCreated, profile }: FeedsProps) => {
+  console.log('Profile in Feed', profile)
   const { user } = useAuthContext();
   // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
-  const [runsOnce,setRunsOnce] = useState(false); // That Use Effect doesn't run on mount
+  const [runsOnce, setRunsOnce] = useState(false); // That Use Effect doesn't run on mount
   const [tlRefresh, setTlRefresh] = useState<number>();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showNewPostButton, setShowNewPostButton] = useState(false);
   // const [profile,setProfile] = useState({});
-  const {fetchOnlineUsers} = useOnlineUsers();
+  const { fetchOnlineUsers } = useOnlineUsers();
   const [flag, setflag] = useState(false);
+
+
   const fetchPosts = async (pageNumber: number) => {
     setError(null);
     setHasMore(true);
@@ -534,13 +536,13 @@ const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
         url: 'api/v1/post/get-all-post',
         data: { userId: user?.id, page: pageNumber },
       });
-  
+
       if (res.message === "No posts found for this user.") {
         setHasMore(false);
         console.log('No posts found');
         return;
       }
-  
+
       if (pageNumber === 1) {
         setPosts([...res.data.posts]);
       } else {
@@ -553,13 +555,13 @@ const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
       setLoading(false);
     }
   };
-  useEffect(() => {    
+  useEffect(() => {
     // alert(`Fetching Post of Page, ${page}`)
     fetchPosts(page);
-  },[page]);
+  }, [page]);
 
   useEffect(() => {
-    if(!hasMounted.current) {
+    if (!hasMounted.current) {
       hasMounted.current = true
       return;
     }
@@ -567,25 +569,25 @@ const Feeds = ({isCreated,setIsCreated,profile} : FeedsProps) => {
     setPage(1);
     fetchPosts(1);
   }, [isCreated]);
- 
-useEffect(() => {
-  
-  socket.on('postSent', (data:any) => {
-    if (data.success) {
-      setflag(data.success);
-      console.log('Post was sent successfully:', data.postId);
-    } else {
-      console.log('Failed to send post');
-    }
-  });
 
-  return () => {
-    socket.off('postSent');
-  };
-}, [user?.id, flag]);
+  useEffect(() => {
+
+    socket.on('postSent', (data: any) => {
+      if (data.success) {
+        setflag(data.success);
+        console.log('Post was sent successfully:', data.postId);
+      } else {
+        console.log('Failed to send post');
+      }
+    });
+
+    return () => {
+      socket.off('postSent');
+    };
+  }, [user?.id, flag]);
 
   const fetchNextPage = () => {
-    if(!loading && hasMore){
+    if (!loading && hasMore) {
       setPage(page => page + 1);
     }
   }
@@ -603,13 +605,13 @@ useEffect(() => {
           PostId: post.post?.Id,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       // console.log(data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error Deleting post:', error.message);
     } finally {
@@ -617,32 +619,32 @@ useEffect(() => {
     }
   }
 
-const PostSkeleton = () => {
-  return (
-    <div style={{ padding: '16px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #e0e0e0', backgroundColor: '#ffffff' }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-        <Skeleton circle width={50} height={50} />
-        <div style={{ marginLeft: '16px', flex: 1 }}>
-          <Skeleton width="60%" height={20} />
-          <Skeleton width="40%" height={16} style={{ marginTop: '8px' }} />
+  const PostSkeleton = () => {
+    return (
+      <div style={{ padding: '16px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #e0e0e0', backgroundColor: '#ffffff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+          <Skeleton circle width={50} height={50} />
+          <div style={{ marginLeft: '16px', flex: 1 }}>
+            <Skeleton width="60%" height={20} />
+            <Skeleton width="40%" height={16} style={{ marginTop: '8px' }} />
+          </div>
+        </div>
+        <Skeleton width="100%" height={200} />
+        <div style={{ marginTop: '16px' }}>
+          <Skeleton width="80%" height={16} />
+          <Skeleton width="95%" height={16} style={{ marginTop: '8px' }} />
+          <Skeleton width="60%" height={16} style={{ marginTop: '8px' }} />
         </div>
       </div>
-      <Skeleton width="100%" height={200} />
-      <div style={{ marginTop: '16px' }}>
-        <Skeleton width="80%" height={16} />
-        <Skeleton width="95%" height={16} style={{ marginTop: '8px' }} />
-        <Skeleton width="60%" height={16} style={{ marginTop: '8px' }} />
-      </div>
-    </div>
-  );
-};
+    );
+  };
   // Conditional rendering
   if (loading) {
     return <div style={{ minHeight: '110vh', padding: '16px' }}>
-    {[...Array(5)].map((_, index) => (
-      <PostSkeleton key={index} />
-    ))}
-  </div> 
+      {[...Array(5)].map((_, index) => (
+        <PostSkeleton key={index} />
+      ))}
+    </div>
   }
 
   if (error) {
@@ -653,48 +655,48 @@ const PostSkeleton = () => {
   return (
     <>
       <div className="position-relative">
-     {flag && !isCreated && <Link to="/"
+        {flag && page>=2 && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
-          style={{ zIndex: 9999, top: '2em' , alignItems:"center", display:"flex", justifyContent:"center", backgroundColor:"#1ea1f2", color:"#fff", boxShadow:"0 2px 4px rgba(0,0,0,0.1)"}}
+          style={{ zIndex: 9999, top: '2em', alignItems: "center", display: "flex", justifyContent: "center", backgroundColor: "#1ea1f2", color: "#fff", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}
         >
           <FaArrowUp color='#fff' /> &nbsp;New posts
         </Link>}
-          <InfiniteScroll
-            dataLength={posts.length} 
-            next={fetchNextPage} 
-            hasMore={hasMore} 
-            loader={
-              <div>
-                {[...Array(5)].map((_, index) => (
-                  <PostSkeleton key={index} />
-                ))}
-              </div>
-            }
-            endMessage={
-              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                <strong>No Posts are available.</strong>
-              </div>
-            }
-            // Matches the id of the scrollable container
-          >
-            
-            {posts.map((post, index) => (
-              <PostCard
-                item={post}
-                posts={posts}
-                setPosts={setPosts}
-                key={post.post.Id}
-                onDelete={handleDelete}
-                setIsCreated={setIsCreated}
-                tlRefresh={tlRefresh}
-                setTlRefresh={setTlRefresh}
-                isCreated={isCreated}
-                profile={profile}
-              />
-            ))}
-          </InfiniteScroll>
-        </div>
+        <InfiniteScroll
+          dataLength={posts.length}
+          next={fetchNextPage}
+          hasMore={hasMore}
+          loader={
+            <div>
+              {[...Array(5)].map((_, index) => (
+                <PostSkeleton key={index} />
+              ))}
+            </div>
+          }
+          endMessage={
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <strong>No Posts are available.</strong>
+            </div>
+          }
+        // Matches the id of the scrollable container
+        >
+
+          {posts.map((post, index) => (
+            <PostCard
+              item={post}
+              posts={posts}
+              setPosts={setPosts}
+              key={post.post.Id}
+              onDelete={handleDelete}
+              setIsCreated={setIsCreated}
+              tlRefresh={tlRefresh}
+              setTlRefresh={setTlRefresh}
+              isCreated={isCreated}
+              profile={profile}
+            />
+          ))}
+        </InfiniteScroll>
+      </div>
     </>
   )
 }

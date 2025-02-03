@@ -724,26 +724,41 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           )}
                         </>
                       ) : (
-                        <Button
-                          variant={
-                            profile.connectionsStatus === 'pending'
+                        <><Button
+                            variant={profile.connectionsStatus === 'pending'
                               ? 'warning-soft'
                               : profile.connectionsStatus === 'accepted'
                                 ? 'success-soft'
                                 : profile.connectionsStatus === 'rejected'
                                   ? 'danger-soft'
-                                  : 'secondary-soft'
-                          }
-                          className="me-2"
-                          type="button">
-                          {profile.connectionsStatus === 'accepted' ? (
-                            <>
-                              <MessageCircleMore className="me-2 text-success" /> Send Message
-                            </>
-                          ) : (
-                            profile.connectionsStatus
-                          )}
-                        </Button>
+                                  : 'secondary-soft'}
+                            className="me-2"
+                            type="button">
+                            {profile.connectionsStatus === 'accepted' ? (
+                              <>
+                                <MessageCircleMore className="me-2 text-success" /> Send Message
+                              </>
+                            ) : (
+                              profile.connectionsStatus
+                            )}
+                          </Button><Button
+                            variant={sent ? 'success-soft' : 'primary-soft'}
+                            className="me-2"
+                            type="button"
+                            onClick={() => UserRequest(profile?.personalDetails?.id)}
+                            disabled={loading || sent}>
+                              {loading ? (
+                                <Loading size={15} loading={true} />
+                              ) : sent ? (
+                                <>
+                                  <FaUserCheck size={19} className="pe-1" /> Request Sent
+                                </>
+                              ) : (
+                                <>
+                                  <FaUserPlus size={19} className="pe-1" /> Send Connection Request
+                                </>
+                              )}
+                            </Button></>
                       )}
 
                       <Dropdown>

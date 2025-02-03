@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, MapPin, Briefcase, DollarSign, Clock, TrendingUp, GraduationCap, FileCheck, Info, Loader2 } from 'lucide-react';
+import { useAuthContext } from '@/context/useAuthContext';
+import { useParams } from 'react-router-dom';
 
 interface Business {
   businessType: string;
@@ -30,17 +32,17 @@ const fallbackBusiness: Business = {
 
 const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
   const isPlaceholder = business.businessType === 'N/A';
-
+ 
   return (
     <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
       <div className="card-header bg-primary bg-gradient text-white py-3">
         <div className="d-flex align-items-center">
           <Building2 className="me-3" size={28} />
           <div>
-            <h3 className="mb-0 fw-bold">{business.businessType}</h3>
+            <h3 className="mb-0 fw-bold">{business.data.businessType}</h3>
             <p className="mb-0 opacity-75 d-flex align-items-center">
               <MapPin size={16} className="me-1" />
-              {business.location}
+              {business.data.businessLocation}
             </p>
           </div>
         </div>
@@ -53,15 +55,15 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
             <div className="d-flex flex-wrap gap-3 mb-4">
               <div className="badge bg-primary bg-gradient p-2 d-flex align-items-center">
                 <Briefcase size={16} className="me-1" />
-                {business.businessModel}
+                {business.data.businessModel}
               </div>
               <div className="badge bg-success bg-gradient p-2 d-flex align-items-center">
                 <DollarSign size={16} className="me-1" />
-                {business.budget}
+                {business.data.budget}
               </div>
               <div className="badge bg-info bg-gradient p-2 d-flex align-items-center">
                 <Clock size={16} className="me-1" />
-                {business.timeline}
+                {business.data.timeline}
               </div>
             </div>
           </div>
@@ -77,11 +79,11 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
                 <ul className="list-group list-group-flush bg-transparent">
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Total Budget</span>
-                    <span className="badge bg-primary rounded-pill">{business.budget}</span>
+                    <span className="badge bg-primary rounded-pill">{business.data.budget}</span>
                   </li>
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Renovation Investment</span>
-                    <span className="badge bg-primary rounded-pill">{business.renovationInvestment}</span>
+                    <span className="badge bg-primary rounded-pill">{business.data.renovationInvestment}</span>
                   </li>
                 </ul>
               </div>
@@ -100,13 +102,13 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
                   <li className="list-group-item bg-transparent">
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="fw-semibold">Growth Preference</span>
-                      <span className="badge bg-success rounded-pill">{business.growthPreference}</span>
+                      <span className="badge bg-success rounded-pill">{business.data.growthOrStableCashFlow}</span>
                     </div>
                   </li>
                   <li className="list-group-item bg-transparent">
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="fw-semibold">Timeline</span>
-                      <span className="badge bg-success rounded-pill">{business.timeline}</span>
+                      <span className="badge bg-success rounded-pill">{business.data.timeline}</span>
                     </div>
                   </li>
                 </ul>
@@ -129,7 +131,7 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
                         <GraduationCap size={18} className="me-2" />
                         Support & Training
                       </h6>
-                      <p className="mb-0 text-muted">{business.supportTraining}</p>
+                      <p className="mb-0 text-muted">{business.data.supportAfterPurchase}</p>
                     </div>
                   </div>
                   <div className="col-md-6">
@@ -138,14 +140,14 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
                         <FileCheck size={18} className="me-2" />
                         NDA Status
                       </h6>
-                      <p className="mb-0 text-muted">{business.ndaAgreement}</p>
+                      <p className="mb-0 text-muted">{business.data.ndaAgreement}</p>
                     </div>
                   </div>
                   {business.additionalInfo !== 'N/A' && (
                     <div className="col-12">
                       <div className="p-3 border rounded bg-white">
                         <h6 className="fw-bold mb-2">Additional Information</h6>
-                        <p className="mb-0 text-muted">{business.additionalInfo}</p>
+                        <p className="mb-0 text-muted">{business.data.additionalInfo}</p>
                       </div>
                     </div>
                   )}
@@ -163,11 +165,14 @@ function AboutBusinessBuyer() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+const {user} = useAuthContext()
+const { id } = useParams();
 
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        const response = await fetch('https://api.example.com/businesses'); // Replace with your actual API endpoint
+        const response = await fetch(`http://13.216.146.100/api/v1/businessbuyer/get/${id}`); // Replace with your actual API endpoint
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -185,7 +190,7 @@ function AboutBusinessBuyer() {
 
     fetchBusinesses();
   }, []);
-
+  
   if (loading) {
     return (
       <div className="min-vh-100 d-flex justify-content-center align-items-center bg-light">
@@ -196,11 +201,11 @@ function AboutBusinessBuyer() {
       </div>
     );
   }
-
+  console.log("--------------ids--------------", ids)
   return (
     <div className="bg-light min-vh-100 py-4">
       <div className="container">
-        <h1 className="text-center mb-5 display-4">Business Profiles</h1>
+        <h1 className="text-center mb-5 display-4">Business Buyer</h1>
        
         <div className="row g-4">
           {businesses.map((business, index) => (

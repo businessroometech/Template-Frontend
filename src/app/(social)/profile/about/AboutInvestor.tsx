@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, DollarSign, Users, Target, Map, Briefcase, Award, Brain, TrendingUp, Globe, Rocket, HandshakeIcon, Loader2 } from 'lucide-react';
+import { useAuthContext } from '@/context/useAuthContext';
+import { useParams } from 'react-router-dom';
 
 // Fallback investor data when API fails
 const fallbackInvestor = {
@@ -22,7 +24,7 @@ const fallbackInvestor = {
   numberOfStartups: 0,
   successStories: "N/A",
   decisionProcess: "N/A",
-  evaluationCriteria: ["N/A"],
+  evaluationCriteria: "N/A",
   exitStrategyPreference: "N/A",
   fundraisingStage: "N/A",
   expectedInvolvement: "N/A"
@@ -43,7 +45,7 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
           <Building2 className="me-3" size={28} />
           <div>
             <h3 className="mb-0 fw-bold">{investor.investorName}</h3>
-            <p className="mb-0 opacity-75">{investor.groupName}</p>
+            <p className="mb-0 opacity-75">{investor.data.groupName}</p>
           </div>
         </div>
       </div>
@@ -55,19 +57,19 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
             <div className="d-flex flex-wrap gap-3 mb-4">
               <div className="badge bg-primary bg-gradient p-2 d-flex align-items-center">
                 <DollarSign size={16} className="me-1" />
-                {investor.investmentSize}
+                {investor.data.investmentSize}
               </div>
               <div className="badge bg-success bg-gradient p-2 d-flex align-items-center">
                 <Rocket size={16} className="me-1" />
-                {investor.preferredStage}
+                {investor.data.startupStage}
               </div>
               <div className="badge bg-info bg-gradient p-2 d-flex align-items-center">
                 <Globe size={16} className="me-1" />
-                {investor.regionPreference}
+                {investor.data.regionPreference}
               </div>
               <div className="badge bg-warning bg-gradient p-2 d-flex align-items-center text-dark">
                 <HandshakeIcon size={16} className="me-1" />
-                {investor.investmentType}
+                {investor.data.investmentType}
               </div>
             </div>
           </div>
@@ -83,15 +85,15 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
                 <ul className="list-group list-group-flush bg-transparent">
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Total Budget</span>
-                    <span className="badge bg-primary rounded-pill">{investor.totalBudget}</span>
+                    <span className="badge bg-primary rounded-pill">{investor.data.totalBudget}</span>
                   </li>
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Equity Range</span>
-                    <span className="badge bg-primary rounded-pill">{investor.equityPercentage}</span>
+                    <span className="badge bg-primary rounded-pill">{investor.data.equityPercentage}</span>
                   </li>
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Co-Investing</span>
-                    <span className="badge bg-primary rounded-pill">{investor.coInvesting}</span>
+                    <span className="badge bg-primary rounded-pill">{investor.data.coInvesting}</span>
                   </li>
                 </ul>
               </div>
@@ -111,20 +113,20 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="fw-semibold">Portfolio Companies</span>
                       <span className="badge bg-success rounded-pill">
-                        {investor.numberOfStartups || "N/A"}
+                        {investor.data.startupsInvested || "N/A"}
                       </span>
                     </div>
                   </li>
                   <li className="list-group-item bg-transparent">
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="fw-semibold">Experience</span>
-                      <span className="badge bg-success rounded-pill">{investor.investmentExperience}</span>
+                      <span className="badge bg-success rounded-pill">{investor.data.investmentExperience}</span>
                     </div>
                   </li>
                   <li className="list-group-item bg-transparent">
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="fw-semibold">Success Stories</span>
-                      <span className="badge bg-success rounded-pill">{investor.successStories}</span>
+                      <span className="badge bg-success rounded-pill">{investor.data.successStories}</span>
                     </div>
                   </li>
                 </ul>
@@ -139,13 +141,13 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
                 <h5 className="card-title d-flex align-items-center mb-3">
                   <Brain className="me-2 text-primary" size={24} />
                   Investment Criteria
+                 
                 </h5>
                 <div className="d-flex flex-wrap gap-2">
-                  {investor.evaluationCriteria.map((criteria, index) => (
-                    <span key={index} className="badge bg-primary bg-gradient p-2">
-                      {criteria}
-                    </span>
-                  ))}
+                 
+                    
+                    
+                
                 </div>
               </div>
             </div>
@@ -163,25 +165,37 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
                   <div className="col-md-6">
                     <div className="p-3 border rounded bg-white">
                       <h6 className="fw-bold mb-2">Decision Process</h6>
-                      <p className="mb-0 text-muted">{investor.decisionProcess}</p>
+                      <p className="mb-0 text-muted">{investor.data.decisionMakingProcess}</p>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="p-3 border rounded bg-white">
                       <h6 className="fw-bold mb-2">Exit Strategy</h6>
-                      <p className="mb-0 text-muted">{investor.exitStrategyPreference}</p>
+                      <p className="mb-0 text-muted">{investor.data.exitStrategy}</p>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="p-3 border rounded bg-white">
-                      <h6 className="fw-bold mb-2">Value Add</h6>
-                      <p className="mb-0 text-muted">{investor.additionalSupport}</p>
+                      <h6 className="fw-bold mb-2">Fund Raising Stage</h6>
+                      <p className="mb-0 text-muted">{investor.data.fundraisingStage}</p>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="p-3 border rounded bg-white">
                       <h6 className="fw-bold mb-2">Involvement Level</h6>
-                      <p className="mb-0 text-muted">{investor.expectedInvolvement}</p>
+                      <p className="mb-0 text-muted">{investor.data.involvementLevel}</p>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="p-3 border rounded bg-white">
+                      <h6 className="fw-bold mb-2">Expected Involvment</h6>
+                      <p className="mb-0 text-muted">{investor.data.expectedInvolvement}</p>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="p-3 border rounded bg-white">
+                      <h6 className="fw-bold mb-2">Exit Stratergy</h6>
+                      <p className="mb-0 text-muted">{investor.data.exitStrategy}</p>
                     </div>
                   </div>
                 </div>
@@ -195,6 +209,10 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
 };
 
 function InvestorCards() {
+const { id } = useParams();
+console.log("----------//ids--------" , id)
+const {user} = useAuthContext()
+
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -202,7 +220,7 @@ function InvestorCards() {
   useEffect(() => {
     const fetchInvestors = async () => {
       try {
-        const response = await fetch('https://api.example.com/investors'); // Replace with your actual API endpoint
+        const response = await fetch(`http://13.216.146.100/api/v1/investor/get/${id}`); // Replace with your actual API endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -235,7 +253,7 @@ function InvestorCards() {
   return (
     <div className="bg-light min-vh-100 py-4" style={{width:"100%"}}>
       <div className="container">
-        <h1 className="text-center mb-5 display-4">Business Profile</h1>
+        <h1 className="text-center mb-5 display-4"></h1>
         {error && (
           <div></div>
         )}
