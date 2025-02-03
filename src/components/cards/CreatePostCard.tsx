@@ -376,7 +376,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     console.log('query', query);
 
     try {
-      const response = await fetch(" http://localhost:5000/v1/post/mention", {
+      const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user?.id, query: query }),
