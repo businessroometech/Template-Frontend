@@ -163,10 +163,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       alert('Max Limit Reached');
       return;
     }
-    console.log('---In handleFileUpload---uploadedFiles----', uploadedFiles)
-    console.log('-----files in params----', files)
     setUploadedFiles([...uploadedFiles, ...files])
-    console.log('---setted files---in my function', files)
   }
 
   // console.log('---- photo uploading -----', uploadedFiles)
@@ -301,7 +298,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
   }, 3000)
 
 
-  const handlePostClick = async (values: string) => {
+  const handlePostClick = async (values) => {
     // Check if thoughts is empty
     if (!thoughts.trim()) {
       console.log('Thoughts cannot be empty.')
@@ -317,7 +314,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
         url: CREATE_POST,
         data: {
           userId: user?.id,
-          content: thoughts,
+          content: values,
           hashtags: hashtags,
         },
       })
@@ -386,7 +383,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       const response = await fetch(`http://localhost:5000/v1/post/mention`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({userId:user?.id, query }),
       });
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -404,7 +401,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
 
   // Function to insert mention
   const handleMentionClick = (user:any, type:string) => {
-    const mention = `${user.fullName} `;
+    const mention = `${user.userName} `;
 
     if (type === "thoughts") {
       setThoughts((prev) => prev + mention);
@@ -450,7 +447,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 resize: "none",
               }}
               rows={2}
-              placeholder="Share your thoughts..."
+              placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
               value={thoughts}
               onChange={handleChange}
             />
@@ -506,7 +503,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
           </li>
           <li className="nav-item d-inline">
             <a className="nav-link bg-light py-2 px-4 mb-2"
-              onClick={handlePostClick}
+              onClick={()=>handlePostClick(thoughts)}
             >
               {isSubmittingPost ? <Spinner size="sm" animation="border" /> : <> <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
                 <span style={{ marginLeft: '5px' }}>Post</span> </>}
@@ -538,7 +535,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
                 onChange={(e) => setPhotoQuote(e.target.value)}
-                placeholder="Share your thoughts..."
+                placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
                 value={photoQuote} // Only use value for controlled input
 
                 
@@ -557,7 +554,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                     resize: "none",
                   }}
                   rows={2}
-                  placeholder="Share your thoughts..."
+                  placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
                   value={photoQuote}
                   onChange={handleChangePhotoQuote}
                 />
@@ -632,7 +629,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 value={videoQuote}
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
-                placeholder="Share your thoughts..."
+                placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
                 defaultValue={''}
               />
 
@@ -703,7 +700,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
               <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
-              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts..." defaultValue={''} />
+              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords" defaultValue={''} />
               {mentionDropdownVisible && searchResults.length > 0 && (
                 <div
                   className="position-absolute bg-white shadow rounded w-100 mt-1"

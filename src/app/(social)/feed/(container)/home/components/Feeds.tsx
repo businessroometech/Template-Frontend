@@ -655,7 +655,7 @@ const Feeds = ({ isCreated, setIsCreated, profile }: FeedsProps) => {
   return (
     <>
       <div className="position-relative">
-        {flag && page>=1 && <Link to="/"
+        {flag && page>=2 && <Link to="/"
           className="position-fixed start-50 translate-middle-x btn btn-primary"
           onClick={() => setShowNewPostButton(true)}
           style={{ zIndex: 9999, top: '2em', alignItems: "center", display: "flex", justifyContent: "center", backgroundColor: "#1ea1f2", color: "#fff", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}

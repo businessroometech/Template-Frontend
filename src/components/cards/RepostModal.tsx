@@ -1,7 +1,7 @@
 import { useAuthContext } from '@/context/useAuthContext';
 import { CREATE_POST } from '@/utils/api';
 import makeApiRequest from '@/utils/apiServer';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { PostSchema } from './PostCard';
 
@@ -25,6 +25,8 @@ const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated }
   const [thoughts, setThoughts] = useState('');
   const [hoveredOption, setHoveredOption] = useState(null); // To track which option is hovered
   const [isSubmittingPost,setIsSubmittingPost] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const {user} = useAuthContext();
 //   console.log('item in repost modal',item);
 
@@ -72,6 +74,56 @@ const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated }
       setIsCreated(() => !isCreated)
     }
   }
+
+  
+    const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+    const textareaRef = useRef(null);
+  
+  
+    // Function to handle textarea change
+    const handleChange = (e: string) => {
+      const value = e.target.value;
+      setThoughts(value);
+  
+      const lastWord = value.split(/\s+/).pop();
+      if (lastWord.startsWith("@")) {
+        fetchUsers(lastWord);
+      } else {
+        setMentionDropdownVisible(false);
+      }
+    };
+  
+  // Function to fetch users when '@' is typed
+  const fetchUsers = async (query: string) => {
+    if (!query.startsWith("@")) return;
+    setLoading(true);
+
+    try {
+      const response = await fetch(`http://localhost:5000/v1/post/mention`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({userId:user?.id, query }),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+      setSearchResults(data?.data || []);
+      setMentionDropdownVisible(true);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+
+    setLoading(false);
+  };
+
+
+   // Function to insert mention
+   const handleMentionClick = (user:any, type:string) => {
+    const mention = `${user.userName} `;
+
+      setThoughts((prev) => prev + mention);
+    setMentionDropdownVisible(false); 
+  };
 
   return (
     <Modal
@@ -141,7 +193,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated }
         {/* Thoughts Input Section */}
         {includeThoughts && (
           <div style={{ marginTop: '15px' }}>
-            <textarea
+            {/* <textarea
               style={{
                 width: '100%',
                 height: '100px',
@@ -155,7 +207,62 @@ const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated }
               placeholder="Add your thoughts..."
               value={thoughts}
               onChange={(e) => setThoughts(e.target.value)}
+            /> */}
+
+
+<div style={{ position: "relative", width: "100%" }}>
+            <textarea
+              ref={textareaRef}
+              className="form-control pe-4 border rounded"
+              style={{
+                borderColor: "#212529",
+                color: "#212529",
+                backgroundColor: "#f8f9fa",
+                fontSize: "14px",
+                width: "100%",
+                resize: "none",
+              }}
+              rows={2}
+              placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+              value={thoughts}
+              onChange={handleChange}
             />
+
+            {/* Mention Dropdown */}
+            {mentionDropdownVisible && searchResults.length > 0 && (
+              <div
+                className="position-absolute bg-white shadow rounded w-100 mt-1"
+                style={{
+                  zIndex: 1000,
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  border: "1px solid #ddd",
+                }}
+              >
+                {searchResults.map((user) => (
+                  <div
+                    key={user.id}
+                    className="d-flex align-items-center p-2 cursor-pointer"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleMentionClick(user, "thoughts")}
+                  >
+                    <img
+                      src={user.avatar ? user.avatar : avatar7}
+                      alt={user.fullName}
+                      className="rounded-circle me-2"
+                      width={40}
+                      height={35}
+                    />
+                    <div>
+                      <h6 className="mb-0">{user.fullName}</h6>
+                      <small className="text-muted">{user.userRole}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
             <Button
               onClick={handleRepost}
               style={{
