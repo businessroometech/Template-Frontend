@@ -372,7 +372,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
 
   // Function to fetch users when '@' is typed
   const fetchUsers = async (query: string) => {
-    if (!query) return; // Avoid unnecessary API calls
+    if (!query) return; 
     console.log('query', query);
 
     try {
@@ -396,7 +396,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     const mention = `@${user.userName} `;
 
     const updateText = (prev: string) => {
-      return prev.replace(/@\S*$/, mention); // Replace only the last mention
+      return prev.replace(/@\S*$/, mention); 
     };
 
     if (type === "thoughts") {
