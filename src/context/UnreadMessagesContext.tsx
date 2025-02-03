@@ -23,7 +23,7 @@ export const UnreadMessagesProvider = ({ children }: { children: React.ReactNode
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ receiverId: user.id }),
+        body: JSON.stringify({ receiverId: user?.id }),
       });
 
       if (!response.ok) {
@@ -33,8 +33,8 @@ export const UnreadMessagesProvider = ({ children }: { children: React.ReactNode
       const data = await response.json();
       // console.log("--------data----------",data);
       const senderData = data?.data?.result?.map((msg: any) => ({
-        senderId: msg.senderId,
-        messageCount: msg.messageCount,
+        senderId: msg?.senderId,
+        messageCount: msg?.messageCount,
       })) || [];
       // console.log("senderData",senderData)
       
