@@ -470,7 +470,7 @@ const PostCard = ({
   const handleMentionClick = async (username: string) => {
 setIsLoading(true)
     try {
-      const res = await fetch ('http://localhost:5000/v1/auth/get-user-userName',{
+      const res = await fetch ('http://13.216.146.100/api/v1/auth/get-user-userName',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

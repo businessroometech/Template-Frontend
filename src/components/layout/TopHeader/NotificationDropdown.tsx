@@ -32,6 +32,7 @@ const NotificationDropdown = ({ count }) => {
 
   // Request notification permission on component mount
   useEffect(() => {
+    fetchNotifications();
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission()
         .then((permission) => {
@@ -43,6 +44,7 @@ const NotificationDropdown = ({ count }) => {
         })
         .catch((err) => console.error("Error requesting notification permission:", err));
     }
+
   }, []);
 
   /// Establish the Socket.IO connection
@@ -247,7 +249,7 @@ useEffect(() => {
                           <div className="avatar text-center">
                             <img
                               className="avatar-img rounded-circle"
-                              src={notification.mediaUrl || avatar7}
+                              src={notification.mediaUrl ? notification.mediaUrl : avatar7}
                               alt="Avatar"
                             />
                           </div>
