@@ -126,7 +126,7 @@ console.log("----------------------------",id)
           }
 
 {subrole === "" || subrole == null && 
-<p>No About Section Was Created by the user</p>
+<p>No About Section Was Created by the user .</p>
 }
         </CardBody>
       </Card>
