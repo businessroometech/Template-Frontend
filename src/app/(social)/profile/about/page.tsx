@@ -106,32 +106,31 @@ console.log("----------------------------",id)
   }, []);
 
   return (
-    <div style={{ width: "130%" }}>
-      <PageMetaData title="About" />
-      <Card>
-        <CardHeader className="border-0 pb-0">
-          <CardTitle>Business Profile Info</CardTitle>
-        </CardHeader>
-        <CardBody>
-          {subrole === "BusinessBuyer" && <AboutBusinessBuyer />}
-          {subrole === "Investor" && <InvestorCards></InvestorCards>}
-          {subrole === "Founder" && <AboutFounder></AboutFounder>}
-          {subrole === "BusinessSeller" && 
-          
-          <div>
+<div style={{ width: "100%" }}>
+  <PageMetaData title="About" />
+  <Card>
+    <CardHeader className="border-0 pb-0">
+      <CardTitle>Business Profile Info</CardTitle>
+    </CardHeader>
+    <CardBody>
+      {subrole === "BusinessBuyer" && <AboutBusinessBuyer />}
+      {subrole === "Investor" && <InvestorCards />}
+      {subrole === "Founder" && <AboutFounder />}
+      {subrole === "BusinessSeller" && (
+        <div>
           <p>Business Seller</p>
           <p>Visit AquireRoom To see All Listed Business</p>
-   <Link to="/marketplace">       <Button >AcquireRoom</Button> </Link>
-          </div>
-          }
+          <Link to="/marketplace">
+            <Button>AcquireRoom</Button>
+          </Link>
+        </div>
+      )}
 
-{subrole === "" || subrole == null && 
-<p>No About Section Was Created by the user .</p>
-}
-        </CardBody>
-      </Card>
-      <Interests />
-    </div>
+      {(subrole === "" || subrole == null) && <p>No About Section Was Created by the user.</p>}
+    </CardBody>
+  </Card>
+  <Interests />
+</div>
   );
 };
 
