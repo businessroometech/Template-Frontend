@@ -3,39 +3,112 @@ import { useChatContext } from '@/context/useChatContext'
 import type { UserType } from '@/types/data'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import clsx from 'clsx'
-
+import { useAuthContext } from '@/context/useAuthContext'
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 import { useOnlineUsers } from '@/context/OnlineUser.'
 import { useState, useEffect } from 'react'
 //import { io } from 'socket.io-client'
 import { Card, Spinner } from 'react-bootstrap'
+import { LIVE_URL } from '@/utils/api'
 import { BsSearch } from 'react-icons/bs'
 
 
-const ChatItem = ({ userId,connectionId, profilePictureUrl, lastMessage, firstName, lastName, isStory }: UserType) => {
-  const { changeActiveChat, activeChat } = useChatContext()
- const { onlineUsers } = useOnlineUsers()
- const status = onlineUsers?.includes(userId) ? 'online' : 'offline'
- 
-  const handleChange = () => {
-    changeActiveChat(userId)
-  }
+const ChatItem = ({ userId, connectionId, profilePictureUrl, lastMessage, firstName, lastName, isStory }: UserType) => {
+  const { changeActiveChat, activeChat } = useChatContext();
+  const { onlineUsers } = useOnlineUsers();
+  const { user } = useAuthContext();
+  const { unreadMessages } = useUnreadMessages();
+  
+  const status = onlineUsers?.includes(userId) ? 'online' : 'offline';
+
+  // Find unread message count for this specific user
+  const unreadMessageData = unreadMessages.find((msg) => msg.senderId === userId);
+  const unreadCount = unreadMessageData ? unreadMessageData.messageCount : 0;
+  // console.log('senderId', userId, 'receiverId', user?.id)
+
+  const handleChange = async () => {
+    try {
+      changeActiveChat(userId);
+      console.log("senderId",userId,"receiverId",user?.id)
+      await fetch(`${LIVE_URL}/api/v1/chat/mark-as-read`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ senderId: userId , receiverId:user?.id}),
+      });
+  
+    } catch (error) {
+      console.error("Failed to mark messages as read:", error);
+    }
+  };
+
   return (
-    <li data-bs-dismiss="offcanvas" onClick={()=>handleChange()
-    }>
-      <div className={clsx('nav-link text-start', { active: activeChat?.id === connectionId })} id="chat-1-tab" data-bs-toggle="pill" role="tab" >
-        <div className="d-flex">
-          <div className={clsx('flex-shrink-0 avatar me-2', status === 'online' ? 'status-online' : 'status-offline', { 'avatar-story': isStory })}>
-            <img className="avatar-img rounded-circle" src={profilePictureUrl || avatar} alt="" />
-          </div>
-          <div className="flex-grow-1 d-block">
-            <h6 className="mb-0 mt-1">{`${firstName} ${lastName}`}</h6>
-            <div className="small text-secondary">{lastMessage}</div>
-          </div>
+    <li data-bs-dismiss="offcanvas" onClick={handleChange}>
+  <div
+    className={clsx("nav-link text-start px-3 py-2 rounded", {
+      active: activeChat?.id === connectionId,
+    })}
+    id="chat-1-tab"
+    data-bs-toggle="pill"
+    role="tab"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      cursor: "pointer",
+      transition: "background 0.2s ease-in-out",
+    }}
+  >
+    <div
+      className={clsx("flex-shrink-0 avatar position-relative", {
+        "status-online": status === "online",
+        "status-offline": status === "offline",
+        "avatar-story": isStory,
+      })}
+      style={{ width: "50px", height: "50px" }}
+    >
+      <img
+        className="avatar-img rounded-circle"
+        src={profilePictureUrl || avatar}
+        alt=""
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    </div>
+    <div className="flex-grow-1" style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ maxWidth: "180px" }}>
+        <h6 className="mb-0 mt-1 text-dark" style={{ fontWeight: "500" }}>
+          {`${firstName} ${lastName}`}
+        </h6>
+        <div className="small text-muted text-truncate">
+          {lastMessage}
         </div>
       </div>
-    </li>
-  )
-}
+      {unreadCount > 0 && (
+        <span className='bg-danger text-white rounded-circle d-flex align-items-center justify-content-center'
+          style={{
+            background: "#FF3B30",
+            color: "#fff",
+            fontSize: "12px",
+            fontWeight: "bold",
+            borderRadius: "12px",
+            padding: "4px 8px",
+            minWidth: "22px",
+            textAlign: "center",
+            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+            marginLeft: "auto",
+          }}
+        >
+          {unreadCount}
+        </span>
+      )}
+    </div>
+  </div>
+</li>
+
+
+  );
+};
 
 const ChatUsers = ({ chats }: { chats: UserType[] }) => {
   const [users, setUsers] = useState<UserType[]>([])

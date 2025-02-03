@@ -62,7 +62,7 @@ const AppRouter = (props: RouteProps) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchOnlineUsers();
-    }, 10000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [fetchOnlineUsers])
@@ -85,12 +85,18 @@ const AppRouter = (props: RouteProps) => {
     // Mark user as online when component mounts
     socket.emit("userOnline", user?.id); // Replace 'user123' with dynamic user info
     socket.on('newMessage', async () => {
-      // if (user?.id) {
+      if (user?.id) {
         await fetchUnreadMessages();
-      // }
+      }
+    });
+    socket.on('messageRead', async () => {
+      if (user?.id) {
+        await fetchUnreadMessages();
+      }
     });
     const handleBeforeUnload = () => {
       socket.emit("userOffline", user?.id); // Mark user as offline
+      // socket.emit("userOffline", user?.id); // Mark user as offline
     };
 
     // Add 'beforeunload' event listener to handle tab closure
@@ -100,11 +106,49 @@ const AppRouter = (props: RouteProps) => {
     return () => {
       // Emit useroffline on unmount as well (in case the user navigates away)
       socket.emit("userOffline", user?.id);
+      // socket.emit("userOffline", user?.id);
       
       // Remove event listener to avoid memory leaks
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [user?.id]);
+//   useEffect(() => {
+//     if (!user?.id) return;
+
+//     // Mark user as online when component mounts
+//     socket.emit("userOnline", user.id);
+
+//     const handleNewMessage = async () => {
+//         await fetchUnreadMessages();
+//     };
+
+//     const handleMessageRead = async () => {
+//         await fetchUnreadMessages();
+//     };
+
+//     socket.on('newMessage', handleNewMessage);
+//     socket.on('messageRead', handleMessageRead);
+
+//     const handleBeforeUnload = () => {
+//         socket.emit("userOffline", user.id); // Mark user as offline
+//     };
+
+//     // Add 'beforeunload' event listener to handle tab closure
+//     window.addEventListener('beforeunload', handleBeforeUnload);
+
+//     // Cleanup event listener & socket listeners when component unmounts
+//     return () => {
+//         socket.emit("userOffline", user.id);
+
+//         // Remove event listener to avoid memory leaks
+//         window.removeEventListener('beforeunload', handleBeforeUnload);
+
+//         // Remove socket listeners to prevent duplication
+//         socket.off('newMessage', handleNewMessage);
+//         socket.off('messageRead', handleMessageRead);
+//     };
+// }, [user?.id, fetchUnreadMessages]); // Added fetchUnreadMessages as dependency
+
 
   return (
     <Routes>

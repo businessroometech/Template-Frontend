@@ -23,7 +23,6 @@ const TopHeader = () => {
   useEffect(() => {
     setMessageCount(unreadMessages.length)
   }, [unreadMessages])
-  console.log('TopHeader',unreadMessages)
 
   useEffect(() => {
     console.log('Notification Dropdown useEffect')
@@ -115,12 +114,11 @@ const TopHeader = () => {
 
                 {/* Notification Badge */}
                 {messageCount > 0 && (
-                  <span
+                  <span className='bg-danger'
                     style={{
                       position: 'absolute',
                       top: '-2px', // Adjusted for better alignment
                       right: '-2px',
-                      background: '#b30000',
                       color: 'white',
                       fontSize: '12px',
                       fontWeight: 'bold',

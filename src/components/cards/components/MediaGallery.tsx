@@ -1,37 +1,48 @@
-import React, { useRef, useEffect } from 'react';
-import lightGallery from 'lightgallery';
-import lgThumbnail from 'lightgallery/plugins/thumbnail';
-import lgZoom from 'lightgallery/plugins/zoom';
-import 'lightgallery/css/lightgallery.css';
-import 'lightgallery/css/lg-thumbnail.css';
-import 'lightgallery/css/lg-zoom.css';
+import React, { useEffect, useState } from 'react';
+import PostModal from './PostModal';
+import { PostSchema,Like } from '../PostCard';
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 
-const MediaGallery = ({ media }) => {
-  const galleryRef = useRef(null);
-  const lightGalleryInstance = useRef(null);
+export interface UtilType {
+  commentCount : number
+  setCommentCount : React.Dispatch<React.SetStateAction<number>>
+  likeStatus : boolean
+  setLikeStatus : React.Dispatch<React.SetStateAction<boolean>>
+  allLikes : Like[]
+  setAllLikes : React.Dispatch<React.SetStateAction<Like[]>>
+  comments : []
+  setComments : React.Dispatch<React.SetStateAction<[]>>
+  likeCount : number
+  setLikeCount : React.Dispatch<React.SetStateAction<number>>
+}
 
-  useEffect(() => {
-    if (media && media.length > 0 && galleryRef.current) {
-      lightGalleryInstance.current = lightGallery(galleryRef.current, {
-        plugins: [lgThumbnail, lgZoom],
-        selector: '.gallery-item',
-        dynamic: true,
-        dynamicEl: media.map((src, index) => ({
-          src,
-          thumb: src,
-          subHtml: `<div class="lightGallery-caption">Image ${index + 1}</div>`,
-        })),
-      });
-    }
 
-    return () => {
-      if (lightGalleryInstance.current) {
-        lightGalleryInstance.current.destroy();
-      }
-    };
-  }, [media]);
+const MediaGallery = ({ 
+  item,
+  media,
+  profile,
+  setShowRepostOp,
+  utils
+}
+:
+{
+  item : PostSchema;
+  media : string[];
+  profile : UserProfile;
+  setShowRepostOp : React.Dispatch<React.SetStateAction<boolean>>
+  utils : UtilType
+}
+) => {
 
+  const [showPostModal,setShowPostModal] = useState<boolean>(false);  
+  const [src,setSrc] = useState<number>(0);
   if (!media || media.length === 0) return null;
+
+  function handleClick(src : number) : void {
+    console.log('click')
+    setSrc(src);
+    setShowPostModal(true);
+  }
 
   const styles = {
     container: { 
@@ -117,14 +128,10 @@ const MediaGallery = ({ media }) => {
     switch (media.length) {
       case 1:
         return (
-          <div ref={galleryRef} style={styles.container}>
+          <div  style={styles.container}>
             <img 
               src={media[0]} 
-              onClick={() => {
-                if (lightGalleryInstance.current) {
-                  lightGalleryInstance.current.openGallery(0);
-                }
-              }}
+              onClick={() => handleClick(0)}
               alt="Single image" 
               style={styles.fullImage}
               className="gallery-item"
@@ -135,17 +142,13 @@ const MediaGallery = ({ media }) => {
 
       case 2:
         return (
-          <div ref={galleryRef} style={styles.twoImageContainer}>
+          <div  style={styles.twoImageContainer}>
             {media.map((src, index) => (
               <img 
                 key={index}
                 src={src} 
                 alt={`Image ${index + 1}`} 
-                onClick={() => {
-                  if (lightGalleryInstance.current) {
-                    lightGalleryInstance.current.openGallery(index);
-                  }
-                }}
+                onClick={() => handleClick(index)}
                 style={styles.twoImageItem}
                 className="gallery-item"
                 data-src={src}
@@ -156,16 +159,12 @@ const MediaGallery = ({ media }) => {
 
       case 3:
         return (
-          <div ref={galleryRef} style={styles.threeImageContainer}>
+          <div style={styles.threeImageContainer}>
             <img 
               src={media[0]} 
               alt="First image" 
               style={styles.threeImageMainImage}
-              onClick={() => {
-                if (lightGalleryInstance.current) {
-                  lightGalleryInstance.current.openGallery(0);
-                }
-              }}
+              onClick={() => handleClick(0)}
               className="gallery-item"
               data-src={media[0]}
             />
@@ -176,11 +175,7 @@ const MediaGallery = ({ media }) => {
                 style={styles.threeImageTopImage}
                 className="gallery-item"
                 data-src={media[1]}
-                onClick={() => {
-                  if (lightGalleryInstance.current) {
-                    lightGalleryInstance.current.openGallery(1);
-                  }
-                }}
+                onClick={() => handleClick(1)}
               />
               <img 
                 src={media[2]} 
@@ -188,11 +183,7 @@ const MediaGallery = ({ media }) => {
                 style={styles.threeImageBottomImageContainer}
                 className="gallery-item"
                 data-src={media[2]}
-                onClick={() => {
-                  if (lightGalleryInstance.current) {
-                    lightGalleryInstance.current.openGallery(2);
-                  }
-                }}
+                onClick={() => handleClick(2)}
               />
             </div>
           </div>
@@ -200,18 +191,15 @@ const MediaGallery = ({ media }) => {
 
       default:
         return (
-          <div ref={galleryRef} style={styles.threeImageContainer}>
+          <div  style={styles.threeImageContainer}>
             <img 
               src={media[0]} 
               alt="First image" 
               style={styles.threeImageMainImage}
               className="gallery-item"
               data-src={media[0]}
-              onClick={() => {
-                if (lightGalleryInstance.current) {
-                  lightGalleryInstance.current.openGallery(0);
-                }
-              }}
+              onClick={() => handleClick(0)}
+              
             />
             <div style={styles.threeImageSideContainer}>
               <img 
@@ -220,11 +208,7 @@ const MediaGallery = ({ media }) => {
                 style={styles.threeImageTopImage}
                 className="gallery-item"
                 data-src={media[1]}
-                onClick={() => {
-                  if (lightGalleryInstance.current) {
-                    lightGalleryInstance.current.openGallery(1);
-                  }
-                }}
+                onClick={() => handleClick(1)}
               />
               <div style={styles.threeImageBottomImageContainer}>
                 <img 
@@ -233,14 +217,11 @@ const MediaGallery = ({ media }) => {
                   style={{width: '100%', height: '100%', objectFit: 'cover'}}
                   className="gallery-item"
                   data-src={media[2]}
+                  onClick={() => handleClick(2)}
                 />
                 <div 
                   style={styles.overlayContainer}
-                  onClick={() => {
-                    if (lightGalleryInstance.current) {
-                      lightGalleryInstance.current.openGallery(2);
-                    }
-                  }}
+                  
                 >
                   <span style={styles.overlayText}>
                     +{media.length - 3} More
@@ -255,6 +236,15 @@ const MediaGallery = ({ media }) => {
 
   return (
     <div style={{marginBottom : '10px'}}>
+      <PostModal 
+        show={showPostModal} 
+        handleClose={() => setShowPostModal(false)} 
+        imageIndex={src} item={item} 
+        profile={profile}
+        media={media}
+        utils={utils}
+        setShowRepostOp={setShowRepostOp}
+      />
       {renderGallery()}
       {media.length > 3 && (
         <div style={{display: 'none'}}>

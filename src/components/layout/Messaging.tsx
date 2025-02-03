@@ -35,6 +35,7 @@ import { FaCheck, FaCheckDouble, FaCircle, FaFaceSmile, FaPaperclip, FaXmark } f
 import * as yup from 'yup'
 import { io } from 'socket.io-client'
 import TextFormInput from '../form/TextFormInput'
+import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 import SimplebarReactClient from '../wrappers/SimplebarReactClient'
 import avatar from '@/assets/images/avatar/default avatar.png'
 import avatar10 from '@/assets/images/avatar/10.jpg'
@@ -54,60 +55,76 @@ const AlwaysScrollToBottom = () => {
 }
 
 const UserMessage = ({ message, toUser, profile }: { message: ChatMessageType; toUser: UserType; profile: string }) => {
-  const received = message.receiverId === toUser.userId
-  const gifPattern = /GIF:\[([^\]]+)\]/
-  const match = message.content.match(gifPattern)
+  const sentByMe = message.receiverId === toUser.userId;
+  const gifPattern = /GIF:\[([^\]]+)\]/;
+  const match = message.content.match(gifPattern);
   // const {onlineUsers} = useOnlineUsers();
   // const status = onlineUsers?.includes(toUser.userId) ? 'online' : 'offline';
 
   return (
-    <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': received })}>
-      <div className="flex-shrink-0 avatar avatar-xs me-2">
-        {!received && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
-      </div>
-      <div className="flex-grow-1">
-        <div className="w-100">
-          <div className={clsx('d-flex flex-column', received ? 'align-items-end' : 'align-items-start')}>
-            {message.gif ? (
-              <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                <img width={87} height={91} src={message.gif} alt={message.content || 'Message GIF'} />
-              </Card>
-            ) : match ? (
-              <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                <img width={107} height={111} src={match[1]} alt="Message GIF" />
-              </Card>
-            ) : message.image ? (
-              <Card className="shadow-none p-2 border border-2 rounded mt-2">
-                <img width={87} height={91} src={message.image} alt={message.content || 'Message Image'} />
-              </Card>
-            ) : (
-              <div className={clsx('p-2 px-3 rounded-2', received ? 'bg-primary text-white' : 'bg-light text-secondary')}>{message.content}</div>
-            )}
-            <div className="d-flex my-2 align-items-center">
-              <div className="small text-secondary">
-                {/* Calculate relative time */}
-                {message.createdAt ? formatDistanceToNow(new Date(message.createdAt), { addSuffix: true }) : 'Just now'}
-              </div>
-              {message.isRead && <FaCheckDouble className="text-info small ms-2" />}
-              {!message.isRead && message.isSend && <FaCheck className="small ms-2" />}
+    <div className={clsx('d-flex mb-1', { 'justify-content-end text-end': sentByMe })}>
+    <div className="flex-shrink-0 avatar avatar-xs me-2">
+      {!sentByMe && <img className="avatar-img rounded-circle" src={profile || avatar} alt="User Avatar" />}
+    </div>
+    <div className="flex-grow-1">
+      <div className="w-100">
+        <div className={clsx('d-flex flex-column', sentByMe ? 'align-items-end' : 'align-items-start')}>
+          {message.gif ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img width={87} height={91} src={message.gif} alt={message.content || 'Message GIF'} />
+            </Card>
+          ) : match ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img width={107} height={111} src={match[1]} alt="Message GIF" />
+            </Card>
+          ) : message.image ? (
+            <Card className="shadow-none p-2 border border-2 rounded mt-2">
+              <img width={87} height={91} src={message.image} alt={message.content || 'Message Image'} />
+            </Card>
+          ) : (
+            <div className={clsx('p-2 px-3 rounded-2', sentByMe ? 'bg-primary text-white' : 'bg-light text-secondary')}>
+              {message.content}
             </div>
+          )}
+          <div className="d-flex my-2 align-items-center">
+            <div className="small text-secondary">
+              {message.createdAt
+                ? formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })
+                : 'Just now'}
+            </div>
+            {sentByMe && (
+              <>
+                {message.isRead ? (
+                  <FaCheckDouble className="text-info small ms-2" />
+                ) : (
+                  <FaCheck className="small ms-2" />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
     </div>
+  </div>
   )
 }
 
 const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const { onlineUsers } = useOnlineUsers()
-  const status = onlineUsers?.includes(user.userId) ? 'online' : 'offline'
-  // console.log(user)
+  const [isLoading, setIsLoading] = useState(true);
+  const { onlineUsers } = useOnlineUsers();
+  const { unreadMessages } = useUnreadMessages();
+  
+  const status = onlineUsers?.includes(user.userId) ? "online" : "offline";
+
+  // Find unread message count for this specific user
+  const unreadMessageData = unreadMessages.find((msg) => msg.senderId === user.userId);
+  const unreadCount = unreadMessageData ? unreadMessageData.messageCount : 0;
+
   useEffect(() => {
     if (user) {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [user])
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -115,33 +132,61 @@ const UserCard = ({ user, openToast }: { user: UserType; openToast: () => void }
         <Spinner animation="border" size="sm" className="ms-auto" />
         <span className="ms-2">Loading user...</span>
       </li>
-    )
+    );
   }
 
   return (
     <li
-      onClick={() => {
-        openToast()
-      }}
+      onClick={openToast}
       className="mt-3 hstack gap-3 align-items-center position-relative toast-btn"
-      data-target="chatToast">
-      <div className={clsx(`avatar status-${status}`, { 'avatar-story': user.isStory })}>
-        {user.profilePictureUrl ? (
-          <img className="avatar-img rounded-circle" src={user.profilePictureUrl} alt="avatar" />
-        ) : (
-          <img className="avatar-img rounded-circle" src={avatar} alt="avatar" />
+      data-target="chatToast"
+    >
+      {/* Profile Picture with Status Indicator */}
+      <div className={clsx(`avatar status-${status}`, { "avatar-story": user.isStory })}>
+        <img
+          className="avatar-img rounded-circle"
+          src={user.profilePictureUrl || avatar}
+          alt="avatar"
+        />
+      </div>
+
+      {/* User Details and Unread Count */}
+      <div 
+        className="flex-grow-1" 
+        style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      >
+        <div style={{ maxWidth: "180px" }}>
+          <Link className="h6 mb-0 stretched-link" to="">
+            {`${user.firstName} ${user.lastName}`}
+          </Link>
+          <div className="small text-secondary text-truncate">{user.lastMessage}</div>
+        </div>
+
+        {/* Unread Message Count - Rightmost Side */}
+        {unreadCount > 0 && (
+          <span 
+            className="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center"
+            style={{
+              background: "#FF3B30",
+              color: "#fff",
+              fontSize: "12px",
+              fontWeight: "bold",
+              borderRadius: "12px",
+              padding: "4px 8px",
+              minWidth: "22px",
+              textAlign: "center",
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+              marginLeft: "auto", // Pushes to the rightmost side
+            }}
+          >
+            {unreadCount}
+          </span>
         )}
       </div>
-      <div className="overflow-hidden">
-        <Link className="h6 mb-0 stretched-link" to="">
-          {`${user.firstName} ${user.lastName}`}
-        </Link>
-        <div className="small text-secondary text-truncate">{user.lastMessage}</div>
-      </div>
-      {/* <div className="small ms-auto text-nowrap">{timeSince(user.lastActivity)}</div> */}
     </li>
-  )
-}
+  );
+};
+
 
 const Messaging = () => {
   const [hasMore, setHasMore] = useState(true)

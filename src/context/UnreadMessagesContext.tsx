@@ -31,13 +31,25 @@ export const UnreadMessagesProvider = ({ children }: { children: React.ReactNode
       }
 
       const data = await response.json();
-      console.log("--------data----------",data);
-      const senderIds = data?.data?.result?.map((msg: any) => msg.senderId) || [];
-
-      if (senderIds.length > 0) {
-        const uniqueSenderIds = senderIds.filter((id, index, self) => self.indexOf(id) === index);
-        setUnreadMessages(uniqueSenderIds.map(String));
-      }
+      // console.log("--------data----------",data);
+      const senderData = data?.data?.result?.map((msg: any) => ({
+        senderId: msg.senderId,
+        messageCount: msg.messageCount,
+      })) || [];
+      // console.log("senderData",senderData)
+      
+      // Remove duplicates and merge counts if necessary
+      const uniqueSenderData = senderData.reduce((acc, current) => {
+        const existing = acc.find((item) => item.senderId === current.senderId);
+        if (existing) {
+          existing.messageCount += current.messageCount; // Sum message count if sender already exists
+        } else {
+          acc.push(current);
+        }
+        return acc;
+      }, [] as { senderId: string; messageCount: number }[]);
+      
+      setUnreadMessages(uniqueSenderData);
     } catch (error) {
       console.error("Failed to fetch unread messages:", error);
     }

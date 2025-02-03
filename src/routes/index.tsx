@@ -7,7 +7,7 @@ import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import path from 'path'
 
 // profiles for seller //
-//const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
+// const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
 
 
 
