@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, MapPin, Lightbulb, Target, Briefcase, DollarSign, TrendingUp, Users, FileCheck, BarChart as ChartBar, Milestone, Goal, Info, Loader2, HandshakeIcon, Brain, Shield, FileText, Clock } from 'lucide-react';
+import { useAuthContext } from '@/context/useAuthContext';
+import { useParams } from 'react-router-dom';
 
 interface StartupProfile {
   businessName: string;
@@ -73,10 +75,10 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
         <div className="d-flex align-items-center">
           <Building2 className="me-3" size={28} />
           <div>
-            <h3 className="mb-0 fw-bold">{profile.businessName}</h3>
+            <h3 className="mb-0 fw-bold">{profile.data.businessName}</h3>
             <p className="mb-0 opacity-75 d-flex align-items-center">
               <MapPin size={16} className="me-1" />
-              {profile.businessLocationCity}, {profile.businessLocationCountry}
+              {profile.data.businessLocationCity}, {profile.data.businessLocationCountry}
             </p>
           </div>
         </div>
@@ -89,15 +91,15 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
             <div className="d-flex flex-wrap gap-3 mb-4">
               <div className="badge bg-primary bg-gradient p-2 d-flex align-items-center">
                 <Briefcase size={16} className="me-1" />
-                {profile.industrySector}
+                {profile.data.industrySector}
               </div>
               <div className="badge bg-success bg-gradient p-2 d-flex align-items-center">
                 <Target size={16} className="me-1" />
-                {profile.businessStage}
+                {profile.data.businessStage}
               </div>
               <div className="badge bg-info bg-gradient p-2 d-flex align-items-center">
                 <Clock size={16} className="me-1" />
-                {profile.businessDuration}
+                {profile.data.businessDuration}
               </div>
             </div>
           </div>
@@ -112,11 +114,11 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                 </h5>
                 <div className="p-3 border rounded bg-white mb-3">
                   <h6 className="fw-bold mb-2">Business Idea</h6>
-                  <p className="mb-0 text-muted">{profile.businessIdea}</p>
+                  <p className="mb-0 text-muted">{profile.data.businessIdea}</p>
                 </div>
                 <div className="p-3 border rounded bg-white">
                   <h6 className="fw-bold mb-2">Problem Solving</h6>
-                  <p className="mb-0 text-muted">{profile.problemSolving}</p>
+                  <p className="mb-0 text-muted">{profile.data.problemSolving}</p>
                 </div>
               </div>
             </div>
@@ -133,15 +135,15 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                 <ul className="list-group list-group-flush bg-transparent">
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Funding Required</span>
-                    <span className="badge bg-primary rounded-pill">{profile.fundingAmount}</span>
+                    <span className="badge bg-primary rounded-pill">{profile.data.fundingAmount}</span>
                   </li>
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Valuation</span>
-                    <span className="badge bg-primary rounded-pill">{profile.businessValuation}</span>
+                    <span className="badge bg-primary rounded-pill">{profile.data.businessValuation}</span>
                   </li>
                   <li className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
                     <span className="fw-semibold">Equity Offered</span>
-                    <span className="badge bg-primary rounded-pill">{profile.equityInExchange}</span>
+                    <span className="badge bg-primary rounded-pill">{profile.data.equityInExchange}</span>
                   </li>
                 </ul>
               </div>
@@ -158,11 +160,11 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                 </h5>
                 <div className="p-3 border rounded bg-white mb-3">
                   <h6 className="fw-bold mb-2">Partner Profile</h6>
-                  <p className="mb-0 text-muted">{profile.partnerType}</p>
+                  <p className="mb-0 text-muted">{profile.data.partnerType}</p>
                 </div>
                 <div className="p-3 border rounded bg-white">
                   <h6 className="fw-bold mb-2">Required Skills</h6>
-                  <p className="mb-0 text-muted">{profile.partnerSkills}</p>
+                  <p className="mb-0 text-muted">{profile.data.partnerSkills}</p>
                 </div>
               </div>
             </div>
@@ -178,11 +180,11 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                 </h5>
                 <div className="p-3 border rounded bg-white mb-3">
                   <h6 className="fw-bold mb-2">Current Traction</h6>
-                  <p className="mb-0 text-muted">{profile.traction}</p>
+                  <p className="mb-0 text-muted">{profile.data.traction}</p>
                 </div>
                 <div className="p-3 border rounded bg-white">
                   <h6 className="fw-bold mb-2">Key Milestones</h6>
-                  <p className="mb-0 text-muted">{profile.milestones}</p>
+                  <p className="mb-0 text-muted">{profile.data.milestones}</p>
                 </div>
               </div>
             </div>
@@ -203,7 +205,7 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                         <Shield size={18} className="me-2" />
                         Challenges
                       </h6>
-                      <p className="mb-0 text-muted">{profile.businessChallenges}</p>
+                      <p className="mb-0 text-muted">{profile.data.businessChallenges}</p>
                     </div>
                   </div>
                   <div className="col-md-4">
@@ -212,7 +214,7 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                         <Goal size={18} className="me-2" />
                         Long-term Goals
                       </h6>
-                      <p className="mb-0 text-muted">{profile.longTermGoals}</p>
+                      <p className="mb-0 text-muted">{profile.data.longTermGoals}</p>
                     </div>
                   </div>
                   <div className="col-md-4">
@@ -221,7 +223,7 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                         <FileText size={18} className="me-2" />
                         Business Plan
                       </h6>
-                      <p className="mb-0 text-muted">{profile.businessPlanStatus}</p>
+                      <p className="mb-0 text-muted">{profile.data.businessPlanStatus}</p>
                     </div>
                   </div>
                 </div>
@@ -239,7 +241,7 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
                     Additional Information
                   </h5>
                   <div className="p-3 border rounded bg-white">
-                    <p className="mb-0 text-muted">{profile.additionalInfo}</p>
+                    <p className="mb-0 text-muted">{profile.data.additionalInfo}</p>
                   </div>
                 </div>
               </div>
@@ -252,14 +254,17 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
 };
 
 function AboutFounder() {
+  
   const [profiles, setProfiles] = useState<StartupProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+const {user} = useAuthContext()
+const { id } = useParams();
+console.log("----------//ids--------" , id)
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const response = await fetch('https://api.example.com/startup-profiles'); // Replace with your actual API endpoint
+        const response = await fetch(`http://13.216.146.100/api/v1/entrepreneur/detail/${id}`); // Replace with your actual API endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -292,7 +297,7 @@ function AboutFounder() {
   return (
     <div className="bg-light min-vh-100 py-4">
       <div className="container">
-        <h1 className="text-center mb-5 display-4">Startup Profiles</h1>
+        <h1 className="text-center mb-5 display-4"></h1>
         
         
         <div className="row g-4">

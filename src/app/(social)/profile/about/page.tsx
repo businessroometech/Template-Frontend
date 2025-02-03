@@ -3,10 +3,12 @@ import { interestsData } from './data'
 
 import PageMetaData from '@/components/PageMetaData'
 import { BsBriefcase, BsCalendarDate, BsEnvelope, BsGeoAlt, BsHeart, BsPencilSquare, BsPlusCircleDotted, BsThreeDots, BsTrash } from 'react-icons/bs'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import InvestorCards from './AboutInvestor'
 import AboutBusinessBuyer from './AboutBusinessBuyer'
 import AboutFounder from './AboutFounder'
+import { useEffect, useState } from 'react'
+import { useAuthContext } from '@/context/useAuthContext'
 
 const Interests = () => {
   return (
@@ -76,24 +78,61 @@ const ActionDropdown = () => {
   )
 }
 
-const About = () => {
 
+
+
+
+const About = () => {
+  const [subrole, setSubrole] = useState(null);
+  const {user} = useAuthContext(); // Replace with actual user ID from context or props
+  const { id } = useParams();
+console.log("----------------------------",id)
+
+  useEffect(() => {
+    const fetchSubrole = async () => {
+      try {
+        const response = await fetch(`http://13.216.146.100/api/v1/subrole/get/${id}`);
+        console.log("----------" ,user?.id)
+        const data = await response.json();
+        console.log("-------ddd----------" , data.data.SubRole )
+        setSubrole(data.data.SubRole); // Ensure the API returns { subrole: "BusinessBuyer" }
+        console.log("----SubRole-----", subrole)
+      } catch (error) {
+        console.error("Error fetching subrole:", error);
+      }
+    };
+
+    fetchSubrole();
+  }, []);
 
   return (
-    <div style={{width:"130%"}}>
-    <PageMetaData title='About'/>
+    <div style={{ width: "130%" }}>
+      <PageMetaData title="About" />
       <Card>
         <CardHeader className="border-0 pb-0">
           <CardTitle>Business Profile Info</CardTitle>
         </CardHeader>
         <CardBody>
-{/* <InvestorCards></InvestorCards> */}
-{/* <AboutBusinessBuyer></AboutBusinessBuyer> */}
-<AboutFounder></AboutFounder>
+          {subrole === "BusinessBuyer" && <AboutBusinessBuyer />}
+          {subrole === "Investor" && <InvestorCards></InvestorCards>}
+          {subrole === "Founder" && <AboutFounder></AboutFounder>}
+          {subrole === "BusinessSeller" && 
+          
+          <div>
+          <p>Business Seller</p>
+          <p>Visit AquireRoom To see All Listed Business</p>
+   <Link to="/marketplace">       <Button >AcquireRoom</Button> </Link>
+          </div>
+          }
+
+{subrole === "" || subrole == null && 
+<p>No About Section Was Created by the user</p>
+}
         </CardBody>
       </Card>
       <Interests />
-      </div>
-  )
-}
-export default About
+    </div>
+  );
+};
+
+export default About;

@@ -43,7 +43,7 @@ const MarketPlace = () => {
       // console.log(user?.id)
       if (user?.id) {
         try {
-          const response = await fetch(`${LIVE_URL}api/v1/businessseller/detail/${user.id}`);
+          const response = await fetch(`${LIVE_URL}api/v1/businessseller/detail/${user?.id}`);
           const data = await response.json();
           
           setMyBusinessData(Array.isArray(data) ? data : [data]);
