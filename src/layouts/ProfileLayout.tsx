@@ -680,9 +680,14 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                     {/* Action Buttons */}
                     <div className="d-flex mt-3 justify-content-center ms-sm-auto">
                       {user?.id === id ? (
+                        <>
+                        <Button variant="primary" className="me-2" type="button">
+                          Get Verified
+                        </Button>
                         <Button variant="danger-soft" className="me-2" type="button" onClick={() => navigate('/settings/account')}>
                           <BsPencilFill size={19} className="pe-1" />
                         </Button>
+                        </>
                       ) : !profile.connectionsStatus ? (
                         <>
                           {sent && (
