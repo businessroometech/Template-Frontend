@@ -275,7 +275,7 @@ const PostModal = ({
         <Container>
           <Row>
             {/* Left Side - Post Image */}
-            <Col md={6} className="p-0 position-relative">
+            <Col md={7} className="p-0 position-relative">
               <Swiper
                 modules={[Navigation]}
                 spaceBetween={10}
@@ -294,7 +294,7 @@ const PostModal = ({
                   <SwiperSlide key={index}>
                     <div
                       style={{
-                        width: "600px", // Adjust width as needed
+                        width: "700px", // Adjust width as needed
                         height: "600px", // Adjust height as needed
                         backgroundColor: "#1b1f23", // Dark shade of black
                         display: "flex",
@@ -386,7 +386,7 @@ const PostModal = ({
 
 
             {/* Right Side - Post Text Content */}
-            <Col md={6} className="p-3 d-flex flex-column" style={{ overflowY: 'scroll', height: '600px' }}>
+            <Col md={5} className="p-3 d-flex flex-column" style={{ overflowY: 'scroll', height: '600px' }}>
               <CardHeader className="border-0 pb-0">
                 <div className="d-flex align-items-center justify-content-between">
                   <div className="d-flex align-items-center">

@@ -28,11 +28,13 @@ import { useUnreadMessages } from '@/context/UnreadMessagesContext'
 
 //api/v1/chat/get-messages-unread
 
+const socket = io(SOCKET_URL, {
+  // path: "/socket.io",
+  transports: ['websocket'],
+})
+
 const AppRouter = (props: RouteProps) => {
-  const socket = io(SOCKET_URL, {
-    // path: "/socket.io",
-    transports: ['websocket'],
-  })
+  
   const {user} = useAuthContext()
   const { isAuthenticated } = useAuthContext()
   const {fetchOnlineUsers} = useOnlineUsers()

@@ -381,7 +381,7 @@ export const APP_MENU_ITEMS: MenuItemType[] = [
   {
     icon :  Users,
     label: 'My Connections',
-    url: '/settings/ManageConnections',
+    url: '/settings/ManageConnections?t=0',
   },
 ]
 
