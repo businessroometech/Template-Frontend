@@ -377,15 +377,13 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
   // Function to fetch users when '@' is typed
   const fetchUsers = async (query: string) => {
     if (!query.startsWith("@")) return;
-    setLoading(true);
-
+   
     try {
       const response = await fetch(`http://13.216.146.100/api/v1/post/mention`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({userId:user?.id, query }),
+        body: JSON.stringify({ userId: user?.id, query: query.slice(1) }),
       });
-
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
       setSearchResults(data?.data || []);
@@ -400,7 +398,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
 
 
   // Function to insert mention
-  const handleMentionClick = (user:any, type:string) => {
+  const handleMentionClick = (user: any, type: string) => {
     const mention = `${user.userName} `;
 
     if (type === "thoughts") {
@@ -411,7 +409,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       setVideoQuote((prev) => prev + mention);
     }
 
-    setMentionDropdownVisible(false); 
+    setMentionDropdownVisible(false);
   };
 
 
@@ -458,7 +456,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 className="position-absolute bg-white shadow rounded w-100 mt-1"
                 style={{
                   zIndex: 1000,
-                  maxHeight: "200px",
+                  maxHeight: "100rem",
                   overflowY: "auto",
                   border: "1px solid #ddd",
                 }}
@@ -470,13 +468,15 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                     style={{ cursor: "pointer" }}
                     onClick={() => handleMentionClick(user, "thoughts")}
                   >
-                    <img
-                      src={user.avatar ? user.avatar : avatar7}
-                      alt={user.fullName}
-                      className="rounded-circle me-2"
-                      width={40}
-                      height={35}
-                    />
+                    <div className='avatar'>
+                      <img
+                        src={user.avatar ? user.avatar : avatar7}
+                        alt={user.fullName}
+                        className="avatar-img rounded-circle border border-white border-3"
+                        width={34}
+                        height={34}
+                      />
+                    </div>
                     <div>
                       <h6 className="mb-0">{user.fullName}</h6>
                       <small className="text-muted">{user.userRole}</small>
@@ -503,7 +503,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
           </li>
           <li className="nav-item d-inline">
             <a className="nav-link bg-light py-2 px-4 mb-2"
-              onClick={()=>handlePostClick(thoughts)}
+              onClick={() => handlePostClick(thoughts)}
             >
               {isSubmittingPost ? <Spinner size="sm" animation="border" /> : <> <SendHorizontal size={14} color="#2f09ec" style={{ marginRight: '3px' }} />
                 <span style={{ marginLeft: '5px' }}>Post</span> </>}
@@ -578,13 +578,15 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                         onClick={() => handleMentionClick(user, "photoQuote")}
 
                       >
-                        <img
-                          src={user.avatar ? user.avatar : avatar7}
-                          alt={user.fullName}
-                          className="rounded-circle me-2"
-                          width={40}
-                          height={35}
-                        />
+                        <div className='avatar'>
+                      <img
+                        src={user.avatar ? user.avatar : avatar7}
+                        alt={user.fullName}
+                        className="avatar-img rounded-circle border border-white border-3"
+                        width={3}
+                        height={3}
+                      />
+                    </div>
                         <div>
                           <h6 className="mb-0">{user.fullName}</h6>
                           <small className="text-muted">{user.userRole}</small>
@@ -650,13 +652,15 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                       style={{ cursor: "pointer" }}
                       onClick={() => handleMentionClick(user, "videoQuote")}
                     >
+                      <div className='avatar'>
                       <img
                         src={user.avatar ? user.avatar : avatar7}
                         alt={user.fullName}
-                        className="rounded-circle me-2"
-                        width={40}
-                        height={35}
+                        className="avatar-img rounded-circle border border-white border-3"
+                        width={34}
+                        height={34}
                       />
+                    </div>
                       <div>
                         <h6 className="mb-0">{user.fullName}</h6>
                         <small className="text-muted">{user.userRole}</small>
@@ -718,13 +722,15 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                       style={{ cursor: "pointer" }}
                       onClick={() => handleMentionClick(user)}
                     >
+                      <div className='avatar'>
                       <img
                         src={user.avatar ? user.avatar : avatar7}
                         alt={user.fullName}
-                        className="rounded-circle me-2"
-                        width={40}
-                        height={35}
+                        className="avatar-img rounded-circle border border-white border-3"
+                        width={34}
+                        height={34}
                       />
+                    </div>
                       <div>
                         <h6 className="mb-0">{user.fullName}</h6>
                         <small className="text-muted">{user.userRole}</small>
