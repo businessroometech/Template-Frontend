@@ -117,7 +117,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
   const fetchUser = async () => {
     try {
       setSkeletonLoading(true)
-      const response = await fetch(' https://strengthholdings.com/api/v1/auth/get-user-Profile', {
+      const response = await fetch('http://13.216.146.100/api/v1/auth/get-user-Profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -200,7 +200,7 @@ const PostCard = ({
       }
 
       // Send a DELETE request to the backend
-      const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
+      const response = await fetch(`http://13.216.146.100/api/v1/post/delete-userpost-byPostId`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
