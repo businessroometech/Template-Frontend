@@ -201,7 +201,7 @@ const { id } = useParams();
       </div>
     );
   }
-  console.log("--------------ids--------------", ids)
+
   return (
     <div className="bg-light min-vh-100 py-4">
       <div className="container">
