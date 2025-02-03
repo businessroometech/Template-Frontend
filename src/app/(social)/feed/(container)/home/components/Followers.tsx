@@ -177,7 +177,7 @@ const Followers = () => {
             )}
             <div className="d-grid mt-3">
               {totalUsers >= limit ? (
-                <Link to="/settings/ManageConnections" className="primary-soft btn btn-sm"  >
+                <Link to="/settings/ManageConnections?t=3" className="primary-soft btn btn-sm"  >
                   View more
                 </Link>
               ) : (

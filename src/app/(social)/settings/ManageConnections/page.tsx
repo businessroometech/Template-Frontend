@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ConnectionRequest } from "@/layouts/ProfileLayout";
 import MyConnections from '@/assets/data/clone/MyConnections';
@@ -6,18 +6,28 @@ import ConnectionsStatus from '@/assets/data/clone/ConnectionsStatus';
 import SuggestedConnections from '@/assets/data/clone/SuggestedConnections';
 import { FaUserFriends, FaUserCheck, FaUserPlus, FaUsers } from 'react-icons/fa';
 import PageMetaData from '@/components/PageMetaData';
+import { useSearchParams } from 'react-router-dom';
 
 const ManageConnections = () => {
+  
+  const [searchParams] = useSearchParams();
+  const [step, setStep] = useState(0); // Default step
 
-  const [step, setStep] = useState(0);
+  useEffect(() => {
+    let index = searchParams.get("t");
+    if (index === null) index = "0";
+
+    let parsedIndex = parseInt(index, 10);
+    if (isNaN(parsedIndex)) parsedIndex = 0;
+    
+    setStep(parsedIndex % 4); // Ensure it's within bounds
+  }, [searchParams]); // Run effect when searchParams change
 
   const sections = [
-    { title: "My Connections", icon: <FaUserPlus style={{ marginRight: '8px' }} />, component: <MyConnections /> },
-    { title: "Request Sent", icon: <FaUserCheck style={{ marginRight: '8px' }} />, component: <ConnectionsStatus /> },
-    { title: "Request Received", icon: <FaUserFriends style={{ marginRight: '8px' }} />, component: <ConnectionRequest /> },
- 
-    
-    { title: "Suggested Connections", icon: <FaUsers style={{ marginRight: '8px' }} />, component: <SuggestedConnections /> },
+    { title: "My Connections", icon: <FaUserPlus style={{ marginRight: "8px" }} />, component: <MyConnections /> },
+    { title: "Request Sent", icon: <FaUserCheck style={{ marginRight: "8px" }} />, component: <ConnectionsStatus /> },
+    { title: "Request Received", icon: <FaUserFriends style={{ marginRight: "8px" }} />, component: <ConnectionRequest /> },
+    { title: "Suggested Connections", icon: <FaUsers style={{ marginRight: "8px" }} />, component: <SuggestedConnections /> },
   ];
 
   const setCurrentSection = (index) => {
