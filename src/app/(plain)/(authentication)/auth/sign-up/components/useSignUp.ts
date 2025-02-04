@@ -34,9 +34,7 @@ const useSignUp = () => {
   const navigate = useNavigate();
 
   const redirectUser = () => {
-    const redirectLink = searchParams.get('redirectTo');
-    if (redirectLink) navigate(redirectLink);
-    else navigate('/');
+   navigate('/auth/verify-email');
   };
 
   const getRole = (roleId : string) => {
@@ -72,7 +70,7 @@ const useSignUp = () => {
       console.log(json);
       if(json?.data?.user) {
         saveSession(json?.data.user);
-        showNotification({ message: 'Signup successful!', variant: 'success' });
+        showNotification({ message: "Signup successfully! Let's verify your email.", variant: "success" });
         redirectUser();
       }
       else {
