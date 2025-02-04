@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Building2, MapPin, Briefcase, DollarSign, Clock, TrendingUp, GraduationCap, FileCheck, Info, Loader2 } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useParams } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 interface Business {
   businessType: string;
@@ -35,7 +36,7 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
  
   return (
     <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
-      <div className="card-header bg-primary bg-gradient text-white py-3">
+      <div className="card-header bg-gradient text-gray py-3">
         <div className="d-flex align-items-center">
           <Building2 className="me-3" size={28} />
           <div>
@@ -151,6 +152,7 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
                       </div>
                     </div>
                   )}
+                <Button>Edit Your Profile</Button>
                 </div>
               </div>
             </div>
@@ -205,7 +207,7 @@ const { id } = useParams();
   return (
     <div className="bg-light min-vh-100 py-4">
       <div className="container">
-        <h1 className="text-center mb-5 display-4">Business Buyer</h1>
+       
        
         <div className="row g-4">
           {businesses.map((business, index) => (
