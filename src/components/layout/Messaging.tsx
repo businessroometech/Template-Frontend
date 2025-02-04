@@ -268,7 +268,7 @@ const Messaging = () => {
           senderId: user?.id,
           receiverId: selectedUser.userId,
           page,
-          limit: 50,
+          limit: 100,
         },
       })
       if (response?.data?.messages) {
@@ -354,7 +354,6 @@ const Messaging = () => {
 
       return updatedChats
     })
-
     setSelectedUser(user)
     fetchMessages()
     setIsOpenCollapseToast((prevState) => ({
@@ -377,208 +376,238 @@ const Messaging = () => {
       [userId]: !prevState[userId],
     }))
   }
-
+  useEffect(() => {
+    
+    if (selectedUser) {
+      fetchMessages();
+    }
+  }, [selectedUser, page]);
   const { onlineUsers } = useOnlineUsers()
 
   return (
     <>
       <ul className="list-unstyled">
-        {allUserMessages?.map((user, index) => <UserCard user={user} key={index} openToast={() => handleUserToggle(user)} />)}
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search users..."
+          onChange={(e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        if (searchTerm === '') {
+          fetchChatsList(); // Reset to original list when input is cleared
+        } else {
+          const filteredUsers = allUserMessages.filter((user) =>
+            `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm)
+          );
+          setAllUserMessages(filteredUsers);
+        }
+          }}
+        />
+        {allUserMessages?.map((user, index) => (
+          <UserCard user={user} key={index} openToast={() => handleUserToggle(user)} />
+        ))}
+        {/* <li className="mt-3"></li>
         <li className="mt-3 d-grid">
           <Link className="btn btn-primary-soft" to="/messaging">
-            See all in messaging
+        See all in messaging
           </Link>
-        </li>
+        </li> */}
       </ul>
       <div aria-live="polite" aria-atomic="true" className="position-relative">
         <ToastContainer className="toast-chat d-flex gap-3 align-items-end">
           {activeChats?.map((chatUser) => {
-            const isOnline = onlineUsers?.includes(chatUser?.userId) // Check if user is online
+        const isOnline = onlineUsers?.includes(chatUser?.userId) // Check if user is online
 
-            return (
-              <Toast
-                key={chatUser?.userId}
-                show={openToasts[chatUser.userId]}
-                onClose={() => closeChat(chatUser?.userId)}
-                style={{ marginBottom: '0px' }}>
-                <ToastHeader closeButton={false} className="bg-mode">
-                  <div className="d-flex justify-content-between align-items-center w-100">
-                    <div className="d-flex">
-                      <div className={clsx('flex-shrink-0 avatar me-2', { 'avatar-story': chatUser?.isStory })}>
-                        {chatUser && chatUser.profilePictureUrl ? (
-                          <img className="avatar-img rounded-circle" src={chatUser.profilePictureUrl} alt="avatar" />
-                        ) : (
-                          <img className="avatar-img rounded-circle" src={avatar} alt="default avatar" />
-                        )}
-                      </div>
-                      <div className="flex-grow-1">
-                        <h6 className="mb-0 mt-1">{`${chatUser?.firstName || ''} ${chatUser?.lastName || ''}`}</h6>
-                        <div className="small text-secondary">
-                          <FaCircle className={`text-${isOnline ? 'success' : 'danger'} me-1`} />
-                          {isOnline ? 'Online' : 'Offline'}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="d-flex">
-                      <Dropdown drop="start">
-                        <DropdownToggle
-                          as="a"
-                          className="btn btn-secondary-soft-hover py-1 px-2 content-none"
-                          id="chatcoversationDropdown"
-                          data-bs-toggle="dropdown"
-                          data-bs-auto-close="outside"
-                          aria-expanded="false">
-                          <BsThreeDotsVertical />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-end" aria-labelledby="chatcoversationDropdown">
-                          <li>
-                            <DropdownItem>
-                              <BsCameraVideo className="me-2 fw-icon" />
-                              Video call
-                            </DropdownItem>
-                          </li>
-                          <li>
-                            <DropdownItem>
-                              <BsTelephone className="me-2 fw-icon" />
-                              Audio call
-                            </DropdownItem>
-                          </li>
-                          <li>
-                            <DropdownItem>
-                              <BsTrash className="me-2 fw-icon" />
-                              Delete
-                            </DropdownItem>
-                          </li>
-                        </DropdownMenu>
-                      </Dropdown>
-                      <a
-                        className="btn btn-secondary-soft-hover py-1 px-2"
-                        data-bs-toggle="collapse"
-                        onClick={() => toggleToastCollapse(chatUser.userId)}>
-                        <BsDashLg />
-                      </a>
-                      <button
-                        onClick={() => closeChat(chatUser.userId)}
-                        className="btn btn-secondary-soft-hover py-1 px-2"
-                        data-bs-dismiss="toast"
-                        aria-label="Close">
-                        <FaXmark />
-                      </button>
-                    </div>
-                  </div>
-                </ToastHeader>
-                <Collapse in={isOpenCollapseToast[chatUser.userId]} className="toast-body">
-                  <div>
-                    <SimplebarReactClient className="chat-conversation-content custom-scrollbar h-200px">
-                      <div className="text-center small my-2">
-                        {new Date().toLocaleString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: 'numeric',
-                          minute: 'numeric',
-                          hour12: true,
-                        })}
-                      </div>
-                      {userMessages[chatUser?.userId]?.map((message, index) => (
-                        <UserMessage message={message} key={index} toUser={chatUser} profile={avatar} />
-                      ))}
-                      <AlwaysScrollToBottom />
-                    </SimplebarReactClient>
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault()
-                        const message = getValues(`newMessage_${chatUser?.userId}`) || ''
+        return (
+          <Toast
+            key={chatUser?.userId}
+            show={openToasts[chatUser.userId]}
+            onClose={() => closeChat(chatUser?.userId)}
+            style={{ marginBottom: '0px', backgroundColor: '#fff' }}>
+            <ToastHeader closeButton={false} className="bg-mode">
+          <div className="d-flex justify-content-between align-items-center w-100">
+            <div className="d-flex">
+              <div className={clsx('flex-shrink-0 avatar me-2', { 'avatar-story': chatUser?.isStory })}>
+            {chatUser && chatUser.profilePictureUrl ? (
+              <img className="avatar-img rounded-circle" src={chatUser.profilePictureUrl} alt="avatar" />
+            ) : (
+              <img className="avatar-img rounded-circle" src={avatar} alt="default avatar" />
+            )}
+              </div>
+              <div className="flex-grow-1">
+            <h6 className="mb-0 mt-1">{`${chatUser?.firstName || ''} ${chatUser?.lastName || ''}`}</h6>
+            <div className="small text-secondary">
+              <FaCircle className={`text-${isOnline ? 'success' : 'danger'} me-1`} />
+              {isOnline ? 'Online' : 'Offline'}
+            </div>
+              </div>
+            </div>
+            <div className="d-flex">
+              <Dropdown drop="start">
+            <DropdownToggle
+              as="a"
+              className="btn btn-secondary-soft-hover py-1 px-2 content-none"
+              id="chatcoversationDropdown"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              aria-expanded="false">
+              <BsThreeDotsVertical />
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-end" aria-labelledby="chatcoversationDropdown">
+              <li>
+                <DropdownItem>
+              <BsCameraVideo className="me-2 fw-icon" />
+              Video call
+                </DropdownItem>
+              </li>
+              <li>
+                <DropdownItem>
+              <BsTelephone className="me-2 fw-icon" />
+              Audio call
+                </DropdownItem>
+              </li>
+              <li>
+                <DropdownItem>
+              <BsTrash className="me-2 fw-icon" />
+              Delete
+                </DropdownItem>
+              </li>
+            </DropdownMenu>
+              </Dropdown>
+              <a
+            className="btn btn-secondary-soft-hover py-1 px-2"
+            data-bs-toggle="collapse"
+            onClick={() => toggleToastCollapse(chatUser.userId)}>
+            <BsDashLg />
+              </a>
+              <button
+            onClick={() => closeChat(chatUser.userId)}
+            className="btn btn-secondary-soft-hover py-1 px-2"
+            data-bs-dismiss="toast"
+            aria-label="Close">
+            <FaXmark />
+              </button>
+            </div>
+          </div>
+            </ToastHeader>
+            <Collapse in={isOpenCollapseToast[chatUser.userId]} className="toast-body">
+          <div>
+            <SimplebarReactClient className="chat-conversation-content custom-scrollbar h-200px">
+              <div className="text-center small my-2">
+            {new Date().toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            })}
+              </div>
+            {loading && selectedUser?.userId === chatUser?.userId ? (
+              <div className="d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
+                <Spinner animation="border" />
+              </div>
+            ) : (
+              userMessages[chatUser?.userId]?.map((message, index) => (
+                <UserMessage message={message} key={index} toUser={chatUser} profile={avatar} />
+              ))
+            )}
+              <AlwaysScrollToBottom />
+            </SimplebarReactClient>
+            <form
+              onSubmit={(e) => {
+            e.preventDefault()
+            const message = getValues(`newMessage_${chatUser?.userId}`) || ''
 
-                        if (!message.trim()) return
+            if (!message.trim()) return
 
-                        sendChatMessage({ newMessage: message }, chatUser)
+            sendChatMessage({ newMessage: message }, chatUser)
 
-                        setValue(`newMessage_${chatUser?.userId}`, '')
-                        setMessageMap((prev) => ({
-                          ...prev,
-                          [chatUser?.userId]: '',
-                        }))
-                      }}
-                      className="mt-2">
-                      <input
-                        className="mb-sm-0 mb-3"
-                        name={`newMessage_${chatUser?.userId}`}
-                        placeholder="Type a message"
-                        autoFocus
-                        control={control}
-                        containerClassName="w-100"
-                        value={messageMap[chatUser?.userId] || ''}
-                        onChange={(e) => {
-                          const newMessage = e.target.value
-                          setSelectedUser(chatUser)
-                          setMessageMap((prev) => ({
-                            ...prev,
-                            [chatUser?.userId]: newMessage,
-                          }))
+            setValue(`newMessage_${chatUser?.userId}`, '')
+            setMessageMap((prev) => ({
+              ...prev,
+              [chatUser?.userId]: '',
+            }))
+              }}
+              className="mt-2">
+              <input
+            className="mb-sm-0 mb-3"
+            name={`newMessage_${chatUser?.userId}`}
+            placeholder="Type a message"
+            autoFocus
+            control={control}
+            containerClassName="w-100"
+            value={messageMap[chatUser?.userId] || ''}
+            onChange={(e) => {
+              const newMessage = e.target.value
+              setSelectedUser(chatUser)
+              setMessageMap((prev) => ({
+                ...prev,
+                [chatUser?.userId]: newMessage,
+              }))
 
-                          setValue(`newMessage_${chatUser?.userId}`, newMessage)
-                        }}
-                        style={{
-                          fontSize: '1rem',
-                          border: '2px solid #ced4da',
-                          borderRadius: '10px',
-                          padding: '10px',
-                          width: '100%',
-                          outline: 'none',
-                          backgroundColor: '#f8f9fa',
-                        }}
-                      />
+              setValue(`newMessage_${chatUser?.userId}`, newMessage)
+            }}
+            style={{
+              fontSize: '1rem',
+              border: '2px solid #ced4da',
+              borderRadius: '10px',
+              padding: '10px',
+              width: '100%',
+              outline: 'none',
+              backgroundColor: '#f8f9fa',
+            }}
+              />
 
-                      <div className="d-sm-flex align-items-end mt-2">
-                        <Button variant="danger-soft" size="sm" className="me-2" onClick={() => setShowEmojiPicker((prev) => !prev)}>
-                          <FaFaceSmile className="fs-6" />
-                        </Button>
-                        <Button variant="secondary-soft" size="sm" className="me-2">
-                          <FaPaperclip className="fs-6" />
-                        </Button>
-                        <Button variant="success-soft" size="sm" className="me-2" onClick={() => setIsGifPickerVisible((prev) => !prev)}>
-                          Gif
-                        </Button>
-                        <Button variant="primary" size="sm" className="ms-auto" type="submit">
-                          Send
-                        </Button>
-                      </div>
-                    </form>
-                    {isGifPickerVisible && (
-                      <div
-                        className="gif-picker-container bg-white shadow-sm border rounded"
-                        style={{
-                          position: 'absolute',
-                          bottom: '60px',
-                          right: '15px',
-                          zIndex: 10,
-                          maxWidth: '300px',
-                          maxHeight: '300px',
-                          overflow: 'hidden',
-                        }}>
-                        <GifPicker onGifClick={handleGifClick} tenorApiKey="YOUR_API_KEY" />
-                      </div>
-                    )}
-                    {showEmojiPicker && (
-                      <div
-                        className="emoji-picker-container bg-white shadow-sm border rounded"
-                        style={{
-                          position: 'absolute',
-                          bottom: '60px',
-                          right: '15px',
-                          zIndex: 10,
-                          maxWidth: '300px',
-                          maxHeight: '300px',
-                          overflow: 'hidden',
-                        }}>
-                        <Picker onEmojiClick={handleEmojiClick} />
-                      </div>
-                    )}
-                  </div>
-                </Collapse>
-              </Toast>
-            )
+              <div className="d-sm-flex align-items-end mt-2">
+            <Button variant="danger-soft" size="sm" className="me-2" onClick={() => setShowEmojiPicker((prev) => !prev)}>
+              <FaFaceSmile className="fs-6" />
+            </Button>
+            <Button variant="secondary-soft" size="sm" className="me-2">
+              <FaPaperclip className="fs-6" />
+            </Button>
+            <Button variant="success-soft" size="sm" className="me-2" onClick={() => setIsGifPickerVisible((prev) => !prev)}>
+              Gif
+            </Button>
+            <Button variant="primary" size="sm" className="ms-auto" type="submit">
+              Send
+            </Button>
+              </div>
+            </form>
+            {isGifPickerVisible && (
+              <div
+            className="gif-picker-container bg-white shadow-sm border rounded"
+            style={{
+              position: 'absolute',
+              bottom: '60px',
+              right: '15px',
+              zIndex: 10,
+              maxWidth: '300px',
+              maxHeight: '300px',
+              overflow: 'hidden',
+            }}>
+            <GifPicker onGifClick={handleGifClick} tenorApiKey="YOUR_API_KEY" />
+              </div>
+            )}
+            {showEmojiPicker && (
+              <div
+            className="emoji-picker-container bg-white shadow-sm border rounded"
+            style={{
+              position: 'absolute',
+              bottom: '60px',
+              right: '15px',
+              zIndex: 10,
+              maxWidth: '300px',
+              maxHeight: '300px',
+              overflow: 'hidden',
+            }}>
+            <Picker onEmojiClick={handleEmojiClick} />
+              </div>
+            )}
+          </div>
+            </Collapse>
+          </Toast>
+        )
           })}
         </ToastContainer>
       </div>
