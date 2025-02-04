@@ -1,46 +1,10 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Dropdown,
-  DropdownDivider,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-} from 'react-bootstrap'
-import {
-  BsBookmark,
-  BsBookmarkCheck,
-  BsChatFill,
-  BsEnvelope,
-  BsFlag,
-  BsHeart,
-  BsHeartFill,
-  BsLink,
-  BsPencilSquare,
-  BsPersonX,
-  BsReplyFill,
-  BsSendFill,
-  BsShare,
-  BsSlashCircle,
-  BsThreeDots,
-  BsXCircle,
-} from 'react-icons/bs'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import logo13 from '@/assets/images/logo/13.svg'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import PostCard, { PostSchema } from '@/components/cards/PostCard'
-import { getAllFeeds } from '@/helpers/data'
-import { Link, useParams } from 'react-router-dom'
-import { useFetchData } from '@/hooks/useFetchData'
-import LoadMoreButton from '../../connections/components/LoadMoreButton'
+import {  useParams } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
-import { useAuthContext } from '@/context/useAuthContext'
-import useToggle from '@/hooks/useToggle'
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 import { ApiResponse } from '@/app/(social)/feed/(container)/home/components/Feeds'
 
@@ -52,7 +16,6 @@ interface PostsProps {
 
 const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
   console.log('Profile in Feed', profile)
-  const { user } = useAuthContext();
   const  currentUser = useParams()
   // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<PostSchema[]>([])
@@ -61,9 +24,9 @@ const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
   const hasMounted = useRef(false) // Track whether the component has mounted
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [runsOnce, setRunsOnce] = useState(false); // That Use Effect doesn't run on mount
+ // That Use Effect doesn't run on mount
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tlRefresh, setTlRefresh] = useState<number>();
+ 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   // const [profile,setProfile] = useState({});
