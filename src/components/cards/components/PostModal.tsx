@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Image, Container, Row, Col, CardHeader, CardBody, ButtonGroup } from "react-bootstrap";
+import { Modal, Button, Container, Row, Col, CardHeader, CardBody, ButtonGroup } from "react-bootstrap";
 import { GetAllLikesResponse, Like, Post, PostSchema } from "../PostCard";
 import { Link } from "react-router-dom";
 import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
@@ -16,7 +16,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import RepostModal from "../RepostModal";
 import { UtilType } from "./MediaGallery";
 const PostModal = ({
   show,
@@ -50,6 +49,8 @@ const PostModal = ({
   const [loadMore, setLoadMore] = useState(false);
   const [comments, setComments] = useState([]);
   const { setTrue, setFalse } = useToggle();
+  const [len,setLen] = useState(media.length || 0);
+  const [isUp,setIsUp] = useState(false);
   const hasMount = useRef(false);
   const swiperRef = useRef(null);
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
@@ -91,7 +92,7 @@ const PostModal = ({
       console.error('An unknown error occurred:', (error as Error).message);
     }
   };
-
+  // alert(len);
   useEffect(() => {
     if (hasMount.current) return;
     if (Object.keys(repostProfile).length !== 0) return;
@@ -126,11 +127,12 @@ const PostModal = ({
       }
     }
     fetchUser();
-  }, [])
 
-  useEffect(() => {
-    console.log('Swiper Ref:', swiperRef.current);
-  }, [swiperRef.current]);
+    return () => {
+      setLen(0);
+    }
+  }, [])
+  
 
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
@@ -291,36 +293,40 @@ const PostModal = ({
               // }}
               >
                 {media.map((image, index) => (
-                  <SwiperSlide key={index}>
-                    <div
+                  <SwiperSlide key={index} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      maxWidth: "700px",
+                      height: "600px",
+                      backgroundColor: "#1b1f23",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden"
+                    }}
+                  >
+                    <img
+                      src={image}
+                      alt={`Slide ${index}`}
                       style={{
-                        width: "700px", // Adjust width as needed
-                        height: "600px", // Adjust height as needed
-                        backgroundColor: "#1b1f23", // Dark shade of black
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "10px", // Optional rounded corners
-                        overflow: "hidden"
+                        width: "auto",
+                        height: "auto",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                        zIndex: 7
                       }}
-                    >
-                      <img
-                        src={image}
-                        alt={`Slide ${index}`}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain"
-                        }}
-                      />
-                    </div>
-
-                  </SwiperSlide>
+                    />
+                  </div>
+                </SwiperSlide>
+                
                 ))}
               </Swiper>
 
               {/* Left Navigation Button */}
-              {swiperRef.current && media.length > 1 && (
+              {media.length > 1 && (
                 <button
                   onClick={() => swiperRef.current?.slidePrev()}
                   style={{
@@ -352,7 +358,7 @@ const PostModal = ({
               )}
 
               {/* Right Navigation Button */}
-              {swiperRef.current && media.length > 1 && (
+              {media.length > 1 &&   (
                 <button
                   onClick={() => swiperRef.current?.slideNext()}
                   style={{
@@ -575,7 +581,7 @@ const PostModal = ({
                         <img
                           className="avatar-img rounded-circle"
                           style={{ width: '52px', height: '35px', objectFit: 'cover' }}
-                          src={profile?.profileImgUrl}
+                          src={profile?.profileImgUrl || fallBackAvatar}
                           alt="avatar"
                         />
                       </span>

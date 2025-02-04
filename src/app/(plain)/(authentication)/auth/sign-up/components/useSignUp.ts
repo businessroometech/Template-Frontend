@@ -36,7 +36,7 @@ const useSignUp = () => {
   const redirectUser = () => {
     const redirectLink = searchParams.get('redirectTo');
     if (redirectLink) navigate(redirectLink);
-    else navigate('/coming-soon');
+    else navigate('/');
   };
 
   const getRole = (roleId : string) => {

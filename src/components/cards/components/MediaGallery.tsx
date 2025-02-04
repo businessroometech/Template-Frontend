@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import PostModal from './PostModal';
 import { PostSchema,Like } from '../PostCard';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
@@ -14,6 +14,20 @@ export interface UtilType {
   setComments : React.Dispatch<React.SetStateAction<[]>>
   likeCount : number
   setLikeCount : React.Dispatch<React.SetStateAction<number>>
+}
+
+export interface StyleProps {
+  container : CSSProperties;
+  fullImage : CSSProperties;
+  twoImageContainer : CSSProperties;
+  twoImageItem  : CSSProperties;
+  threeImageContainer : CSSProperties;
+  threeImageMainImage : CSSProperties;
+  threeImageSideContainer : CSSProperties;
+  threeImageTopImage : CSSProperties;
+  threeImageBottomImageContainer : CSSProperties;
+  overlayContainer : CSSProperties;
+  overlayText : CSSProperties;
 }
 
 
@@ -44,20 +58,26 @@ const MediaGallery = ({
     setShowPostModal(true);
   }
 
-  const styles = {
-    container: { 
+  const styles : StyleProps = {
+    container : { 
+      position : 'relative',
       width: '100%',
       height: 'auto',
+      maxHeight : '600px',
       display: 'flex',
       flexWrap: 'wrap',
-      gap: '1px' // Adding space between images
+      gap: '1px', // Adding space between images
+      overflow : 'hidden',
     },
     fullImage: {
       width: '100%', 
-      height: '100%', 
-      objectFit: 'fit',
+      height: '100%',
+      maxHeight : '600px', 
+      objectFit : 'contain',
       cursor: 'pointer',
       margin: '1px', // Add space between images
+      overflow : 'hidden',
+      zIndex : 2,
     },
     twoImageContainer: {
       display: 'flex',
@@ -129,6 +149,21 @@ const MediaGallery = ({
       case 1:
         return (
           <div  style={styles.container}>
+            <div 
+              style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                width: '100%', 
+                height: '100%', 
+                backgroundImage: `url(${media[0]})`, 
+                backgroundSize: 'cover',
+                backgroundPosition: 'center', 
+                filter: 'blur(20px)', // Adjust blur intensity
+                transform: 'scale(1.1)', // Slightly enlarge to avoid edge cut-off
+                zIndex: 1
+              }} 
+            />
             <img 
               src={media[0]} 
               onClick={() => handleClick(0)}
