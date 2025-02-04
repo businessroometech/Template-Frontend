@@ -923,9 +923,11 @@ const handleSubmit = async (e: React.FormEvent) => {
         {renderSection()}
   
         {/* Navigation Buttons */}
+        
         <div className="d-flex justify-content-between mt-4">
-     
+        
           <div >
+          <ButtonGroup>
             <Button
              onClick={() => {
               navigate("settings/account")
@@ -933,8 +935,8 @@ const handleSubmit = async (e: React.FormEvent) => {
             >
               Back
             </Button>
-          </div>
-          <div style={{marginRight:"900px"}}>
+
+         
             <Button
               variant="btn btn-danger"
               type="button"
@@ -942,9 +944,12 @@ const handleSubmit = async (e: React.FormEvent) => {
             >
               Skip
             </Button>
+            </ButtonGroup>
+         
           </div>
-          <div>
-            <ButtonGroup>
+          
+          <div style={{marginLeft:"-90%"}}>
+            <ButtonGroup >
               <Button
                 variant="secondary"
                 type="button"

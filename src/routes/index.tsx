@@ -5,6 +5,7 @@ import AcountSttingClone from '@/assets/data/clone/accountClone'
 import VisitProfile from '@/components/VisitProfile'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import path from 'path'
+import EditAbout from '@/app/(social)/profile/about/EditAbout'
 
 // profiles for seller //
 // const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
@@ -318,6 +319,11 @@ export const profilePagesRoutes: RoutesProps[] = [
     name: 'Feed',
     element: <ProfileFeed />,
   },
+  // {
+  //   path: '/profile/editabout/:id', 
+  //   name: 'Feed',
+  //   element: <EditAbout></EditAbout>,
+  // },
   {
     path: '/profile/about/:id',
     name: 'About',

@@ -40,12 +40,12 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
 
   return (
     <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
-      <div className="card-header bg-primary bg-gradient text-white py-3">
+      <div className="card-header  text-black py-3">
         <div className="d-flex align-items-center">
-          <Building2 className="me-3" size={28} />
+          <Building2 className="me-3" size={28}  color='gray'/>
           <div>
-            <h3 className="mb-0 fw-bold">{investor.investorName}</h3>
-            <p className="mb-0 opacity-75">{investor.data.groupName}</p>
+            <h1 className="mb-0 fw-bold " >{investor.investorName}</h1>
+            <h3 className="mb-0 opacity-75">{investor.data.groupName}</h3>
           </div>
         </div>
       </div>

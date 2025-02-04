@@ -545,7 +545,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
     },
     {
       key: 'profile-about',
-      label: 'About',
+      label: 'Business Profile',
       url: `/profile/about/${id}`,
       parentKey: 'pages-profile',
     },

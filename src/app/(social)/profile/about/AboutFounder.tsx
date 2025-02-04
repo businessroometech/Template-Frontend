@@ -71,7 +71,7 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
 
   return (
     <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
-      <div className="card-header bg-primary bg-gradient text-white py-3">
+      <div className="card-header bg-gradient text-gray py-3">
         <div className="d-flex align-items-center">
           <Building2 className="me-3" size={28} />
           <div>

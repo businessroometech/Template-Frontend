@@ -71,7 +71,7 @@ const useSignIn = () => {
         if (json.status === 'success') {
           setMessage('Email successfully verified! Redirecting to login...');
           showNotification({ message: "Email successfully verified!", variant: 'success' })
-          setTimeout(() => navigate('/auth/login'), 3000);
+          navigate('/')
         } else {
           setMessage(json.message || 'Verification failed.');
         }
@@ -103,15 +103,21 @@ const useSignIn = () => {
         body: JSON.stringify(body),
       });
       const json = await res.json();
+      
       console.log(json);
-      if (json?.data?.accessToken && json?.data?.userStatus === 0) {
+      if (json?.data?.accessToken && json?.data.user.active === 0) {
         showNotification({ message: 'please verify email, Redirecting....', variant: 'info' })
         navigate('/auth/verify-email')
       }
-      else if (json?.data?.accessToken ) {
+      else if (json?.data?.accessToken && json?.data.user.active === 1) {
         saveSession(json?.data?.user);
         redirectUser()
         showNotification({ message: 'Successfully logged in. Redirecting....', variant: 'info' })
+      }
+      else if (json?.data?.accessToken && json?.data.user.active === -1) {
+        saveSession(json?.data?.user);
+        redirectUser()
+        showNotification({ message: 'You can not logged in ', variant: 'danger' })
       }
       else if(json?.status === 'error') {
         showNotification({ message: json.message, variant: 'danger' })
