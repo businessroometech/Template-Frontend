@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, MapPin, Briefcase, DollarSign, Clock, TrendingUp, GraduationCap, FileCheck, Info, Loader2 } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 interface Business {
@@ -32,6 +32,10 @@ const fallbackBusiness: Business = {
 };
 
 const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
+const navigate = useNavigate()
+const { id } = useParams();
+
+
   const isPlaceholder = business.businessType === 'N/A';
  
   return (
@@ -152,7 +156,9 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
                       </div>
                     </div>
                   )}
-                <Button>Edit Your Profile</Button>
+                {/* <Button onClick={()=> {
+                  navigate(`/profile/editabout/${id}`)
+                }}>Edit Your Profile</Button> */}
                 </div>
               </div>
             </div>

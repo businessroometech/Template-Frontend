@@ -319,11 +319,11 @@ export const profilePagesRoutes: RoutesProps[] = [
     name: 'Feed',
     element: <ProfileFeed />,
   },
-  {
-    path: '/profile/editabout/:id', 
-    name: 'Feed',
-    element: <EditAbout></EditAbout>,
-  },
+  // {
+  //   path: '/profile/editabout/:id', 
+  //   name: 'Feed',
+  //   element: <EditAbout></EditAbout>,
+  // },
   {
     path: '/profile/about/:id',
     name: 'About',
