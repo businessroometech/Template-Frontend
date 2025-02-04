@@ -53,6 +53,7 @@ interface PostsProps {
 const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
   console.log('Profile in Feed', profile)
   const { user } = useAuthContext();
+  const  currentUser = useParams()
   // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<PostSchema[]>([])
   const [loading, setLoading] = useState<boolean>(true) // Loading state
@@ -78,7 +79,7 @@ const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
       const res = await makeApiRequest<ApiResponse>({
         method: 'POST',
         url: 'api/v1/post/get-userpost-byUserId',
-        data: { userId: user?.id, page: pageNumber },
+        data: { userId: currentUser.id, page: pageNumber },
       });
 
       if (res.message === "No posts found for this user.") {
