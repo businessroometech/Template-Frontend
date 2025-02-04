@@ -103,12 +103,13 @@ const useSignIn = () => {
         body: JSON.stringify(body),
       });
       const json = await res.json();
+      
       console.log(json);
-      if (json?.data?.accessToken && json?.data?.userStatus === 0) {
+      if (json?.data?.accessToken && json?.data.user.active === 0) {
         showNotification({ message: 'please verify email, Redirecting....', variant: 'info' })
         navigate('/auth/verify-email')
       }
-      else if (json?.data?.accessToken ) {
+      else if (json?.data?.accessToken && json?.data.user.active === 1) {
         saveSession(json?.data?.user);
         redirectUser()
         showNotification({ message: 'Successfully logged in. Redirecting....', variant: 'info' })
