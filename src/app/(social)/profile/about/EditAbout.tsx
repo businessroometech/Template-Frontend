@@ -1,6 +1,6 @@
 
 // import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
+// import { useNavigate, useParams } from 'react-router-dom';
 // import { ButtonGroup, Card } from 'react-bootstrap';
 // import { FaMapMarkerAlt, FaBuilding, FaMoneyBillWave, FaToolbox, FaClock, FaBalanceScale, FaHandsHelping, FaFileSignature, FaInfoCircle } from 'react-icons/fa';
 // import { useAuthContext } from '@/context/useAuthContext';
@@ -9,6 +9,8 @@
 // import { LIVE_URL } from '@/utils/api';
 
 // const EditAbout = () => {
+//     const id = useParams()
+//     console.log("-----------------------editid--------------------------------" , id)
 //   const { user } = useAuthContext();
 //   const navigate = useNavigate();
 //   const [formData, setFormData] = useState({
@@ -53,38 +55,16 @@
 //     toast.success("Form submitted successfully!");
   
 //     try {
-//       const response1 = await fetch(`http://localhost:5000/api/v1/businessbuyer/update/${}`, {
+//       const response1 = await fetch(`http://localhost:5000/api/v1/businessbuyer/update/${id}`, {
 //         method: 'POST',
 //         headers: {
-//           'Content-Type': 'application/json',
+//         //   'Content-Type': 'application/json',
 //         },
 //         body: JSON.stringify({ ...formData }),
 //       });
   
 //       if (!response1.ok) {
 //         throw new Error("Failed to submit business buyer data");
-//       }
-  
-//       try {
-//         const response2 = await fetch(`http://13.216.146.100/api/v1/subrole/create`, {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({
-//             UserId: user?.id,
-//             SubRole: "BusinessBuyer"
-//           }),
-//         });
-  
-//         if (!response2.ok) {
-//           throw new Error("Failed to submit subrole data");
-//         }
-  
-//         navigate('/');
-//       } catch (error) {
-//         console.error("Error in second request:", error);
-//         toast.error("An error occurred while submitting the subrole data.");
 //       }
   
 //     } catch (error) {
