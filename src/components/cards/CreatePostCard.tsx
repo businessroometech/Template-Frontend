@@ -7,6 +7,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Image,
   Modal,
   ModalBody,
   ModalFooter,
@@ -67,6 +68,7 @@ interface CreatePostCardProps {
 import { useAuthContext } from '@/context/useAuthContext'
 import UserModel from './UserModel'
 import { Spinner } from "react-bootstrap";
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 interface ApiResponse<T> {
   status: number
   data: T
@@ -103,7 +105,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
   const { isTrue: isOpenPost, toggle: togglePost } = useToggle()
 
   // const {user} = useAuthContext();
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState<UserProfile>({})
 
   useEffect(() => {
     if (modelTime) {
@@ -416,15 +418,28 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       <Card className="card-body" style={{ maxHeight: '10em' }}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
-            <div className="avatar avatar-s me-2" style={{ marginTop: "-4px" }}>
+            <div className="me-2" style={{ marginTop: "-25px" }}>
               <span role="button">
-                <img
-                  className="avatar-img rounded-circle"
-                  src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-                  alt="avatar"
-                  width={40}
-                  height={40}
-                />
+              <div
+                    style={{
+                      border : '3px solid white',
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      marginTop : '30px'
+                    }}
+                  >
+                    <Image
+                      src={profile.profileImgUrl || avatar7} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(profile.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
               </span>
             </div>
           </Link>

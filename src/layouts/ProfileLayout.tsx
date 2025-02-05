@@ -21,39 +21,19 @@ import {
   CardHeader,
   CardTitle,
   Col,
-  Container,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
   Image,
   Row,
 } from 'react-bootstrap'
 import {
-  BsBookmark,
   BsBriefcase,
-  BsCalendar2Plus,
-  BsCalendarDate,
-  BsChatLeftText,
-  BsEnvelope,
-  BsFileEarmarkPdf,
-  BsGear,
-  BsGenderFemale,
-  BsGenderMale,
   BsGeoAlt,
-  BsHeart,
-  BsLock,
   BsPatchCheckFill,
   BsPencilFill,
-  BsPersonAdd,
-  BsPersonCheckFill,
-  BsPersonX,
-  BsThreeDots,
 } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa6'
 
 // import { PROFILE_MENU_ITEMS } from '@/assets/data/menu-items'
-import { getAllUsers } from '@/helpers/data'
+
 
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import background5 from '@/assets/images/bg/Profile-Bg.jpg'
@@ -74,6 +54,7 @@ import Loading from '@/components/Loading'
 import Followers from '@/app/(social)/feed/(container)/home/components/Followers'
 import { set } from 'react-hook-form'
 import { LIVE_URL } from '@/utils/api';
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 
 const Experience = () => {
   return null;
@@ -361,7 +342,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
   const { user } = useAuthContext()
   const [loading, setLoading] = useState(false)
   const [skeletonLoading, setSkeletonLoading] = useState(true)
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState<UserProfile>({})
   const [sent, setSent] = useState(false)
   const { id } = useParams()
   const skeletonBaseColor = '#b0b0b0'
@@ -613,26 +594,45 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         <Col md={12} lg={9} className="vstack gap-4" style={{ paddingRight : '50px',paddingLeft : '30px'}}>
           <Card style={{}}>
            {/* Profile Cover Image */}
-           <div className="h-200px rounded-top position-relative">
-                  {skeletonLoading ? (
-                    <Skeleton width="100%" height="20px" baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
-                  ) : (
-                    <div
-                      className="h-200px rounded-top"
-                      onClick={() => {if(user?.id === id)setCoverModal(true)}}
-                    >
-                      <Image
-                        src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
-                        alt="Profile Cover"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: 'contain',
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
+           <div className="position-relative rounded-top">
+  {skeletonLoading ? (
+    <Skeleton
+      width="100%"
+      height="20px"
+      baseColor={skeletonBaseColor}
+      highlightColor={skeletonHighlightColor}
+    />
+  ) : (
+        <div
+          style={{
+            width: "100%",
+            paddingTop: "25%", // Maintains a 4:1 aspect ratio
+            borderTopLeftRadius: "8px",
+            borderTopRightRadius: "8px",
+            overflow: "hidden",
+            position: "relative",
+          }}
+          onClick={() => {
+            if (user?.id === id) setCoverModal(true);
+          }}
+        >
+              <Image
+                src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
+                alt="Profile"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover", // Ensures the image covers the div without stretching
+                  transform: `scale(${(profile.personalDetails.zoom || 50) / 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
+                }}
+              />
+            </div>
+          )}
+        </div>
+
                 <CardBody className="py-0">
                   {/* Profile Info Section */}
                   <div className="d-sm-flex align-items-start text-center text-sm-start">
@@ -642,12 +642,26 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         {skeletonLoading ? (
                           <Skeleton circle width={120} height={120} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         ) : (
-                          <img
-                            onClick={() => {if(user?.id === id)setShowModal(true)}}
-                            className="avatar-img rounded-circle border border-white border-3"
-                            src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-                            alt="avatar"
+                          <div
+                          onClick={() => {if(user?.id === id)setShowModal(true)}}
+                          style={{
+                            border : '3px solid white',
+                            width: "100px",
+                            height: "100px",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Image
+                            src={profile.profileImgUrl || avatar7} // Replace with your actual image source
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              transform: `scale(${(profile.personalDetails.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails.rotateProfile || 50) - 50}deg)`,
+                            }}
                           />
+                        </div>
                         )}
                       </div>
                     </div>
@@ -705,18 +719,6 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         </>
                       ) : !profile.connectionsStatus ? (
                         <>
-                          {sent && (
-                            <Button variant="danger-soft" className="me-2" type="button" onClick={handleCancel} disabled={loading}>
-                              {loading ? (
-                                <Loading size={15} loading={true} />
-                              ) : (
-                                <>
-                                  <FaTimes size={19} className="pe-1" /> Cancel Send Request
-                                </>
-                              )}
-                            </Button>
-                          )}
-
                           {!sent && (
                             <Button
                               variant={sent ? 'success-soft' : 'primary-soft'}
@@ -756,24 +758,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             ) : (
                               profile.connectionsStatus
                             )}
-                          </Button><Button
-                            variant={sent ? 'success-soft' : 'primary-soft'}
-                            className="me-2"
-                            type="button"
-                            onClick={() => UserRequest(profile?.personalDetails?.id)}
-                            disabled={loading || sent}>
-                              {loading ? (
-                                <Loading size={15} loading={true} />
-                              ) : sent ? (
-                                <>
-                                  <FaUserCheck size={19} className="pe-1" /> Request Sent
-                                </>
-                              ) : (
-                                <>
-                                  <FaUserPlus size={19} className="pe-1" /> Send Connection Request
-                                </>
-                              )}
-                            </Button></>
+                          </Button>
+                        </>
                       )}
 
                       {/* <Dropdown>

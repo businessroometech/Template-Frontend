@@ -13,6 +13,7 @@ import { Diamond, Gem, Globe, Map, MapPin } from 'lucide-react'
 import { useLayoutContext } from '@/context/useLayoutContext'
 import { set } from 'react-hook-form'
 import { LIVE_URL } from '@/utils/api'
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
@@ -20,7 +21,7 @@ type ProfilePanelProps = {
 
 const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const { user } = useAuthContext()
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState<UserProfile>({});
   const { theme } = useLayoutContext()
   const navigate = useNavigate()
   const [skeletonLoading, setSkeletonLoading] = useState(true)
@@ -84,12 +85,12 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         <div className="h-60px">
           {!skeletonLoading ? (
             <div
-            className="h-80px rounded-top"
+            className="h-90px rounded-top"
             style={{
               position : 'relative',
               overflow : 'hidden',
               backgroundPosition: 'center',
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               backgroundRepeat: 'no-repeat',
             }}
           >
@@ -99,6 +100,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             style={{
               width: "100%",
               height: "100%",
+              transform: `scale(${(profile.personalDetails.zoom || 50)/ 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
             }}
           />
           </div>
@@ -114,13 +116,26 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                 {skeletonLoading ? (
                   <Skeleton height={50} width={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} style={{ borderRadius: '50%' }}/>
                 ) : (
-                  <img
-                    height={64}
-                    width={64}
-                    src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-                    alt="avatar"
-                    className="avatar-img rounded-circle border border-white border-3"
-                  />
+                  <div
+                    style={{
+                      border : '3px solid white',
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      marginTop : '30px'
+                    }}
+                  >
+                    <Image
+                      src={profile.profileImgUrl || avatar7} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(profile.personalDetails.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </Link>

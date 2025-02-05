@@ -28,11 +28,8 @@ const Followers = () => {
   const skeletonHighlightColor = '#f2f2f2'
 
   useEffect(() => {
-    if (allFollowers.length > 0) {
-      return
-    }
     fetchConnectionSuggestions()
-  }, [allFollowers])
+  }, [])
 
 
 
