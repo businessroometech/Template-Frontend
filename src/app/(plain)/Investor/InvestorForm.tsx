@@ -1955,9 +1955,8 @@ export default InvestorForm;
 
 
 
-
-import { useState } from 'react';
-import { Card, Col, Form, Row, ToastContainer, Toast } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 import {
   FaBalanceScale, FaCalendarAlt, FaExchangeAlt, FaListAlt, FaMapMarkerAlt,
   FaMoneyCheckAlt, FaTasks, FaBullhorn, FaBullseye, FaCertificate, FaChartLine,
@@ -1967,15 +1966,37 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/useAuthContext';
 import { toast } from 'react-toastify';
-//import {ToastContainer , Toast} from 'react-bootstrap';
-//import { toast } from 'react-toastify';
+
+interface FormData {
+  isAccredited: string;
+  groupName: string;
+  investorType: string;
+  startupType: string;
+  startupStage: string;
+  regionPreference: string;
+  investmentSize: string;
+  totalBudget: string;
+  coInvesting: string;
+  equityPercentage: string;
+  investmentType: string;
+  involvementLevel: string;
+  additionalSupport: string;
+  previousInvestment: string;
+  investmentExperience: string;
+  startupsInvested: string;
+  successStories: string;
+  decisionMakingProcess: string;
+  evaluationCriteria: string[];
+  exitStrategy: string;
+  fundraisingStage: string;
+  expectedInvolvement: string;
+}
 
 const InvestorForm = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState({
-    // Investment Preferences
+  const [formData, setFormData] = useState<FormData>({
     isAccredited: '',
     groupName: '',
     investorType: '',
@@ -1986,94 +2007,111 @@ const InvestorForm = () => {
     totalBudget: '',
     coInvesting: '',
     equityPercentage: '',
-
-    // Investment Strategy
     investmentType: '',
     involvementLevel: '',
     additionalSupport: '',
-
-    // Investment Experience
     previousInvestment: '',
     investmentExperience: '',
     startupsInvested: '',
     successStories: '',
     decisionMakingProcess: '',
-
-    // Startup Requirements
     evaluationCriteria: [],
     exitStrategy: '',
     fundraisingStage: '',
-
-    // Investment Goals
     expectedInvolvement: ''
   });
                                                                                  
   const [step, setStep] = useState(1);
-  //const [showToast, setShowToast] = useState(false);
-  //const [toastMessage, setToastMessage] = useState('');
 
-  const handleInputChange = (name, value) => {
+  const tabs = [
+    { 
+      icon: <FaUserTie size={24} />,
+      title: "Investment Preferences",
+      step: 1 
+    },
+    { 
+      icon: <FaChartLine size={24} />,
+      title: "Investment Strategy",
+      step: 2 
+    },
+    { 
+      icon: <FaMedal size={24} />,
+      title: "Investment Experience",
+      step: 3 
+    },
+    { 
+      icon: <FaBullseye size={24} />,
+      title: "Requirements & Goals",
+      step: 4 
+    }
+  ];
+
+  const handleInputChange = (name: string, value: any) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value,
-      UserId : user?.id
+      [name]: value
     }));
   };
 
-   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-      if (!user?.id) {
-        toast.error("User ID is missing. Please log in again.");
-        return;
+    if (!user?.id) {
+      toast.error("User ID is missing. Please log in again.");
+      return;
+    }
+    
+    try {
+      const response1 = await fetch(`http://13.216.146.100/api/v1/investor/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, UserId: user.id }),
+      });
+    
+      if (!response1.ok) {
+        throw new Error("Failed to submit investor data");
       }
     
-      toast.success("Form submitted successfully!");
-    
       try {
-        const response1 = await fetch(`http://13.216.146.100/api/v1/investor/create`, {
+        const response2 = await fetch(`http://13.216.146.100/api/v1/subrole/create`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...formData }),
+          body: JSON.stringify({
+            UserId: user.id,
+            SubRole: "Investor"
+          }),
         });
     
-        if (!response1.ok) {
-          throw new Error("Failed to submit business buyer data");
+        if (!response2.ok) {
+          throw new Error("Failed to submit subrole data");
         }
     
-        try {
-          const response2 = await fetch(`http://13.216.146.100/api/v1/subrole/create`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              UserId: user?.id,
-              SubRole: "Investor"
-            }),
-          });
-    
-          if (!response2.ok) {
-            throw new Error("Failed to submit subrole data");
-          }
-    
-          navigate('/');
-        } catch (error) {
-          console.error("Error in second request:", error);
-          toast.error("An error occurred while submitting the subrole data.");
-        }
-    
+        toast.success("Form submitted successfully!");
+        navigate('/');
       } catch (error) {
-        console.error("Error in first request:", error);
-        toast.error("An error occurred while submitting the form.");
+        console.error("Error in second request:", error);
+        toast.error("An error occurred while submitting the subrole data.");
       }
-    };
+    
+    } catch (error) {
+      console.error("Error in first request:", error);
+      toast.error("An error occurred while submitting the form.");
+    }
+  };
 
   const handleSkip = () => navigate('/');
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
+
+  const handleTabClick = (tabStep: number) => {
+    
+      setStep(tabStep);
+    
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -2199,9 +2237,9 @@ const InvestorForm = () => {
       type="text"
       value={formData.regionPreference}
       onChange={(e) => {
-        const input = e.target.value;
-        if (/^[A-Za-z\s]*$/.test(input)) { // Allow only alphabets and spaces
-          handleInputChange("regionPreference", input);
+        const value = e.target.value;
+        if (/^[A-Za-z\s]*$/.test(value)) {  // Allows only letters and spaces
+          handleInputChange("regionPreference", value);
         }
       }}
       placeholder="Enter your preferred region or country"
@@ -2392,8 +2430,7 @@ const InvestorForm = () => {
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
                     </Form.Select>
-
-                    </Form.Group>
+                  </Form.Group>
                 </Row>
 
                 {formData.previousInvestment === "Yes" && (
@@ -2493,7 +2530,7 @@ const InvestorForm = () => {
                       as="textarea"
                       rows={3}
                       value={formData.evaluationCriteria}
-                      onChange={(e) => handleInputChange("evaluationCriteria", e.target.value)}
+                      onChange={(e) => handleInputChange("evaluationCriteria", e.target.value.split('\n'))}
                       placeholder="List your key criteria for evaluating startups"
                     />
                   </Form.Group>
@@ -2541,24 +2578,24 @@ const InvestorForm = () => {
                 </Row>
 
                 <Row className="mb-3">
-  <Form.Group as={Col}>
-    <Form.Label>
-      <FaUser className="me-2" />
-      What is your expected involvement with the startup after the investment?
-    </Form.Label>
-    <Form.Control
-      as="select"
-      value={formData.expectedInvolvement}
-      onChange={(e) => handleInputChange("expectedInvolvement", e.target.value)}
-    >
-      <option value="">Select involvement level</option>
-      <option value="boardPosition">Board Position</option>
-      <option value="advisoryRole">Advisory Role</option>
-      <option value="passiveRole">Passive Role</option>
-      <option value="notInvolved">Not Involved</option>
-    </Form.Control>
-  </Form.Group>
-</Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>
+                      <FaUser className="me-2" />
+                      What is your expected involvement with the startup after the investment?
+                    </Form.Label>
+                    <Form.Select
+                      value={formData.expectedInvolvement}
+                      onChange={(e) => handleInputChange("expectedInvolvement", e.target.value)}
+                      required
+                    >
+                      <option value="">Select involvement level</option>
+                      <option value="boardPosition">Board Position</option>
+                      <option value="advisoryRole">Advisory Role</option>
+                      <option value="passiveRole">Passive Role</option>
+                      <option value="notInvolved">Not Involved</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Row>
               </Form>
             </Card.Body>
           </Card>
@@ -2573,6 +2610,35 @@ const InvestorForm = () => {
     <div className="container py-4">
       <h2 className="mb-4 text-center">Investor Profile</h2>
       
+      {/* Enhanced Tab Navigation */}
+      <div className="mb-4">
+        <div className="d-flex justify-content-between align-items-center bg-white rounded-3 p-3 shadow-sm">
+          {tabs.map((tab) => (
+            <div
+              key={tab.step}
+              onClick={() => handleTabClick(tab.step)}
+              className={`flex-grow-1 text-center py-3 px-4 rounded-3 mx-2 tab-item ${
+                step === tab.step
+                  ? 'bg-primary text-white'
+                  : step > tab.step
+                  ? 'bg-light text-primary cursor-pointer'
+                  : 'text-muted'
+              }`}
+              style={{ 
+                cursor: tab.step <= step ? 'pointer' : 'pointer',
+                transition: 'all 0.3s ease',
+                minWidth: '200px'
+              }}
+            >
+              <div className="d-flex flex-column align-items-center justify-content-center">
+                {tab.icon}
+                <span className="mt-2 fw-semibold">{tab.title}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {renderStep()}
 
       <div className="d-flex justify-content-between mt-4">
@@ -2610,32 +2676,8 @@ const InvestorForm = () => {
           )}
         </div>
       </div>
-
-      {/* <Toast
-        // show={showToast}
-        // onClose={() => setShowToast(false)}
-        delay={3000}
-        autohide
-        style={{
-          position: 'fixed',
-          top: 20,
-          right: 20,
-          zIndex: 9999
-        }}
-      >
-        <Toast.Header>
-          <strong className="me-auto">Notification</strong>
-        </Toast.Header>
-        <Toast.Body>{toastMessage}</Toast.Body>
-      </Toast> */}
     </div>
   );
 };
 
 export default InvestorForm;
-
-
-
-
-
-

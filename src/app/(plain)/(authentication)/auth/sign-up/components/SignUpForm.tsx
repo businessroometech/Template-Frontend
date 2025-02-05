@@ -430,7 +430,17 @@ const SignUpForm = () => {
       setShowModal(true);
     }}
   >
-    Select your Role{PrintRole(role) && <span style={{paddingLeft : '2px'}}>-({PrintRole(role)})</span>}
+    {/* Select your Role{PrintRole(role) && <span style={{paddingLeft : '2px'}}>-({PrintRole(role)})</span>} */}
+    {role ? (
+  <>
+    Your role is <span style={{ paddingLeft: '2px' }}>{PrintRole(role)}</span>
+  </>
+) : (
+  <>
+    Select your Role {PrintRole(role) && <span style={{ paddingLeft: '2px' }}>-({PrintRole(role)})</span>}
+  </>
+)}
+
   </Button>
   <Button variant="primary" type="submit" size="lg" disabled={loading}>
   {loading ? (
