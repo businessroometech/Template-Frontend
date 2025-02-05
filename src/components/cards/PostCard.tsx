@@ -493,7 +493,7 @@ const PostCard = ({
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i;
     const youtubeRegex =
-      /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+))/;
+      /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
   
     return content.split(/(\s+)/).map((word, index) => {
       if (mentionRegex.test(word)) {
@@ -564,6 +564,7 @@ const PostCard = ({
     });
   };
   
+
 
 
   if (isDeleted) return null;
@@ -667,32 +668,35 @@ const PostCard = ({
           </div>
         </CardHeader>
         <CardBody>
-          {post?.repostText && (
+          {post?.content && (
             <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-              <div id={post.Id}
+              <div
+                id={post.Id}
                 className="w-full"
                 style={{
-                  whiteSpace: 'pre-wrap', // Preserve line breaks
-                  wordWrap: 'break-word', // Prevent horizontal overflow for long words
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
                   lineHeight: '19px',
                   color: 'black',
                   fontSize: '16px',
-                  maxHeight: isExpandedRe ? 'none' : '192px',
-                  overflow: 'hidden',
+                  // Set maxHeight to 'none' to show all content if there's a link or any embedded content.
+                  maxHeight: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'none' : (isExpanded ? 'none' : '192px'),
+                  overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
-                {post.repostText}
+                {formatContent(post.content)}
               </div>
-              {!isExpandedRe && post.repostText.length > 230 && (
+              {!isExpanded && post.content.length > 230 && (
                 <span
                   className="text-blue-500 mt-1 cursor-pointer"
-                  onClick={() => setIsExpandedRe(true)}
+                  onClick={() => setIsExpanded(true)}
                 >
                   ...read more
                 </span>
               )}
             </div>
           )}
+
           <Card className="mb-4">
             <CardHeader className="border-0 pb-0">
               <div className="d-flex align-items-center justify-content-between">
@@ -763,8 +767,9 @@ const PostCard = ({
                       lineHeight: '19px',
                       color: 'black',
                       fontSize: '16px',
-                      maxHeight: isExpanded ? 'none' : '192px',
-                      overflow: 'hidden',
+                      // Set maxHeight to 'none' to show all content if there's a link or any embedded content.
+                      maxHeight: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'none' : (isExpanded ? 'none' : '192px'),
+                      overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                     }}
                   >
                     {formatContent(post.content)}
@@ -779,6 +784,7 @@ const PostCard = ({
                   )}
                 </div>
               )}
+
 
 
               {media?.length > 0 && (
@@ -1142,13 +1148,14 @@ const PostCard = ({
                 id={post.Id}
                 className="w-full"
                 style={{
-                  whiteSpace: 'pre-wrap', // Preserve line breaks
-                  wordWrap: 'break-word', // Prevent horizontal overflow for long words
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
                   lineHeight: '19px',
                   color: 'black',
                   fontSize: '16px',
-                  maxHeight: isExpanded ? 'none' : '192px',
-                  overflow: 'hidden',
+                  // Set maxHeight to 'none' to show all content if there's a link or any embedded content.
+                  maxHeight: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'none' : (isExpanded ? 'none' : '192px'),
+                  overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
                 {formatContent(post.content)}
@@ -1163,6 +1170,7 @@ const PostCard = ({
               )}
             </div>
           )}
+
 
           {media?.length > 0 && (
             isVideo ? (
