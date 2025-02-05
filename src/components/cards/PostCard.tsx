@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
-import {  MessageSquare, Repeat, ThumbsUp} from 'lucide-react';
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Image} from 'react-bootstrap';
+import { MessageSquare, Repeat, ThumbsUp } from 'lucide-react';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Image } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
 import { useAuthContext } from '@/context/useAuthContext';
@@ -466,14 +466,14 @@ const PostCard = ({
   const handleMentionClick = async (username: string) => {
     setIsLoading(true)
     try {
-      const res = await fetch ('http://13.216.146.100/api/v1/auth/get-user-userName',{
+      const res = await fetch('http://13.216.146.100/api/v1/auth/get-user-userName', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userName:username }),
+        body: JSON.stringify({ userName: username }),
       })
-           
+
       const data = await res.json();
       // toast.success("navigate to user profile");
       setIsLoading(false)
@@ -488,20 +488,24 @@ const PostCard = ({
   // Function to render mentions and hashtags with styling
   const formatContent = (content: string) => {
     if (!content) return null;
-
-    // Regex to find @mentions and #hashtags
+  
+    // Regex patterns
     const mentionRegex = /(@[a-zA-Z0-9_]+)/g;
     const hashtagRegex = /(#\w+)/g;
-
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i;
+    const youtubeRegex =
+      /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
+  
     return content.split(/(\s+)/).map((word, index) => {
       if (mentionRegex.test(word)) {
-        const username = word.substring(1); // Remove '@' symbol
+        const username = word.substring(1);
         return (
           <span
             key={index}
             onClick={() => handleMentionClick(username)}
             style={{
-              color: '#1E40AF', 
+              color: '#1E40AF',
               fontWeight: 'bold',
               cursor: 'pointer',
             }}
@@ -514,17 +518,55 @@ const PostCard = ({
           <span
             key={index}
             style={{
-              color: '#4CAF50', 
+              color: '#4CAF50',
               fontWeight: 'bold',
             }}
           >
             {word}
           </span>
         );
+      } else if (youtubeRegex.test(word)) {
+        const videoId = word.match(youtubeRegex)?.[2];
+        return (
+          <iframe
+            key={index}
+            width="100%"
+            height="330px"
+            src={`https://www.youtube.com/embed/${videoId}`}
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+            style={{ borderRadius: '8px', marginTop: '8px' }}
+          ></iframe>
+        );
+      } else if (imageRegex.test(word)) {
+        return (
+          <img
+            key={index}
+            src={word}
+            alt={word}
+            style={{ maxWidth: '100%', borderRadius: '8px', marginTop: '8px' }}
+          />
+        );
+      } else if (urlRegex.test(word)) {
+        return (
+          <a
+            key={index}
+            href={word}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#0645AD', textDecoration: 'underline' }}
+          >
+            {word}
+          </a>
+        );
       }
-      return word; // Return the normal text
+  
+      return word;
     });
   };
+  
+
 
 
   if (isDeleted) return null;
@@ -647,32 +689,35 @@ const PostCard = ({
           </div>
         </CardHeader>
         <CardBody>
-          {post?.repostText && (
+          {post?.content && (
             <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-              <div id={post.Id}
+              <div
+                id={post.Id}
                 className="w-full"
                 style={{
-                  whiteSpace: 'pre-wrap', // Preserve line breaks
-                  wordWrap: 'break-word', // Prevent horizontal overflow for long words
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
                   lineHeight: '19px',
                   color: 'black',
                   fontSize: '16px',
-                  maxHeight: isExpandedRe ? 'none' : '192px',
-                  overflow: 'hidden',
+                  // Set maxHeight to 'none' to show all content if there's a link or any embedded content.
+                  maxHeight: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'none' : (isExpanded ? 'none' : '192px'),
+                  overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
-                {post.repostText}
+                {formatContent(post.content)}
               </div>
-              {!isExpandedRe && post.repostText.length > 230 && (
+              {!isExpanded && post.content.length > 230 && (
                 <span
                   className="text-blue-500 mt-1 cursor-pointer"
-                  onClick={() => setIsExpandedRe(true)}
+                  onClick={() => setIsExpanded(true)}
                 >
                   ...read more
                 </span>
               )}
             </div>
           )}
+
           <Card className="mb-4">
             <CardHeader className="border-0 pb-0">
               <div className="d-flex align-items-center justify-content-between">
@@ -752,33 +797,35 @@ const PostCard = ({
               </div>
             </CardHeader>
             <CardBody>
-            {post?.content && (
-        <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-          <div
-            id={post.Id}
-            className="w-full"
-            style={{
-              whiteSpace: 'pre-wrap', // Preserve line breaks
-              wordWrap: 'break-word', // Prevent horizontal overflow for long words
-              lineHeight: '19px',
-              color: 'black',
-              fontSize: '16px',
-              maxHeight: isExpanded ? 'none' : '192px',
-              overflow: 'hidden',
-            }}
-          >
-            {formatContent(post.content)}
-          </div>
-          {!isExpanded && post.content.length > 230 && (
-            <span
-              className="text-blue-500 mt-1 cursor-pointer"
-              onClick={() => setIsExpanded(true)}
-            >
-              ...read more
-            </span>
-          )}
-        </div>
-      )}
+              {post?.content && (
+                <div className="mb-1 p-1 bg-gray-100 rounded-lg">
+                  <div
+                    id={post.Id}
+                    className="w-full"
+                    style={{
+                      whiteSpace: 'pre-wrap',
+                      wordWrap: 'break-word',
+                      lineHeight: '19px',
+                      color: 'black',
+                      fontSize: '16px',
+                      // Set maxHeight to 'none' to show all content if there's a link or any embedded content.
+                      maxHeight: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'none' : (isExpanded ? 'none' : '192px'),
+                      overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
+                    }}
+                  >
+                    {formatContent(post.content)}
+                  </div>
+                  {!isExpanded && post.content.length > 230 && (
+                    <span
+                      className="text-blue-500 mt-1 cursor-pointer"
+                      onClick={() => setIsExpanded(true)}
+                    >
+                      ...read more
+                    </span>
+                  )}
+                </div>
+              )}
+
 
 
               {media?.length > 0 && (
@@ -1175,33 +1222,35 @@ const PostCard = ({
         </CardHeader>
 
         <CardBody>
-        {post?.content && (
-        <div className="mb-1 p-1 bg-gray-100 rounded-lg">
-          <div
-            id={post.Id}
-            className="w-full"
-            style={{
-              whiteSpace: 'pre-wrap', // Preserve line breaks
-              wordWrap: 'break-word', // Prevent horizontal overflow for long words
-              lineHeight: '19px',
-              color: 'black',
-              fontSize: '16px',
-              maxHeight: isExpanded ? 'none' : '192px',
-              overflow: 'hidden',
-            }}
-          >
-            {formatContent(post.content)}
-          </div>
-          {!isExpanded && post.content.length > 230 && (
-            <span
-              className="text-blue-500 mt-1 cursor-pointer"
-              onClick={() => setIsExpanded(true)}
-            >
-              ...read more
-            </span>
+          {post?.content && (
+            <div className="mb-1 p-1 bg-gray-100 rounded-lg">
+              <div
+                id={post.Id}
+                className="w-full"
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
+                  lineHeight: '19px',
+                  color: 'black',
+                  fontSize: '16px',
+                  // Set maxHeight to 'none' to show all content if there's a link or any embedded content.
+                  maxHeight: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'none' : (isExpanded ? 'none' : '192px'),
+                  overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
+                }}
+              >
+                {formatContent(post.content)}
+              </div>
+              {!isExpanded && post.content.length > 230 && (
+                <span
+                  className="text-blue-500 mt-1 cursor-pointer"
+                  onClick={() => setIsExpanded(true)}
+                >
+                  ...read more
+                </span>
+              )}
+            </div>
           )}
-        </div>
-      )}
+
 
           {media?.length > 0 && (
             isVideo ? (
