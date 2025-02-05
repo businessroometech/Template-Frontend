@@ -1,166 +1,91 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Dropdown,
-  DropdownDivider,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-} from 'react-bootstrap'
-import {
-  BsBookmark,
-  BsBookmarkCheck,
-  BsChatFill,
-  BsEnvelope,
-  BsFlag,
-  BsHeart,
-  BsHeartFill,
-  BsLink,
-  BsPencilSquare,
-  BsPersonX,
-  BsReplyFill,
-  BsSendFill,
-  BsShare,
-  BsSlashCircle,
-  BsThreeDots,
-  BsXCircle,
-} from 'react-icons/bs'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import logo13 from '@/assets/images/logo/13.svg'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import PostCard from '@/components/cards/PostCard'
-import { getAllFeeds } from '@/helpers/data'
-import { Link, useParams } from 'react-router-dom'
-import { useFetchData } from '@/hooks/useFetchData'
-import LoadMoreButton from '../../connections/components/LoadMoreButton'
+import PostCard, { PostSchema } from '@/components/cards/PostCard'
+import {  useParams } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
-import { useAuthContext } from '@/context/useAuthContext'
-import useToggle from '@/hooks/useToggle'
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
+import { ApiResponse } from '@/app/(social)/feed/(container)/home/components/Feeds'
 
-const ActionMenu = ({ name }: { name?: string }) => {
-  return (
-    <Dropdown>
-      <DropdownToggle as="a" className="text-secondary btn btn-secondary-soft-hover py-1 px-2 content-none" id="cardFeedAction">
-        <BsThreeDots />
-      </DropdownToggle>
-
-      <DropdownMenu className="dropdown-menu-end" aria-labelledby="cardFeedAction">
-        <li>
-          <DropdownItem>
-            <BsBookmark size={22} className="fa-fw pe-2" />
-            Save post
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownItem>
-            <BsPersonX size={22} className="fa-fw pe-2" />
-            Unfollow {name}
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownItem>
-            <BsXCircle size={22} className="fa-fw pe-2" />
-            Hide post
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownItem>
-            <BsSlashCircle size={22} className="fa-fw pe-2" />
-            Block
-          </DropdownItem>
-        </li>
-        <li>
-          <DropdownDivider />
-        </li>
-        <li>
-          <DropdownItem>
-            <BsFlag size={22} className="fa-fw pe-2" />
-            Report post
-          </DropdownItem>
-        </li>
-      </DropdownMenu>
-    </Dropdown>
-  )
+interface PostsProps {
+  isCreated : boolean
+  setIsCreated : React.Dispatch<React.SetStateAction<boolean>>
+  profile : UserProfile
 }
 
-const Posts = ({ isCreated }) => {
-  const { user } = useAuthContext()
-
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState<boolean>(false) // Loading state
+const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
+  console.log('Profile in Feed', profile)
+  const  currentUser = useParams()
+  // console.log('profile in feed',profile)
+  const [posts, setPosts] = useState<PostSchema[]>([])
+  const [loading, setLoading] = useState<boolean>(true) // Loading state
   const [error, setError] = useState<string | null>(null) // Error state
   const hasMounted = useRef(false) // Track whether the component has mounted
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // That Use Effect doesn't run on mount
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
   const [page, setPage] = useState(1);
- const [hasMore, setHasMore] = useState(true);
-  const [limit, setLimit] = useState<number>(3)
-  const CurrentUser = useParams()
+  const [hasMore, setHasMore] = useState(true);
+  // const [profile,setProfile] = useState({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [flag, setflag] = useState(false);
 
-  // const { setTrue, setFalse, isTrue: isSpinning } = useToggle()
-  // onDelete= async () => {
 
-  //   try {
-  //     const response = await fetch(`${LIVE_URL}api/v1/post/delete-userpost-byPostId`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Add token if required
-  //       },
-  //       body: JSON.stringify({
-  //         userId: user?.id,
-  //         PostId: post.post?.Id,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-  //     console.log(tlRefresh) // Assuming the response is JSON
-  //     setTlRefresh(tlRefresh+1 || 1);
-  //     console.log(tlRefresh)
-  //     console.log(data);
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   } catch (error: any) {
-  //     console.error('Error Deleting post:', error.message);
-  //   } finally {
-  //     console.log('call done')
-  //   }
-  // }
-
-  const fetchPosts = async () => {
-    setHasMore(true)
-    setError(null)
+  const fetchPosts = async (pageNumber: number) => {
+    setError(null);
+    setHasMore(true);
+    // console.log('fetching posts');
     try {
-      const res = await makeApiRequest<{ data: any[] }>({
+      const res = await makeApiRequest<ApiResponse>({
         method: 'POST',
         url: 'api/v1/post/get-userpost-byUserId',
-        data: { userId: CurrentUser  ?.id, page: page, limit: limit },
-      })
-      if(res.message == "No posts found for this user."){
+        data: { userId: currentUser.id, page: pageNumber },
+      });
+
+      if (res.message === "No posts found for this user.") {
         setHasMore(false);
+        console.log('No posts found');
         return;
       }
-      setLoading(false)
-      console.log('res', res.data.posts)
-      setPosts(previousData => [...previousData,...res.data.posts])
+
+      if (pageNumber === 1) {
+        setPosts([...res.data.posts]);
+      } else {
+        setPosts((previousPosts) => [...previousPosts, ...res.data.posts]);
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error(JSON.stringify(error))
-      setError('This User have no Posts');
+      console.error('Error fetching posts:', error.message);
+      setError(error.message || 'An unknown error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+  useEffect(() => {
+    // alert(`Fetching Post of Page, ${page}`)
+    fetchPosts(page);
+  }, [page]);
 
   useEffect(() => {
-    fetchPosts()
-  }, [page])
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return;
+    }
+    // alert('Posts reset');
+    setPage(1);
+    fetchPosts(1);
+  }, [isCreated]);
 
+
+  const fetchNextPage = () => {
+    // alert('Next Page Fetch')
+    if (!loading && hasMore) {
+      setPage(page => page + 1);
+    }
+  }
 
   const PostSkeleton = () => {
     return (
@@ -183,129 +108,51 @@ const Posts = ({ isCreated }) => {
   };
   // Conditional rendering
   if (loading) {
-    return  <div style={{ minHeight: '110vh', padding: '16px' }}>
-    {[...Array(3)].map((_, index) => (
-      <PostSkeleton key={index} />
-    ))}
-  </div> // Show a loading spinner or message
+    return <div style={{ minHeight: '110vh', padding: '16px' }}>
+      {[...Array(5)].map((_, index) => (
+        <PostSkeleton key={index} />
+      ))}
+    </div>
   }
 
   if (error) {
-    return <div>Error: {error}</div> // Show an error message
-  }
-  const fetchNextPage = () => {
-    if(!loading && hasMore){
-      setPage(page => page + 1);
-    }
+    return <div>Error: {error}</div>
   }
 
-
-  // const [showNewPostButton, setShowNewPostButton] = useState(false);
-  // const scrollContainerRef = useRef(null);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     if (scrollContainerRef.current) {
-  //       const scrollTop = scrollContainerRef.current.scrollTop;
-
-  //       // Show button if scrolled up or near the top (scrollTop < 1000)
-  //       if (scrollTop < 1) {
-  //         setShowNewPostButton(true);
-  //       } else {
-  //         setShowNewPostButton(false);
-  //       }
-  //     }
-  //   };
-
-  //   const container = scrollContainerRef.current;
-
-  //   if (container) {
-  //     container.addEventListener('scroll', handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (container) {
-  //       container.removeEventListener('scroll', handleScroll);
-  //     }
-  //   };
-  // }, []);
 
   return (
     <>
-      <div
-        className="position-relative"
-        // ref={scrollContainerRef}
-        style={{ 
-          maxHeight: '500px', 
-          paddingTop : '24px'
-        }}><InfiniteScroll
-            dataLength={posts.length}
-            next={fetchNextPage}
-            hasMore={hasMore}
-            loader={<div>
-              {[...Array(3)].map((_, index) => (
+      <div className="position-relative">
+        <InfiniteScroll
+          dataLength={posts.length}
+          next={fetchNextPage}
+          hasMore={hasMore}
+          loader={
+            <div>
+              {[...Array(5)].map((_, index) => (
                 <PostSkeleton key={index} />
               ))}
-            </div>}
-            endMessage={
-              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                <strong>No posts are available.</strong>
-              </div>
-            }
-          >
-
-        {posts.map((post, index) => (
-          <PostCard item={post} key={post.Id || index} isMediaKeys={true} />))}
-          </InfiniteScroll>
-      </div>
-
-      {/* <SponsoredCard /> */}
-      {/* <Post2 /> */}
-      {/* <People /> */}
-      {/* <CommonPost>
-        <div className="vstack gap-2">
-          {postData.map((item, idx) => (
-            <div key={idx}>
-              <input type="radio" className="btn-check" name="poll" id={`option${idx}`} />
-              <label className="btn btn-outline-primary w-100" htmlFor={`option${idx}`}>
-                {item.title}
-              </label>
             </div>
+          }
+          endMessage={
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <strong>No Posts are available.</strong>
+            </div>
+          }
+        // Matches the id of the scrollable container
+        >
+
+          {posts.map((post) => (
+            <PostCard
+              item={post}
+              key={post.post.Id}
+              setIsCreated={setIsCreated}
+              isCreated={isCreated}
+              profile={profile}
+            />
           ))}
-        </div>
-      </CommonPost> */}
-
-      {/* <CommonPost>
-        <Card className="card-body mt-4">
-          <div className="d-sm-flex justify-content-sm-between align-items-center">
-            <span className="small">16/20 responded</span>
-            <span className="small">Results not visible to participants</span>
-          </div>
-          <div className="vstack gap-4 gap-sm-3 mt-3">
-            {postData.map((item, idx) => (
-              <div className="d-flex align-items-center justify-content-between" key={idx}>
-                <div className="overflow-hidden w-100 me-3">
-                  <div className="progress bg-primary bg-opacity-10 position-relative" style={{ height: 30 }}>
-                    <div
-                      className="progress-bar bg-primary bg-opacity-25"
-                      role="progressbar"
-                      style={{ width: `${item.progress}%` }}
-                      aria-valuenow={item.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}></div>
-                    <span className="position-absolute pt-1 ps-3 fs-6 fw-normal text-truncate w-100">{item.userRole}</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">{item.progress}%</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </CommonPost> */}
-
-      {/* <Post3 /> */}
-      {/* <SuggestedStories /> */}
-      {/* <LoadMoreButton limit={limit} setLimit={setLimit} isSpinning={isSpinning}/> */}
+        </InfiniteScroll>
+      </div>
     </>
   )
 }

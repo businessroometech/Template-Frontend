@@ -776,7 +776,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             </Button></>
                       )}
 
-                      <Dropdown>
+                      {/* <Dropdown>
                         <DropdownToggle
                           as="a"
                           className="icon-md btn btn-light content-none"
@@ -800,7 +800,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             <BsGear size={22} className="fa-fw pe-2" /> Profile settings
                           </DropdownItem>
                         </DropdownMenu>
-                      </Dropdown>
+                      </Dropdown> */}
                     </div>
                   </div>
                   {/* Profile Details */}

@@ -16,6 +16,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Image,
   Row,
 } from 'react-bootstrap';
 import {
@@ -143,11 +144,11 @@ body: JSON.stringify({ userId: user?.id }),
                             )}
                           >
                             <div className="avatar text-center">
-                              <img
-                                className="avatar-img rounded-circle"
-                                src={notification.mediaUrl || avatar7}
-                                alt={notification.firstName || 'Avatar'}
-                              />
+                            <Image
+                              className="avatar-img rounded-circle"
+                              src={notification?.mediaUrl ? notification?.mediaUrl : avatar7}
+                              alt="Avatar"
+                            />
                             </div>
                             <div className="mx-sm-3 my-2 my-sm-0">
                               <p className="small mb-2 text-secondary">

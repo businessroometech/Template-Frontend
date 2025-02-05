@@ -177,12 +177,12 @@ const FeedLayout = ({ children }: ChildrenType) => {
             </div>
           </OffcanvasHeader>
           <div className="offcanvas-body pt-0 custom-scrollbar">
-            <form className="rounded position-relative">
-              <FormControl className="ps-5 bg-light" type="search" placeholder="Search..." aria-label="Search" />
+            {/* <form className="rounded position-relative"> */}
+              {/* <FormControl className="ps-5 bg-light" type="search" placeholder="Search..." aria-label="Search" />
               <button className="btn bg-transparent px-3 py-0 position-absolute top-50 start-0 translate-middle-y" type="button">
                 <BsSearch className="fs-5" />
-              </button>
-            </form>
+              </button> */}
+            {/* </form> */}
             <Messaging />
           </div>
         </Offcanvas>

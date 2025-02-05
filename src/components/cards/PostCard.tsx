@@ -1,26 +1,20 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
+import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Repeat, Rocket, Share, Smile, Star, ThumbsUp, Lightbulb as Bulb, X } from 'lucide-react';
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
+import {  MessageSquare, Repeat, ThumbsUp} from 'lucide-react';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader} from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
-import { CircleUserRound } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import useToggle from '@/hooks/useToggle';
-import { getLinkPreview } from "link-preview-js";
 import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
 import VideoPlayer from './components/VideoPlayer';
-import GlightBox from '../GlightBox';
-import { mixed } from 'yup';
 import ResponsiveGallery, { UtilType } from './components/MediaGallery';
-import axios from 'axios';
 import { FaGlobe } from 'react-icons/fa';
 import RepostModal from './RepostModal';
 import { LIVE_URL } from '@/utils/api';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
-import ReactMarkdown from 'react-markdown';
 import { toast } from 'react-toastify';
 export interface Like {
   id: string;
