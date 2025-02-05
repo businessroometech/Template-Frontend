@@ -25,7 +25,7 @@ const ForgotPassForm = () => {
   return (
     <form className="mt-3" onSubmit={handleSubmit(() => {})}>
       <div className="mb-3">
-        <PasswordFormInput name="password" control={control} size="lg" placeholder="Enter new password" />
+        <PasswordFormInput name="password" control={control} size="lg" placeholder="Enter Your Email Address" />
         <div className="mt-2">
           <PasswordStrengthMeter password={firstPassword} />
         </div>
