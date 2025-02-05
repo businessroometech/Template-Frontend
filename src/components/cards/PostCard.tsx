@@ -542,7 +542,7 @@ const PostCard = ({
           <img
             key={index}
             src={word}
-            alt="User shared content"
+            alt={word}
             style={{ maxWidth: '100%', borderRadius: '8px', marginTop: '8px' }}
           />
         );
