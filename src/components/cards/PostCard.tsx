@@ -3,7 +3,7 @@ import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
 import { MessageSquare, Repeat, ThumbsUp } from 'lucide-react';
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader } from 'react-bootstrap';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Image } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
 import { useAuthContext } from '@/context/useAuthContext';
@@ -16,6 +16,7 @@ import RepostModal from './RepostModal';
 import { LIVE_URL } from '@/utils/api';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 import { toast } from 'react-toastify';
+import ImageZoom from './ImageZoom';
 export interface Like {
   id: string;
   occupation: string;
@@ -70,6 +71,8 @@ export interface UserDetails {
   timestamp: string;
   userRole: string;
   avatar: string;
+  zoomProfile : number;
+  rotateProfile : number;
 }
 
 export interface PostSchema {
@@ -252,7 +255,6 @@ const PostCard = ({
       }
     } catch (error) {
       setAllLikes([]);
-      console.error('An unknown error occurred:', (error as Error).message);
     }
   };
 
@@ -305,7 +307,7 @@ const PostCard = ({
         console.error('Error fetching user profile:', error)
       }
     }
-    fetchUser();
+    if(post.repostedFrom) fetchUser();
   }, [])
 
 
@@ -590,7 +592,26 @@ const PostCard = ({
             <div className="d-flex align-items-center">
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post?.userId}`} role="button">
-                  <img className="avatar-img rounded-circle" src={userInfo.avatar ? userInfo.avatar : fallBackAvatar} />
+                <div
+                    style={{
+                      border : '3px solid white',
+                      width: "55px",
+                      height: "55px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                  
+                    }}
+                  >
+                    <Image
+                      src={userInfo.avatar ? userInfo.avatar : fallBackAvatar} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(userInfo?.zoomProfile || 50)  / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
                 </Link>
                 {/* {post.repostedFrom && <p>This is a repost</p>} */}
               </div>
@@ -716,7 +737,27 @@ const PostCard = ({
                 <div className="d-flex align-items-center">
                   <div className="avatar me-2">
                     <Link to={`/profile/feed/${post?.repostedFrom}`} role="button">
-                      <img className="avatar-img rounded-circle" src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} />
+                    <div
+                    style={{
+                      border : '3px solid white',
+                      width: "55px",
+                      height: "55px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                  
+                    }}
+                  >
+                    <Image
+                      src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(repostProfile?.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(repostProfile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
+                      
                     </Link>
 
                   </div>
@@ -894,12 +935,26 @@ const PostCard = ({
             <div className="avatar avatar-xs me-3">
               <Link to={`/profile/feed/${user?.id}`}>
                 <span role="button">
-                  <img
-                    className="avatar-img rounded-circle"
-                    style={{ width: '52px', height: '35px', objectFit: 'cover' }}
-                    src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
-                    alt="avatar"
-                  />
+                <div
+                    style={{
+                      border : '3px solid white',
+                      width: "45px",
+                      height: "45px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                  
+                    }}
+                  >
+                    <Image
+                      src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(profile?.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
                 </span>
               </Link>
             </div>
@@ -982,7 +1037,28 @@ const PostCard = ({
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: '-10px' }}>
                   {/* Avatar */}
                   <Link to={`/profile/feed/${post?.userId}`} role="button" style={{ paddingBottom: '3px', paddingRight: '4px' }}>
-                    <img
+
+                  <div
+                    style={{
+                      border : '3px solid white',
+                      width: "55px",
+                      height: "55px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                  
+                    }}
+                  >
+                    <Image
+                      src={userInfo.avatar ? userInfo?.avatar : fallBackAvatar} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(userInfo?.zoomProfile || 50)  / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
+                    {/* <img
                       style={{
                         width: 30,
                         height: 30,
@@ -991,7 +1067,7 @@ const PostCard = ({
                       }}
                       src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
                       alt={userInfo?.firstName || "avatar"}
-                    />
+                    /> */}
                   </Link>
 
                   {/* Name and Repost Text */}
@@ -1060,7 +1136,11 @@ const PostCard = ({
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post.repostedFrom ? repostProfile?.personalDetails?.id : post?.userId}`} role="button">
                   {userInfo?.avatar ? (
-                    <img className="avatar-img rounded-circle" src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar} />
+                    <ImageZoom 
+                      src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar}
+                      zoom={post.repostedFrom ? repostProfile?.personalDetails?.zoomProfile : userInfo?.zoomProfile}
+                      rotate={post.repostedFrom ? repostProfile?.personalDetails?.rotateProfile : userInfo?.rotateProfile}
+                    />
                   ) : (
                     <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                   )}
@@ -1076,7 +1156,7 @@ const PostCard = ({
                       justifyContent: "space-between",
                       alignItems: "flex-start",
                       flexDirection: "column",
-                    }}
+                    }}profile
                   >
                     <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
                       {post.repostedFrom ? repostProfile?.personalDetails?.firstName : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}
@@ -1275,12 +1355,19 @@ const PostCard = ({
             <div className="avatar avatar-xs me-3">
               <Link to={`/profile/feed/${user?.id}`}>
                 <span role="button">
-                  <img
+                  <ImageZoom 
+                    src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
+                    zoom={profile?.personalDetails?.zoomProfile}
+                    rotate={profile?.personalDetails?.rotateProfile}
+                    width='45px'
+                    height='45px'
+                  />
+                  {/* <img
                     className="avatar-img rounded-circle"
                     style={{ width: '52px', height: '35px', objectFit: 'cover' }}
                     src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
                     alt="avatar"
-                  />
+                  /> */}
                 </span>
               </Link>
             </div>

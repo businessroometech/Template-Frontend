@@ -86,9 +86,13 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
           const requestBody = forCover ? {
             userId: user?.id,
             bgPictureUploadId: url[0],
+            zoom : zoom,
+            rotate : straighten
           } : {
             userId: user?.id,
             profilePictureUploadId: url[0],
+            zoomProfile : zoom,
+            rotateProfile : straighten
           };
   
           console.log('Request body:', requestBody);

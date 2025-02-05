@@ -6,6 +6,8 @@ import fallBackAvatar from '../../../assets/images/avatar/default avatar.png';
 import axios, { AxiosResponse } from 'axios';
 import { useAuthContext } from '@/context/useAuthContext';
 import { LIVE_URL } from '@/utils/api';
+import ImageZoom from '../ImageZoom';
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 
 interface DeleteCommentResponse {
   message: string;
@@ -26,7 +28,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const [commentRefresh,setCommentRefresh] = useState(0);
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
-  const [profile,setProfile] = useState<boolean>(false);
+  const [profile,setProfile] = useState<UserProfile>(false);
   // console.log('---comment---',comment);
   console.log('---my profile---',myProfile);
   function formatText(text : string,name : string) : string {
@@ -200,12 +202,19 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <Link to={`/profile/feed/${comment?.commenterId}`}>
-        <img
+        <ImageZoom 
           src={profile.profileImgUrl || fallBackAvatar}
+          zoom={profile?.personalDetails?.zoomProfile}
+          rotate={profile?.personalDetails?.rotateProfile}
+          width='35px'
+          height='35px'
+        />
+        {/* <img
+          src={}
           alt={`${comment.commenterName || comment.createdBy}-avatar`}
           className="rounded-circle me-3"
           style={{ width: '35px', height: '35px', objectFit: 'cover' }}
-        />
+        /> */}
         </Link>
         {/* Comment Content */}
         <div
@@ -315,12 +324,13 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
           <div className="avatar avatar-xs me-3">
             <Link to={`/profile/feed/${comment.commenterId}`}>
               <span role="button">
-                <img
-                  className="avatar-img rounded-circle"
-                  style={{ width: '35px', height: '35px', objectFit: 'cover' }}
-                  src={(myProfile && myProfile.profileImgUrl) || fallBackAvatar}
-                  alt="avatar"
-                />
+              <ImageZoom 
+                src={(myProfile && myProfile.profileImgUrl) || fallBackAvatar}
+                zoom={myProfile?.personalDetails?.zoom}
+                rotate={myProfile?.personalDetails?.rotate}
+                width='35px'
+                height='35px'
+              />
               </span>
             </Link>
           </div>

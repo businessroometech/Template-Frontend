@@ -34,7 +34,7 @@ export type ApiResponse = {
 
 
 const Feeds = ({ isCreated, setIsCreated, profile }: FeedsProps) => {
-  console.log('Profile in Feed', profile)
+  // console.log('Profile in Feed', profile)
   const { user } = useAuthContext();
   // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<PostSchema[]>([])
