@@ -492,6 +492,7 @@ const PostCard = ({
     const hashtagRegex = /(#\w+)/g;
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i;
+    const videoRegex = /(https?:\/\/.*\.(?:mp4|webm|ogg))/i; // Added for videos
     const youtubeRegex =
       /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
   
@@ -542,9 +543,22 @@ const PostCard = ({
           <img
             key={index}
             src={word}
-            alt={word}
+            alt="User shared image"
             style={{ maxWidth: '100%', borderRadius: '8px', marginTop: '8px' }}
           />
+        );
+      } else if (videoRegex.test(word)) {
+        return (
+          <video
+            key={index}
+            width="100%"
+            height="auto"
+            controls
+            style={{ borderRadius: '8px', marginTop: '8px' }}
+          >
+            <source src={word} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         );
       } else if (urlRegex.test(word)) {
         return (
@@ -563,7 +577,6 @@ const PostCard = ({
       return word;
     });
   };
-  
 
 
 
