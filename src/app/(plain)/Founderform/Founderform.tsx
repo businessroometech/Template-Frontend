@@ -146,38 +146,45 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </Form.Group>
                 </Row>
                 <Row className="mb-3">
-                  <Form.Group as={Col} controlId="businessLocationCountry">
-                    <Form.Label className="fs-6"> {/* Increased font size */}
-                      <FaGlobe className="me-2" />
-                      Where is your business located?
-                    </Form.Label>
-                    <Form.Select
-                    style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
-                      value={formData.businessLocationCountry}
-                      onChange={(e) => handleInputChange("businessLocationCountry", e.target.value)}
-                      required
-                    >
-                      <option value="">Select Country</option>
-                      <option value="USA">USA</option>
-                      <option value="Canada">Canada</option>
-                      <option value="UK">UK</option>
-                      <option value="India">India</option>
-                      <option value="Other">Other</option>
-                    </Form.Select>
-                  </Form.Group>
-                  <Form.Group as={Col} controlId="businessLocationCity">
-                    <Form.Label className="fs-6"> {/* Increased font size */}
-                      <FaCity className="me-2" />
-                      City
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter city"
-                      value={formData.businessLocationCity}
-                      onChange={(e) => handleInputChange("businessLocationCity", e.target.value)}
-                    />
-                  </Form.Group>
-                </Row>
+  <Form.Group as={Col} controlId="businessLocationCountry">
+    <Form.Label className="fs-6"> {/* Increased font size */}
+      <FaGlobe className="me-2" />
+      Where is your business located?
+    </Form.Label>
+    <Form.Select
+      style={{ backgroundColor: 'transparent', border: '1px solid #ccc' }}
+      value={formData.businessLocationCountry}
+      onChange={(e) => handleInputChange("businessLocationCountry", e.target.value)}
+      required
+    >
+      <option value="">Select Country</option>
+      <option value="USA">USA</option>
+      <option value="Canada">Canada</option>
+      <option value="UK">UK</option>
+      <option value="India">India</option>
+      <option value="Other">Other</option>
+    </Form.Select>
+  </Form.Group>
+
+  <Form.Group as={Col} controlId="businessLocationCity">
+    <Form.Label className="fs-6"> {/* Increased font size */}
+      <FaCity className="me-2" />
+      City
+    </Form.Label>
+    <Form.Control
+      type="text"
+      placeholder="Enter city"
+      value={formData.businessLocationCity}
+      onChange={(e) => {
+        const input = e.target.value;
+        if (/^[A-Za-z\s]*$/.test(input)) {
+          handleInputChange("businessLocationCity", input);
+        }
+      }}
+    />
+  </Form.Group>
+</Row>
+
                 <Row className="mb-3">
                   <Form.Group controlId="businessIdea">
                     <Form.Label className="fs-6"> {/* Increased font size */}

@@ -637,7 +637,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   {/* Profile Info Section */}
                   <div className="d-sm-flex align-items-start text-center text-sm-start">
                     {/* Profile Picture */}
-                    <div>
+                    <div style={{marginTop:"40px"}}>
                       <div className="avatar avatar-xxl mt-n5 mb-3">
                         {skeletonLoading ? (
                           <Skeleton circle width={120} height={120} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
@@ -668,13 +668,28 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                         &nbsp;
                         <BsPatchCheckFill className="text-success small" />
                       </h1>
-                      <p>
+                      {/* <p>
                         {!skeletonLoading ? (
                           `${profile.connectionsCount} connections`
                         ) : (
                           <Skeleton width={80} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
                         )}
-                      </p>
+                      </p> */}
+                       <ul className="list-unstyled">
+  <li>
+    <BsBriefcase className="me-1" />
+    {profile?.personalDetails?.occupation
+      ? profile?.personalDetails?.occupation.replace(/^entrepreneur$/i, 'Entrepreneur')
+      : user.userRole.replace(/^entrepreneur$/i, 'Entrepreneur')}
+  </li>
+  <li>
+    <BsGeoAlt className="me-1" />
+    {profile?.personalDetails?.permanentAddress?.city
+      ? profile?.personalDetails?.permanentAddress?.city
+      : user.country}{' '}
+    {profile?.personalDetails?.permanentAddress?.state}
+  </li>
+</ul>
                     </div>
 
                     {/* Action Buttons */}
@@ -761,7 +776,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             </Button></>
                       )}
 
-                      <Dropdown>
+                      {/* <Dropdown>
                         <DropdownToggle
                           as="a"
                           className="icon-md btn btn-light content-none"
@@ -785,18 +800,18 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             <BsGear size={22} className="fa-fw pe-2" /> Profile settings
                           </DropdownItem>
                         </DropdownMenu>
-                      </Dropdown>
+                      </Dropdown> */}
                     </div>
                   </div>
                   {/* Profile Details */}
                   <ul className="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
                     <li className="list-inline-item">
-                      <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation.replace(/^entrepreneur$/i, 'Entrepreneur') : user.userRole.replace(/^entrepreneur$/i, 'Entrepreneur')}
+                      {/* <BsBriefcase className="me-1" /> {profile?.personalDetails?.occupation ? profile?.personalDetails?.occupation.replace(/^entrepreneur$/i, 'Entrepreneur') : user.userRole.replace(/^entrepreneur$/i, 'Entrepreneur')} */}
                     </li>
                     <li className="list-inline-item">
-                      <BsGeoAlt className="me-1" />{' '}
+                      {/* <BsGeoAlt className="me-1" />{' '}
                       {profile?.personalDetails?.permanentAddress?.city ? profile?.personalDetails?.permanentAddress?.city : user.country}{' '}
-                      {profile?.personalDetails?.permanentAddress?.state}
+                      {profile?.personalDetails?.permanentAddress?.state} */}
                     </li>
                     {/* <li className="list-inline-item">
                       <BsCalendar2Plus className="me-1" /> Joined on :  {formatDate(user.createdAt)}

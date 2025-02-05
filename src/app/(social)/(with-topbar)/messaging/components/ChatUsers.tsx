@@ -142,9 +142,9 @@ const ChatUsers = ({ chats }: { chats: UserType[] }) => {
           aria-label="Search"
           onKeyUp={(e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value)}
         />
-        <button className="btn bg-transparent text-secondary px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="button">
+        {/* <button className="btn bg-transparent text-secondary px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="button">
           <BsSearch className="fs-5" />
-        </button>
+        </button> */}
       </form>
       <div className="mt-4 h-100">
         {loading ? (

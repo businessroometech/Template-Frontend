@@ -154,7 +154,7 @@ const ChatArea = () => {
           senderId: user?.id,
           receiverId: activeChat.personalDetails.id,
           page: page,
-          limit: 50,
+          limit: 100,
         },
       })
       // socket.emit('sendMessage', newMessage)
