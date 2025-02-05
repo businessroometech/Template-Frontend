@@ -2190,19 +2190,25 @@ const InvestorForm = () => {
                 </Row>
 
                 <Row className="mb-3">
-                  <Form.Group as={Col}>
-                    <Form.Label>
-                      <FaMapMarkerAlt className="me-2" />
-                      Do you prefer investing in startups based in a specific region or country?
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={formData.regionPreference}
-                      onChange={(e) => handleInputChange("regionPreference", e.target.value)}
-                      placeholder="Enter your preferred region or country"
-                    />
-                  </Form.Group>
-                </Row>
+  <Form.Group as={Col}>
+    <Form.Label>
+      <FaMapMarkerAlt className="me-2" />
+      Do you prefer investing in startups based in a specific region or country?
+    </Form.Label>
+    <Form.Control
+      type="text"
+      value={formData.regionPreference}
+      onChange={(e) => {
+        const input = e.target.value;
+        if (/^[A-Za-z\s]*$/.test(input)) { // Allow only alphabets and spaces
+          handleInputChange("regionPreference", input);
+        }
+      }}
+      placeholder="Enter your preferred region or country"
+    />
+  </Form.Group>
+</Row>
+
 
                 <Row className="mb-3">
                   <Form.Group as={Col}>
@@ -2535,20 +2541,24 @@ const InvestorForm = () => {
                 </Row>
 
                 <Row className="mb-3">
-                  <Form.Group as={Col}>
-                    <Form.Label>
-                      <FaUser className="me-2" />
-                      What is your expected level of involvement with portfolio companies?
-                    </Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      value={formData.expectedInvolvement}
-                      onChange={(e) => handleInputChange("expectedInvolvement", e.target.value)}
-                      placeholder="Describe how you plan to be involved with your investments"
-                    />
-                  </Form.Group>
-                </Row>
+  <Form.Group as={Col}>
+    <Form.Label>
+      <FaUser className="me-2" />
+      What is your expected involvement with the startup after the investment?
+    </Form.Label>
+    <Form.Control
+      as="select"
+      value={formData.expectedInvolvement}
+      onChange={(e) => handleInputChange("expectedInvolvement", e.target.value)}
+    >
+      <option value="">Select involvement level</option>
+      <option value="boardPosition">Board Position</option>
+      <option value="advisoryRole">Advisory Role</option>
+      <option value="passiveRole">Passive Role</option>
+      <option value="notInvolved">Not Involved</option>
+    </Form.Control>
+  </Form.Group>
+</Row>
               </Form>
             </Card.Body>
           </Card>

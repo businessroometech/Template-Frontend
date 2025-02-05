@@ -208,10 +208,11 @@ const Connections = () => {
                 { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" size="sm" className="mb-0 me-2">
                     Remove
                   </Button>}
-                    <Button variant="primary-soft" size="sm" className="mb-0">
+             <Link to="/messaging"><Button variant="primary-soft" size="sm" className="mb-0">
 
                       Message
                     </Button>
+                    </Link>   
                   </>):(
                     <>
                     {sent && (

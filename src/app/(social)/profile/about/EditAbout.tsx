@@ -1,5 +1,5 @@
 
-// import React, { useState } from 'react';
+// import React, { useEffect, useState } from 'react';
 // import { useNavigate, useParams } from 'react-router-dom';
 // import { ButtonGroup, Card } from 'react-bootstrap';
 // import { FaMapMarkerAlt, FaBuilding, FaMoneyBillWave, FaToolbox, FaClock, FaBalanceScale, FaHandsHelping, FaFileSignature, FaInfoCircle } from 'react-icons/fa';
@@ -9,6 +9,10 @@
 // import { LIVE_URL } from '@/utils/api';
 
 // const EditAbout = () => {
+
+
+
+    
 //     const id = useParams()
 //     console.log("-----------------------editid--------------------------------" , id)
 //   const { user } = useAuthContext();
@@ -34,44 +38,6 @@
 //     { title: "Support & Confidentiality", icon: <FaHandsHelping /> },
 //     { title: "Additional Information", icon: <FaInfoCircle /> },
 //   ];
-
-//   const handleInputChange = (name, value) => {
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: value,
-//       UserId: user?.id
-
-//     }));
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-  
-//     if (!user?.id) {
-//       toast.error("User ID is missing. Please log in again.");
-//       return;
-//     }
-  
-//     toast.success("Form submitted successfully!");
-  
-//     try {
-//       const response1 = await fetch(`http://localhost:5000/api/v1/businessbuyer/update/${id}`, {
-//         method: 'POST',
-//         headers: {
-//         //   'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ ...formData }),
-//       });
-  
-//       if (!response1.ok) {
-//         throw new Error("Failed to submit business buyer data");
-//       }
-  
-//     } catch (error) {
-//       console.error("Error in first request:", error);
-//       toast.error("An error occurred while submitting the form.");
-//     }
-//   };
 //   const handleSkip = () => {
 //     navigate('/');
 //   };
@@ -156,6 +122,83 @@
 //     }
 //   };
 
+
+
+
+
+//   const fetchData = async () => {
+//     if (!id) {
+//         toast.error("User ID is missing from URL parameters.");
+//         return;
+//     }
+
+//     try {
+//         const response = await fetch(`http://localhost:5000/v1/businessbuyer/get/256bca3d45b35a71c4c5914fc62cf207` ) 
+//         if (!response.ok) {
+//             throw new Error("Failed to fetch business buyer data.");
+//         }
+//         const data = await response.json();
+
+//         setFormData({
+//             businessType: data.data.businessType || '',
+//             businesslocation: data.data.businesslocation || '',
+//             businessModel: data.data.businessModel || '',
+//             budget: data.data.budget || '',
+//             renovationInvestment: data.data.renovationInvestment || '',
+//             timeline: data.data.timeline || '',
+//             growthOrStableCashFlow: data.data.growthOrStableCashFlow || '',
+//             supportAfterPurchase: data.data.supportAfterPurchase || '',
+//             ndaAgreement:data.data.ndaAgreement || '',
+//             additionalInfo:data.data.additionalInfo || '',
+//         });
+//         console.log("=========------------ddd-------------================" , data )
+//     } catch (error) {
+//         console.error("Error fetching business buyer data:", error);
+//         toast.error("Failed to fetch business buyer data.");
+//     }
+    
+// };
+
+//   useEffect(() => {
+ 
+//    fetchData()
+// }, []);
+
+// const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+  
+//     if (!user?.id) {
+//       toast.error("User ID is missing. Please log in again.");
+//       return;
+//     }
+  
+//     toast.success("Form submitted successfully!");
+  
+//     try {
+//       const response1 = await fetch(`http://localhost:5000/v1/businessbuyer/update/256bca3d45b35a71c4c5914fc62cf207`, {
+//         method: 'PUT',
+//         headers: {
+//         //   'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ ...formData }),
+//       });
+  
+//       if (!response1.ok) {
+//         throw new Error("Failed to submit business buyer data");
+//       }
+  
+//     } catch (error) {
+//       console.error("Error in first request:", error);
+//       toast.error("An error occurred while submitting the form.");
+//     }
+//   };
+//   const handleInputChange = (name, value) => {
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+
+//     }));
+//   };
 //   return (
 //     <div className="container mt-5">
 //       <h2 className="text-start mb-4">Entrepreneur (Interested in Acquiring a Startup.)</h2>

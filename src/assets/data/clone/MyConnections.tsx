@@ -239,9 +239,10 @@ const MyConnections = () => {
                 { user?.id===id && <Button onClick={()=>handleRemove(connection.connectionId)} variant="danger-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0 me-2">
                     Remove
                   </Button>}
-                    <Button  onClick={() => navigate('/messaging')} variant="primary-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0">
+           <Link to="/messaging"><Button  onClick={() => navigate('/messaging')} variant="primary-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0">
                       Message
                     </Button>
+                    </Link>  
                   </>):(
                     <>
                     {sent && (

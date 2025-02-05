@@ -703,6 +703,14 @@ const BusinessPreferencesForm = () => {
   ];
 
   const handleInputChange = (name, value) => {
+
+    if (name === "location") {
+      // Allow only alphabets and spaces
+      if (!/^[A-Za-z\s]*$/.test(value)) {
+        return;
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
