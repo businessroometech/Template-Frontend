@@ -19,6 +19,7 @@ import EditAbout from '@/app/(social)/profile/about/EditAbout'
 
 //demo pages
 const HomeDemo = lazy(() => import('@/app/(social)/feed/(container)/home/page'))
+const UserPost = lazy(() => import('@/app/(social)/feed/(container)/home/userPost'))
 const HomeClassic = lazy(() => import('@/app/(plain)/classic/page'))
 const HomePost = lazy(() => import('@/app/(social)/(with-topbar)/posts/page'))
 const HomeVideo = lazy(() => import('@/app/(social)/feed/(no-container)/videos/page'))
@@ -93,6 +94,8 @@ const initialRoutes: RoutesProps[] = [
     name: 'root',
     element: <Navigate to="/feed/home" />,
   },
+
+  
  
 ]
 
@@ -104,6 +107,11 @@ const generalRoutes: RoutesProps[] = [
     element: <HomeDemo />,
   },
  
+  {
+    path: '/feed/post/:id',
+    name: 'Demo Home',
+    element: <UserPost />,
+  },
   {
     path: '/profile-visitors',
     name: 'Profile Visitors',

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
-import { MessageSquare, Repeat, ThumbsUp } from 'lucide-react';
+import { Copy, MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Image } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
@@ -18,8 +18,6 @@ import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 import { toast } from 'react-toastify';
 import ImageZoom from './ImageZoom';
 // import { LinkPreview } from '@dhaiwat10/react-link-preview';
-
-
 
 import LinkPreview from '@ashwamegh/react-link-preview'
 
@@ -157,7 +155,30 @@ const PostCard = ({
   const media = post.repostedFrom ? post?.mediaUrls : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 
+  const handleCopy = (postId: string)=>{
+    const shareUrl = `http://13.216.146.100/feed/post/${postId}`;
 
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => toast.success("Link copied to clipboard!"))
+      .catch((error) => console.error("Error copying link:", error));
+  }
+
+  const handleShare = (postId: string) => {
+    const shareUrl = `http://13.216.146.100/feed/home#${postId}`;
+  
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Check out this post!",
+          url: shareUrl,
+        })
+        .catch((error) => console.error("Error sharing:", error));
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
+    }
+  };
 
   function isRepost() {
     return post.repostedFrom !== null && post.repostedFrom !== undefined
@@ -494,7 +515,7 @@ const PostCard = ({
   };
 
   // Function to render mentions and hashtags with styling
-  const formatContent = (content: string) => {
+   const formatContent = (content: string) => {
     if (!content) return null;
   
     // Regex patterns
@@ -1401,14 +1422,22 @@ const PostCard = ({
                 isCreated={isCreated}
                 setIsCreated={setIsCreated}
               />}
-            {/* <Button
-            variant="ghost"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-           
-          </Button> */}
+              <Button
+          onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+          variant="ghost"
+          className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+          style={{ fontSize: "0.8rem" }}
+        >
+          <Copy size={16} />
+        </Button>
+          <Button
+      onClick={() => handleShare(post.Id)}
+      variant="ghost"
+      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+      style={{ fontSize: "0.8rem" }}
+    >
+      <Share size={16} />
+    </Button>
           </ButtonGroup>
           {openComment && <div className="d-flex mb-4 px-3">
             <div className="avatar avatar-xs me-3">
