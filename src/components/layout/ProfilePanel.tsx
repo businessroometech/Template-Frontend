@@ -119,12 +119,13 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                   <div
                     style={{
                       border : '3px solid white',
-                      width: "60px",
-                      height: "60px",
+                      width: "120px",
+                      height: "120px",
                       borderRadius: "50%",
                       overflow: "hidden",
-                      marginTop : '30px'
-                    }}
+                      marginTop : '30px',
+                      marginLeft:"-22px"
+                       }}
                   >
                     <Image
                       src={profile.profileImgUrl || avatar7} // Replace with your actual image source
