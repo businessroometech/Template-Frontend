@@ -646,8 +646,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           onClick={() => {if(user?.id === id)setShowModal(true)}}
                           style={{
                             border : '3px solid white',
-                            width: "100px",
-                            height: "100px",
+                            width: "120px",
+                            height: "120px",
                             borderRadius: "50%",
                             overflow: "hidden",
                           }}
