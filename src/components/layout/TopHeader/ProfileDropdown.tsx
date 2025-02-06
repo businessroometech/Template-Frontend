@@ -121,11 +121,17 @@ const ProfileDropdown = () => {
         <li className="px-3">
           <div className="d-flex align-items-center position-relative">
             <div className="avatar me-3">
-              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar" />
+            <ImageZoom 
+              src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+              zoom={profile?.personalDetails?.zoomProfile}
+              width='50px'
+              height='50px'
+              rotate={profile?.personalDetails?.rotateProfile}
+            />
             </div>
             <div>
               <Link className="h6 stretched-link" to="">
-                {profile.personalDetails?.firstName} {profile.personalDetails?.lastName}
+                {profile.personalDetails?.firstName} {profile.personalDetails?.lastName }
               </Link>
               <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>

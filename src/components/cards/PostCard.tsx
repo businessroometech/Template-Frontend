@@ -318,7 +318,7 @@ const PostCard = ({
     if (post.repostedFrom) fetchUser();
   }, [])
 
-
+  console.log('---item---',item);
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
     const fetchComments = async () => {
