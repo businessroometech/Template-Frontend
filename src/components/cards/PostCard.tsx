@@ -79,8 +79,8 @@ export interface UserDetails {
   timestamp: string;
   userRole: string;
   avatar: string;
-  zoomProfile : number;
-  rotateProfile : number;
+  zoomProfile: number;
+  rotateProfile: number;
 }
 
 export interface PostSchema {
@@ -315,7 +315,7 @@ const PostCard = ({
         console.error('Error fetching user profile:', error)
       }
     }
-    if(post.repostedFrom) fetchUser();
+    if (post.repostedFrom) fetchUser();
   }, [])
 
 
@@ -502,10 +502,14 @@ const PostCard = ({
     const hashtagRegex = /(#\w+)/g;
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i;
-    const videoRegex = /(https?:\/\/.*\.(?:mp4|webm|ogg))/i; // Added for videos
+    const videoRegex = /(https?:\/\/.*\.(?:mp4|webm|ogg))/i;
     const youtubeRegex =
       /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
-      
+    const pptRegex = /(https?:\/\/[^\s]+\.pptx?)/g;
+  
+    // **New regex for Google Docs, Sheets, and Slides**
+    const googleDocsRegex =
+      /https:\/\/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([a-zA-Z0-9-_]+)/;
   
     return content.split(/(\s+)/).map((word, index) => {
       if (mentionRegex.test(word)) {
@@ -571,6 +575,52 @@ const PostCard = ({
             Your browser does not support the video tag.
           </video>
         );
+      } else if (pptRegex.test(word)) {
+        return (
+          <div key={index} className="ppt-preview">
+            <iframe
+              src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(word)}`}
+              width="100%"
+              height="300px"
+              style={{
+                borderRadius: '8px',
+                marginTop: '8px',
+                border: '1px solid #ddd',
+              }}
+              allowFullScreen
+            ></iframe>
+          </div>
+        );
+      } else if (googleDocsRegex.test(word)) {
+        const match = word.match(googleDocsRegex);
+        if (match) {
+          const docType = match[1];
+          const docId = match[2];
+  
+          let embedUrl = '';
+          if (docType === 'document') {
+            embedUrl = `https://docs.google.com/document/d/${docId}/preview`;
+          } else if (docType === 'spreadsheets') {
+            embedUrl = `https://docs.google.com/spreadsheets/d/${docId}/preview`;
+          } else if (docType === 'presentation') {
+            embedUrl = `https://docs.google.com/presentation/d/${docId}/embed`;
+          }
+  
+          return (
+            <iframe
+              key={index}
+              src={embedUrl}
+              width="100%"
+              height="400px"
+              style={{
+                borderRadius: '8px',
+                marginTop: '8px',
+                border: '1px solid #ddd',
+              }}
+              allowFullScreen
+            ></iframe>
+          );
+        }
       } else if (urlRegex.test(word)) {
         return (
           <LinkPreview
@@ -588,7 +638,7 @@ const PostCard = ({
       return word;
     });
   };
-
+  
 
 
   if (isDeleted) return null;
@@ -601,14 +651,14 @@ const PostCard = ({
             <div className="d-flex align-items-center">
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post?.userId}`} role="button">
-                <div
+                  <div
                     style={{
-                      border : '3px solid white',
+                      border: '3px solid white',
                       width: "55px",
                       height: "55px",
                       borderRadius: "50%",
                       overflow: "hidden",
-                  
+
                     }}
                   >
                     <Image
@@ -617,7 +667,7 @@ const PostCard = ({
                       style={{
                         width: "100%",
                         height: "100%",
-                        transform: `scale(${(userInfo?.zoomProfile || 50)  / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                        transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
                       }}
                     />
                   </div>
@@ -746,27 +796,27 @@ const PostCard = ({
                 <div className="d-flex align-items-center">
                   <div className="avatar me-2">
                     <Link to={`/profile/feed/${post?.repostedFrom}`} role="button">
-                    <div
-                    style={{
-                      border : '3px solid white',
-                      width: "55px",
-                      height: "55px",
-                      borderRadius: "50%",
-                      overflow: "hidden",
-                  
-                    }}
-                  >
-                    <Image
-                      src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} // Replace with your actual image source
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        transform: `scale(${(repostProfile?.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(repostProfile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
-                      }}
-                    />
-                  </div>
-                      
+                      <div
+                        style={{
+                          border: '3px solid white',
+                          width: "55px",
+                          height: "55px",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+
+                        }}
+                      >
+                        <Image
+                          src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                          alt="Profile"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            transform: `scale(${(repostProfile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(repostProfile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                          }}
+                        />
+                      </div>
+
                     </Link>
 
                   </div>
@@ -944,14 +994,14 @@ const PostCard = ({
             <div className="avatar avatar-xs me-3">
               <Link to={`/profile/feed/${user?.id}`}>
                 <span role="button">
-                <div
+                  <div
                     style={{
-                      border : '3px solid white',
+                      border: '3px solid white',
                       width: "45px",
                       height: "45px",
                       borderRadius: "50%",
                       overflow: "hidden",
-                  
+
                     }}
                   >
                     <Image
@@ -960,7 +1010,7 @@ const PostCard = ({
                       style={{
                         width: "100%",
                         height: "100%",
-                        transform: `scale(${(profile?.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                        transform: `scale(${(profile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
                       }}
                     />
                   </div>
@@ -1047,26 +1097,26 @@ const PostCard = ({
                   {/* Avatar */}
                   <Link to={`/profile/feed/${post?.userId}`} role="button" style={{ paddingBottom: '3px', paddingRight: '4px' }}>
 
-                  <div
-                    style={{
-                      border : '3px solid white',
-                      width: "55px",
-                      height: "55px",
-                      borderRadius: "50%",
-                      overflow: "hidden",
-                  
-                    }}
-                  >
-                    <Image
-                      src={userInfo.avatar ? userInfo?.avatar : fallBackAvatar} // Replace with your actual image source
-                      alt="Profile"
+                    <div
                       style={{
-                        width: "100%",
-                        height: "100%",
-                        transform: `scale(${(userInfo?.zoomProfile || 50)  / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                        border: '3px solid white',
+                        width: "55px",
+                        height: "55px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+
                       }}
-                    />
-                  </div>
+                    >
+                      <Image
+                        src={userInfo.avatar ? userInfo?.avatar : fallBackAvatar} // Replace with your actual image source
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                        }}
+                      />
+                    </div>
                     {/* <img
                       style={{
                         width: 30,
@@ -1145,7 +1195,7 @@ const PostCard = ({
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post.repostedFrom ? repostProfile?.personalDetails?.id : post?.userId}`} role="button">
                   {userInfo?.avatar ? (
-                    <ImageZoom 
+                    <ImageZoom
                       src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar}
                       zoom={post.repostedFrom ? repostProfile?.personalDetails?.zoomProfile : userInfo?.zoomProfile}
                       rotate={post.repostedFrom ? repostProfile?.personalDetails?.rotateProfile : userInfo?.rotateProfile}
@@ -1165,7 +1215,7 @@ const PostCard = ({
                       justifyContent: "space-between",
                       alignItems: "flex-start",
                       flexDirection: "column",
-                    }}profile
+                    }} profile
                   >
                     <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
                       {post.repostedFrom ? repostProfile?.personalDetails?.firstName : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}
@@ -1364,7 +1414,7 @@ const PostCard = ({
             <div className="avatar avatar-xs me-3">
               <Link to={`/profile/feed/${user?.id}`}>
                 <span role="button">
-                  <ImageZoom 
+                  <ImageZoom
                     src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
                     zoom={profile?.personalDetails?.zoomProfile}
                     rotate={profile?.personalDetails?.rotateProfile}
