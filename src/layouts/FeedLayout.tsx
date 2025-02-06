@@ -50,7 +50,7 @@ const FeedLayout = ({ children }: ChildrenType) => {
       <Suspense fallback={<Preloader/>}>
         <TopHeader />
       </Suspense>
-      <main style={{marginTop : '0px'}}>
+      <main style={{marginTop : '0px',backgroundColor : 'white'}}>
         <Col
         style={{
           paddingLeft: "80px", // Adjust left padding

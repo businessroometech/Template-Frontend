@@ -574,7 +574,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       <TopHeader />
     </Suspense>
     
-    <main className="bg-pink px-3 px-md-5" style={{marginRight : '2%'}}>
+    <main className="bg-pink px-3 px-md-5" style={{marginRight : '2%',backgroundColor : 'white'}}>
       <EditProfilePictureModal
         show={showModal}
         onHide={() => setShowModal(false)}
@@ -646,8 +646,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                           onClick={() => {if(user?.id === id)setShowModal(true)}}
                           style={{
                             border : '3px solid white',
-                            width: "100px",
-                            height: "100px",
+                            width: "120px",
+                            height: "120px",
                             borderRadius: "50%",
                             overflow: "hidden",
                           }}

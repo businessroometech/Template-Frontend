@@ -17,9 +17,9 @@
     --bs-gray-900: #fff;
     --bs-light: #202227;
     --bs-secondary-rgb: 197, 198, 204;
-    --bs-body-bg: #191a1f;
-    --bs-body-color: #a1a1a8;
-    --bs-body-color-rgb: 161, 161, 168;
+    --bs-body-bg: white;
+    --bs-body-color: white;
+    --bs-body-color-rgb: white;
     --bs-mode:#0f0f10;
     --bs-mode-rgb:15, 15, 16;
     --bs-border-color: rgba(255, 255, 255, 0.07);
@@ -172,7 +172,7 @@
       border: 1px solid var(--bs-gray-100);
     }
     .choices[data-type*=select-one] .choices__input{
-      background: var(--bs-body-bg);
+      background: 'white';
     }
 
     // Flatpickr

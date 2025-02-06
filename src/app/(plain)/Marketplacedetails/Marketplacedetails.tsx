@@ -584,7 +584,7 @@ console.log("Business Details________________" ,businessDetails)
   );
 
   return (
-    <div style={{ height: '100vh', marginLeft:"60px" }}>
+    <div style={{ height: '100vh', marginLeft:"60px",backgroundColor : 'white'}}>
       {/* Header */}
       <TopHeader></TopHeader>
       {/* <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '1rem 0' ,marginTop:"60px"}}>
@@ -612,7 +612,7 @@ console.log("Business Details________________" ,businessDetails)
       {/* Main Content with Profile Panel */}
       <div style={{ display: 'flex', height: 'calc(100vh - 8rem)', marginTop:"60px", marginLeft:"20px"}}>
         {/* Profile Panel */}
-        <div style={{ width: '280px', borderRight: '1px solid #e5e7eb', backgroundColor: '#f8f9fa', marginTop:"25px"}}>
+        <div style={{ width: '280px', borderRight: '1px solid #e5e7eb', backgroundColor: 'white', marginTop:"25px"}}>
           <SimplebarReactClient style={{ height: '100%' }}>
             <ProfilePanel links={profilePanelLinksData1} />
           </SimplebarReactClient>
