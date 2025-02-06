@@ -19,7 +19,7 @@ const ImageZoom = ({src,zoom,rotate,width="55px",height="55px"} : {
         }}
     >
         <Image
-            src={src} // Replace with your actual image source
+            src={src} 
             alt="Profile"
             style={{
             width: "100%",
