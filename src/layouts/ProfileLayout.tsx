@@ -574,7 +574,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
       <TopHeader />
     </Suspense>
     
-    <main className="bg-pink px-3 px-md-5" style={{marginRight : '2%'}}>
+    <main className="bg-pink px-3 px-md-5" style={{marginRight : '2%',backgroundColor : 'white'}}>
       <EditProfilePictureModal
         show={showModal}
         onHide={() => setShowModal(false)}

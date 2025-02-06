@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 
 const OtherLayout = ({ children }: ChildrenType) => {
   return (
-    <Suspense fallback={<Preloader />}>{children}</Suspense>
+    <Suspense fallback={<Preloader />} ><div style={{backgroundColor : 'white'}}>{children}</div></Suspense>
   )
 }
 

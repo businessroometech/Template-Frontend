@@ -223,7 +223,7 @@ const ChatArea = () => {
 
   if (!activeChat) {
     return (
-      <div className="d-flex justify-content-center align-items-center h-100">
+      <div className="d-flex justify-content-center align-items-center h-100 bg-white" >
         <h5 className="text-secondary">Tap on a name to start chatting</h5>
       </div>
     )
@@ -243,8 +243,8 @@ const ChatArea = () => {
   const status = onlineUsers?.includes(activeChat.personalDetails.id) ? 'online' : 'offline'
 
   return (
-    <Card className="card-chat rounded-0 border-0 mx-5" >
-  <CardBody className="d-flex flex-column h-100 p-0 ">
+    <Card className="card-chat rounded-0 border-0 mx-5"  >
+  <CardBody className="d-flex flex-column h-100 p-0 " style={{backgroundColor : 'white'}}>
     {/* Header */}
     <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white sticky-top" style={{ top: 0, zIndex: 1, borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
       <div className="d-flex align-items-center">
@@ -262,7 +262,7 @@ const ChatArea = () => {
       style={{
         overflowY: 'auto',
         padding: '20px',
-        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
+        background: 'white',
         borderBottomLeftRadius: '15px',
         borderBottomRightRadius: '15px',
       }}>

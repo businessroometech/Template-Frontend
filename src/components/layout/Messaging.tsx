@@ -425,7 +425,7 @@ const Messaging = () => {
             onClose={() => closeChat(chatUser?.userId)}
             style={{ marginBottom: '0px', backgroundColor: '#fff' }}>
             <ToastHeader closeButton={false} className="bg-mode">
-          <div className="d-flex justify-content-between align-items-center w-100">
+          <div className="d-flex justify-content-between align-items-center w-100" >
             <div className="d-flex">
               <div className={clsx('flex-shrink-0 avatar me-2', { 'avatar-story': chatUser?.isStory })}>
             {chatUser && chatUser.profilePictureUrl ? (
@@ -555,7 +555,7 @@ const Messaging = () => {
               padding: '10px',
               width: '100%',
               outline: 'none',
-              backgroundColor: '#f8f9fa',
+              backgroundColor: 'white',
             }}
               />
 
