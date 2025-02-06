@@ -119,8 +119,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                   <div
                     style={{
                       border : '3px solid white',
-                      width: "120px",
-                      height: "120px",
+                      width: "90px",
+                      height: "90px",
                       borderRadius: "50%",
                       overflow: "hidden",
                       marginTop : '30px',
