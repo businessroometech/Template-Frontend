@@ -169,7 +169,7 @@ const PostCard = ({
     if (navigator.share) {
       navigator
         .share({
-          title: "Check out this post!",
+          title: "Check out this post!", 
           url: shareUrl,
         })
         .catch((error) => console.error("Error sharing:", error));
