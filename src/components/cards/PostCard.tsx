@@ -17,6 +17,14 @@ import { LIVE_URL } from '@/utils/api';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 import { toast } from 'react-toastify';
 import ImageZoom from './ImageZoom';
+// import { LinkPreview } from '@dhaiwat10/react-link-preview';
+
+
+
+import LinkPreview from '@ashwamegh/react-link-preview'
+
+// If you're using built in layout, you will need to import this css
+import '@ashwamegh/react-link-preview/dist/index.css'
 export interface Like {
   id: string;
   occupation: string;
@@ -497,6 +505,7 @@ const PostCard = ({
     const videoRegex = /(https?:\/\/.*\.(?:mp4|webm|ogg))/i; // Added for videos
     const youtubeRegex =
       /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
+      
   
     return content.split(/(\s+)/).map((word, index) => {
       if (mentionRegex.test(word)) {
@@ -564,15 +573,15 @@ const PostCard = ({
         );
       } else if (urlRegex.test(word)) {
         return (
-          <a
+          <LinkPreview
             key={index}
-            href={word}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#0645AD', textDecoration: 'underline' }}
-          >
-            {word}
-          </a>
+            url={word}
+            width="100%"
+            descriptionLength={90}
+            imageHeight={200}
+            borderRadius="8px"
+            marginTop="8px"
+          />
         );
       }
   

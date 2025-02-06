@@ -11,6 +11,8 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx}'"
   },
   "dependencies": {
+    "@ashwamegh/react-link-preview": "^1.0.1",
+    "@dhaiwat10/react-link-preview": "^1.15.0",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@heroicons/react": "^2.2.0",
