@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, MapPin, Lightbulb, Target, Briefcase, DollarSign, TrendingUp, Users, FileCheck, BarChart as ChartBar, Milestone, Goal, Info, Loader2, HandshakeIcon, Brain, Shield, FileText, Clock } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 interface StartupProfile {
   businessName: string;
@@ -68,6 +69,11 @@ const fallbackProfile: StartupProfile = {
 
 const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
   const isPlaceholder = profile.businessName === "N/A";
+  const navigate = useNavigate()
+ const {id} = useParams()
+
+
+
 
   return (
     <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
@@ -247,6 +253,9 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
               </div>
             </div>
           )}
+          <Button onClick={() => {
+            navigate(`/profile/editfounder/${id}`)
+          }}>Edit About</Button>
         </div>
       </div>
     </div>
@@ -260,6 +269,10 @@ function AboutFounder() {
   const [error, setError] = useState<string | null>(null);
 const {user} = useAuthContext()
 const { id } = useParams();
+const navigate = useNavigate()
+
+
+
 console.log("----------//ids--------" , id)
   useEffect(() => {
     const fetchProfiles = async () => {

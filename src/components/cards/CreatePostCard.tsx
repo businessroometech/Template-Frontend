@@ -2,71 +2,47 @@ import {
   Button,
   Card,
   Col,
-  Dropdown,
-  DropdownDivider,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
   Image,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
   OverlayTrigger,
-  Row,
   Tooltip,
 } from 'react-bootstrap'
-import Skeleton from 'react-loading-skeleton'
 
 import 'react-loading-skeleton/dist/skeleton.css'
 import {
-  BsBookmarkCheck,
   BsCalendar2EventFill,
   BsCameraReels,
   BsCameraReelsFill,
   BsCameraVideoFill,
   BsEmojiSmileFill,
-  BsEnvelope,
-  BsFileEarmarkText,
   BsGeoAltFill,
   BsImageFill,
   BsImages,
-  BsPencilSquare,
   BsTagFill,
-  BsThreeDots,
 } from 'react-icons/bs'
+
 import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import useToggle from '@/hooks/useToggle'
 import DropzoneFormInput from '../form/DropzoneFormInput'
-import TextFormInput from '../form/TextFormInput'
-import TextAreaFormInput from '../form/TextAreaFormInput'
-import DateFormInput from '../form/DateFormInput'
-import avatar1 from '@/assets/images/avatar/default avatar.png'
-import avatar2 from '@/assets/images/avatar/02.jpg'
-import avatar3 from '@/assets/images/avatar/03.jpg'
-import avatar4 from '@/assets/images/avatar/04.jpg'
-import avatar5 from '@/assets/images/avatar/05.jpg'
-import avatar6 from '@/assets/images/avatar/06.jpg'
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import ChoicesFormInput from '../form/ChoicesFormInput'
 import { Link } from 'react-router-dom'
 import { SendHorizontal } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
-import { CREATE_POST, LIVE_URL } from '@/utils/api'
-import { FileUpload, uploadDoc, uploadMulti } from '@/utils/CustomS3ImageUpload'
-import { MentionsInput, Mention } from "react-mentions";
-const skeletonBaseColor = '#e3e3e3'
-const skeletonHighlightColor = '#f2f2f2'
+import { CREATE_POST } from '@/utils/api'
+import { FileUpload, uploadMulti } from '@/utils/CustomS3ImageUpload'
 
 interface CreatePostCardProps {
   isCreated: boolean,
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
-import UserModel from './UserModel'
 import { Spinner } from "react-bootstrap";
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 interface ApiResponse<T> {
@@ -103,8 +79,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
   const [awsIds, setAwsIds] = useState<any>([])
   const [skeletonLoading, setSkeletonLoading] = useState(true)
   const { isTrue: isOpenPost, toggle: togglePost } = useToggle()
-
-  // const {user} = useAuthContext();
+  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([])
   const [profile, setProfile] = useState<UserProfile>({})
 
   useEffect(() => {
@@ -157,15 +132,11 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     return date.toLocaleString('en-GB', options).replace(',', ' at')
   }
 
-  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([])
+  
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
-    if (files.length >= 9) {
-      alert('Max Limit Reached');
-      return;
-    }
-    setUploadedFiles([...uploadedFiles, ...files])
+    setUploadedFiles([...files])
   }
 
   // console.log('---- photo uploading -----', uploadedFiles)
@@ -205,7 +176,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
           url: CREATE_POST,
           data: {
             userId: user?.id,
-            content: photoQuote,
+            content: thoughts,
             hashtags: hashtags,
             mediaKeys: uploadSuccess,
           },
@@ -225,6 +196,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       setIsCreated(() => !isCreated)
       setIsSubmittingPhoto(false);
       setUploadedFiles([]);
+      setThoughts('');
     }
   }
 
@@ -249,7 +221,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
         // Making the API request
         const data = {
           userId: user?.id,
-          content: videoQuote,
+          content: thoughts,
           hashtags: hashtags,
           mediaKeys: uploadSuccess || [],
         }
@@ -277,6 +249,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       setIsSubmittingVideo(false);
       toggleVideoModel();
       setUploadedFiles([]);
+      setThoughts('');
       setIsCreated(() => !isCreated)
     }
   }
@@ -348,13 +321,13 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
 
   // Function to handle photo quote change
   const handleChangePhotoQuote = (e: any) => {
-    setPhotoQuote(e.target.value);
+    setThoughts(e.target.value);
     checkForMention(e.target.value);
   };
 
   // Function to handle video quote change
   const handleChangeVideoQuote = (e: any) => {
-    setVideoQuote(e.target.value);
+    setThoughts(e.target.value);
     checkForMention(e.target.value);
   };
 
@@ -568,7 +541,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                   }}
                   rows={2}
                   placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
-                  value={photoQuote}
+                  value={thoughts}
                   onChange={handleChangePhotoQuote}
                 />
 
@@ -613,7 +586,14 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
           </div>
           <div>
             <label className="form-label">Upload attachment</label>
-            <DropzoneFormInput icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
+            <DropzoneFormInput 
+              icon={BsImages} 
+              onFileUpload={handleFileUpload} 
+              showPreview 
+              text="Drag here or click to upload photo."
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={uploadedFiles}
+              />
           </div>
         </ModalBody>
         <ModalFooter>
@@ -641,7 +621,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
             <form className="w-100">
               <textarea
                 onChange={handleChangeVideoQuote}
-                value={videoQuote}
+                value={thoughts}
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
                 placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
@@ -692,6 +672,8 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
               icon={BsCameraReels}
               showPreview
               text="Drag here or click to upload video."
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={uploadedFiles}
             />
           </div>
         </ModalBody>

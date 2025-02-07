@@ -83,7 +83,7 @@ const ActionDropdown = () => {
 
 
 const About = () => {
-  const [subrole, setSubrole] = useState(null);
+  const [subrole, setSubrole] = useState("");
   const {user} = useAuthContext(); // Replace with actual user ID from context or props
   const { id } = useParams();
 console.log("----------------------------",id)
@@ -95,8 +95,8 @@ console.log("----------------------------",id)
         console.log("----------" ,user?.id)
         const data = await response.json();
         console.log("-------ddd----------" , data.data.SubRole )
-        setSubrole(data.data.SubRole); // Ensure the API returns { subrole: "BusinessBuyer" }
-        console.log("----SubRole-----", subrole)
+        setSubrole(data.data.SubRole); 
+        console.log("----SubRole-----", data.data.SubRole)
       } catch (error) {
         console.error("Error fetching subrole:", error);
       }

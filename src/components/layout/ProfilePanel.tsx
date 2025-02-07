@@ -109,12 +109,13 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           )}
         </div>
 
-        <CardBody className="pt-0" style={{marginTop : '10px'}}>
+        <CardBody className="pt-0" style={{marginTop : '40px'}}>
           <div className="text-center">
             <Link to={`/profile/feed/${user?.id}`}>
               <div className="avatar avatar-lg mt-n5 mb-3">
                 {skeletonLoading ? (
                   <Skeleton height={50} width={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} style={{ borderRadius: '50%' }}/>
+                  
                 ) : (
                   <div
                     style={{
@@ -123,9 +124,10 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
                       height: "90px",
                       borderRadius: "50%",
                       overflow: "hidden",
-                      marginTop : '30px',
+                      // marginTop : '30px',
                       marginLeft:"-22px"
                        }}
+                    className=''
                   >
                     <Image
                       src={profile.profileImgUrl || avatar7} // Replace with your actual image source

@@ -8,9 +8,21 @@ import { useAuthContext } from '@/context/useAuthContext';
 import { LIVE_URL } from '@/utils/api';
 import ImageZoom from '../ImageZoom';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
+import { GetAllLikesResponse, Like, Post } from '../PostCard';
+import LikeListModal from './LikeListModal';
 
 interface DeleteCommentResponse {
   message: string;
+}
+
+export interface Comment {
+  id: string;
+  commenterName: string;
+  text: string;
+  timestamp: string;
+  postId: string;
+  likeStatus: boolean;
+  commenterId: string;
 }
 
 // Define the structure of the API error
@@ -18,7 +30,18 @@ interface DeleteCommentError {
   error: string;
 }
 
-const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount,myProfile = null}: CommentItemProps) => {
+
+const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount,myProfile = null}: {
+  comment : Comment;
+  level : number;
+  refresh : number;
+  setRefresh : React.Dispatch<React.SetStateAction<number>>;
+  post : Post;
+  commentCount : number;
+  setCommentCount : React.Dispatch<React.SetStateAction<number>>;
+  myProfile : UserProfile | null
+  parentId : string | null
+}) => {
   const [showReplies, setShowReplies] = useState(false);
   const [reply, setReply] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -29,11 +52,49 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
   const [menuVisible,setMenuVisible] = useState<boolean>(false);
   const [isDeleted,setIsDeleted] = useState<boolean>(false);
   const [profile,setProfile] = useState<UserProfile>(false);
-  // console.log('---comment---',comment);
+  const [allLikes,setAllLikes] = useState<Like[]>([]);
+  const [showLikes,setShowLikes] = useState<boolean>(false);
+  console.log('---comment---',comment);
   console.log('---my profile---',myProfile);
   function formatText(text : string,name : string) : string {
       return  `@${name} ${text}`
   }
+
+  const handleGetAllLikesForComment = async (postId: string,commentId): Promise<void> => {
+      if (!postId) {
+        console.error('Post ID is required');
+        return;
+      }
+  
+      try {
+        const response = await fetch(`${LIVE_URL}api/v1/post/get-all-likes-for-comment
+`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ postId,commentId }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'success') {
+            // // console.log('Likes fetched successfully:', data.data?.likes);
+            setAllLikes(data.data?.likes || []);
+            // Optionally, update the UI with the likes data
+          } else {
+            console.error('Error fetching likes:', data.message);
+            setAllLikes([]);
+          }
+        } else {
+          const errorData: GetAllLikesResponse = await response.json();
+          console.error('Error fetching likes:', errorData.message);
+          setAllLikes([]);
+        }
+      } catch (error) {
+        setAllLikes([]);
+      }
+  };
 
   // console.log('levl',level)
   const handleDeleteComment = async (commentId: string, level: number, setIsDeleted: (value: boolean) => void): Promise<void> => {
@@ -56,7 +117,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       if (response.ok) {
         const data: DeleteCommentResponse = await response.json();
         console.log('Comment deleted successfully:', data.message);
-        setCommentCount(()=>commentCount-1);
+        if(level < 1) setCommentCount(()=>commentCount-1);
         setIsDeleted(true);
         // Optionally update the UI
       } else {
@@ -96,7 +157,7 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
         // console.log('Comment created successfully:', result.data.comment);
         // Add additional logic here, such as updating the UI or clearing the form
         
-        setCommentCount(() => commentCount + 1);
+        // setCommentCount(() => commentCount + 1);
         setRefresh(() => refresh+1);
       } else {
         console.error('Error creating comment:', result.message);
@@ -190,7 +251,8 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
     };
   
     if(level < 1) fetchData();
-    if(!profile) fetchUser()
+    if(!profile) fetchUser();
+    handleGetAllLikesForComment(post.Id,comment.id);
   }, [comment.commenterId, comment.id, commentRefresh, level, profile]);
   
   // console.log('this is replies',replies);
@@ -199,11 +261,17 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
   return (
     <li className="comment-item" id={comment.id}>
+      <LikeListModal
+        isOpen={showLikes}
+        onClose={() => setShowLikes(false)}
+        likes={allLikes}
+        forComment={true}
+      />
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <Link to={`/profile/feed/${comment?.commenterId}`}>
         <ImageZoom 
-          src={profile.profileImgUrl || fallBackAvatar}
+          src={profile?.profileImgUrl || fallBackAvatar}
           zoom={profile?.personalDetails?.zoomProfile}
           rotate={profile?.personalDetails?.rotateProfile}
           width='35px'
@@ -284,11 +352,12 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
 
           {/* Actions */}
           <div className="d-flex align-items-center gap-3 small">
-            <span role="button" className="text-primary d-flex align-items-center" onClick={() => {
+            <span role="button" className="text-primary d-flex align-items-center">
+             <span onClick={() => {
               console.log('clicked')
               toggleLike();
-            }}>
-              {commentLike ? <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} className='me-1'/> : <ThumbsUp size={16} className="me-1" />} Like
+            }}> {commentLike ? <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} className='me-1'/> : <ThumbsUp size={16} className="me-1" />} </span>
+              <span onClick={()=>setShowLikes(true)}>Likes</span>
             </span>
             <span
               role="button"
