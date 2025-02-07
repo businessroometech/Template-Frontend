@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, DollarSign, Users, Target, Map, Briefcase, Award, Brain, TrendingUp, Globe, Rocket, HandshakeIcon, Loader2 } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 // Fallback investor data when API fails
 const fallbackInvestor = {
@@ -34,7 +35,7 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
   const isPlaceholder = investor.investorName === "N/A"
 
 
-
+const {id} = useParams()
 
 
 
@@ -200,6 +201,7 @@ const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
                   </div>
                 </div>
               </div>
+         <Link to = {`/profile/editinvestor/${id}`}>    <Button>Edit Your Profile</Button></Link>
             </div>
           </div>
         </div>
