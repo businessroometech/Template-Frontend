@@ -276,14 +276,12 @@ const EditProfilePictureModal = ({
             {forCover ? <>
             
               <div
-                className="h-200px rounded-top"
+                className="h-130px rounded-top"
                 style={{
                   overflow: "hidden",
+                  width : '100%',
                   margin: "0 auto",
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  backgroundRepeat: 'no-repeat',
-              
+                  overflowY : 'hidden'                  
                 }}
               >
                 <Image
@@ -291,7 +289,6 @@ const EditProfilePictureModal = ({
                   alt="Profile"
                   style={{
                     width: "100%",
-                    height: "100%",
                     transform: `scale(${zoom / 50}) rotate(${straighten - 50}deg)`,
                   }}
                 />
