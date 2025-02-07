@@ -90,8 +90,7 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               position : 'relative',
               overflow : 'hidden',
               backgroundPosition: 'center',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
+              
             }}
           >
             <Image
@@ -99,8 +98,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             alt="Profile"
             style={{
               width: "100%",
-              height: "100%",
               transform: `scale(${(profile.personalDetails.zoom || 50)/ 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
+              objectFit : 'contain'
             }}
           />
           </div>

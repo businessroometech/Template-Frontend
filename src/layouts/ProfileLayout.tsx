@@ -580,6 +580,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         onHide={() => setShowModal(false)}
         onPhotoUpdate={() => console.log('press')}
         src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+        profile={profile}
       />
       <EditProfilePictureModal
         show={coverModal}
@@ -587,6 +588,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         onPhotoUpdate={() => console.log('press')}
         src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
         forCover={true}
+        profile={profile}
       />
       
       <Row className="g-4">
@@ -595,27 +597,27 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           <Card style={{}}>
            {/* Profile Cover Image */}
            <div className="position-relative rounded-top">
-  {skeletonLoading ? (
-    <Skeleton
-      width="100%"
-      height="20px"
-      baseColor={skeletonBaseColor}
-      highlightColor={skeletonHighlightColor}
-    />
-  ) : (
-        <div
-          style={{
-            width: "100%",
-            paddingTop: "25%", // Maintains a 4:1 aspect ratio
-            borderTopLeftRadius: "8px",
-            borderTopRightRadius: "8px",
-            overflow: "hidden",
-            position: "relative",
-          }}
-          onClick={() => {
-            if (user?.id === id) setCoverModal(true);
-          }}
-        >
+            {skeletonLoading ? (
+              <Skeleton
+                width="100%"
+                height="20px"
+                baseColor={skeletonBaseColor}
+                highlightColor={skeletonHighlightColor}
+              />
+            ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height : '250px',
+                      borderTopLeftRadius: "8px",
+                      borderTopRightRadius: "8px",
+                      overflow: "hidden",
+                      position: "relative",
+                    }}
+                    onClick={() => {
+                      if (user?.id === id) setCoverModal(true);
+                    }}
+                  >
               <Image
                 src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
                 alt="Profile"
@@ -624,8 +626,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   top: 0,
                   left: 0,
                   width: "100%",
-                  height: "100%",
-                  objectFit: "cover", // Ensures the image covers the div without stretching
+                  objectFit: 'cover', // Ensures the image covers the div without stretching
                   transform: `scale(${(profile.personalDetails.zoom || 50) / 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
                 }}
               />
