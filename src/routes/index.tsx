@@ -6,6 +6,8 @@ import VisitProfile from '@/components/VisitProfile'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import path from 'path'
 import EditAbout from '@/app/(social)/profile/about/EditAbout'
+import EditInvestor from '@/app/(social)/profile/about/EditInvestor'
+import EditFounder from '@/app/(social)/profile/about/EditFounder'
 
 // profiles for seller //
 // const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
@@ -331,6 +333,16 @@ export const profilePagesRoutes: RoutesProps[] = [
     path: '/profile/editabout/:id', 
     name: 'Feed',
     element: <EditAbout></EditAbout>,
+  },
+  {
+    path: '/profile/editinvestor/:id', 
+    name: 'Feed',
+    element: <EditInvestor></EditInvestor>,
+  },
+  {
+    path: '/profile/editfounder/:id', 
+    name: 'Feed',
+    element: <EditFounder></EditFounder>,
   },
   {
     path: '/profile/about/:id',

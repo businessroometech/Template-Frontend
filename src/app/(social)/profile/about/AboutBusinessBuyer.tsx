@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 
 interface Business {
   businessType: string;
-  location: string;
+businessLocation: string;
   businessModel: string;
   budget: string;
   renovationInvestment: string;
@@ -20,10 +20,10 @@ interface Business {
 // Fallback business data when API fails
 const fallbackBusiness: Business = {
   businessType: 'N/A',
-  location: 'N/A',
+  businessLocation: 'N/A',
   businessModel: 'N/A',
-  budget: 'N/A',
-  renovationInvestment: 'N/A',
+  budget: "N/A",
+  renovationInvestment: "N/A",
   timeline: 'N/A',
   growthPreference: 'N/A',
   supportTraining: 'N/A',

@@ -13,13 +13,13 @@ const EditAbout = () => {
 
 
     
-    const id = useParams()
+    const {id} = useParams()
     console.log("-----------------------editid--------------------------------" , id)
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessType: '',
-    businesslocation: '',
+    businessLocation: '',
     businessModel: '',
     budget: '',
     renovationInvestment: '',
@@ -95,7 +95,7 @@ const EditAbout = () => {
       case 0:
         return renderFormFields([
           { id: 'businessType', label: 'What type of business are you interested in buying?', name: 'businessType', icon: <FaBuilding />, type: 'select', options: ['SaaS', 'Content', 'Marketplace', 'Agency', 'Mobile App', 'Shopify App', 'Main Street', 'Ecommerce', 'Other'], required: true },
-          { id: 'location', label: 'Preferred business location or region:', name: 'location', icon: <FaMapMarkerAlt />, type: 'text', required: true },
+          { id: 'businessLocation', label: 'Preferred business location or region:', name: 'businessLocation', icon: <FaMapMarkerAlt />, type: 'text', required: true },
           { id: 'businessModel', label: 'What is your preferred business model?', name: 'businessModel', icon: <FaToolbox />, type: 'select', options: ['Independent', 'Franchise', 'Online', 'Hybrid'], required: true },
         ]);
       case 1:
@@ -106,11 +106,11 @@ const EditAbout = () => {
       case 2:
         return renderFormFields([
           { id: 'timeline', label: 'What is your timeline for purchasing a business?', name: 'timeline', icon: <FaClock />, type: 'select', options: ['Immediately', '1-3 months', '6 months', '1 year', 'Flexible'], required: true },
-          { id: 'growthPreference', label: 'Are you interested in a business with potential for growth or stable cash flow?', name: 'growthPreference', icon: <FaBalanceScale />, type: 'select', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
+          { id: ' growthOrStableCashFlow', label: 'Are you interested in a business with potential for growth or stable cash flow?', name: 'growthOrStableCashFlow', icon: <FaBalanceScale />, type: 'select', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
         ]);
       case 3:
         return renderFormFields([
-          { id: 'supportTraining', label: 'Are you interested in any support or training after the business purchase?', name: 'supportTraining', icon: <FaHandsHelping />, type: 'select', options: ['Yes', 'No', 'Maybe'], required: true },
+          { id: 'supportAfterPurchase', label: 'Are you interested in any support or training after the business purchase?', name: 'supportAfterPurchase', icon: <FaHandsHelping />, type: 'select', options: ['Yes', 'No', 'Maybe'], required: true },
           { id: 'ndaAgreement', label: 'Are you willing to sign a non-disclosure agreement (NDA) before receiving sensitive business information?', name: 'ndaAgreement', icon: <FaFileSignature />, type: 'select', options: ['Yes', 'No'], required: true },
         ]);
       case 4:
@@ -121,6 +121,45 @@ const EditAbout = () => {
         return null;
     }
   };
+
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`http://13.216.146.100/api/v1/businessbuyer/get/${id}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch data");
+            }
+            const data = await response.json();
+            setFormData(data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            toast.error("Failed to load details.");
+        }
+    };
+    
+    if (id) fetchData();
+    }, [id]);
+
+
+
+
+
+
+
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+
+    }));
+  };
+
+
+
+
 
 
 
@@ -138,10 +177,10 @@ const handleSubmit = async (e: React.FormEvent) => {
     toast.success("Form submitted successfully!");
   
     try {
-      const response1 = await fetch(`http://localhost:5000/v1/businessbuyer/update/bf7fe3d031266d8b0ed46bfcc457a868`, {
+      const response1 = await fetch(`http://13.216.146.100/api/v1/businessbuyer/update/${id}`, {
         method: 'PUT',
         headers: {
-        //   'Content-Type': 'application/json',
+         'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ...formData }),
       });
@@ -155,13 +194,11 @@ const handleSubmit = async (e: React.FormEvent) => {
       toast.error("An error occurred while submitting the form.");
     }
   };
-  const handleInputChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
 
-    }));
-  };
+
+
+
+
   
   return (
     <div className="container mt-5">

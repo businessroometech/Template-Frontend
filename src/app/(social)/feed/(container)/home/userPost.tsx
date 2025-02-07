@@ -156,7 +156,7 @@ const userPost = ({
   useEffect(() => {
     const fetchUserPost = async () => {
         try {
-          const response = await fetch("http://localhost:5000/v1/post/get-user-post-by-id", {
+          const response = await fetch("http://13.216.146.100/api/v1/post/get-user-post-by-id", {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
