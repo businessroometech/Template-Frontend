@@ -723,7 +723,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                                 <>
                                   <FaUserCheck size={19} className="pe-1" /> Request Sent
                                 </>
-                              ) : (
+                              ) : ( !skeletonLoading&&
                                 <>
                                   <FaUserPlus size={19} className="pe-1" /> Send Connection Request
                                 </>
