@@ -115,17 +115,19 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
               <div className="avatar avatar-lg mt-n5 mb-3">
                 {skeletonLoading ? (
                   <Skeleton height={50} width={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} style={{ borderRadius: '50%' }}/>
+                  
                 ) : (
                   <div
                     style={{
                       border : '3px solid white',
-                      width: "120px",
-                      height: "120px",
+                      width: "100px",
+                      height: "100px",
                       borderRadius: "50%",
                       overflow: "hidden",
                       marginTop : '30px',
                       marginLeft:"-22px"
                        }}
+                    className=''
                   >
                     <Image
                       src={profile.profileImgUrl || avatar7} // Replace with your actual image source

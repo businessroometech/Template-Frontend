@@ -156,9 +156,9 @@ const { id } = useParams();
                       </div>
                     </div>
                   )}
-                {/* <Button onClick={()=> {
+                <Button onClick={()=> {
                   navigate(`/profile/editabout/${id}`)
-                }}>Edit Your Profile</Button> */}
+                }}>Edit Your Profile</Button>
                 </div>
               </div>
             </div>
