@@ -183,12 +183,10 @@ const Friends = () => {
     }
   }
 }
-
 export const ConnectionRequest = () => {
   const { user } = useAuthContext();
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // For global loading state
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
@@ -196,7 +194,7 @@ export const ConnectionRequest = () => {
   }, [user]);
 
   const fetchConnections = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-request`, {
         method: 'POST',
@@ -210,12 +208,16 @@ export const ConnectionRequest = () => {
     } catch (error) {
       console.error('Error fetching connection requests:', error);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
+    // Optimistically update UI by removing the user before API call
+    setAllFollowers((prev) => prev.filter(follower => follower?.requesterDetails?.id !== userId));
+
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
+
     try {
       const response = await fetch(`${LIVE_URL}api/v1/connection/update-connection-status`, {
         method: 'POST',
@@ -226,29 +228,25 @@ export const ConnectionRequest = () => {
           status,
         }),
       });
+
       if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
       toast.success(`Connection request ${status} successfully.`);
-      await fetchConnections();
+
     } catch (error) {
       console.error(`Error while updating connection status:`, error);
       toast.error(`Error while trying to ${status} the connection request.`);
+      
+      // Revert UI changes if request fails
+      fetchConnections();
     } finally {
       setLoadingStates((prev) => ({ ...prev, [userId]: null }));
     }
   };
 
-  // Conditional loading spinner
   if (loading) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center bg-light"
-        style={{ height: '100vh' }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
-        >
+      <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status" style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}>
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
@@ -260,15 +258,7 @@ export const ConnectionRequest = () => {
       {allFollowers.length === 0 ? (
         <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
           <div className="text-center">
-            <p
-              className="mb-0"
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: '600',
-                color: '#6c757d',
-                opacity: '0.8',
-              }}
-            >
+            <p className="mb-0" style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6c757d', opacity: '0.8' }}>
               No connection requests found
             </p>
             <p className="small text-muted">
@@ -281,7 +271,7 @@ export const ConnectionRequest = () => {
           {allFollowers.map((follower, idx) => (
             <div className="d-flex row col-12 mb-3" key={idx}>
               <div className="col-8 d-flex">
-                <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                <div className="avatar">
                   <span role="button">
                     <img
                       className="avatar-img rounded-circle"
@@ -336,6 +326,7 @@ export const ConnectionRequest = () => {
     </Card>
   );
 };
+
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
