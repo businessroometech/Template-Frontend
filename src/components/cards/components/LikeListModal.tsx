@@ -2,6 +2,8 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import ImageZoom from "../ImageZoom";
 import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/context/useAuthContext";
 
 interface Like {
   id: string;
@@ -18,8 +20,10 @@ interface LikeListModalProps {
 }
 
 const LikeListModal: React.FC<LikeListModalProps> = ({ isOpen, onClose, likes,forComment = false}) => {
+  const navigate = useNavigate();
+  const {user} = useAuthContext();
   return (
-    <Modal show={isOpen} onHide={onClose} centered backdrop="static" keyboard={false}>
+    <Modal show={isOpen} onHide={onClose} centered backdrop="static" keyboard={false} >
       <Modal.Header closeButton>
         <Modal.Title>People who liked this</Modal.Title>
       </Modal.Header>
@@ -28,24 +32,27 @@ const LikeListModal: React.FC<LikeListModalProps> = ({ isOpen, onClose, likes,fo
           <p className="text-center text-muted">No likes yet.</p>
         ) : (
           likes.map((like) => (
-            <div key={like.id} className="d-flex align-items-center p-3 border-bottom">
-              <ImageZoom src={forComment ? fallBackAvatar : like.likerUrl || fallBackAvatar}
-                 zoom={50}
-                 rotate={50}
-                 width="50px"
-                 height="50px"
-              />
-              {/* <img
-                src={like.likerUrl}
-                alt={`${like.firstName} ${like.lastName}`}
-                className="rounded-circle me-3"
-                width={50}
-                height={50}
-              /> */}
-              <div style={{marginLeft : '8px'}}>
-                <h6 className="mb-0">{forComment ? like.user?.firstName : like.firstName} {forComment ? like.user?.lastName : like.lastName}</h6>
-                <small className="text-muted">{forComment ? like.user?.userRole : like.userRole}</small>
+            <div key={like.id} className="d-flex align-items-center justify-content-between p-3 border-bottom">
+              <div className="d-flex align-items-center">
+                <Link to={`/profile/feed/${like.id}`}>
+                  <ImageZoom 
+                    src={(forComment ? like.profilePicture : like.likerUrl) || fallBackAvatar}
+                    zoom={50}
+                    rotate={50}
+                    width="50px"
+                    height="50px"
+                  />
+                </Link>
+                
+                <Link to={`/profile/feed/${like.id}`} className="ms-3">
+                  <div>
+                    <h6 className="mb-0">{like.firstName} {like.lastName}</h6>
+                    <small className="text-muted">{like.userRole}</small>
+                  </div>
+                </Link>
               </div>
+
+              {like.id !== user?.id && <button className="btn btn-primary btn-sm">{forComment ? like.isMutualConnection ? "Message" : "Connect" : "Connect"}</button>}
             </div>
           ))
         )}

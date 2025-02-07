@@ -267,7 +267,7 @@ const MediaGallery = ({
                 />
                 <div 
                   style={styles.overlayContainer}
-                  
+                  onClick={() => handleClick(2)}
                 >
                   <span style={styles.overlayText}>
                     +{media.length - 3} More
