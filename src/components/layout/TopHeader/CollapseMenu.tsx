@@ -106,7 +106,15 @@ const CollapseMenu = ({ isSearch }: { isSearch?: boolean }) => {
                         key={result?.id} 
                         className="d-flex align-items-center p-2 cursor-pointer"
                       >
-                          <Image src={result.profileImgUrl ? result.profileImgUrl : avatar7} alt={`${result.firstName} ${result.lastName}`} roundedCircle width={40} height={35} className="me-3" />
+                          <div className='avatar'>
+                          <img
+                            src={result.profileImgUrl ? result.profileImgUrl : avatar7}
+                            alt={result.firstName}
+                            className="avatar-img rounded-circle border border-white border-3"
+                            width={3}
+                            height={3}
+                          />
+                        </div>
                           <div>
                           <h6 className="mb-0">{`${result.firstName} ${result.lastName}`}  <span className="badge bg-success bg-opacity-10 text-success small">{result.mutualConnectionCount>0?result.mutualConnectionCount:""}</span></h6>
                          

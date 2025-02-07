@@ -555,7 +555,7 @@ const Messaging = () => {
               padding: '10px',
               width: '100%',
               outline: 'none',
-              backgroundColor: 'white',
+              backgroundColor: '#f8f9fawhh',
             }}
               />
 

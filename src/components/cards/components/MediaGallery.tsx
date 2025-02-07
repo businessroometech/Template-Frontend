@@ -72,6 +72,7 @@ const MediaGallery = ({
     fullImage: {
       width: '100%', 
       height: '100%',
+      position : 'relative',
       maxHeight : '600px', 
       objectFit : 'contain',
       cursor: 'pointer',
@@ -149,29 +150,39 @@ const MediaGallery = ({
       case 1:
         return (
           <div  style={styles.container}>
-            <div 
+            <img 
+              src={media[0]} 
+              onClick={() => handleClick(0)}
+              alt="Single image" 
+              style={{
+                width: '100%',
+                height: '100%',
+                maxHeight: '600px',
+                objectFit: 'contain',
+                position: 'relative',  // Ensures it's above blur
+                zIndex: 2,             // Ensures it's above blur
+                cursor: 'pointer',
+                margin: '1px',
+              }}
+
+              className="gallery-item"
+              data-src={media[0]}
+            />
+            {/* <div 
               style={{ 
                 position: 'absolute', 
                 top: 0, 
                 left: 0, 
                 width: '100%', 
                 height: '100%', 
-                backgroundImage: `url(${media[0]})`, 
+                backgroundColor : `gray`, 
                 backgroundSize: 'cover',
                 backgroundPosition: 'center', 
                 filter: 'blur(20px)', // Adjust blur intensity
                 transform: 'scale(1.1)', // Slightly enlarge to avoid edge cut-off
-                zIndex: 1
+                zIndex: 0
               }} 
-            />
-            <img 
-              src={media[0]} 
-              onClick={() => handleClick(0)}
-              alt="Single image" 
-              style={styles.fullImage}
-              className="gallery-item"
-              data-src={media[0]}
-            />
+            /> */}
           </div>
         );
 
