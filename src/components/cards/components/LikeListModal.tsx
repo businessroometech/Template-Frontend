@@ -29,7 +29,7 @@ const LikeListModal: React.FC<LikeListModalProps> = ({ isOpen, onClose, likes,fo
         ) : (
           likes.map((like) => (
             <div key={like.id} className="d-flex align-items-center p-3 border-bottom">
-              <ImageZoom src={forComment ? like?.user?. : like.likerUrl || fallBackAvatar}
+              <ImageZoom src={forComment ? fallBackAvatar : like.likerUrl || fallBackAvatar}
                  zoom={50}
                  rotate={50}
                  width="50px"
