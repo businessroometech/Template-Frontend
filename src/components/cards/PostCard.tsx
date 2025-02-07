@@ -23,6 +23,7 @@ import LinkPreview from '@ashwamegh/react-link-preview'
 
 // If you're using built in layout, you will need to import this css
 import '@ashwamegh/react-link-preview/dist/index.css'
+import LikeListModal from './components/LikeListModal';
 export interface Like {
   id: string;
   occupation: string;
@@ -135,6 +136,8 @@ const PostCard = ({
   const [showRepostOp, setShowRepostOp] = useState<boolean>(false);
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
   const [close, setClose] = useState<boolean>(true);
+  const [showList,setShowList] = useState<boolean>(false);
+
   const utils: UtilType = {
     comments: comments,
     setComments: setComments,
@@ -339,7 +342,7 @@ const PostCard = ({
     if (post.repostedFrom) fetchUser();
   }, [])
 
-  console.log('---item---',item);
+  // console.log('---item---',item);
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
     const fetchComments = async () => {
@@ -456,7 +459,9 @@ const PostCard = ({
       }}
     >
       {/* Left side with like icon and text */}
-      {<span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      {<span onClick={() =>{ console.log('clicking')
+        setShowList(true)
+      }}style={{ display: "flex", alignItems: "center", gap: "6px" }}>
         {allLikes.length > 0 && <MdThumbUp size={16} />}
         <span
           style={{
@@ -540,7 +545,7 @@ const PostCard = ({
             key={index}
             onClick={() => handleMentionClick(username)}
             style={{
-              color: '#1E40AF',
+              color: '#3DAEF4',
               fontWeight: 'bold',
               cursor: 'pointer',
             }}
@@ -553,7 +558,7 @@ const PostCard = ({
           <span
             key={index}
             style={{
-              color: '#4CAF50',
+              color: '#3DAEF4',
               fontWeight: 'bold',
             }}
           >
@@ -667,6 +672,11 @@ const PostCard = ({
   if (isRepostWithText()) {
     return (
       <Card className="mb-4">
+         <LikeListModal
+                isOpen={showList}
+                onClose={() => setShowList(false)}
+                likes={allLikes}
+          />
         <CardHeader className="border-0 pb-0">
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
@@ -782,7 +792,7 @@ const PostCard = ({
           </div>
         </CardHeader>
         <CardBody>
-          {post?.content && (
+          {post?.repostText && (
             <div className="mb-1 p-1 bg-gray-100 rounded-lg">
               <div
                 id={post.Id}
@@ -798,9 +808,9 @@ const PostCard = ({
                   overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
-                {formatContent(post.content)}
+                {formatContent(post.repostText)}
               </div>
-              {!isExpanded && post.content.length > 230 && (
+              {!isExpanded && post.repostText.length > 230 && (
                 <span
                   className="text-blue-500 mt-1 cursor-pointer"
                   onClick={() => setIsExpanded(true)}
@@ -992,7 +1002,7 @@ const PostCard = ({
               <Repeat size={16} />
               {/* <span>Repost</span> */}
             </Button>
-            {
+            
               <RepostModal
                 isOpen={showRepostOp}
                 onClose={() => setShowRepostOp(false)}
@@ -1001,7 +1011,8 @@ const PostCard = ({
                 isCreated={isCreated}
                 setIsCreated={setIsCreated}
               />
-            }
+             
+            
             {/* <Button
             variant="ghost"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
@@ -1102,6 +1113,11 @@ const PostCard = ({
   return (
     <>
       <Card className="mb-4">
+          <LikeListModal
+                isOpen={showList}
+                onClose={() => setShowList(false)}
+                likes={allLikes}
+          />
         <CardHeader className="border-0 pb-0">
           {(post.repostedFrom && close) &&
             <>
@@ -1236,7 +1252,7 @@ const PostCard = ({
                       justifyContent: "space-between",
                       alignItems: "flex-start",
                       flexDirection: "column",
-                    }} profile
+                    }} 
                   >
                     <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
                       {post.repostedFrom ? repostProfile?.personalDetails?.firstName : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}

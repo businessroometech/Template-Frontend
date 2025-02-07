@@ -118,7 +118,7 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
         console.error('Error updating profile:', error);
       } finally {
         setLoading(false);
-        navigate("/");
+        window.location.reload()
       }
     }
 
@@ -214,32 +214,32 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
             {forCover ? <>
             
               <div
-                      className="h-200px rounded-top"
-                      style={{
-                        backgroundImage: `url(${src})`,
-                        backgroundPosition: 'center',
-                        backgroundSize: 'cover',
-                        backgroundRepeat: 'no-repeat',
-                      }}
-                    />
+                className="h-200px rounded-top"
+                style={{
+                  backgroundImage: `url(${src})`,
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              />
             
             
             
             </> : <div
-                className="rounded-circle overflow-hidden mx-auto"
-                style={{
-                  width: "180px", // Increased size
-                  height: "180px",
-                  border: "3px solid #ccc",
-                  marginBottom: "20px",
-                }}
-              >
-                <img
-                  src={src} // Replace with dynamic photo
-                  alt="Profile"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>}
+                    className="rounded-circle overflow-hidden mx-auto"
+                    style={{
+                      width: "180px", // Increased size
+                      height: "180px",
+                      border: "3px solid #ccc",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <img
+                      src={src} // Replace with dynamic photo
+                      alt="Profile"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  </div>}
             
 
             {/* Options Below Profile */}

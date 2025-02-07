@@ -14,6 +14,7 @@ type DropzoneFormInputProps = {
   iconProps?: React.ComponentProps<any>
   text?: string
   textClassName?: string
+  uploadedFiles : FileUpload[]
   onFileUpload?: (files: FileUpload[]) => void // Updated callback to return FileUpload type
 }
 
@@ -25,6 +26,7 @@ interface FileUpload {
   documentName: string
   documentDescription: string
   fileSize: number
+  
 }
 
 const DropzoneFormInput = ({
@@ -36,12 +38,13 @@ const DropzoneFormInput = ({
   showPreview,
   text,
   textClassName,
+  uploadedFiles,
   onFileUpload,
 }: DropzoneFormInputProps) => {
   const [selectedFiles, setSelectedFiles] = useState<FileType[]>([])
 
   const handleAcceptedFiles = async (files: File[]) => {
-    let allFiles: FileUpload[] = []
+    let allFiles: FileUpload[] = uploadedFiles
 
     console.log('---all files in handleAcceptedFiles---',allFiles);
     console.log('--files in handleAcceptedFiles',files);
@@ -68,6 +71,9 @@ const DropzoneFormInput = ({
         }
 
         allFiles.push(fileUploadData)
+        if(selectedFiles.length + uploadedFiles.length >=10) {
+          alert('cannot post more then 10 photos');
+        }
         setSelectedFiles((prevFiles) => [...prevFiles, file])
 
         if (onFileUpload) onFileUpload(allFiles) // Pass the formatted files to parent component
