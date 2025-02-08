@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, DollarSign, Users, Target, Map, Briefcase, Award, Brain, TrendingUp, Globe, Rocket, HandshakeIcon, Loader2 } from 'lucide-react';
+import { Building2, DollarSign, Users, Target, Map, Briefcase, Award, Brain, TrendingUp, Globe, Rocket, HandshakeIcon, Loader2, Trash } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
 
 // Fallback investor data when API fails
 const fallbackInvestor = {
@@ -30,18 +31,38 @@ const fallbackInvestor = {
   fundraisingStage: "N/A",
   expectedInvolvement: "N/A"
 };
-
+                                  
 const InvestorCard: React.FC<{ investor }> = ({ investor }) => {
   const isPlaceholder = investor.investorName === "N/A"
 
 
 const {id} = useParams()
+const navigate = useNavigate()
+
+
+
+const handledelete = async () => {
+  try {
+    await fetch(`http://13.216.146.100/api/v1/investor/delete/${id}`, {
+      method: "DELETE",
+    });
+    await fetch(`http://13.216.146.100/api/v1/subrole/delete/${id}`, {
+      method: "DELETE",
+    });
+    // Reload the page
+    window.location.reload();
+  } catch (error) {
+    console.error("Error while deleting:", error);
+    alert("Unable to delete Investor and Subrole");
+  }
+};
+
 
 
 
   return (
-    <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
-      <div className="card-header  text-black py-3">
+    <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`} >
+      <div className="card-header  text-black py-3" style={{display:"flex"}} >
         <div className="d-flex align-items-center">
           <Building2 className="me-3" size={28}  color='gray'/>
           <div>
@@ -49,8 +70,14 @@ const {id} = useParams()
             <h3 className="mb-0 opacity-75">{investor.data.groupName}</h3>
           </div>
         </div>
+        {/* <div style={{ cursor:"pointer" }}>
+          <Trash color='red' onClick={() => {
+            handledelete()
+            
+            }}></Trash>
+        </div> */}
       </div>
-      
+                                          
       <div className="card-body py-4">
         <div className="row g-4">
           {/* Quick Overview */}
@@ -100,7 +127,7 @@ const {id} = useParams()
               </div>
             </div>
           </div>
-
+                                                 
           {/* Experience & Track Record */}
           <div className="col-md-6">
             <div className="card h-100 border-0 bg-light">
@@ -126,33 +153,35 @@ const {id} = useParams()
                   </li>
                   <li className="list-group-item bg-transparent">
                     <div className="d-flex justify-content-between align-items-center">
-                      <span className="fw-semibold">Success Stories</span>
-                      <span className="badge bg-success rounded-pill">{investor.data.successStories}</span>
+                      <span className="fw-semibold">Exit Stratergy</span>
+                      <span className="badge bg-success rounded-pill">{investor.data.exitStrategy}</span>
                     </div>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-
+                                          
           {/* Evaluation Criteria */}
           <div className="col-12">
-            <div className="card border-0 bg-light">
-              <div className="card-body">
-                <h5 className="card-title d-flex align-items-center mb-3">
-                  <Brain className="me-2 text-primary" size={24} />
-                  Investment Criteria
-                 
-                </h5>
-                <div className="d-flex flex-wrap gap-2">
-                 
-                    
-                    
-                
-                </div>
-              </div>
-            </div>
-          </div>
+  <div className="card border-0 bg-light">
+    <div className="card-body">
+      <h5 className="card-title d-flex align-items-center mb-3">
+        <Brain className="me-2 text-primary" size={24} />
+        Investment Criteria
+      </h5>
+      <div className="d-flex flex-column gap-2">
+        {Array.isArray(investor.data.successStories) ? (
+          investor.data.successStories.map((story, index) => (
+            <p key={index} className="mb-1">{story}</p>
+          ))
+        ) : (
+          <p style={{ whiteSpace: "pre-line" }}>{investor.data.successStories}</p>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
 
           {/* Additional Information */}
           <div className="col-12">
@@ -201,7 +230,17 @@ const {id} = useParams()
                   </div>
                 </div>
               </div>
-         <Link to = {`/profile/editinvestor/${id}`}>    <Button>Edit Your Profile</Button></Link>
+             <Button onClick={() => {
+              navigate(`/profile/editinvestor/${id}`)
+             }}>Edit Your Profile</Button>
+
+             <Button style={{ cursor:"pointer", marginTop:"4px", backgroundColor:"red"}}   onClick={() => {
+            handledelete()
+            
+            }}>
+          <Trash></Trash>
+            Delete Your Profile
+        </Button>
             </div>
           </div>
         </div>

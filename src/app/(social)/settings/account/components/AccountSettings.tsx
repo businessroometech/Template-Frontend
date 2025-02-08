@@ -255,7 +255,7 @@ const [loading, setLoading] = useState(false);
           </div>
           <TextFormInput name="fName" label="First Name"  control={control} containerClassName="col-6" />
           <TextFormInput name="lName" label="Last Name" control={control} containerClassName="col-6" />
-          <DropdownFormInput
+          {/* <DropdownFormInput
             name="occupation"
             label="Role"
             control={control}
@@ -264,7 +264,7 @@ const [loading, setLoading] = useState(false);
               { value: "entrepreneur", label: "Entrepreneur" },
               { value: "investor", label: "Investor" },
             ]}
-          />
+          /> */}
           <DropdownFormInput
             name="gender"
             label="Gender"

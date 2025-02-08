@@ -39,6 +39,7 @@ const EditInvestor = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const {id }=useParams()
+  
 console.log("=============" , id)
 
   const [formData, setFormData] = useState<FormData>({

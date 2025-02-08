@@ -110,7 +110,7 @@ console.log("----------------------------",id)
   <PageMetaData title="About" />
   <Card>
     <CardHeader className="border-0 pb-0">
-      <CardTitle>Business Profile Info</CardTitle>
+      {/* <CardTitle>Business Profile Information</CardTitle> */}
     </CardHeader>
     <CardBody>
       {subrole === "BusinessBuyer" && <AboutBusinessBuyer />}
