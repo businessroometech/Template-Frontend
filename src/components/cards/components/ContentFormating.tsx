@@ -1,13 +1,76 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import LinkPreview from "@ashwamegh/react-link-preview"
-
 // If you're using built in layout, you will need to import this css
 import '@ashwamegh/react-link-preview/dist/index.css'
-const formatContent = (content: string) => {
-    if (!content) return null;
+import { useEffect, useState } from "react";
+import LinkPreview from "./LinkPreview";
 
+
+  const formatContent = (content: string) => {
+    if (!content) return null;
+    const navigate = useNavigate();
+
+const [mentionMap, setMentionMap] = useState<{ [key: string]: string }>({});
+
+
+const handleMentionClick = async (username: string) => {
+   
+    try {
+      const res = await fetch('http://13.216.146.100/api/v1/auth/get-user-userName', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userName: username }),
+      })
+
+      const data = await res.json();
+      // toast.success("navigate to user profile");
+ 
+      navigate(`/profile/feed/${data.data.id}`);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      toast.error('User not available');
+    }
+
+  };
+
+  
+
+useEffect(() => {
+  const fetchMentions = async () => {
+    const uniqueMentions = Object.keys(mentionMap).filter((mention) => mentionMap[mention] === mention);
+
+    if (uniqueMentions.length === 0) return;
+
+    const updatedMap = { ...mentionMap };
+
+    await Promise.all(
+      uniqueMentions.map(async (username) => {
+        try {
+          const res = await fetch('http://13.216.146.100/api/v1/auth/get-user-userName', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userName: username }),
+          });
+
+          if (!res.ok) throw new Error('Failed to fetch user data');
+
+          const data = await res.json();
+          updatedMap[username] = `${data.data.firstName} ${data.data.lastName}`;
+        } catch (error) {
+          console.error('Error fetching username:', error);
+          updatedMap[username] = username;
+        }
+      })
+    );
+
+    setMentionMap(updatedMap);
+  };
+
+  fetchMentions();
+}, [mentionMap]);
   
     // Regex patterns
     const mentionRegex = /(@[a-zA-Z0-9_]+)/g;
@@ -26,17 +89,18 @@ const formatContent = (content: string) => {
     return content.split(/(\s+)/).map((word, index) => {
       if (mentionRegex.test(word)) {
         const username = word.substring(1);
+       
+        if (!mentionMap[username]) {
+          setMentionMap((prev) => ({ ...prev, [username]: username })); // Add mention only if not already present
+        }
+
         return (
           <span
             key={index}
             onClick={() => handleMentionClick(username)}
-            style={{
-              color: '#1E40AF',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-            }}
+            style={{ color: '#3DAEF4', fontWeight: 'bold', cursor: 'pointer' }}
           >
-            {word}
+            {mentionMap[username] || username}
           </span>
         );
       } else if (hashtagRegex.test(word)) {
@@ -44,7 +108,7 @@ const formatContent = (content: string) => {
           <span
             key={index}
             style={{
-              color: '#4CAF50',
+              color: '#3DAEF4',
               fontWeight: 'bold',
             }}
           >
@@ -135,49 +199,17 @@ const formatContent = (content: string) => {
         }
       } else if (urlRegex.test(word)) {
         return (
+          <a href={word} target="_blank">
           <LinkPreview
             key={index}
             url={word}
-            width="100%"
-            descriptionLength={90}
-            imageHeight={200}
-            borderRadius="8px"
-            marginTop="8px"
-          />
+          />         
+          </a>
         );
       }
   
       return word;
     });
   };
-
-  
-  const navigate = useNavigate();
-
-  // Function to navigate to a user profile when clicking a mention
- 
-
-  const handleMentionClick = async (username: string) => {
-   
-    try {
-      const res = await fetch('http://13.216.146.100/api/v1/auth/get-user-userName', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userName: username }),
-      })
-
-      const data = await res.json();
-      // toast.success("navigate to user profile");
- 
-      navigate(`/profile/feed/${data.data.id}`);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      toast.error('User not available');
-    }
-
-  };
-
   
   export default formatContent

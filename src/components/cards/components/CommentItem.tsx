@@ -67,20 +67,19 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       }
   
       try {
-        const response = await fetch(`${LIVE_URL}api/v1/post/get-all-likes-for-comment
-`, {
+        const response = await fetch(`${LIVE_URL}api/v1/post/get-comment-like-list`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ postId,commentId }),
+          body: JSON.stringify({ postId,commentId,userId : user?.id }),
         });
   
         if (response.ok) {
           const data = await response.json();
           if (data.status === 'success') {
             // // console.log('Likes fetched successfully:', data.data?.likes);
-            setAllLikes(data.data?.likes || []);
+            setAllLikes(data.data?.likeList || []);
             // Optionally, update the UI with the likes data
           } else {
             console.error('Error fetching likes:', data.message);

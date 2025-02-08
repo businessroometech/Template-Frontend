@@ -6,6 +6,7 @@ import { useAuthContext } from "@/context/useAuthContext";
 import { FileUpload, uploadDoc,GetImageWithUrl } from "@/utils/CustomS3ImageUpload";
 import { useNavigate } from "react-router-dom";
 import { LIVE_URL } from "@/utils/api";
+import { UserProfile } from "@/app/(social)/feed/(container)/home/page";
 
 
 
@@ -63,10 +64,29 @@ const handleAcceptedFiles = async (files: File[]): Promise<FileUpload[]> => {
 
 
 
-const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover = false}) => {
+const EditProfilePictureModal = ({ 
+  show, 
+  onHide, 
+  onPhotoUpdate,
+  src = "",
+  forCover = false,
+  profile
+} : 
+{
+  show : boolean;
+  onHide : () => void;
+  onPhotoUpdate : () => void;
+  src : string
+  forCover ?: boolean
+  profile : UserProfile
+}) => {
     const [exp,setExp] = useState(0);
-    const[zoom,setZoom] = useState(50);
-    const [straighten, setStraighten] = useState(50);
+    const [zoom, setZoom] = useState(
+      forCover ? profile?.personalDetails?.zoom ?? 50 : profile?.personalDetails?.zoomProfile ?? 50
+    );    
+    const [straighten, setStraighten] = useState(
+      forCover ? profile?.personalDetails?.rotate ?? 50 : profile?.personalDetails?.rotateProfile ?? 50
+    );
     const [uploadedFile, setUploadedFile] = useState<Files[]>(null);
     const {user} = useAuthContext();
     const [awsUrl,setAwsUrl] = useState<string>("");
@@ -122,25 +142,67 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
       }
     }
 
-      const handleUploadprofile = async () => {
-        try {
-            const modedFiles = await handleAcceptedFiles([uploadedFile])
-          const response = await uploadDoc(modedFiles, user?.id);
-          console.log('response of uploadDoc',response);
-          // const srcUrl = await GetImageWithUrl(response[0]);
-          // console.log('---- response in the upload doc function ----', srcUrl);
-          return response;
-        } catch (err) {
-          console.error('Error in the createpostcard:', err);
-          return false;
-        }
-      };
-
-    const handleDelete = () => {
-    onPhotoUpdate(null); // Reset to default or remove profile picture
-    onHide();
+    const handleUploadprofile = async () => {
+      try {
+          const modedFiles = await handleAcceptedFiles([uploadedFile])
+        const response = await uploadDoc(modedFiles, user?.id);
+        console.log('response of uploadDoc',response);
+        // const srcUrl = await GetImageWithUrl(response[0]);
+        // console.log('---- response in the upload doc function ----', srcUrl);
+        return response;
+      } catch (err) {
+        console.error('Error in the createpostcard:', err);
+        return false;
+      }
     };
 
+    const handleDelete = async () => {
+      onPhotoUpdate(null); // Reset to default or remove profile picture
+      try {
+        const requestBody = forCover ? {
+          userId: user?.id,
+          bgPictureUploadId: null,
+          zoom : 50,
+          rotate : 50,
+        } : {
+          userId: user?.id,
+          profilePictureUploadId: null,
+          zoomProfile : 50,
+          rotateProfile : 50
+        };
+
+        console.log('Request body:', requestBody);
+
+        const response = await fetch(
+          `${LIVE_URL}api/v1/auth/update-or-create-Profile`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        console.log(result);
+      } 
+      catch (error) {
+      console.error('Error updating profile:', error);
+      } 
+      finally {
+      window.location.reload()
+      }
+    };
+
+    const handleEdit = () => {
+      setObjectUrl(src)
+      setExp(2);
+    }
     const handleFileChange = async (e) => {
       const file = e.target.files[0];
       console.log(file);
@@ -214,15 +276,24 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
             {forCover ? <>
             
               <div
-                className="h-200px rounded-top"
+                className="h-130px rounded-top"
                 style={{
-                  backgroundImage: `url(${src})`,
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  backgroundRepeat: 'no-repeat',
+                  overflow: "hidden",
+                  width : '100%',
+                  margin: "0 auto",
+                  overflowY : 'hidden'                  
                 }}
-              />
-            
+              >
+                <Image
+                  src={objectUrl || src} // Replace with your actual image source
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    transform: `scale(${zoom / 50}) rotate(${straighten - 50}deg)`,
+                  }}
+                />
+              </div>
+
             
             
             </> : <div
@@ -234,17 +305,21 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
                       marginBottom: "20px",
                     }}
                   >
-                    <img
-                      src={src} // Replace with dynamic photo
+                    <Image
+                      src={objectUrl || src} // Replace with your actual image source
                       alt="Profile"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${zoom / 50}) rotate(${straighten - 50}deg)`,
+                      }}
                     />
                   </div>}
             
 
             {/* Options Below Profile */}
             <div className="d-flex justify-content-around align-items-center mt-4">
-              <div className="text-center">
+              <div className="text-center" onClick={() => handleEdit()}>
                 <FaEdit size={24} className="mb-2" />
                 <p className="small mb-0">Edit</p>
               </div>
@@ -256,12 +331,11 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
                 <FaBorderStyle size={24} className="mb-2" />
                 <p className="small mb-0">Frames</p>
               </div>
-              <div className="text-center">
+              <div className="text-center" onClick={handleDelete}  style={{ cursor: "pointer" }}>
                 <FaTrash size={24} className="mb-2 text-danger" />
                 <p
                   className="small text-danger mb-0"
-                  onClick={handleDelete}
-                  style={{ cursor: "pointer" }}
+                 
                 >
                   Delete
                 </p>
@@ -360,26 +434,50 @@ const EditProfilePictureModal = ({ show, onHide, onPhotoUpdate,src = "",forCover
               forCover ? <>
               
               <div
-                      className="h-200px rounded-top"
-                      style={{
-                        backgroundImage: `url(${src})`,
-                        backgroundPosition: 'center',
-                        backgroundSize: 'cover',
-                        backgroundRepeat: 'no-repeat',
-                        marginTop : '20px',
-                        marginBottom : '20px'
-                      }}
-                    />
+                className="h-200px rounded-top"
+                style={{
+                  overflow: "hidden",
+                  margin: "0 auto",
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundRepeat: 'no-repeat',
+              
+                }}
+              >
+                <Image
+                  src={objectUrl || src} // Replace with your actual image source
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    transform: `scale(${zoom / 50}) rotate(${straighten - 50}deg)`,
+                  }}
+                />
+              </div>
               
               
               </> : 
 
-              <Image
-              src={src} // Replace with actual profile image URL
-              roundedCircle
-              alt="Profile"
-              style={{ width: "100px", height: "100px", margin: "20px 0" }}
-            />
+                <div
+                  style={{
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  margin: "0 auto",
+                  position: "relative",
+                  }}
+                >
+                  <Image
+                    src={objectUrl || src} // Replace with your actual image source
+                    alt="Profile"
+                    style={{
+                    width: "100%",
+                    height: "100%",
+                    transform: `scale(${zoom / 50}) rotate(${straighten - 50}deg)`,
+                  }}
+                  />
+                </div>
             }
             <p>
               On Businessroom, we require members to use their real identities, so take

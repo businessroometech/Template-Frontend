@@ -183,12 +183,10 @@ const Friends = () => {
     }
   }
 }
-
 export const ConnectionRequest = () => {
   const { user } = useAuthContext();
   const [allFollowers, setAllFollowers] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // For global loading state
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: 'accepted' | 'rejected' | null }>({});
 
   useEffect(() => {
@@ -196,7 +194,7 @@ export const ConnectionRequest = () => {
   }, [user]);
 
   const fetchConnections = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const response = await fetch(`${LIVE_URL}api/v1/connection/get-connection-request`, {
         method: 'POST',
@@ -210,12 +208,16 @@ export const ConnectionRequest = () => {
     } catch (error) {
       console.error('Error fetching connection requests:', error);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
   const handleStatusUpdate = async (userId: string, status: 'accepted' | 'rejected') => {
+    // Optimistically update UI by removing the user before API call
+    setAllFollowers((prev) => prev.filter(follower => follower?.requesterDetails?.id !== userId));
+
     setLoadingStates((prev) => ({ ...prev, [userId]: status }));
+
     try {
       const response = await fetch(`${LIVE_URL}api/v1/connection/update-connection-status`, {
         method: 'POST',
@@ -226,29 +228,25 @@ export const ConnectionRequest = () => {
           status,
         }),
       });
+
       if (!response.ok) throw new Error(`Failed to ${status} the connection request.`);
       toast.success(`Connection request ${status} successfully.`);
-      await fetchConnections();
+
     } catch (error) {
       console.error(`Error while updating connection status:`, error);
       toast.error(`Error while trying to ${status} the connection request.`);
+      
+      // Revert UI changes if request fails
+      fetchConnections();
     } finally {
       setLoadingStates((prev) => ({ ...prev, [userId]: null }));
     }
   };
 
-  // Conditional loading spinner
   if (loading) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center bg-light"
-        style={{ height: '100vh' }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
-        >
+      <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status" style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}>
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
@@ -260,15 +258,7 @@ export const ConnectionRequest = () => {
       {allFollowers.length === 0 ? (
         <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
           <div className="text-center">
-            <p
-              className="mb-0"
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: '600',
-                color: '#6c757d',
-                opacity: '0.8',
-              }}
-            >
+            <p className="mb-0" style={{ fontSize: '1.25rem', fontWeight: '600', color: '#6c757d', opacity: '0.8' }}>
               No connection requests found
             </p>
             <p className="small text-muted">
@@ -281,7 +271,7 @@ export const ConnectionRequest = () => {
           {allFollowers.map((follower, idx) => (
             <div className="d-flex row col-12 mb-3" key={idx}>
               <div className="col-8 d-flex">
-                <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                <div className="avatar">
                   <span role="button">
                     <img
                       className="avatar-img rounded-circle"
@@ -336,6 +326,7 @@ export const ConnectionRequest = () => {
     </Card>
   );
 };
+
 
 export const ProfileLayout = ({ children }: ChildrenType) => {
   const { pathname } = useLocation()
@@ -580,6 +571,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         onHide={() => setShowModal(false)}
         onPhotoUpdate={() => console.log('press')}
         src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+        profile={profile}
       />
       <EditProfilePictureModal
         show={coverModal}
@@ -587,6 +579,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
         onPhotoUpdate={() => console.log('press')}
         src={profile.coverImgUrl ? profile.coverImgUrl : avatar7}
         forCover={true}
+        profile={profile}
       />
       
       <Row className="g-4">
@@ -595,27 +588,27 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
           <Card style={{}}>
            {/* Profile Cover Image */}
            <div className="position-relative rounded-top">
-  {skeletonLoading ? (
-    <Skeleton
-      width="100%"
-      height="20px"
-      baseColor={skeletonBaseColor}
-      highlightColor={skeletonHighlightColor}
-    />
-  ) : (
-        <div
-          style={{
-            width: "100%",
-            paddingTop: "25%", // Maintains a 4:1 aspect ratio
-            borderTopLeftRadius: "8px",
-            borderTopRightRadius: "8px",
-            overflow: "hidden",
-            position: "relative",
-          }}
-          onClick={() => {
-            if (user?.id === id) setCoverModal(true);
-          }}
-        >
+            {skeletonLoading ? (
+              <Skeleton
+                width="100%"
+                height="20px"
+                baseColor={skeletonBaseColor}
+                highlightColor={skeletonHighlightColor}
+              />
+            ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height : '250px',
+                      borderTopLeftRadius: "8px",
+                      borderTopRightRadius: "8px",
+                      overflow: "hidden",
+                      position: "relative",
+                    }}
+                    onClick={() => {
+                      if (user?.id === id) setCoverModal(true);
+                    }}
+                  >
               <Image
                 src={profile?.coverImgUrl ? profile?.coverImgUrl : background5}
                 alt="Profile"
@@ -624,9 +617,8 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   top: 0,
                   left: 0,
                   width: "100%",
-                  height: "100%",
-                  objectFit: "cover", // Ensures the image covers the div without stretching
-                  transform: `scale(${(profile.personalDetails.zoom || 50) / 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
+                  objectFit: 'cover', // Ensures the image covers the div without stretching
+                  transform: `scale(${(profile?.personalDetails?.zoom || 50) / 50}) rotate(${(profile?.personalDetails?.rotate || 50) - 50}deg)`,
                 }}
               />
             </div>
@@ -658,7 +650,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             style={{
                               width: "100%",
                               height: "100%",
-                              transform: `scale(${(profile.personalDetails.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails.rotateProfile || 50) - 50}deg)`,
+                              transform: `scale(${(profile?.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
                             }}
                           />
                         </div>
@@ -732,7 +724,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                                 <>
                                   <FaUserCheck size={19} className="pe-1" /> Request Sent
                                 </>
-                              ) : (
+                              ) : ( !skeletonLoading&&
                                 <>
                                   <FaUserPlus size={19} className="pe-1" /> Send Connection Request
                                 </>
