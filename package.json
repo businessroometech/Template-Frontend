@@ -48,6 +48,7 @@
     "react-datepicker": "^7.6.0",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
+    "react-easy-crop": "^5.2.0",
     "react-emoji-picker": "^1.0.13",
     "react-feather": "^2.0.10",
     "react-flatpickr": "^3.10.13",

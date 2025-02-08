@@ -618,7 +618,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                   left: 0,
                   width: "100%",
                   objectFit: 'cover', // Ensures the image covers the div without stretching
-                  transform: `scale(${(profile.personalDetails.zoom || 50) / 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
+                  transform: `scale(${(profile?.personalDetails?.zoom || 50) / 50}) rotate(${(profile?.personalDetails?.rotate || 50) - 50}deg)`,
                 }}
               />
             </div>
@@ -650,7 +650,7 @@ export const ProfileLayout = ({ children }: ChildrenType) => {
                             style={{
                               width: "100%",
                               height: "100%",
-                              transform: `scale(${(profile.personalDetails.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails.rotateProfile || 50) - 50}deg)`,
+                              transform: `scale(${(profile?.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
                             }}
                           />
                         </div>

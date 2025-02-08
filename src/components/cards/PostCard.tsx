@@ -138,6 +138,9 @@ const PostCard = ({
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
   const [close, setClose] = useState<boolean>(true);
   const [showList, setShowList] = useState<boolean>(false);
+  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const utils: UtilType = {
     comments: comments,
@@ -497,9 +500,7 @@ const PostCard = ({
   }
 
 
-  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
 
   // Handle input change and check for mentions
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -554,12 +555,9 @@ const PostCard = ({
     }, 0);
   };
 
-
-
-  if (isDeleted) return null;
-
   if (isRepostWithText()) {
     return (
+      isDeleted ? null : 
       <Card className="mb-4">
         <LikeListModal
           isOpen={showList}
@@ -1040,6 +1038,7 @@ const PostCard = ({
   }
 
   return (
+    isDeleted ? null : 
     <>
       <Card className="mb-4">
         <LikeListModal
