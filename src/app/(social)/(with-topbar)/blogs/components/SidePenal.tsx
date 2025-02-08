@@ -68,17 +68,17 @@ const Tags = () => {
   )
 }
 
-const Followers =  () => {
-  const allFollowers =useFetchData(getAllUsers) 
-  const filteredFollowers = allFollowers?.filter(follower => user?.id !== follower.id);
+const Followers = () => {
+  const allFollowers = useFetchData(getAllUsers)
+  const filteredFollowers = allFollowers?.filter(follower => user?.id !== follower.id) || [];
   return (
     <Card  >
       <CardHeader className="pb-0 border-0">
-        <CardTitle className="mb-0">Suggested Connections</CardTitle>
+        <CardTitle className="mb-0">Connect'n Grow</CardTitle>
       </CardHeader>
       <CardBody>
 
-{filteredFollowers?.slice(0, 3).map((follower, idx) => (
+        {filteredFollowers?.slice(0, 3).map((follower, idx) => (
           <div className={clsx('hstack gap-2', { 'mb-3': filteredFollowers.slice(0, 3).length - 1 != idx })} key={idx}>
             <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
               <span role="button">
@@ -97,6 +97,11 @@ const Followers =  () => {
             </Button>
           </div>
         ))}
+        {filteredFollowers?.length < 1 && (
+          <div className='hstack gap-2 mb-3' >
+<p>No more suggested connections </p>
+          </div>
+        )}
       </CardBody>
     </Card>
   )
@@ -113,7 +118,7 @@ const SidePenal = () => {
       </Col>
       <Col sm={6} lg={12}>
         <Followers />
-        <ConnectionRequest/>
+        <ConnectionRequest />
       </Col>
     </>
   )

@@ -14,7 +14,7 @@ const BusinessSellerForm = () => {
     { title: "My Connections", icon: <FaUserPlus style={{ marginRight: '8px' }} />, component: <MyConnections /> },
     { title: "Request Sent", icon: <FaUserCheck style={{ marginRight: '8px' }} />, component: <ConnectionsStatus /> },
     { title: "Request Received", icon: <FaUserFriends style={{ marginRight: '8px' }} />, component: <ConnectionRequest /> },
-    { title: "Suggested Connections", icon: <FaUsers style={{ marginRight: '8px' }} />, component: <SuggestedConnections /> },
+    { title: "Connect'n Grow", icon: <FaUsers style={{ marginRight: '8px' }} />, component: <SuggestedConnections /> },
   ];
 
   const setCurrentSection = (index) => {

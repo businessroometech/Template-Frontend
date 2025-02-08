@@ -15,7 +15,7 @@ import { toast } from 'react-toastify'
 
 const Followers = () => {
   const { pathname } = useLocation()
-  const { user } = useAuthContext() 
+  const { user } = useAuthContext()
   const [profile, setProfile] = useState({})
   const [sent, setSent] = useState(false)
   const [allFollowers, setAllFollowers] = useState<any[]>([])
@@ -111,82 +111,86 @@ const Followers = () => {
   const navigate = useNavigate()
   const filteredFollowers = allFollowers?.filter((follower) => user?.id !== follower.id)
   return (
-    <div style={{width:"98%", marginLeft:"3%"}} >
+    <div style={{ width: "98%", marginLeft: "3%" }} >
       {/* <ConnectionRequest /> */}
       <br />
-      <Card style={{ marginTop: '-22px'   }}>
+      <Card style={{ marginTop: '-22px' }}>
         <CardHeader className="pb-0 border-0">
-          <CardTitle className="mb-0" style={{ fontSize: '17px' }}>
-            Suggested Connections
+          <CardTitle className="mb-0 text-center" style={{ fontSize: '17px', fontWeight: 500 }}>
+            Connect'n Grow
           </CardTitle>
         </CardHeader>
 
-        {allFollowers.length > 0 && (
-          <CardBody>
-            {filteredFollowers?.map(
-              (follower, idx) => (
-                (
-                  <div className="hstack gap-2 mb-3" key={idx}>
-                    <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
-                      {skeletonLoading ? (
-                        <span role="button">
-                          <Skeleton height={40} width={40} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
-                        </span>
-                      ) : (
-                        <span role="button">
-                          <img
-                            className="avatar-img rounded-circle"
-                            src={follower.profilePictureUrl ? follower.profilePictureUrl : avatar}
-                            alt={`${follower.firstName}'s profile`}
-                          />
-                        </span>
-                      )}
-                    </div>
-                    <div className="overflow-hidden">
-                    <Link 
-  className="h6 mb-0" 
-  to={`/profile/feed/${follower.id}`}
-  onClick={(e) => {
-    e.preventDefault();
-    navigate(`/profile/feed/${follower.id}`);
-    window.location.reload();
-  }}
->
-  {follower.firstName} {follower.lastName}
-</Link>
 
-                      <p className="mb-0 small text-truncate">{follower.userRole}</p>
-                    </div>
-                    <Button
-                      variant={sentStatus[follower.id] ? 'primary' : 'primary-soft'}
-                      className="rounded-circle icon-md ms-auto flex-centered"
-                      onClick={() => UserRequest(follower.id)}
-                      disabled={loading === follower.id}>
-                      {loading === follower.id ? (
-                        <Loading size={15} loading={true} />
-                      ) : (
-                        <span>{sentStatus[follower.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
-                      )}
-                    </Button>
+        <CardBody>
+          {allFollowers.length > 0 && filteredFollowers?.map(
+            (follower, idx) => (
+              (
+                <div className="hstack gap-2 mb-3" key={idx}>
+                  <div className={clsx('avatar', { 'avatar-story': follower.isStory })}>
+                    {skeletonLoading ? (
+                      <span role="button">
+                        <Skeleton height={40} width={40} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
+                      </span>
+                    ) : (
+                      <span role="button">
+                        <img
+                          className="avatar-img rounded-circle"
+                          src={follower.profilePictureUrl ? follower.profilePictureUrl : avatar}
+                          alt={`${follower.firstName}'s profile`}
+                        />
+                      </span>
+                    )}
                   </div>
-                )
-              ),
+                  <div className="overflow-hidden">
+                    <Link
+                      className="h6 mb-0"
+                      to={`/profile/feed/${follower.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/profile/feed/${follower.id}`);
+                        window.location.reload();
+                      }}
+                    >
+                      {follower.firstName} {follower.lastName}
+                    </Link>
+
+                    <p className="mb-0 small text-truncate">{follower.userRole}</p>
+                  </div>
+                  <Button
+                    variant={sentStatus[follower.id] ? 'primary' : 'primary-soft'}
+                    className="rounded-circle icon-md ms-auto flex-centered"
+                    onClick={() => UserRequest(follower.id)}
+                    disabled={loading === follower.id}>
+                    {loading === follower.id ? (
+                      <Loading size={15} loading={true} />
+                    ) : (
+                      <span>{sentStatus[follower.id] ? <BsPersonCheckFill /> : <FaPlus />}</span>
+                    )}
+                  </Button>
+                </div>
+              )
+            ),
+          )}
+          <div className="d-grid mt-3">
+            {totalUsers >= limit ? (
+              allFollowers.length > 0 && <Link to="/settings/ManageConnections?t=3" className="primary-soft btn btn-sm"  >
+                View more
+              </Link>
+            ) : (
+              <Button variant="info-soft" size="sm" disabled>
+                no more suggestions
+              </Button>
             )}
-            <div className="d-grid mt-3">
-              {totalUsers >= limit ? (
-                <Link to="/settings/ManageConnections?t=3" className="primary-soft btn btn-sm"  >
-                  View more
-                </Link>
-              ) : (
-                <Button variant="info-soft" size="sm" disabled>
-                  no more suggestions
-                </Button>
-              )}
-            </div>
-          </CardBody>
-        )}
+            {filteredFollowers?.length < 1 && (
+              <div className=' muted gap-2 mb-3 text-center' >
+                <p>No more suggested connections </p>
+              </div>
+            )}
+          </div>
+        </CardBody>
       </Card>
-      </div>
+    </div>
   )
 }
 export default Followers

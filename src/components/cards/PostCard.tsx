@@ -509,7 +509,7 @@ const PostCard = ({
   };
 
   // Check if user is typing a mention
-  const checkForMention = (text:string) => {
+  const checkForMention = (text: string) => {
     const match = text.match(/@\S*$/);
     if (text.endsWith("@")) {
       fetchUsers("");
@@ -521,7 +521,7 @@ const PostCard = ({
   };
 
   // Fetch users when '@' is typed
-  const fetchUsers = async (query:string) => {
+  const fetchUsers = async (query: string) => {
     try {
       const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
         method: "POST",
@@ -534,16 +534,18 @@ const PostCard = ({
       const data = await response.json();
       setSearchResults(data?.data || []);
       setMentionDropdownVisible(data?.data.length > 0);
+      console.log("searchResult*****", searchResults);
+
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
   // Insert mention into the text correctly
-  const handleMentionClick = (selectedUser:string) => {
+  const handleMentionClick = (selectedUser: string) => {
     const mention = `@${selectedUser} `;
 
-    setCommentText((prev) => prev.replace(/@\S*$/, mention)); // Replace last mention text
+    setCommentText((prev) => prev.replace(/@\S*$/, mention));
     setMentionDropdownVisible(false);
 
     // Move cursor to end
@@ -939,79 +941,79 @@ const PostCard = ({
               </Link>
             </div>
             <form
-        className="nav nav-item w-100 d-flex align-items-center"
-        onSubmit={(e) => {
-          e.preventDefault();
-          console.log("Submitted:", commentText);
-        }}
-        style={{ gap: "10px" }}
-      >
-        <textarea
-          ref={textareaRef}
-          className="form-control"
-          style={{
-            backgroundColor: "#fff",
-            color: "#000",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            textAlign: "left",
-            resize: "none",
-            height: "38px",
-            flex: 1,
-            border: "1px solid #ced4da",
-            borderRadius: "4px",
-            padding: "5px 10px",
-          }}
-          rows={1}
-          placeholder="Add a comment..."
-          value={commentText}
-          onChange={handleChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              console.log("Comment submitted:", commentText);
-            }
-          }}
-        />
-      </form>
-
-      {/* Mention Dropdown */}
-      {mentionDropdownVisible && searchResults.length > 0 && (
-        <div
-          className="position-absolute bg-white shadow rounded w-100 mt-1"
-          style={{
-            zIndex: 1000,
-            maxHeight: "10rem",
-            overflowY: "auto",
-            border: "1px solid #ddd",
-          }}
-        >
-          {searchResults.map((user) => (
-            <div
-              key={user.id}
-              className="d-flex align-items-center p-2 cursor-pointer"
-              style={{ cursor: "pointer" }}
-              onClick={() => handleMentionClick(user)}
+              className="nav nav-item w-100 d-flex align-items-center"
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("Submitted:", commentText);
+              }}
+              style={{ gap: "10px" }}
             >
-              <div className="avatar">
-                <img
-                  src={user.avatar || "default-avatar.png"} // Ensure a default avatar
-                  alt={user.fullName}
-                  className="avatar-img rounded-circle border border-white border-3"
-                  width={34}
-                  height={34}
-                />
-              </div>
-              <div>
-                <h6 className="mb-0">{user.fullName}</h6>
-                <small className="text-muted">{user.userRole}</small>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-            
+              <textarea
+                ref={textareaRef}
+                className="form-control"
+                style={{
+                  backgroundColor: "#fff",
+                  color: "#000",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  textAlign: "left",
+                  resize: "none",
+                  height: "38px",
+                  flex: 1,
+                  border: "1px solid #ced4da",
+                  borderRadius: "4px",
+                  padding: "5px 10px",
+                }}
+                rows={1}
+                placeholder="Add a comment... sachin"
+                value={commentText}
+                onChange={handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    console.log("Comment submitted:", commentText);
+                  }
+                }}
+              />
+
+
+              {/* Mention Dropdown */}
+              {mentionDropdownVisible && searchResults.length > 0 && (
+                <div
+                  className="position bg-white shadow rounded w-100 mt-1"
+                  style={{
+                    zIndex: 1000,
+                    maxHeight: "10rem",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="d-flex align-items-center p-2 cursor-pointer"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleMentionClick(user.userName)}
+                    >
+                      <div className="avatar">
+                        <img
+                          src={user.avatar || "default-avatar.png"}
+                          alt={user.fullName}
+                          className="avatar-img rounded-circle border border-white border-3"
+                          width={34}
+                          height={34}
+                        />
+                      </div>
+                      <div>
+                        <h6 className="mb-0">{user.fullName}</h6>
+                        <small className="text-muted">{user.userRole}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </form>
           </div>}
 
           {openComment && (isLoading ? (
@@ -1427,7 +1429,7 @@ const PostCard = ({
                   padding: "5px 10px",
                 }}
                 rows={1}
-                placeholder="Add a comment..."
+                placeholder="Add a comment... "
                 value={commentText}
                 onChange={handleChange}
                 onKeyDown={(e) => {
@@ -1437,6 +1439,42 @@ const PostCard = ({
                   }
                 }}
               />
+
+              {/* Mention Dropdown */}
+              {mentionDropdownVisible && searchResults.length > 0 && (
+                <div
+                  className="position bg-white shadow rounded w-100 mt-1"
+                  style={{
+                    zIndex: 1000,
+                    maxHeight: "10rem",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="d-flex align-items-center p-2 cursor-pointer"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleMentionClick(user.userName)}
+                    >
+                      <div className="avatar">
+                        <img
+                          src={user.avatar || "default-avatar.png"}
+                          alt={user.fullName}
+                          className="avatar-img rounded-circle border border-white border-3"
+                          width={34}
+                          height={34}
+                        />
+                      </div>
+                      <div>
+                        <h6 className="mb-0">{user.fullName}</h6>
+                        <small className="text-muted">{user.userRole}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </form>
           </div>}
 

@@ -47,7 +47,7 @@ const MediaGallery = ({
   utils : UtilType
 }
 ) => {
-
+  const [imageError, setImageError] = useState(false);
   const [showPostModal,setShowPostModal] = useState<boolean>(false);  
   const [src,setSrc] = useState<number>(0);
   if (!media || media.length === 0) return null;
@@ -150,24 +150,44 @@ const MediaGallery = ({
       case 1:
         return (
           <div  style={styles.container}>
-            <img 
-              src={media[0]} 
-              onClick={() => handleClick(0)}
-              alt="Single image" 
-              style={{
-                width: '100%',
-                height: '100%',
-                maxHeight: '600px',
-                objectFit: 'contain',
-                position: 'relative',  // Ensures it's above blur
-                zIndex: 2,             // Ensures it's above blur
-                cursor: 'pointer',
-                margin: '1px',
-              }}
-
-              className="gallery-item"
-              data-src={media[0]}
-            />
+            {!imageError ? (
+        <img
+          src={media[0]}
+          onClick={() => handleClick(0)}
+          onError={() => setImageError(true)} 
+          alt="unsupported format"
+          style={{
+            width: "100%",
+            height: "100%",
+            maxHeight: "600px",
+            objectFit: "contain",
+            position: "relative",
+            zIndex: 2,
+            cursor: "pointer",
+            margin: "1px",
+          }}
+          className="gallery-item"
+          data-src={media[0]}
+        />
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            maxHeight: "600px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#f0f0f0",
+            color: "#555",
+            fontSize: "16px",
+            fontWeight: "bold",
+            border: "1px solid #ccc",
+          }}
+        >
+          Image format unsupported
+        </div>
+      )}
             {/* <div 
               style={{ 
                 position: 'absolute', 

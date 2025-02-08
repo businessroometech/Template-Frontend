@@ -281,6 +281,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       return
     }
     setIsSubmittingPost(true);
+
     try {
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
@@ -289,7 +290,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
         url: CREATE_POST,
         data: {
           userId: user?.id,
-          content: values,
+          content: processMentionsForSubmission(values),
           hashtags: hashtags,
         },
       })
@@ -309,15 +310,16 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     }
   }
 
+  const [mentionMap, setMentionMap] = useState<Record<string, string>>({});
   const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
   const textareaRef = useRef(null);
 
-  // Function to handle textarea change
-  const handleChange = (e: any) => {
-    const value = e.target.value;
-    setThoughts(value);
-    checkForMention(value);
-  };
+// Function to handle textarea change
+const handleChange = (e: any) => {
+  const value = e.target.value;
+  setThoughts(value);
+  checkForMention(value);
+};
 
   // Function to handle photo quote change
   const handleChangePhotoQuote = (e: any) => {
@@ -331,59 +333,61 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     checkForMention(e.target.value);
   };
 
-  // Function to check if user is typing a mention
-  const checkForMention = (text: string) => {
-    const match = text.match(/@\S*$/);
-    if (text.endsWith("@")) {
-      fetchUsers("")
-    }
-    else if (match) {
-      fetchUsers(match[0].slice(1));
-    }
-    else {
-      setMentionDropdownVisible(false);
-    }
-  };
+ // Function to check if user is typing a mention
+const checkForMention = (text: string) => {
+  const match = text.match(/@\S*$/);
+  if (text.endsWith("@")) {
+    fetchUsers("");
+  } else if (match) {
+    fetchUsers(match[0].slice(1));
+  } else {
+    setMentionDropdownVisible(false);
+  }
+};
 
-  // Function to fetch users when '@' is typed
-  const fetchUsers = async (query: string) => {
-    if (!query) return; 
-    console.log('query', query);
+// Function to fetch users when '@' is typed
+const fetchUsers = async (query: string) => {
+  if (!query) return;
 
-    try {
-      const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.id, query: query }),
-      });
+  try {
+    const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user?.id, query: query }),
+    });
 
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-      setSearchResults(data?.data || []);
-      setMentionDropdownVisible(data?.data.length > 0);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json();
+    setSearchResults(data?.data || []);
+    setMentionDropdownVisible(data?.data.length > 0);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
 
   // Function to insert mention correctly
-  const handleMentionClick = (user: any, type: string) => {
-    const mention = `@${user.userName} `;
+const handleMentionClick = (mentionedUser: any) => {
+  const mentionDisplay = `@${mentionedUser.fullName}`;
+  const mentionActual = `@${mentionedUser.userName}`;
 
-    const updateText = (prev: string) => {
-      return prev.replace(/@\S*$/, mention); 
-    };
+  // Store mapping of displayed mention to actual username
+  setMentionMap((prev) => ({ ...prev, [mentionDisplay]: mentionActual }));
 
-    if (type === "thoughts") {
-      setThoughts(updateText);
-    } else if (type === "photoQuote") {
-      setPhotoQuote(updateText);
-    } else if (type === "videoQuote") {
-      setVideoQuote(updateText);
-    }
+  setThoughts((prev) => prev.replace(/@\S*$/, mentionDisplay + " "));
+  setMentionDropdownVisible(false);
+};
 
-    setMentionDropdownVisible(false);
-  };
+// Function to process text before submitting
+const processMentionsForSubmission = (text: string) => {
+  let processedText = text;
+  
+  // Replace each mention display with actual username
+  Object.entries(mentionMap).forEach(([display, actual]) => {
+    processedText = processedText.replace(display, actual);
+  });
+
+  return processedText;
+};
 
 
   return (
@@ -431,11 +435,10 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 resize: "none",
               }}
               rows={2}
-              placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+              placeholder="Start a post"
               value={thoughts}
               onChange={handleChange}
             />
-
             {/* Mention Dropdown */}
             {mentionDropdownVisible && searchResults.length > 0 && (
               <div
@@ -521,7 +524,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
                 onChange={(e) => setPhotoQuote(e.target.value)}
-                placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+                placeholder="Start a post"
                 value={photoQuote} // Only use value for controlled input
 
                 
@@ -540,7 +543,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                     resize: "none",
                   }}
                   rows={2}
-                  placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+                  placeholder="Start a post"
                   value={thoughts}
                   onChange={handleChangePhotoQuote}
                 />
@@ -624,7 +627,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 value={thoughts}
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
-                placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+                placeholder="Start a post"
                 defaultValue={''}
               />
 
@@ -699,7 +702,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
               <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
-              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords" defaultValue={''} />
+              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Start a post" defaultValue={''} />
               {mentionDropdownVisible && searchResults.length > 0 && (
                 <div
                   className="position-absolute bg-white shadow rounded w-100 mt-1"

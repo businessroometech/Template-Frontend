@@ -13,7 +13,7 @@ const Followers =  () => {
   return (
     <Card >
       <CardHeader className="pb-0 border-0">
-      <CardTitle className="mb-0" style={{ fontSize: '2px' }}>Suggested Connections</CardTitle>
+      <CardTitle className="mb-0" style={{ fontSize: '2px' }}>Connect'n Grow</CardTitle>
       </CardHeader>
 
       <CardBody>
@@ -37,6 +37,11 @@ const Followers =  () => {
             </Button>
           </div>
         ))}
+ {allFollowers.length < 1 && (
+          <div className='hstack gap-2 mb-3' >
+<p>No more suggested connections </p>
+          </div>
+        )}
 
         <div className="d-grid mt-3">
           <Button variant="primary-soft" size="sm">

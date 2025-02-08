@@ -1067,7 +1067,7 @@ const userPost = ({
                     padding: "5px 10px",
                   }}
                   rows={1}
-                  placeholder="Add a comment..."
+                  placeholder="Add a comment... "
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   onKeyDown={(e) => {

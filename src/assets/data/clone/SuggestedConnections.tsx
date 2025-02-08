@@ -123,7 +123,7 @@ const SuggestedConnections = () => {
 
   return (
     <Card>
-      <CardHeader className="border-0 pb-0">{/* <CardTitle>Suggested Connections</CardTitle> */}</CardHeader>
+      <CardHeader className="border-0 pb-0">{/* <CardTitle>Connect'n Grow</CardTitle> */}</CardHeader>
       <CardBody>
         {skeletonLoading ? (
           <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: '100vh' }}>
@@ -138,7 +138,7 @@ const SuggestedConnections = () => {
             hasMore={false}
             loader={<Loading loading={allFollowers.length !== totalUsers} size={16} />}
             style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-            endMessage={<b>No more suggested connections</b>}
+            endMessage={<b>No more Connect'n Grow</b>}
             scrollableTarget="scrollableDiv">
             {allFollowers.map((friend, idx) => (
               <div className="d-md-flex align-items-center mb-4" key={idx}>

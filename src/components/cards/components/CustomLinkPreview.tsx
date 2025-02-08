@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import LinkPreview from "@ashwamegh/react-link-preview";
+import "@ashwamegh/react-link-preview/dist/index.css";
 
 interface LinkPreviewProps {
   url: string;
 }
 
-const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
+const CustomLinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   const [metadata, setMetadata] = useState<{
     title?: string;
     description?: string;
@@ -14,20 +16,39 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   }>({});
 
   useEffect(() => {
+    if (!url) return;
+
     const fetchMetadata = async () => {
       try {
-        const response = await fetch(url);
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const response = await fetch(proxyUrl);
 
-        const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content") || doc.title;
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, "text/html");
+
+        const title =
+          doc.querySelector("meta[property='og:title']")?.content ||
+          doc.querySelector("title")?.innerText ||
+          "No Title Available";
+
         const description =
-          doc.querySelector("meta[property='og:description']")?.getAttribute("content") ||
-          doc.querySelector("meta[name='description']")?.getAttribute("content") ||
+          doc.querySelector("meta[property='og:description']")?.content ||
+          doc.querySelector("meta[name='description']")?.content ||
+          "No description available";
+
+        const image =
+          doc.querySelector("meta[property='og:image']")?.content ||
+          doc.querySelector("meta[name='twitter:image']")?.content ||
           "";
-        const image = doc.querySelector("meta[property='og:image']")?.getAttribute("content") || "";
-        const siteName = new URL(url).hostname.replace("www.", "");
+
+        const siteName =
+          doc.querySelector("meta[property='og:site_name']")?.content ||
+          new URL(url).hostname.replace("www.", "");
 
         setMetadata({ title, description, image, siteName, error: false });
       } catch (error) {
@@ -39,20 +60,25 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
     fetchMetadata();
   }, [url]);
 
-  // ✅ Show direct link if metadata fetching fails
   if (metadata.error) {
     return (
-      <p style={{ fontSize: "14px", color: "#007bff" }}>
-        <a href={url} target="_blank" rel="noopener noreferrer">
-          {url}
-        </a>
-      </p>
+      <LinkPreview
+        url={url}
+        customDomain="https://lpdg-server.azurewebsites.net/parse/link"
+      />
     );
   }
 
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit" }}>
-      <div
+
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+{metadata.title?
+     ( <div
         style={{
           display: "flex",
           alignItems: "center",
@@ -61,11 +87,10 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
           overflow: "hidden",
           width: "100%",
           height: "150px",
-          boxShadow:"none",
-          MozWindowShadow:"none"
+          boxShadow: "none",
+          MozWindowShadow: "none",
         }}
       >
-        {/* ✅ Show image only if available */}
         {metadata.image && (
           <img
             src={metadata.image}
@@ -88,9 +113,16 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
             {metadata.description && metadata.description.length > 150 ? `${metadata.description.substring(0, 150)}...` : metadata.description}
           </p>
         </div>
-      </div>
+      </div>):(
+       <a href={url} target="_blank" 
+      className="text-primary"
+       rel="noopener noreferrer"
+       style={{ textDecoration: "none", color: "inherit" }}>
+        {url}
+        </a>
+      )}
     </a>
   );
 };
 
-export default LinkPreview;
+export default CustomLinkPreview;
