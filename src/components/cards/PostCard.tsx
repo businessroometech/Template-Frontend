@@ -138,6 +138,9 @@ const PostCard = ({
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
   const [close, setClose] = useState<boolean>(true);
   const [showList, setShowList] = useState<boolean>(false);
+  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const utils: UtilType = {
     comments: comments,
@@ -497,9 +500,7 @@ const PostCard = ({
   }
 
 
-  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
 
   // Handle input change and check for mentions
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -556,12 +557,9 @@ const PostCard = ({
     }, 0);
   };
 
-
-
-  if (isDeleted) return null;
-
   if (isRepostWithText()) {
     return (
+      isDeleted ? null : 
       <Card className="mb-4">
         <LikeListModal
           isOpen={showList}
@@ -857,19 +855,19 @@ const PostCard = ({
             className="w-100 border-top border-bottom mb-3"
             style={{
               backgroundColor: "white",
-              borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
+              borderBottom: "1px solid #dee2e6",
             }}
           >
             <Button
-              variant="ghost" // Always remains ghost
+              variant="ghost"
               className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
               onClick={toggleLike}
-              style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+              style={{ fontSize: "0.8rem" }}
             >
               {likeStatus ? (
-                <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} /> // Blue icon when liked
+                <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
               ) : (
-                <ThumbsUp size={16} style={{ color: "inherit" }} /> // Default color when not liked
+                <ThumbsUp size={16} style={{ color: "inherit" }} />
               )}
               {/* <span>Like</span> */}
             </Button>
@@ -878,7 +876,7 @@ const PostCard = ({
               variant="ghost"
               className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
               onClick={() => setOpenComment(!openComment)}
-              style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+              style={{ fontSize: "0.8rem" }}
             >
               <MessageSquare size={16} />
               {/* <span>Comment</span> */}
@@ -887,31 +885,37 @@ const PostCard = ({
             <Button
               variant="ghost"
               className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+              style={{ fontSize: "0.8rem" }}
               onClick={() => setShowRepostOp(true)}
             >
               <Repeat size={16} />
               {/* <span>Repost</span> */}
             </Button>
-
-            <RepostModal
-              isOpen={showRepostOp}
-              onClose={() => setShowRepostOp(false)}
-              authorName={userInfo?.firstName}
-              item={item}
-              isCreated={isCreated}
-              setIsCreated={setIsCreated}
-            />
-
-
-            {/* <Button
-            variant="ghost"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-           
-          </Button> */}
+            {
+              <RepostModal
+                isOpen={showRepostOp}
+                onClose={() => setShowRepostOp(false)}
+                authorName={userInfo?.firstName}
+                item={item}
+                isCreated={isCreated}
+                setIsCreated={setIsCreated}
+              />}
+            <Button
+              onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Copy size={16} />
+            </Button>
+            <Button
+              onClick={() => handleShare(post.Id)}
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Share size={16} />
+            </Button>
           </ButtonGroup>
           {openComment && <div className="d-flex mb-4 px-3">
             <div className="avatar avatar-xs me-3">
@@ -1042,6 +1046,7 @@ const PostCard = ({
   }
 
   return (
+    isDeleted ? null : 
     <>
       <Card className="mb-4">
         <LikeListModal

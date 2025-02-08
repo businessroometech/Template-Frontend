@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, MapPin, Briefcase, DollarSign, Clock, TrendingUp, GraduationCap, FileCheck, Info, Loader2 } from 'lucide-react';
+import { Building2, MapPin, Briefcase, DollarSign, Clock, TrendingUp, GraduationCap, FileCheck, Info, Loader2, Trash } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
@@ -35,12 +35,43 @@ const BusinessCard: React.FC<{ business: Business }> = ({ business }) => {
 const navigate = useNavigate()
 const { id } = useParams();
 
+const handledelete = async () => {
+  try {
+    await fetch(`http://13.216.146.100/api/v1/businessbuyer/delete/${id}`, {
+      method: "DELETE",
+    });
+    await fetch(`http://13.216.146.100/api/v1/subrole/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    // Reload the page
+    window.location.reload();
+  } catch (error) {
+    console.error("Error while deleting:", error);
+    alert("Unable to delete Investor and Subrole");
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const isPlaceholder = business.businessType === 'N/A';
  
   return (
     <div className={`card shadow-lg border-0 overflow-hidden ${isPlaceholder ? 'opacity-75' : ''}`}>
-      <div className="card-header bg-gradient text-gray py-3">
+      <div className="card-header bg-gradient text-gray py-3" style={{display:"flex"}}>
         <div className="d-flex align-items-center">
           <Building2 className="me-3" size={28} />
           <div>
@@ -51,6 +82,7 @@ const { id } = useParams();
             </p>
           </div>
         </div>
+      
       </div>
       
       <div className="card-body py-4">
@@ -159,6 +191,12 @@ const { id } = useParams();
                 <Button onClick={()=> {
                   navigate(`/profile/editabout/${id}`)
                 }}>Edit Your Profile</Button>
+                  <Button style={{ cursor:"pointer", marginTop:"4px", backgroundColor:"red"}}   onClick={() => {
+                                      handledelete()
+                                      }}>
+                                    <Trash></Trash>
+                                      Delete Your Profile
+                                  </Button>
                 </div>
               </div>
             </div>

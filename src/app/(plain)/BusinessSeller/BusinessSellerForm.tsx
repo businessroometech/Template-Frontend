@@ -1069,7 +1069,7 @@ const BusinessSellerForm = () => {
 
       
           
-          <ButtonGroup>
+          <ButtonGroup style={{marginLeft:"-120px"}}>
             {step > 0 && (
               <button 
                 type="button" 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, MapPin, Lightbulb, Target, Briefcase, DollarSign, TrendingUp, Users, FileCheck, BarChart as ChartBar, Milestone, Goal, Info, Loader2, HandshakeIcon, Brain, Shield, FileText, Clock } from 'lucide-react';
+import { Building2, MapPin, Lightbulb, Target, Briefcase, DollarSign, TrendingUp, Users, FileCheck, BarChart as ChartBar, Milestone, Goal, Info, Loader2, HandshakeIcon, Brain, Shield, FileText, Clock, Trash } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
@@ -72,7 +72,21 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
   const navigate = useNavigate()
  const {id} = useParams()
 
-
+ const handledelete = async () => {
+  try {
+    await fetch(`http://13.216.146.100/api/v1/entrepreneur/delete/${id}`, {
+      method: "DELETE",
+    });
+    await fetch(`http://13.216.146.100/api/v1/subrole/delete/${id}`, {
+      method: "DELETE",
+    });
+    // Reload the page
+    window.location.reload();
+  } catch (error) {
+    console.error("Error while deleting:", error);
+    alert("Unable to delete Entrepreneur and Subrole");
+  }
+};
 
 
   return (
@@ -86,6 +100,9 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
               <MapPin size={16} className="me-1" />
               {profile.data.businessLocationCity}, {profile.data.businessLocationCountry}
             </p>
+          </div>
+          <div>
+
           </div>
         </div>
       </div>
@@ -256,6 +273,12 @@ const StartupCard: React.FC<{ profile: StartupProfile }> = ({ profile }) => {
           <Button onClick={() => {
             navigate(`/profile/editfounder/${id}`)
           }}>Edit About</Button>
+           <Button style={{ cursor:"pointer", marginTop:"4px", backgroundColor:"red"}}   onClick={() => {
+                      handledelete()
+                      }}>
+                    <Trash></Trash>
+                      Delete Your Profile
+                  </Button>
         </div>
       </div>
     </div>
