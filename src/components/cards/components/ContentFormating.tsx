@@ -8,12 +8,6 @@ import '@ashwamegh/react-link-preview/dist/index.css'
 import { useEffect, useState } from "react";
 
 
-
-  // Function to navigate to a user profile when clicking a mention
- 
-  
-
-
   const formatContent = (content: string) => {
     if (!content) return null;
     const navigate = useNavigate();
