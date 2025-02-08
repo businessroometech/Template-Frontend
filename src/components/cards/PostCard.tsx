@@ -137,7 +137,7 @@ const PostCard = ({
   const [showRepostOp, setShowRepostOp] = useState<boolean>(false);
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
   const [close, setClose] = useState<boolean>(true);
-  const [showList,setShowList] = useState<boolean>(false);
+  const [showList, setShowList] = useState<boolean>(false);
 
   const utils: UtilType = {
     comments: comments,
@@ -159,7 +159,7 @@ const PostCard = ({
   const media = post.repostedFrom ? post?.mediaUrls : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 
-  const handleCopy = (postId: string)=>{
+  const handleCopy = (postId: string) => {
     const shareUrl = `http://13.216.146.100/feed/post/${postId}`;
 
     navigator.clipboard.writeText(shareUrl)
@@ -169,11 +169,11 @@ const PostCard = ({
 
   const handleShare = (postId: string) => {
     const shareUrl = `http://13.216.146.100/feed/home#${postId}`;
-  
+
     if (navigator.share) {
       navigator
         .share({
-          title: "Check out this post!", 
+          title: "Check out this post!",
           url: shareUrl,
         })
         .catch((error) => console.error("Error sharing:", error));
@@ -435,6 +435,7 @@ const PostCard = ({
     handleGetAllLikesForPost(post.Id)
   };
 
+
   function LikeText(allLikes: Like[]) {
     const userLike = allLikes.find(like => like.id === user?.id);
     const otherLikes = allLikes.filter(like => like.id !== user?.id);
@@ -460,9 +461,10 @@ const PostCard = ({
       }}
     >
       {/* Left side with like icon and text */}
-      {<span onClick={() =>{ console.log('clicking')
+      {<span onClick={() => {
+        console.log('clicking')
         setShowList(true)
-      }}style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      }} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
         {allLikes.length > 0 && <MdThumbUp size={16} />}
         <span
           style={{
@@ -495,17 +497,75 @@ const PostCard = ({
   }
 
 
+  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Handle input change and check for mentions
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCommentText(value);
+    checkForMention(value);
+  };
+
+  // Check if user is typing a mention
+  const checkForMention = (text:string) => {
+    const match = text.match(/@\S*$/);
+    if (text.endsWith("@")) {
+      fetchUsers("");
+    } else if (match) {
+      fetchUsers(match[0].slice(1));
+    } else {
+      setMentionDropdownVisible(false);
+    }
+  };
+
+  // Fetch users when '@' is typed
+  const fetchUsers = async (query:string) => {
+    try {
+      const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id, query }),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      setSearchResults(data?.data || []);
+      setMentionDropdownVisible(data?.data.length > 0);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  // Insert mention into the text correctly
+  const handleMentionClick = (selectedUser:string) => {
+    const mention = `@${selectedUser} `;
+
+    setCommentText((prev) => prev.replace(/@\S*$/, mention)); // Replace last mention text
+    setMentionDropdownVisible(false);
+
+    // Move cursor to end
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 0);
+  };
+
+
 
   if (isDeleted) return null;
 
   if (isRepostWithText()) {
     return (
       <Card className="mb-4">
-         <LikeListModal
-                isOpen={showList}
-                onClose={() => setShowList(false)}
-                likes={allLikes}
-          />
+        <LikeListModal
+          isOpen={showList}
+          onClose={() => setShowList(false)}
+          likes={allLikes}
+        />
         <CardHeader className="border-0 pb-0">
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
@@ -831,17 +891,17 @@ const PostCard = ({
               <Repeat size={16} />
               {/* <span>Repost</span> */}
             </Button>
-            
-              <RepostModal
-                isOpen={showRepostOp}
-                onClose={() => setShowRepostOp(false)}
-                authorName={userInfo?.firstName}
-                item={item}
-                isCreated={isCreated}
-                setIsCreated={setIsCreated}
-              />
-             
-            
+
+            <RepostModal
+              isOpen={showRepostOp}
+              onClose={() => setShowRepostOp(false)}
+              authorName={userInfo?.firstName}
+              item={item}
+              isCreated={isCreated}
+              setIsCreated={setIsCreated}
+            />
+
+
             {/* <Button
             variant="ghost"
             className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
@@ -879,39 +939,79 @@ const PostCard = ({
               </Link>
             </div>
             <form
-              className="nav nav-item w-100 d-flex align-items-center"
-              onSubmit={handleCommentSubmit}
-              style={{ gap: "10px" }}
+        className="nav nav-item w-100 d-flex align-items-center"
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log("Submitted:", commentText);
+        }}
+        style={{ gap: "10px" }}
+      >
+        <textarea
+          ref={textareaRef}
+          className="form-control"
+          style={{
+            backgroundColor: "#fff",
+            color: "#000",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            textAlign: "left",
+            resize: "none",
+            height: "38px",
+            flex: 1,
+            border: "1px solid #ced4da",
+            borderRadius: "4px",
+            padding: "5px 10px",
+          }}
+          rows={1}
+          placeholder="Add a comment..."
+          value={commentText}
+          onChange={handleChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              console.log("Comment submitted:", commentText);
+            }
+          }}
+        />
+      </form>
+
+      {/* Mention Dropdown */}
+      {mentionDropdownVisible && searchResults.length > 0 && (
+        <div
+          className="position-absolute bg-white shadow rounded w-100 mt-1"
+          style={{
+            zIndex: 1000,
+            maxHeight: "10rem",
+            overflowY: "auto",
+            border: "1px solid #ddd",
+          }}
+        >
+          {searchResults.map((user) => (
+            <div
+              key={user.id}
+              className="d-flex align-items-center p-2 cursor-pointer"
+              style={{ cursor: "pointer" }}
+              onClick={() => handleMentionClick(user)}
             >
-              <textarea
-                data-autoresize
-                className="form-control"
-                style={{
-                  backgroundColor: "#fff",
-                  color: "#000",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  textAlign: "left",
-                  resize: "none",
-                  height: "38px",
-                  flex: 1,
-                  border: "1px solid #ced4da",
-                  borderRadius: "4px",
-                  padding: "5px 10px",
-                }}
-                rows={1}
-                placeholder="Add a comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleCommentSubmit(e);
-                  }
-                }}
-              />
-            </form>
+              <div className="avatar">
+                <img
+                  src={user.avatar || "default-avatar.png"} // Ensure a default avatar
+                  alt={user.fullName}
+                  className="avatar-img rounded-circle border border-white border-3"
+                  width={34}
+                  height={34}
+                />
+              </div>
+              <div>
+                <h6 className="mb-0">{user.fullName}</h6>
+                <small className="text-muted">{user.userRole}</small>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+            
           </div>}
 
           {openComment && (isLoading ? (
@@ -942,11 +1042,11 @@ const PostCard = ({
   return (
     <>
       <Card className="mb-4">
-          <LikeListModal
-                isOpen={showList}
-                onClose={() => setShowList(false)}
-                likes={allLikes}
-          />
+        <LikeListModal
+          isOpen={showList}
+          onClose={() => setShowList(false)}
+          likes={allLikes}
+        />
         <CardHeader className="border-0 pb-0">
           {(post.repostedFrom && close) &&
             <>
@@ -1081,7 +1181,7 @@ const PostCard = ({
                       justifyContent: "space-between",
                       alignItems: "flex-start",
                       flexDirection: "column",
-                    }} 
+                    }}
                   >
                     <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
                       {post.repostedFrom ? repostProfile?.personalDetails?.firstName : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}
@@ -1267,22 +1367,22 @@ const PostCard = ({
                 isCreated={isCreated}
                 setIsCreated={setIsCreated}
               />}
-              <Button
-          onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
-          variant="ghost"
-          className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-          style={{ fontSize: "0.8rem" }}
-        >
-          <Copy size={16} />
-        </Button>
-          <Button
-      onClick={() => handleShare(post.Id)}
-      variant="ghost"
-      className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-      style={{ fontSize: "0.8rem" }}
-    >
-      <Share size={16} />
-    </Button>
+            <Button
+              onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Copy size={16} />
+            </Button>
+            <Button
+              onClick={() => handleShare(post.Id)}
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Share size={16} />
+            </Button>
           </ButtonGroup>
           {openComment && <div className="d-flex mb-4 px-3">
             <div className="avatar avatar-xs me-3">
@@ -1329,7 +1429,7 @@ const PostCard = ({
                 rows={1}
                 placeholder="Add a comment..."
                 value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
+                onChange={handleChange}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();

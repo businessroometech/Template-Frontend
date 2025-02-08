@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import LinkPreview from "@ashwamegh/react-link-preview"
-
 // If you're using built in layout, you will need to import this css
 import '@ashwamegh/react-link-preview/dist/index.css'
 import { useEffect, useState } from "react";
+import LinkPreview from "./LinkPreview";
 
 
   const formatContent = (content: string) => {
@@ -204,12 +203,7 @@ useEffect(() => {
           <LinkPreview
             key={index}
             url={word}
-            width="100%"
-            descriptionLength={90}
-            imageHeight={200}
-            borderRadius="8px"
-            marginTop="8px"
-          />
+          />         
           </a>
         );
       }
