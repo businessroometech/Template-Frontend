@@ -35,33 +35,31 @@ const ManageConnections = () => {
   };
 
   return (
-    <div style={{padding:"0px", marginRight:"6.5%", width:"94.5%"}}>
-      
-      <PageMetaData title='ManageConnections'/>
-      
-      <div className="d-flex justify-content-center mb-4 flex-wrap"   >
-        {sections.map((section, index) => (
-          <button
-            key={index}
-            type="button"
-            className="btn mx-2 mb-2 d-flex align-items-center"
-            style={{
-              backgroundColor: step === index ? '#1ea1f2' : 'transparent',
-              borderColor: '#1ea1f2',
-              color: step === index ? 'white' : '#1ea1f2'
-            }}
-            onClick={() => setCurrentSection(index)}
-          >
-            {section.icon} {section.title}
-          </button>
-        ))}
-      </div>
-
-      <div style={{width:"106%"}}>
-        {sections[step].component}
-      </div>
-    
+    <div className="container-fluid px-0">
+    <PageMetaData title="ManageConnections" />
+  
+    {/* Section Tabs */}
+    <div className="d-flex justify-content-center flex-wrap gap-2 mb-4">
+      {sections.map((section, index) => (
+        <button
+          key={index}
+          type="button"
+          className={`btn d-flex align-items-center ${
+            step === index ? "btn-primary text-white" : "btn-outline-primary"
+          }`}
+          onClick={() => setCurrentSection(index)}
+        >
+          {section.icon} {section.title}
+        </button>
+      ))}
     </div>
+  
+    {/* Section Content */}
+    <div className="w-100 mx-auto">
+      {sections[step].component}
+    </div>
+  </div>
+  
   );
 };
 
