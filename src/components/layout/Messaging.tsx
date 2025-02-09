@@ -392,7 +392,7 @@ const Messaging = () => {
           className="form-control"
           placeholder="Search users..."
           onChange={(e) => {
-        const searchTerm = e.target.value.toLowerCase();
+        const searchTerm = e.target.value.toLowerCase();w
         if (searchTerm === '') {
           fetchChatsList(); // Reset to original list when input is cleared
         } else {
