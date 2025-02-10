@@ -89,7 +89,7 @@ const PostModal = ({
       }
     } catch (error) {
       setAllLikes([]);
-      console.error('An unknown error occurred:', (error as Error).message);
+      // console.error('An unknown error occurred:', (error as Error).message);
     }
   };
   // alert(len);

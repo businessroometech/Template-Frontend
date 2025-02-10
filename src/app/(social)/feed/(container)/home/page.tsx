@@ -39,6 +39,10 @@ export interface PersonalDetails {
   updatedBy: string;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
+  zoom: number;
+  rotate: number;
+  zoomProfile: number;
+  rotateProfile: number;
 }
 
 export interface UserProfile {

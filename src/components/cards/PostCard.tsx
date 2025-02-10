@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
-import { MessageSquare, Repeat, ThumbsUp } from 'lucide-react';
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader } from 'react-bootstrap';
+import { Copy, MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Image } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
 import { useAuthContext } from '@/context/useAuthContext';
@@ -16,6 +16,15 @@ import RepostModal from './RepostModal';
 import { LIVE_URL } from '@/utils/api';
 import { UserProfile } from '@/app/(social)/feed/(container)/home/page';
 import { toast } from 'react-toastify';
+import ImageZoom from './ImageZoom';
+// import { LinkPreview } from '@dhaiwat10/react-link-preview';
+
+import LinkPreview from '@ashwamegh/react-link-preview'
+
+// If you're using built in layout, you will need to import this css
+import '@ashwamegh/react-link-preview/dist/index.css'
+import LikeListModal from './components/LikeListModal';
+import formatContent from './components/ContentFormating';
 export interface Like {
   id: string;
   occupation: string;
@@ -70,6 +79,8 @@ export interface UserDetails {
   timestamp: string;
   userRole: string;
   avatar: string;
+  zoomProfile: number;
+  rotateProfile: number;
 }
 
 export interface PostSchema {
@@ -126,6 +137,11 @@ const PostCard = ({
   const [showRepostOp, setShowRepostOp] = useState<boolean>(false);
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
   const [close, setClose] = useState<boolean>(true);
+  const [showList, setShowList] = useState<boolean>(false);
+  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const utils: UtilType = {
     comments: comments,
     setComments: setComments,
@@ -146,7 +162,30 @@ const PostCard = ({
   const media = post.repostedFrom ? post?.mediaUrls : post?.mediaUrls;
   const isVideo = media?.length > 0 && (media[0] as string).includes('video/mp4');
 
+  const handleCopy = (postId: string) => {
+    const shareUrl = `http://13.216.146.100/feed/post/${postId}`;
 
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => toast.success("Link copied to clipboard!"))
+      .catch((error) => console.error("Error copying link:", error));
+  }
+
+  const handleShare = (postId: string) => {
+    const shareUrl = `http://13.216.146.100/feed/home#${postId}`;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Check out this post!",
+          url: shareUrl,
+        })
+        .catch((error) => console.error("Error sharing:", error));
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
+    }
+  };
 
   function isRepost() {
     return post.repostedFrom !== null && post.repostedFrom !== undefined
@@ -252,7 +291,6 @@ const PostCard = ({
       }
     } catch (error) {
       setAllLikes([]);
-      console.error('An unknown error occurred:', (error as Error).message);
     }
   };
 
@@ -305,10 +343,10 @@ const PostCard = ({
         console.error('Error fetching user profile:', error)
       }
     }
-    fetchUser();
+    if (post.repostedFrom) fetchUser();
   }, [])
 
-
+  // console.log('---item---',item);
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
     const fetchComments = async () => {
@@ -400,6 +438,7 @@ const PostCard = ({
     handleGetAllLikesForPost(post.Id)
   };
 
+
   function LikeText(allLikes: Like[]) {
     const userLike = allLikes.find(like => like.id === user?.id);
     const otherLikes = allLikes.filter(like => like.id !== user?.id);
@@ -425,7 +464,10 @@ const PostCard = ({
       }}
     >
       {/* Left side with like icon and text */}
-      {<span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      {<span onClick={() => {
+        console.log('clicking')
+        setShowList(true)
+      }} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
         {allLikes.length > 0 && <MdThumbUp size={16} />}
         <span
           style={{
@@ -458,126 +500,97 @@ const PostCard = ({
   }
 
 
-  const navigate = useNavigate();
 
-  // Function to navigate to a user profile when clicking a mention
-  const handleMentionClick = async (username: string) => {
-    setIsLoading(true)
-    try {
-      const res = await fetch('http://13.216.146.100/api/v1/auth/get-user-userName', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userName: username }),
-      })
 
-      const data = await res.json();
-      // toast.success("navigate to user profile");
-      setIsLoading(false)
-      navigate(`/profile/feed/${data.data.id}`);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      toast.error('User not available');
+  // Handle input change and check for mentions
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCommentText(value);
+    checkForMention(value);
+  };
+
+  // Check if user is typing a mention
+  const checkForMention = (text: string) => {
+    const match = text.match(/@\S*$/);
+    if (text.endsWith("@")) {
+      fetchUsers("");
+    } else if (match) {
+      fetchUsers(match[0].slice(1));
+    } else {
+      setMentionDropdownVisible(false);
     }
-
   };
 
-  // Function to render mentions and hashtags with styling
-  const formatContent = (content: string) => {
-    if (!content) return null;
-  
-    // Regex patterns
-    const mentionRegex = /(@[a-zA-Z0-9_]+)/g;
-    const hashtagRegex = /(#\w+)/g;
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i;
-    const youtubeRegex =
-      /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
-  
-    return content.split(/(\s+)/).map((word, index) => {
-      if (mentionRegex.test(word)) {
-        const username = word.substring(1);
-        return (
-          <span
-            key={index}
-            onClick={() => handleMentionClick(username)}
-            style={{
-              color: '#1E40AF',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-            }}
-          >
-            {word}
-          </span>
-        );
-      } else if (hashtagRegex.test(word)) {
-        return (
-          <span
-            key={index}
-            style={{
-              color: '#4CAF50',
-              fontWeight: 'bold',
-            }}
-          >
-            {word}
-          </span>
-        );
-      } else if (youtubeRegex.test(word)) {
-        const videoId = word.match(youtubeRegex)?.[2];
-        return (
-          <iframe
-            key={index}
-            width="100%"
-            height="250"
-            src={`https://www.youtube.com/embed/${videoId}`}
-            frameBorder="0"
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            style={{ borderRadius: '8px', marginTop: '8px' }}
-          ></iframe>
-        );
-      } else if (imageRegex.test(word)) {
-        return (
-          <img
-            key={index}
-            src={word}
-            alt="User shared content"
-            style={{ maxWidth: '100%', borderRadius: '8px', marginTop: '8px' }}
-          />
-        );
-      } else if (urlRegex.test(word)) {
-        return (
-          <a
-            key={index}
-            href={word}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#0645AD', textDecoration: 'underline' }}
-          >
-            {word}
-          </a>
-        );
+  // Fetch users when '@' is typed
+  const fetchUsers = async (query: string) => {
+    try {
+      const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id, query }),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      setSearchResults(data?.data || []);
+      setMentionDropdownVisible(data?.data.length > 0);
+      console.log("searchResult*****", searchResults);
+
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  // Insert mention into the text correctly
+  const handleMentionClick = (selectedUser: string) => {
+    const mention = `@${selectedUser} `;
+
+    setCommentText((prev) => prev.replace(/@\S*$/, mention));
+    setMentionDropdownVisible(false);
+
+    // Move cursor to end
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
       }
-  
-      return word;
-    });
+    }, 0);
   };
-  
-
-
-
-  if (isDeleted) return null;
 
   if (isRepostWithText()) {
     return (
+      isDeleted ? null : 
       <Card className="mb-4">
+        <LikeListModal
+          isOpen={showList}
+          onClose={() => setShowList(false)}
+          likes={allLikes}
+        />
         <CardHeader className="border-0 pb-0">
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post?.userId}`} role="button">
-                  <img className="avatar-img rounded-circle" src={userInfo.avatar ? userInfo.avatar : fallBackAvatar} />
+                  <div
+                    style={{
+                      border: '3px solid white',
+                      width: "55px",
+                      height: "55px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+
+                    }}
+                  >
+                    <Image
+                      src={userInfo.avatar ? userInfo.avatar : fallBackAvatar} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
                 </Link>
                 {/* {post.repostedFrom && <p>This is a repost</p>} */}
               </div>
@@ -668,7 +681,7 @@ const PostCard = ({
           </div>
         </CardHeader>
         <CardBody>
-          {post?.content && (
+          {post?.repostText && (
             <div className="mb-1 p-1 bg-gray-100 rounded-lg">
               <div
                 id={post.Id}
@@ -684,9 +697,9 @@ const PostCard = ({
                   overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
-                {formatContent(post.content)}
+                {formatContent(post.repostText)}
               </div>
-              {!isExpanded && post.content.length > 230 && (
+              {!isExpanded && post.repostText.length > 230 && (
                 <span
                   className="text-blue-500 mt-1 cursor-pointer"
                   onClick={() => setIsExpanded(true)}
@@ -703,7 +716,27 @@ const PostCard = ({
                 <div className="d-flex align-items-center">
                   <div className="avatar me-2">
                     <Link to={`/profile/feed/${post?.repostedFrom}`} role="button">
-                      <img className="avatar-img rounded-circle" src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} />
+                      <div
+                        style={{
+                          border: '3px solid white',
+                          width: "55px",
+                          height: "55px",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+
+                        }}
+                      >
+                        <Image
+                          src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                          alt="Profile"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            transform: `scale(${(repostProfile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(repostProfile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                          }}
+                        />
+                      </div>
+
                     </Link>
 
                   </div>
@@ -822,19 +855,19 @@ const PostCard = ({
             className="w-100 border-top border-bottom mb-3"
             style={{
               backgroundColor: "white",
-              borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
+              borderBottom: "1px solid #dee2e6",
             }}
           >
             <Button
-              variant="ghost" // Always remains ghost
+              variant="ghost"
               className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
               onClick={toggleLike}
-              style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+              style={{ fontSize: "0.8rem" }}
             >
               {likeStatus ? (
-                <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} /> // Blue icon when liked
+                <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
               ) : (
-                <ThumbsUp size={16} style={{ color: "inherit" }} /> // Default color when not liked
+                <ThumbsUp size={16} style={{ color: "inherit" }} />
               )}
               {/* <span>Like</span> */}
             </Button>
@@ -843,7 +876,7 @@ const PostCard = ({
               variant="ghost"
               className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
               onClick={() => setOpenComment(!openComment)}
-              style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+              style={{ fontSize: "0.8rem" }}
             >
               <MessageSquare size={16} />
               {/* <span>Comment</span> */}
@@ -852,7 +885,7 @@ const PostCard = ({
             <Button
               variant="ghost"
               className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }} // Slightly smaller font size
+              style={{ fontSize: "0.8rem" }}
               onClick={() => setShowRepostOp(true)}
             >
               <Repeat size={16} />
@@ -866,37 +899,61 @@ const PostCard = ({
                 item={item}
                 isCreated={isCreated}
                 setIsCreated={setIsCreated}
-              />
-            }
-            {/* <Button
-            variant="ghost"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-           
-          </Button> */}
+              />}
+            <Button
+              onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Copy size={16} />
+            </Button>
+            <Button
+              onClick={() => handleShare(post.Id)}
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Share size={16} />
+            </Button>
           </ButtonGroup>
           {openComment && <div className="d-flex mb-4 px-3">
             <div className="avatar avatar-xs me-3">
               <Link to={`/profile/feed/${user?.id}`}>
                 <span role="button">
-                  <img
-                    className="avatar-img rounded-circle"
-                    style={{ width: '52px', height: '35px', objectFit: 'cover' }}
-                    src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
-                    alt="avatar"
-                  />
+                  <div
+                    style={{
+                      border: '3px solid white',
+                      width: "45px",
+                      height: "45px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+
+                    }}
+                  >
+                    <Image
+                      src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(profile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
                 </span>
               </Link>
             </div>
             <form
               className="nav nav-item w-100 d-flex align-items-center"
-              onSubmit={handleCommentSubmit}
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("Submitted:", commentText);
+              }}
               style={{ gap: "10px" }}
             >
               <textarea
-                data-autoresize
+                ref={textareaRef}
                 className="form-control"
                 style={{
                   backgroundColor: "#fff",
@@ -913,16 +970,53 @@ const PostCard = ({
                   padding: "5px 10px",
                 }}
                 rows={1}
-                placeholder="Add a comment..."
+                placeholder="Add a comment... sachin"
                 value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
+                onChange={handleChange}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    handleCommentSubmit(e);
+                    console.log("Comment submitted:", commentText);
                   }
                 }}
               />
+
+
+              {/* Mention Dropdown */}
+              {mentionDropdownVisible && searchResults.length > 0 && (
+                <div
+                  className="position bg-white shadow rounded w-100 mt-1"
+                  style={{
+                    zIndex: 1000,
+                    maxHeight: "10rem",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="d-flex align-items-center p-2 cursor-pointer"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleMentionClick(user.userName)}
+                    >
+                      <div className="avatar">
+                        <img
+                          src={user.avatar || "default-avatar.png"}
+                          alt={user.fullName}
+                          className="avatar-img rounded-circle border border-white border-3"
+                          width={34}
+                          height={34}
+                        />
+                      </div>
+                      <div>
+                        <h6 className="mb-0">{user.fullName}</h6>
+                        <small className="text-muted">{user.userRole}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </form>
           </div>}
 
@@ -952,8 +1046,14 @@ const PostCard = ({
   }
 
   return (
+    isDeleted ? null : 
     <>
       <Card className="mb-4">
+        <LikeListModal
+          isOpen={showList}
+          onClose={() => setShowList(false)}
+          likes={allLikes}
+        />
         <CardHeader className="border-0 pb-0">
           {(post.repostedFrom && close) &&
             <>
@@ -969,7 +1069,28 @@ const PostCard = ({
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: '-10px' }}>
                   {/* Avatar */}
                   <Link to={`/profile/feed/${post?.userId}`} role="button" style={{ paddingBottom: '3px', paddingRight: '4px' }}>
-                    <img
+
+                    <div
+                      style={{
+                        border: '3px solid white',
+                        width: "55px",
+                        height: "55px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+
+                      }}
+                    >
+                      <Image
+                        src={userInfo.avatar ? userInfo?.avatar : fallBackAvatar} // Replace with your actual image source
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                        }}
+                      />
+                    </div>
+                    {/* <img
                       style={{
                         width: 30,
                         height: 30,
@@ -978,7 +1099,7 @@ const PostCard = ({
                       }}
                       src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
                       alt={userInfo?.firstName || "avatar"}
-                    />
+                    /> */}
                   </Link>
 
                   {/* Name and Repost Text */}
@@ -1047,7 +1168,11 @@ const PostCard = ({
               <div className="avatar me-2">
                 <Link to={`/profile/feed/${post.repostedFrom ? repostProfile?.personalDetails?.id : post?.userId}`} role="button">
                   {userInfo?.avatar ? (
-                    <img className="avatar-img rounded-circle" src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar} />
+                    <ImageZoom
+                      src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar}
+                      zoom={post.repostedFrom ? repostProfile?.personalDetails?.zoomProfile : userInfo?.zoomProfile}
+                      rotate={post.repostedFrom ? repostProfile?.personalDetails?.rotateProfile : userInfo?.rotateProfile}
+                    />
                   ) : (
                     <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
                   )}
@@ -1249,25 +1374,40 @@ const PostCard = ({
                 isCreated={isCreated}
                 setIsCreated={setIsCreated}
               />}
-            {/* <Button
-            variant="ghost"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-           
-          </Button> */}
+            <Button
+              onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Copy size={16} />
+            </Button>
+            <Button
+              onClick={() => handleShare(post.Id)}
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Share size={16} />
+            </Button>
           </ButtonGroup>
           {openComment && <div className="d-flex mb-4 px-3">
             <div className="avatar avatar-xs me-3">
               <Link to={`/profile/feed/${user?.id}`}>
                 <span role="button">
-                  <img
+                  <ImageZoom
+                    src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
+                    zoom={profile?.personalDetails?.zoomProfile}
+                    rotate={profile?.personalDetails?.rotateProfile}
+                    width='45px'
+                    height='45px'
+                  />
+                  {/* <img
                     className="avatar-img rounded-circle"
                     style={{ width: '52px', height: '35px', objectFit: 'cover' }}
                     src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
                     alt="avatar"
-                  />
+                  /> */}
                 </span>
               </Link>
             </div>
@@ -1294,9 +1434,9 @@ const PostCard = ({
                   padding: "5px 10px",
                 }}
                 rows={1}
-                placeholder="Add a comment..."
+                placeholder="Add a comment... "
                 value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
+                onChange={handleChange}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -1304,6 +1444,42 @@ const PostCard = ({
                   }
                 }}
               />
+
+              {/* Mention Dropdown */}
+              {mentionDropdownVisible && searchResults.length > 0 && (
+                <div
+                  className="position bg-white shadow rounded w-100 mt-1"
+                  style={{
+                    zIndex: 1000,
+                    maxHeight: "10rem",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="d-flex align-items-center p-2 cursor-pointer"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleMentionClick(user.userName)}
+                    >
+                      <div className="avatar">
+                        <img
+                          src={user.avatar || "default-avatar.png"}
+                          alt={user.fullName}
+                          className="avatar-img rounded-circle border border-white border-3"
+                          width={34}
+                          height={34}
+                        />
+                      </div>
+                      <div>
+                        <h6 className="mb-0">{user.fullName}</h6>
+                        <small className="text-muted">{user.userRole}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </form>
           </div>}
 

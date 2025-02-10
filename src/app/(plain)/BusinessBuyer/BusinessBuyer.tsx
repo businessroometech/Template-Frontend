@@ -682,10 +682,10 @@ const BusinessPreferencesForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessType: '',
-    businesslocation: '',
+    businessLocation: '',
     businessModel: '',
-    budget: '',
-    renovationInvestment: '',
+    budget: "",
+    renovationInvestment: "",
     timeline: '',
     growthOrStableCashFlow: '',
     supportAfterPurchase: '',
@@ -703,19 +703,11 @@ const BusinessPreferencesForm = () => {
   ];
 
   const handleInputChange = (name, value) => {
-
-    if (name === "location") {
-      // Allow only alphabets and spaces
-      if (!/^[A-Za-z\s]*$/.test(value)) {
-        return;
-      }
-    }
-
+    // Remove any validation restrictions
     setFormData((prev) => ({
       ...prev,
       [name]: value,
       UserId: user?.id
-
     }));
   };
 
@@ -826,7 +818,7 @@ const BusinessPreferencesForm = () => {
       case 0:
         return renderFormFields([
           { id: 'businessType', label: 'What type of business are you interested in buying?', name: 'businessType', icon: <FaBuilding />, type: 'select', options: ['SaaS', 'Content', 'Marketplace', 'Agency', 'Mobile App', 'Shopify App', 'Main Street', 'Ecommerce', 'Other'], required: true },
-          { id: 'location', label: 'Preferred business location or region:', name: 'location', icon: <FaMapMarkerAlt />, type: 'text', required: true },
+          { id: 'businessLocation', label: 'Preferred business location or region:', name: 'businessLocation', icon: <FaMapMarkerAlt />, type: 'text', required: true },
           { id: 'businessModel', label: 'What is your preferred business model?', name: 'businessModel', icon: <FaToolbox />, type: 'select', options: ['Independent', 'Franchise', 'Online', 'Hybrid'], required: true },
         ]);
       case 1:
@@ -837,11 +829,11 @@ const BusinessPreferencesForm = () => {
       case 2:
         return renderFormFields([
           { id: 'timeline', label: 'What is your timeline for purchasing a business?', name: 'timeline', icon: <FaClock />, type: 'select', options: ['Immediately', '1-3 months', '6 months', '1 year', 'Flexible'], required: true },
-          { id: 'growthPreference', label: 'Are you interested in a business with potential for growth or stable cash flow?', name: 'growthPreference', icon: <FaBalanceScale />, type: 'select', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
+          { id: 'growthOrStableCashFlow', label: 'Are you interested in a business with potential for growth or stable cash flow?', name: 'growthOrStableCashFlow', icon: <FaBalanceScale />, type: 'select', options: ['Growth', 'Stable Cash Flow', 'Both'], required: true },
         ]);
       case 3:
         return renderFormFields([
-          { id: 'supportTraining', label: 'Are you interested in any support or training after the business purchase?', name: 'supportTraining', icon: <FaHandsHelping />, type: 'select', options: ['Yes', 'No', 'Maybe'], required: true },
+          { id: 'supportAfterPurchase', label: 'Are you interested in any support or training after the business purchase?', name: 'supportAfterPurchase', icon: <FaHandsHelping />, type: 'select', options: ['Yes', 'No', 'Maybe'], required: true },
           { id: 'ndaAgreement', label: 'Are you willing to sign a non-disclosure agreement (NDA) before receiving sensitive business information?', name: 'ndaAgreement', icon: <FaFileSignature />, type: 'select', options: ['Yes', 'No'], required: true },
         ]);
       case 4:

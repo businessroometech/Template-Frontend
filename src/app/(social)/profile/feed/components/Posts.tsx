@@ -15,7 +15,7 @@ interface PostsProps {
 }
 
 const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
-  console.log('Profile in Feed', profile)
+  // console.log('Profile in Feed', profile)
   const  currentUser = useParams()
   // console.log('profile in feed',profile)
   const [posts, setPosts] = useState<PostSchema[]>([])
@@ -118,7 +118,7 @@ const Posts = ({ isCreated,setIsCreated,profile } : PostsProps) => {
   if (error) {
     return <div>Error: {error}</div>
   }
-
+  // console.log('---profile in posts---',profile)
 
   return (
     <>

@@ -47,7 +47,7 @@ const MediaGallery = ({
   utils : UtilType
 }
 ) => {
-
+  const [imageError, setImageError] = useState(false);
   const [showPostModal,setShowPostModal] = useState<boolean>(false);  
   const [src,setSrc] = useState<number>(0);
   if (!media || media.length === 0) return null;
@@ -72,6 +72,7 @@ const MediaGallery = ({
     fullImage: {
       width: '100%', 
       height: '100%',
+      position : 'relative',
       maxHeight : '600px', 
       objectFit : 'contain',
       cursor: 'pointer',
@@ -149,29 +150,59 @@ const MediaGallery = ({
       case 1:
         return (
           <div  style={styles.container}>
-            <div 
+            {!imageError ? (
+        <img
+          src={media[0]}
+          onClick={() => handleClick(0)}
+          onError={() => setImageError(true)} 
+          alt="unsupported format"
+          style={{
+            width: "100%",
+            height: "100%",
+            maxHeight: "600px",
+            objectFit: "contain",
+            position: "relative",
+            zIndex: 2,
+            cursor: "pointer",
+            margin: "1px",
+          }}
+          className="gallery-item"
+          data-src={media[0]}
+        />
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            maxHeight: "600px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#f0f0f0",
+            color: "#555",
+            fontSize: "16px",
+            fontWeight: "bold",
+            border: "1px solid #ccc",
+          }}
+        >
+          Image format unsupported
+        </div>
+      )}
+            {/* <div 
               style={{ 
                 position: 'absolute', 
                 top: 0, 
                 left: 0, 
                 width: '100%', 
                 height: '100%', 
-                backgroundImage: `url(${media[0]})`, 
+                backgroundColor : `gray`, 
                 backgroundSize: 'cover',
                 backgroundPosition: 'center', 
                 filter: 'blur(20px)', // Adjust blur intensity
                 transform: 'scale(1.1)', // Slightly enlarge to avoid edge cut-off
-                zIndex: 1
+                zIndex: 0
               }} 
-            />
-            <img 
-              src={media[0]} 
-              onClick={() => handleClick(0)}
-              alt="Single image" 
-              style={styles.fullImage}
-              className="gallery-item"
-              data-src={media[0]}
-            />
+            /> */}
           </div>
         );
 
@@ -256,7 +287,7 @@ const MediaGallery = ({
                 />
                 <div 
                   style={styles.overlayContainer}
-                  
+                  onClick={() => handleClick(2)}
                 >
                   <span style={styles.overlayText}>
                     +{media.length - 3} More

@@ -101,10 +101,10 @@ body: JSON.stringify({ userId: user?.id }),
   return (
     <>
       <PageMetaData title="Notifications" />
-      <main>
+      <main style={{height : '100vh',backgroundColor : 'white'}}>
         <Container>
-          <Row className="g-4">
-            <Col lg={8} className="mx-auto">
+          <Row className="g-4" >
+            <Col lg={8} className="mx-auto" style={{marginTop : '100px'}}>
               <Card>
                 <CardHeader className="py-3 border-0 d-flex align-items-center justify-content-between">
                   <h1 className="h5 mb-0">Notifications</h1>

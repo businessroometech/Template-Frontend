@@ -6,6 +6,8 @@ import VisitProfile from '@/components/VisitProfile'
 import MarketPlace from '@/app/(plain)/MarketPlace/MarketPlace'
 import path from 'path'
 import EditAbout from '@/app/(social)/profile/about/EditAbout'
+import EditInvestor from '@/app/(social)/profile/about/EditInvestor'
+import EditFounder from '@/app/(social)/profile/about/EditFounder'
 
 // profiles for seller //
 // const BusinessSeller = lazy(() => import('@/app/(plain)/BusinessSeller/BusinessSeller'))
@@ -19,6 +21,7 @@ import EditAbout from '@/app/(social)/profile/about/EditAbout'
 
 //demo pages
 const HomeDemo = lazy(() => import('@/app/(social)/feed/(container)/home/page'))
+const UserPost = lazy(() => import('@/app/(social)/feed/(container)/home/userPost'))
 const HomeClassic = lazy(() => import('@/app/(plain)/classic/page'))
 const HomePost = lazy(() => import('@/app/(social)/(with-topbar)/posts/page'))
 const HomeVideo = lazy(() => import('@/app/(social)/feed/(no-container)/videos/page'))
@@ -93,6 +96,8 @@ const initialRoutes: RoutesProps[] = [
     name: 'root',
     element: <Navigate to="/feed/home" />,
   },
+
+  
  
 ]
 
@@ -104,6 +109,11 @@ const generalRoutes: RoutesProps[] = [
     element: <HomeDemo />,
   },
  
+  {
+    path: '/feed/post/:id',
+    name: 'Demo Home',
+    element: <UserPost />,
+  },
   {
     path: '/profile-visitors',
     name: 'Profile Visitors',
@@ -319,11 +329,21 @@ export const profilePagesRoutes: RoutesProps[] = [
     name: 'Feed',
     element: <ProfileFeed />,
   },
-  // {
-  //   path: '/profile/editabout/:id', 
-  //   name: 'Feed',
-  //   element: <EditAbout></EditAbout>,
-  // },
+  {
+    path: '/profile/editabout/:id', 
+    name: 'Feed',
+    element: <EditAbout></EditAbout>,
+  },
+  {
+    path: '/profile/editinvestor/:id', 
+    name: 'Feed',
+    element: <EditInvestor></EditInvestor>,
+  },
+  {
+    path: '/profile/editfounder/:id', 
+    name: 'Feed',
+    element: <EditFounder></EditFounder>,
+  },
   {
     path: '/profile/about/:id',
     name: 'About',

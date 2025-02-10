@@ -2,71 +2,49 @@ import {
   Button,
   Card,
   Col,
-  Dropdown,
-  DropdownDivider,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
+  Image,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
   OverlayTrigger,
-  Row,
   Tooltip,
 } from 'react-bootstrap'
-import Skeleton from 'react-loading-skeleton'
 
 import 'react-loading-skeleton/dist/skeleton.css'
 import {
-  BsBookmarkCheck,
   BsCalendar2EventFill,
   BsCameraReels,
   BsCameraReelsFill,
   BsCameraVideoFill,
   BsEmojiSmileFill,
-  BsEnvelope,
-  BsFileEarmarkText,
   BsGeoAltFill,
   BsImageFill,
   BsImages,
-  BsPencilSquare,
   BsTagFill,
-  BsThreeDots,
 } from 'react-icons/bs'
+
 import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import useToggle from '@/hooks/useToggle'
 import DropzoneFormInput from '../form/DropzoneFormInput'
-import TextFormInput from '../form/TextFormInput'
-import TextAreaFormInput from '../form/TextAreaFormInput'
-import DateFormInput from '../form/DateFormInput'
-import avatar1 from '@/assets/images/avatar/default avatar.png'
-import avatar2 from '@/assets/images/avatar/02.jpg'
-import avatar3 from '@/assets/images/avatar/03.jpg'
-import avatar4 from '@/assets/images/avatar/04.jpg'
-import avatar5 from '@/assets/images/avatar/05.jpg'
-import avatar6 from '@/assets/images/avatar/06.jpg'
 import avatar7 from '@/assets/images/avatar/default avatar.png'
 import ChoicesFormInput from '../form/ChoicesFormInput'
 import { Link } from 'react-router-dom'
 import { SendHorizontal } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
-import { CREATE_POST, LIVE_URL } from '@/utils/api'
-import { FileUpload, uploadDoc, uploadMulti } from '@/utils/CustomS3ImageUpload'
-import { MentionsInput, Mention } from "react-mentions";
-const skeletonBaseColor = '#e3e3e3'
-const skeletonHighlightColor = '#f2f2f2'
+import { CREATE_POST } from '@/utils/api'
+import { FileUpload, uploadMulti } from '@/utils/CustomS3ImageUpload'
 
 interface CreatePostCardProps {
   isCreated: boolean,
   setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
 }
 import { useAuthContext } from '@/context/useAuthContext'
-import UserModel from './UserModel'
 import { Spinner } from "react-bootstrap";
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 interface ApiResponse<T> {
   status: number
   data: T
@@ -101,9 +79,8 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
   const [awsIds, setAwsIds] = useState<any>([])
   const [skeletonLoading, setSkeletonLoading] = useState(true)
   const { isTrue: isOpenPost, toggle: togglePost } = useToggle()
-
-  // const {user} = useAuthContext();
-  const [profile, setProfile] = useState({})
+  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([])
+  const [profile, setProfile] = useState<UserProfile>({})
 
   useEffect(() => {
     if (modelTime) {
@@ -155,15 +132,11 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     return date.toLocaleString('en-GB', options).replace(',', ' at')
   }
 
-  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([])
+  
 
   // This function will be triggered when files are uploaded
   const handleFileUpload = (files: FileUpload[]) => {
-    if (files.length >= 9) {
-      alert('Max Limit Reached');
-      return;
-    }
-    setUploadedFiles([...uploadedFiles, ...files])
+    setUploadedFiles([...files])
   }
 
   // console.log('---- photo uploading -----', uploadedFiles)
@@ -203,7 +176,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
           url: CREATE_POST,
           data: {
             userId: user?.id,
-            content: photoQuote,
+            content: thoughts,
             hashtags: hashtags,
             mediaKeys: uploadSuccess,
           },
@@ -223,6 +196,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       setIsCreated(() => !isCreated)
       setIsSubmittingPhoto(false);
       setUploadedFiles([]);
+      setThoughts('');
     }
   }
 
@@ -247,7 +221,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
         // Making the API request
         const data = {
           userId: user?.id,
-          content: videoQuote,
+          content: thoughts,
           hashtags: hashtags,
           mediaKeys: uploadSuccess || [],
         }
@@ -275,6 +249,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       setIsSubmittingVideo(false);
       toggleVideoModel();
       setUploadedFiles([]);
+      setThoughts('');
       setIsCreated(() => !isCreated)
     }
   }
@@ -306,6 +281,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       return
     }
     setIsSubmittingPost(true);
+
     try {
       const hashtagRegex = /#\w+/g
       const hashtags = thoughts.match(hashtagRegex) || []
@@ -314,7 +290,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
         url: CREATE_POST,
         data: {
           userId: user?.id,
-          content: values,
+          content: processMentionsForSubmission(values),
           hashtags: hashtags,
         },
       })
@@ -334,81 +310,84 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
     }
   }
 
+  const [mentionMap, setMentionMap] = useState<Record<string, string>>({});
   const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
   const textareaRef = useRef(null);
 
-  // Function to handle textarea change
-  const handleChange = (e: any) => {
-    const value = e.target.value;
-    setThoughts(value);
-    checkForMention(value);
-  };
+// Function to handle textarea change
+const handleChange = (e: any) => {
+  const value = e.target.value;
+  setThoughts(value);
+  checkForMention(value);
+};
 
   // Function to handle photo quote change
   const handleChangePhotoQuote = (e: any) => {
-    setPhotoQuote(e.target.value);
+    setThoughts(e.target.value);
     checkForMention(e.target.value);
   };
 
   // Function to handle video quote change
   const handleChangeVideoQuote = (e: any) => {
-    setVideoQuote(e.target.value);
+    setThoughts(e.target.value);
     checkForMention(e.target.value);
   };
 
-  // Function to check if user is typing a mention
-  const checkForMention = (text: string) => {
-    const match = text.match(/@\S*$/);
-    if (text.endsWith("@")) {
-      fetchUsers("")
-    }
-    else if (match) {
-      fetchUsers(match[0].slice(1));
-    }
-    else {
-      setMentionDropdownVisible(false);
-    }
-  };
+ // Function to check if user is typing a mention
+const checkForMention = (text: string) => {
+  const match = text.match(/@\S*$/);
+  if (text.endsWith("@")) {
+    fetchUsers("");
+  } else if (match) {
+    fetchUsers(match[0].slice(1));
+  } else {
+    setMentionDropdownVisible(false);
+  }
+};
 
-  // Function to fetch users when '@' is typed
-  const fetchUsers = async (query: string) => {
-    if (!query) return; 
-    console.log('query', query);
+// Function to fetch users when '@' is typed
+const fetchUsers = async (query: string) => {
+  if (!query) return;
 
-    try {
-      const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.id, query: query }),
-      });
+  try {
+    const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user?.id, query: query }),
+    });
 
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-      setSearchResults(data?.data || []);
-      setMentionDropdownVisible(data?.data.length > 0);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json();
+    setSearchResults(data?.data || []);
+    setMentionDropdownVisible(data?.data.length > 0);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+};
 
   // Function to insert mention correctly
-  const handleMentionClick = (user: any, type: string) => {
-    const mention = `@${user.userName} `;
+const handleMentionClick = (mentionedUser: any) => {
+  const mentionDisplay = `@${mentionedUser.fullName}`;
+  const mentionActual = `@${mentionedUser.userName}`;
 
-    const updateText = (prev: string) => {
-      return prev.replace(/@\S*$/, mention); 
-    };
+  // Store mapping of displayed mention to actual username
+  setMentionMap((prev) => ({ ...prev, [mentionDisplay]: mentionActual }));
 
-    if (type === "thoughts") {
-      setThoughts(updateText);
-    } else if (type === "photoQuote") {
-      setPhotoQuote(updateText);
-    } else if (type === "videoQuote") {
-      setVideoQuote(updateText);
-    }
+  setThoughts((prev) => prev.replace(/@\S*$/, mentionDisplay + " "));
+  setMentionDropdownVisible(false);
+};
 
-    setMentionDropdownVisible(false);
-  };
+// Function to process text before submitting
+const processMentionsForSubmission = (text: string) => {
+  let processedText = text;
+  
+  // Replace each mention display with actual username
+  Object.entries(mentionMap).forEach(([display, actual]) => {
+    processedText = processedText.replace(display, actual);
+  });
+
+  return processedText;
+};
 
 
   return (
@@ -416,15 +395,28 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
       <Card className="card-body" style={{ maxHeight: '10em' }}>
         <div className="d-flex mb-3">
           <Link to={`/profile/feed/${user?.id}`}>
-            <div className="avatar avatar-s me-2" style={{ marginTop: "-4px" }}>
+            <div className="me-2" style={{ marginTop: "-25px" }}>
               <span role="button">
-                <img
-                  className="avatar-img rounded-circle"
-                  src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-                  alt="avatar"
-                  width={40}
-                  height={40}
-                />
+              <div
+                    style={{
+                      border : '3px solid white',
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      marginTop : '30px'
+                    }}
+                  >
+                    <Image
+                      src={profile.profileImgUrl || avatar7} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(profile.personalDetails?.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
               </span>
             </div>
           </Link>
@@ -443,11 +435,10 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 resize: "none",
               }}
               rows={2}
-              placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+              placeholder="Start a post"
               value={thoughts}
               onChange={handleChange}
             />
-
             {/* Mention Dropdown */}
             {mentionDropdownVisible && searchResults.length > 0 && (
               <div
@@ -533,7 +524,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
                 onChange={(e) => setPhotoQuote(e.target.value)}
-                placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+                placeholder="Start a post"
                 value={photoQuote} // Only use value for controlled input
 
                 
@@ -552,8 +543,8 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
                     resize: "none",
                   }}
                   rows={2}
-                  placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
-                  value={photoQuote}
+                  placeholder="Start a post"
+                  value={thoughts}
                   onChange={handleChangePhotoQuote}
                 />
 
@@ -598,7 +589,14 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
           </div>
           <div>
             <label className="form-label">Upload attachment</label>
-            <DropzoneFormInput icon={BsImages} onFileUpload={handleFileUpload} showPreview text="Drag here or click to upload photo." />
+            <DropzoneFormInput 
+              icon={BsImages} 
+              onFileUpload={handleFileUpload} 
+              showPreview 
+              text="Drag here or click to upload photo."
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={uploadedFiles}
+              />
           </div>
         </ModalBody>
         <ModalFooter>
@@ -626,10 +624,10 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
             <form className="w-100">
               <textarea
                 onChange={handleChangeVideoQuote}
-                value={videoQuote}
+                value={thoughts}
                 className="form-control pe-4 fs-3 lh-1 border-0"
                 rows={2}
-                placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+                placeholder="Start a post"
                 defaultValue={''}
               />
 
@@ -677,6 +675,8 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
               icon={BsCameraReels}
               showPreview
               text="Drag here or click to upload video."
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={uploadedFiles}
             />
           </div>
         </ModalBody>
@@ -702,7 +702,7 @@ const CreatePostCard = ({ setIsCreated, isCreated }: CreatePostCardProps) => {
               <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="" />
             </div>
             <form className="w-100">
-              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords" defaultValue={''} />
+              <textarea className="form-control pe-4 fs-3 lh-1 border-0" rows={4} placeholder="Start a post" defaultValue={''} />
               {mentionDropdownVisible && searchResults.length > 0 && (
                 <div
                   className="position-absolute bg-white shadow rounded w-100 mt-1"

@@ -1,79 +1,151 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather';
-import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs';
-import fallBackAvatar from '../../../assets/images/avatar/default avatar.png';
-import axios, { AxiosResponse } from 'axios';
-import { useAuthContext } from '@/context/useAuthContext';
-import { LIVE_URL } from '@/utils/api';
+import React, { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ThumbsUp, MessageSquare, ChevronUp, ChevronDown } from 'react-feather'
+import { BsFillHandThumbsUpFill, BsSendFill, BsThreeDots, BsTrash } from 'react-icons/bs'
+import fallBackAvatar from '../../../assets/images/avatar/default avatar.png'
+import axios, { AxiosResponse } from 'axios'
+import { useAuthContext } from '@/context/useAuthContext'
+import { LIVE_URL } from '@/utils/api'
+import ImageZoom from '../ImageZoom'
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
+import { GetAllLikesResponse, Like, Post } from '../PostCard'
+import LikeListModal from './LikeListModal'
+import formatContent from './ContentFormating'
 
 interface DeleteCommentResponse {
-  message: string;
+  message: string
+}
+
+export interface Comment {
+  id: string
+  commenterName: string
+  text: string
+  timestamp: string
+  postId: string
+  likeStatus: boolean
+  commenterId: string
 }
 
 // Define the structure of the API error
 interface DeleteCommentError {
-  error: string;
+  error: string
 }
 
-const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,commentCount,setCommentCount,myProfile = null}: CommentItemProps) => {
-  const [showReplies, setShowReplies] = useState(false);
-  const [reply, setReply] = useState(false);
-  const [commentText, setCommentText] = useState('');
-  const [commentLike,setCommentLike] = useState<boolean>(comment.likeStatus || false);
-  const {user} = useAuthContext();
-  const [replies,setReplies] = useState([]);
-  const [commentRefresh,setCommentRefresh] = useState(0);
-  const [menuVisible,setMenuVisible] = useState<boolean>(false);
-  const [isDeleted,setIsDeleted] = useState<boolean>(false);
-  const [profile,setProfile] = useState<boolean>(false);
-  // console.log('---comment---',comment);
-  console.log('---my profile---',myProfile);
-  function formatText(text : string,name : string) : string {
-      return  `@${name} ${text}`
+const CommentItem = ({
+  post,
+  comment,
+  level,
+  setRefresh,
+  refresh,
+  parentId = null,
+  commentCount,
+  setCommentCount,
+  myProfile = null,
+}: {
+  comment: Comment
+  level: number
+  refresh: number
+  setRefresh: React.Dispatch<React.SetStateAction<number>>
+  post: Post
+  commentCount: number
+  setCommentCount: React.Dispatch<React.SetStateAction<number>>
+  myProfile: UserProfile | null
+  parentId: string | null
+}) => {
+  const [showReplies, setShowReplies] = useState(false)
+  const [reply, setReply] = useState(false)
+  const [commentText, setCommentText] = useState('')
+  const [commentLike, setCommentLike] = useState<boolean>(comment.likeStatus || false)
+  const { user } = useAuthContext()
+  const [replies, setReplies] = useState([])
+  const [commentRefresh, setCommentRefresh] = useState(0)
+  const [menuVisible, setMenuVisible] = useState<boolean>(false)
+  const [isDeleted, setIsDeleted] = useState<boolean>(false)
+  const [profile, setProfile] = useState<UserProfile>(false)
+  const [allLikes, setAllLikes] = useState<Like[]>([])
+  const [showLikes, setShowLikes] = useState<boolean>(false)
+  console.log('---comment---', comment)
+  console.log('---my profile---', myProfile)
+  function formatText(text: string, name: string): string {
+    return `@${name} ${text}`
+  }
+
+  const handleGetAllLikesForComment = async (postId: string, commentId): Promise<void> => {
+    if (!postId) {
+      console.error('Post ID is required')
+      return
+    }
+
+    try {
+      const response = await fetch(`${LIVE_URL}api/v1/post/get-comment-like-list`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId, commentId, userId: user?.id }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.status === 'success') {
+          // // console.log('Likes fetched successfully:', data.data?.likes);
+          setAllLikes(data.data?.likeList || [])
+          // Optionally, update the UI with the likes data
+        } else {
+          console.error('Error fetching likes:', data.message)
+          setAllLikes([])
+        }
+      } else {
+        const errorData: GetAllLikesResponse = await response.json()
+        console.error('Error fetching likes:', errorData.message)
+        setAllLikes([])
+      }
+    } catch (error) {
+      setAllLikes([])
+    }
   }
 
   // console.log('levl',level)
   const handleDeleteComment = async (commentId: string, level: number, setIsDeleted: (value: boolean) => void): Promise<void> => {
     if (!commentId) {
-      console.error('Comment ID is required');
-      return;
+      console.error('Comment ID is required')
+      return
     }
-    
-    const endpoint = `${LIVE_URL}api/v1/post/${level === 0 ? 'comments' : 'nested-comments'}`;
-  
+
+    const endpoint = `${LIVE_URL}api/v1/post/${level === 0 ? 'comments' : 'nested-comments'}`
+
     try {
       const response = await fetch(endpoint, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ commentId,nestedCommentId : commentId  }),
-      });
-  
+        body: JSON.stringify({ commentId, nestedCommentId: commentId }),
+      })
+
       if (response.ok) {
-        const data: DeleteCommentResponse = await response.json();
-        console.log('Comment deleted successfully:', data.message);
-        setCommentCount(()=>commentCount-1);
-        setIsDeleted(true);
+        const data: DeleteCommentResponse = await response.json()
+        console.log('Comment deleted successfully:', data.message)
+        if (level < 1) setCommentCount(() => commentCount - 1)
+        setIsDeleted(true)
         // Optionally update the UI
       } else {
-        const errorData: DeleteCommentError = await response.json();
-        console.error('Error deleting comment:', errorData.error);
-        alert(errorData.error); // Optionally show the error to the user
+        const errorData: DeleteCommentError = await response.json()
+        console.error('Error deleting comment:', errorData.error)
+        alert(errorData.error) // Optionally show the error to the user
       }
     } catch (error) {
-      console.error('An unknown error occurred:', (error as Error).message);
+      console.error('An unknown error occurred:', (error as Error).message)
     }
-  };
+  }
 
   const handleCommentSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log(post);
-    const userId = user?.id; 
-    const postId = post.Id; 
-    const commentId = level < 1 ? comment.id : parentId; 
-    const text = level < 1 ? commentText : formatText(commentText,comment.commenterName);   
+    event.preventDefault()
+    console.log(post)
+    const userId = user?.id
+    const postId = post.Id
+    const commentId = level < 1 ? comment.id : parentId
+    const text = level < 1 ? commentText : formatText(commentText, comment.commenterName)
     try {
       const response = await fetch(`${LIVE_URL}api/v1/post/create-nested-comment`, {
         method: 'POST',
@@ -86,25 +158,25 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
           commentId, // Include only if it is a reply to another comment
           text,
         }),
-      });
-  
-      const result = await response.json();
-  
+      })
+
+      const result = await response.json()
+
       if (response.ok) {
         // console.log('Comment created successfully:', result.data.comment);
         // Add additional logic here, such as updating the UI or clearing the form
-        
-        setCommentCount(() => commentCount + 1);
-        setRefresh(() => refresh+1);
+
+        // setCommentCount(() => commentCount + 1);
+        setRefresh(() => refresh + 1)
       } else {
-        console.error('Error creating comment:', result.message);
-        alert(`Error: ${result.message}`);
+        console.error('Error creating comment:', result.message)
+        alert(`Error: ${result.message}`)
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
-      alert('An unexpected error occurred. Please try again later.');
+      console.error('Unexpected error:', error)
+      alert('An unexpected error occurred. Please try again later.')
     }
-  };
+  }
 
   const toggleLike = async () => {
     try {
@@ -113,45 +185,45 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: user?.id, postId: post.Id, commentId : comment.id,status: !commentLike }),
-      });
+        body: JSON.stringify({ userId: user?.id, postId: post.Id, commentId: comment.id, status: !commentLike }),
+      })
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      setCommentLike((prev) => !prev);
-      setCommentRefresh((prev) => prev + 1);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+      setCommentLike((prev) => !prev)
+      setCommentRefresh((prev) => prev + 1)
     } catch (error) {
-      console.error('Error toggling like:', error);
+      console.error('Error toggling like:', error)
     }
-  };
+  }
 
   const fetchReplies = async (commentId: string) => {
     // console.log('---commentId in fetchReplies---', commentId);
     if (!commentId) {
-      throw new Error('commentId is required.');
+      throw new Error('commentId is required.')
     }
-  
+
     try {
       const response = await fetch(`${LIVE_URL}api/v1/post/get-nested-comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ commentId}),
-      });
-  
+        body: JSON.stringify({ commentId }),
+      })
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch replies.');
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to fetch replies.')
       }
-      const result = await response.json();
+      const result = await response.json()
       // console.log('---nested replies---', result);
-      return result.data?.nestedComments || [];
+      return result.data?.nestedComments || []
     } catch (error) {
-      console.error('Error fetching replies:', error);
-      throw error;
+      console.error('Error fetching replies:', error)
+      throw error
     }
-  };
-  
+  }
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -161,51 +233,121 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userId: comment.commenterId
-          })
-        });
+            userId: comment.commenterId,
+          }),
+        })
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok')
         }
 
-        const data = await response.json(); 
+        const data = await response.json()
         // console.log('Profile Response',data);
-        setProfile(() => data.data); 
+        setProfile(() => data.data)
         // console.log('Profile in Home',profile);
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error('Error fetching user profile:', error)
       }
-    };
+    }
     const fetchData = async () => {
       try {
-        const res = await fetchReplies(comment.id);
+        const res = await fetchReplies(comment.id)
         // console.log('this is the res', res);
-        setReplies(res);
+        setReplies(res)
       } catch (error) {
-        console.error('Error in useEffect:', error);
+        console.error('Error in useEffect:', error)
+      }
+    }
+
+    if (level < 1) fetchData()
+    if (!profile) fetchUser()
+    handleGetAllLikesForComment(post.Id, comment.id)
+  }, [comment.commenterId, comment.id, commentRefresh, level, profile])
+
+ 
+  
+   const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+    // Handle input change and check for mentions
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setCommentText(value);
+      checkForMention(value);
+    };
+  
+    // Check if user is typing a mention
+    const checkForMention = (text: string) => {
+      const match = text.match(/@\S*$/);
+      if (text.endsWith("@")) {
+        fetchUsers("");
+      } else if (match) {
+        fetchUsers(match[0].slice(1));
+      } else {
+        setMentionDropdownVisible(false);
       }
     };
   
-    if(level < 1) fetchData();
-    if(!profile) fetchUser()
-  }, [comment.commenterId, comment.id, commentRefresh, level, profile]);
+    // Fetch users when '@' is typed
+    const fetchUsers = async (query: string) => {
+      try {
+        const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user?.id, query }),
+        });
   
-  // console.log('this is replies',replies);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  
+        const data = await response.json();
+        setSearchResults(data?.data || []);
+        setMentionDropdownVisible(data?.data.length > 0);
+        console.log("searchResult*****", searchResults);
+  
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+  
+    // Insert mention into the text correctly
+    const handleMentionClick = (selectedUser: string) => {
+      const mention = `@${selectedUser} `;
+  
+      setCommentText((prev) => prev.replace(/@\S*$/, mention));
+      setMentionDropdownVisible(false);
+  
+      // Move cursor to end
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+        }
+      }, 0);
+    };
+  
+  
 
-  if (isDeleted) return null;
+  if (isDeleted) return null
 
   return (
     <li className="comment-item" id={comment.id}>
+      <LikeListModal isOpen={showLikes} onClose={() => setShowLikes(false)} likes={allLikes} forComment={true} />
       <div className="d-flex align-items-start mb-3">
         {/* Avatar */}
         <Link to={`/profile/feed/${comment?.commenterId}`}>
-        <img
-          src={profile.profileImgUrl || fallBackAvatar}
+          <ImageZoom
+            src={profile?.profileImgUrl || fallBackAvatar}
+            zoom={profile?.personalDetails?.zoomProfile}
+            rotate={profile?.personalDetails?.rotateProfile}
+            width="35px"
+            height="35px"
+          />
+          {/* <img
+          src={}
           alt={`${comment.commenterName || comment.createdBy}-avatar`}
           className="rounded-circle me-3"
           style={{ width: '35px', height: '35px', objectFit: 'cover' }}
-        />
+        /> */}
         </Link>
         {/* Comment Content */}
         <div
@@ -216,50 +358,46 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
             overflowWrap: 'break-word',
             wordBreak: 'break-word',
             maxWidth: '100%',
-          }}
-        >
+          }}>
           <div className="d-flex justify-content-between">
-            <div style={{display : 'flex'}}>
-            <Link to={`/profile/feed/${comment?.commenterId}`}>
-              <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
-            </Link>
-            <small className="ms-2">{comment.timestamp}</small>
+            <div style={{ display: 'flex' }}>
+              <Link to={`/profile/feed/${comment?.commenterId}`}>
+                <h6 className="mb-1">{comment.commenterName || comment.createdBy}</h6>
+              </Link>
+              <small className="ms-2">{comment.timestamp}</small>
             </div>
-            { user?.id === comment.commenterId && 
-              <div style={{ position: "relative" }}>
-              <button
-                className="btn btn-link p-0 text-dark"
-                style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                onClick={() => setMenuVisible(!menuVisible)}
-              >
-                <BsThreeDots />
-              </button>
-              {menuVisible && (
-                <div
-                  className="dropdown-menu show"
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    right: 0,
-                    zIndex: 1000,
-                    display: "block",
-                    backgroundColor: "white",
-                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                    borderRadius: "0.25rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  <button
-                    className="dropdown-item text-danger d-flex align-items-center"
-                    onClick={() => handleDeleteComment(comment.id,level,setIsDeleted)}
-                    style={{ gap: "0.5rem" }}
-                  >
-                    <BsTrash /> Delete
-                  </button>
-                </div>
-              )}
+            {user?.id === comment.commenterId && (
+              <div style={{ position: 'relative' }}>
+                <button
+                  className="btn btn-link p-0 text-dark"
+                  style={{ fontSize: '1.5rem', lineHeight: '1' }}
+                  onClick={() => setMenuVisible(!menuVisible)}>
+                  <BsThreeDots />
+                </button>
+                {menuVisible && (
+                  <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      zIndex: 1000,
+                      display: 'block',
+                      backgroundColor: 'white',
+                      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                      borderRadius: '0.25rem',
+                      overflow: 'hidden',
+                    }}>
+                    <button
+                      className="dropdown-item text-danger d-flex align-items-center"
+                      onClick={() => handleDeleteComment(comment.id, level, setIsDeleted)}
+                      style={{ gap: '0.5rem' }}>
+                      <BsTrash /> Delete
+                    </button>
+                  </div>
+                )}
               </div>
-            }
+            )}
           </div>
 
           <p
@@ -268,32 +406,32 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
               whiteSpace: 'pre-wrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-            }}
-          >
-            {comment.text}
+            }}>
+            {formatContent(comment.text)}
           </p>
 
           {/* Actions */}
           <div className="d-flex align-items-center gap-3 small">
-            <span role="button" className="text-primary d-flex align-items-center" onClick={() => {
-              console.log('clicked')
-              toggleLike();
-            }}>
-              {commentLike ? <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} className='me-1'/> : <ThumbsUp size={16} className="me-1" />} Like
+            <span role="button" className="text-primary d-flex align-items-center">
+              <span
+                onClick={() => {
+                  console.log('clicked')
+                  toggleLike()
+                }}>
+                {' '}
+                {commentLike ? (
+                  <BsFillHandThumbsUpFill size={16} style={{ color: '#1EA1F2' }} className="me-1" />
+                ) : (
+                  <ThumbsUp size={16} className="me-1" />
+                )}{' '}
+              </span>
+              <span onClick={() => setShowLikes(true)}>Likes</span>
             </span>
-            <span
-              role="button"
-              className="text-primary d-flex align-items-center"
-              onClick={() => setReply((prev) => !prev)}
-            >
+            <span role="button" className="text-primary d-flex align-items-center" onClick={() => setReply((prev) => !prev)}>
               <MessageSquare size={16} className="me-1" /> Reply
             </span>
             {replies && replies.length > 0 && level < 1 && (
-              <span
-                role="button"
-                className="text-secondary d-flex align-items-center"
-                onClick={() => setShowReplies((prev) => !prev)}
-              >
+              <span role="button" className="text-secondary d-flex align-items-center" onClick={() => setShowReplies((prev) => !prev)}>
                 {showReplies ? (
                   <>
                     <ChevronUp size={16} className="me-1" /> Hide Replies
@@ -315,49 +453,82 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
           <div className="avatar avatar-xs me-3">
             <Link to={`/profile/feed/${comment.commenterId}`}>
               <span role="button">
-                <img
-                  className="avatar-img rounded-circle"
-                  style={{ width: '35px', height: '35px', objectFit: 'cover' }}
+                <ImageZoom
                   src={(myProfile && myProfile.profileImgUrl) || fallBackAvatar}
-                  alt="avatar"
+                  zoom={myProfile?.personalDetails?.zoom}
+                  rotate={myProfile?.personalDetails?.rotate}
+                  width="35px"
+                  height="35px"
                 />
               </span>
             </Link>
           </div>
-          <form
-  className="nav nav-item w-100 d-flex align-items-center"
-  onSubmit={handleCommentSubmit}
-  style={{ gap: "10px" }}
->
-  <textarea
-    data-autoresize
-    className="form-control"
-    style={{
-      backgroundColor: "#fff",   // Set the input background to white
-      color: "#000",             // Optional: Ensure text color is black for contrast
-      whiteSpace: "nowrap",      // Keep text on a single line
-      overflow: "hidden",        // Hide overflowing content
-      textOverflow: "ellipsis",  // Optional: show ellipsis for overflow
-      textAlign: "left",         // Start text and cursor from the left
-      resize: "none",            // Disable resizing
-      height: "38px",            // Fixed height for a single line
-      flex: 1,                   // Allow textarea to take available space
-      border: "1px solid #ced4da", // Optional: Subtle border for better visibility
-      borderRadius: "4px",       // Rounded corners for a smoother look
-      padding: "5px 10px",       // Add some padding for better UX
-    }}
-    rows={1}
-    placeholder="Add a comment..."
-    value={commentText}
-    onChange={(e) => setCommentText(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter" && !e.shiftKey) { // Submit on Enter, allow Shift+Enter for new lines
-        e.preventDefault(); // Prevent adding a new line
-        handleCommentSubmit(e); // Call the form's submit handler
-      }
-    }}
-  />
-</form>
+          <form className="nav nav-item w-100 d-flex align-items-center" onSubmit={handleCommentSubmit} style={{ gap: '10px' }}>
+            <textarea
+              data-autoresize
+              className="form-control"
+              style={{
+                backgroundColor: '#fff', 
+                color: '#000', 
+                whiteSpace: 'nowrap', 
+                overflow: 'hidden', 
+                textOverflow: 'ellipsis', 
+                textAlign: 'left', 
+                resize: 'none', 
+                height: '38px', 
+                flex: 1, 
+                border: '1px solid #ced4da', 
+                borderRadius: '4px', 
+                padding: '5px 10px', 
+              }}
+              rows={1}
+              placeholder="Add a comment... "
+              value={commentText}
+              onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault() 
+                  handleCommentSubmit(e) 
+                }
+              }}
+            />
+
+{mentionDropdownVisible && searchResults.length > 0 && (
+                <div
+                  className="position bg-white shadow rounded w-100 mt-1"
+                  style={{
+                    zIndex: 1000,
+                    maxHeight: "10rem",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="d-flex align-items-center p-2 cursor-pointer"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleMentionClick(user.userName)}
+                    >
+                      <div className="avatar">
+                        <img
+                          src={user.avatar || "default-avatar.png"}
+                          alt={user.fullName}
+                          className="avatar-img rounded-circle border border-white border-3"
+                          width={34}
+                          height={34}
+                        />
+                      </div>
+                      <div>
+                        <h6 className="mb-0">{user.fullName}</h6>
+                        <small className="text-muted">{user.userRole}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+          </form>
+          
         </div>
       )}
 
@@ -365,27 +536,26 @@ const CommentItem = ({post, comment, level,setRefresh,refresh,parentId=null,comm
       {showReplies && replies && replies.length > 0 && (
         <ul className="list-unstyled ms-5">
           {replies.map((reply, idx) => (
-            <CommentItem 
-              key={idx} 
-              comment={reply} 
-              level={level + 1} 
-              post={post} 
-              setRefresh={setRefresh} 
-              refresh={refresh} 
+            <CommentItem
+              key={idx}
+              comment={reply}
+              level={level + 1}
+              post={post}
+              setRefresh={setRefresh}
+              refresh={refresh}
               parentId={comment.id}
-              commentCount = {commentCount}
-              setCommentCount = {setCommentCount}
+              commentCount={commentCount}
+              setCommentCount={setCommentCount}
               myProfile={myProfile}
             />
           ))}
         </ul>
       )}
     </li>
-  );
-};
+  )
+}
 
-export default CommentItem;
-
+export default CommentItem
 
 // import LoadContentButton from '@/components/LoadContentButton'
 // import type { CommentType } from '@/types/data'
@@ -412,7 +582,7 @@ export default CommentItem;
 //               <div className="bg-light rounded-start-top-0 p-3 rounded">
 //                 <div className="d-flex justify-content-between">
 //                   <h6 className="mb-1">
-                    
+
 //                     <Link to=""> {socialUser.name} </Link>
 //                   </h6>
 //                   <small className="ms-2">{timeSince(createdAt)}</small>
@@ -428,20 +598,20 @@ export default CommentItem;
 //               <ul className="nav nav-divider py-2 small">
 //                 <li className="nav-item">
 //                   <span className="nav-link" role="button">
-                    
+
 //                     Like ({likesCount})
 //                   </span>
 //                 </li>
 //                 <li className="nav-item">
 //                   <span className="nav-link" role="button">
-                    
+
 //                     Reply
 //                   </span>
 //                 </li>
 //                 {children?.length && children?.length > 0 && (
 //                   <li className="nav-item">
 //                     <span className="nav-link" role="button">
-                      
+
 //                       View {children?.length} replies
 //                     </span>
 //                   </li>
@@ -461,6 +631,3 @@ export default CommentItem;
 // }
 
 // export default CommentItem;
-
-
-

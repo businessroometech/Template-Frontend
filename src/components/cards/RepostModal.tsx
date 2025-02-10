@@ -223,7 +223,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated }
                 resize: "none",
               }}
               rows={2}
-              placeholder="Share your thoughts, Use @ to mention your connections and # to add topics or keywords"
+              placeholder="Start a post"
               value={thoughts}
               onChange={handleChange}
             />

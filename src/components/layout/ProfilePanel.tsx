@@ -13,6 +13,7 @@ import { Diamond, Gem, Globe, Map, MapPin } from 'lucide-react'
 import { useLayoutContext } from '@/context/useLayoutContext'
 import { set } from 'react-hook-form'
 import { LIVE_URL } from '@/utils/api'
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 
 type ProfilePanelProps = {
   links: ProfilePanelLink[]
@@ -20,7 +21,7 @@ type ProfilePanelProps = {
 
 const ProfilePanel = ({ links }: ProfilePanelProps) => {
   const { user } = useAuthContext()
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState<UserProfile>({});
   const { theme } = useLayoutContext()
   const navigate = useNavigate()
   const [skeletonLoading, setSkeletonLoading] = useState(true)
@@ -84,13 +85,12 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
         <div className="h-60px">
           {!skeletonLoading ? (
             <div
-            className="h-80px rounded-top"
+            className="h-90px rounded-top"
             style={{
               position : 'relative',
               overflow : 'hidden',
               backgroundPosition: 'center',
-              backgroundSize: 'cover',
-              backgroundRepeat: 'no-repeat',
+              
             }}
           >
             <Image
@@ -98,7 +98,8 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
             alt="Profile"
             style={{
               width: "100%",
-              height: "100%",
+              transform: `scale(${(profile.personalDetails.zoom || 50)/ 50}) rotate(${(profile.personalDetails.rotate || 50) - 50}deg)`,
+              objectFit : 'contain'
             }}
           />
           </div>
@@ -107,20 +108,36 @@ const ProfilePanel = ({ links }: ProfilePanelProps) => {
           )}
         </div>
 
-        <CardBody className="pt-0" style={{marginTop : '10px'}}>
+        <CardBody className="pt-0" style={{marginTop : '40px'}}>
           <div className="text-center">
             <Link to={`/profile/feed/${user?.id}`}>
               <div className="avatar avatar-lg mt-n5 mb-3">
                 {skeletonLoading ? (
                   <Skeleton height={50} width={50} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} style={{ borderRadius: '50%' }}/>
+                  
                 ) : (
-                  <img
-                    height={64}
-                    width={64}
-                    src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
-                    alt="avatar"
-                    className="avatar-img rounded-circle border border-white border-3"
-                  />
+                  <div
+                    style={{
+                      border : '3px solid white',
+                      width: "90px",
+                      height: "90px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      // marginTop : '30px',
+                      marginLeft:"-22px"
+                       }}
+                    className=''
+                  >
+                    <Image
+                      src={profile.profileImgUrl || avatar7} // Replace with your actual image source
+                      alt="Profile"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: `scale(${(profile.personalDetails.zoomProfile || 50)  / 50}) rotate(${(profile.personalDetails.rotateProfile || 50) - 50}deg)`,
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </Link>

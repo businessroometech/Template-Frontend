@@ -11,7 +11,7 @@ const SocialLayout = ({ children }: ChildrenType) => {
       </Suspense>
 
       <Suspense fallback={<Preloader />}>
-        {children}
+        <div style={{backgroundColor : 'white'}}>{children}</div>
       </Suspense>
     </>
   )

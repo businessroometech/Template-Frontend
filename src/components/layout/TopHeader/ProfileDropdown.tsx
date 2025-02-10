@@ -15,6 +15,8 @@ import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { LIVE_URL } from '@/utils/api'
+import ImageZoom from '@/components/cards/ImageZoom'
+import { UserProfile } from '@/app/(social)/feed/(container)/home/page'
 
 type ThemeModeType = {
   theme: ThemeType
@@ -44,7 +46,7 @@ const ProfileDropdown = () => {
   const [skeletonLoading, setSkeletonLoading] = useState(true)
 
   const { user } = useAuthContext()
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState<UserProfile>({})
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -105,18 +107,31 @@ const ProfileDropdown = () => {
         {skeletonLoading ? (
           <Skeleton height={40} width={40} baseColor={skeletonBaseColor} highlightColor={skeletonHighlightColor} />
         ) : (
-          <img className="avatar-img rounded-2" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar" />
+          <ImageZoom 
+            src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+            zoom={profile?.personalDetails?.zoomProfile}
+            width='40px'
+            height='40px'
+            rotate={profile?.personalDetails?.rotateProfile}
+          />
+          // <img className="avatar-img rounded-2" src={} alt="avatar" />
         )}
       </DropdownToggle>
       <DropdownMenu className="dropdown-animation dropdown-menu-end pt-3 small me-md-n3" aria-labelledby="profileDropdown">
         <li className="px-3">
           <div className="d-flex align-items-center position-relative">
             <div className="avatar me-3">
-              <img className="avatar-img rounded-circle" src={profile.profileImgUrl ? profile.profileImgUrl : avatar7} alt="avatar" />
+            <ImageZoom 
+              src={profile.profileImgUrl ? profile.profileImgUrl : avatar7}
+              zoom={profile?.personalDetails?.zoomProfile}
+              width='50px'
+              height='50px'
+              rotate={profile?.personalDetails?.rotateProfile}
+            />
             </div>
             <div>
               <Link className="h6 stretched-link" to="">
-                {profile.personalDetails?.firstName} {profile.personalDetails?.lastName}
+                {profile.personalDetails?.firstName} {profile.personalDetails?.lastName }
               </Link>
               <p className="small m-0">{profile.personalDetails?.occupation}</p>
             </div>

@@ -15,11 +15,11 @@ const SettingLayout = ({ children }: ChildrenType) => {
   const { width } = useViewPort()
   const { startOffcanvas } = useLayoutContext()
   return (
-   <div style={{marginLeft:"4.5%", width:"94.5%" }}>
+   <div style={{marginLeft:"4.5%", width:"94.5%",backgroundColor : 'white' }}>
       <Suspense fallback={<FallbackLoading />}>
         <TopHeader />
       </Suspense>
-      <main>
+      <main style={{backgroundColor : 'white'}}>
         
           <Row>
             <Col lg={3}>
