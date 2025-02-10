@@ -1203,7 +1203,7 @@ const PostCard = ({
                     </button>
                   </div> }
                   </>
-                )}
+                      )}
                     </div>
                   }
                 </div>
@@ -1274,7 +1274,7 @@ const PostCard = ({
               </div>
 
               {
-                post.userId === user?.id && !post.repostedFrom &&
+                
 
                 <div style={{ position: "relative" }}>
                   <button
@@ -1285,29 +1285,53 @@ const PostCard = ({
                     <BsThreeDots />
                   </button>
                   {menuVisible && (
-                    <div
-                      className="dropdown-menu show"
-                      style={{
-                        position: "absolute",
-                        top: "100%",
-                        right: 0,
-                        zIndex: 1000,
-                        display: "block",
-                        backgroundColor: "white",
-                        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                        borderRadius: "0.25rem",
-                        overflow: "hidden",
-                      }}
+                  <>
+                 { post.userId === user?.id && <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      right: 0,
+                      zIndex: 1000,
+                      display: "block",
+                      backgroundColor: "white",
+                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                      borderRadius: "0.25rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <button
+                      className="dropdown-item text-danger d-flex align-items-center"
+                      onClick={() => handleDeletePost(post?.Id)}
+                      style={{ gap: "0.5rem" }}
                     >
-                      <button
-                        className="dropdown-item text-danger d-flex align-items-center"
-                        onClick={() => handleDeletePost(post?.Id)}
-                        style={{ gap: "0.5rem" }}
-                      >
-                        <BsTrash /> Delete Post
-                      </button>
-                    </div>
-                  )}
+                      <BsTrash /> Delete Post
+                    </button>
+                  </div> }
+                  { post.userId !== user?.id && <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      right: 0,
+                      zIndex: 1000,
+                      display: "block",
+                      backgroundColor: "white",
+                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                      borderRadius: "0.25rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <button
+                      className="dropdown-item text-danger d-flex align-items-center"
+                      onClick={() => handleDeletePost(post?.Id)}
+                      style={{ gap: "0.5rem" }}
+                    >
+                      <EyeOff /> Hide Post
+                    </button>
+                  </div> }
+                  </>
+                      )}
                 </div>
               }
             </div>
