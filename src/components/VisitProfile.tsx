@@ -212,7 +212,7 @@ const ProfileVisited = () => {
     const fetchProfileVisits = async () => {
       try {
         const response = await fetch(
-          "https://strengthholdings.com/api/api/v1/auth/get-profile-visited",
+          `${LIVE_URL}api/v1/auth/get-profile-visited`,
           {
             method: "POST",
             headers: {
@@ -224,8 +224,9 @@ const ProfileVisited = () => {
              }),
             
           }
+         
         );
-
+        // console.log(response)
         if (response.ok) {
           const data = await response.json()
           setVisits(data?.data || [])
@@ -374,47 +375,99 @@ const ProfileVisited = () => {
   )
 }
 
-const visitProfile = () => {
-  const [step, setStep] = useState(0)
+const VisitProfile = () => {
+  const [step, setStep] = useState(0);
 
   const sections = [
     {
-      title: 'Who Viewed My Profile',
-      icon: <FaEye style={{ marginRight: '8px' }} />,
+      title: "Who Viewed My Profile",
+      icon: <FaEye className="icon" />,
       component: <ProfileVisits />,
     },
     {
       title: "Profiles I've Viewed",
-      icon: <FaUserAlt style={{ marginRight: '8px' }} />,
+      icon: <FaUserAlt className="icon" />,
       component: <ProfileVisited />,
     },
-  ]
-
-  const setCurrentSection = (index) => {
-    setStep(index)
-  }
+  ];
 
   return (
-    <div className="container">
-      <div className="d-flex justify-content-center mb-4 flex-wrap">
+    <div className="container-fluid px-0">
+      <div className="tabs-container">
         {sections.map((section, index) => (
           <button
             key={index}
             type="button"
-            className="btn mx-2 mb-2 d-flex align-items-center"
-            style={{
-              backgroundColor: step === index ? '#1ea1f2' : 'transparent',
-              borderColor: '#1ea1f2',
-              color: step === index ? 'white' : '#1ea1f2',
-            }}
-            onClick={() => setCurrentSection(index)}>
-            {section.icon} {section.title}
+            className={`tab-btn ${step === index ? "active" : ""}`}
+            onClick={() => setStep(index)}
+          >
+            <div className="icon">{section.icon}</div>
+            <span className="title">{section.title}</span>
           </button>
         ))}
       </div>
-      <div>{sections[step].component}</div>
-    </div>
-  )
-}
+      <div className="content-container">{sections[step].component}</div>
+      <style>
+        {`
+          .tab-btn {
+            background: #f0f2f5;
+            border-radius: 12px;
+            color: #007bff;
+            width: 180px;
+            height: 80px;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            margin: 10px;
+          }
 
-export default visitProfile
+          .tab-btn.active {
+            background: #007bff;
+            color: white;
+          }
+
+          .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+          }
+
+          .title {
+            font-size: 14px;
+          }
+
+          .tabs-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            width: 89%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 20px auto;
+            gap: 5px;
+          }
+
+          .content-container {
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+export default VisitProfile;

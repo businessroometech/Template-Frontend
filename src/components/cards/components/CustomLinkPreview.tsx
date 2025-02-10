@@ -112,7 +112,7 @@ const CustomLinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
           <p style={{ margin: "5px 0 0", fontSize: "14px", color: "#333" }}>
             {metadata.description && metadata.description.length > 150 ? `${metadata.description.substring(0, 150)}...` : metadata.description}
           </p>
-        </div>
+        </div> 
       </div>):(
        <a href={url} target="_blank" 
       className="text-primary"

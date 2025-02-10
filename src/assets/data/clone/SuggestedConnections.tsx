@@ -122,12 +122,11 @@ const SuggestedConnections = () => {
   }
 
   return (
-    <Card>
-      <CardHeader className="border-0 pb-0">{/* <CardTitle>Connect'n Grow</CardTitle> */}</CardHeader>
+    <Card className="rounded shadow-lg border">
       <CardBody>
         {skeletonLoading ? (
-          <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: '100vh' }}>
-            <div className="spinner-border text-primary" role="status" style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}>
+          <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "100vh" }}>
+            <div className="spinner-border text-primary" role="status" style={{ width: "4rem", height: "4rem", borderWidth: "6px" }}>
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
@@ -137,56 +136,51 @@ const SuggestedConnections = () => {
             next={fetchMoreData}
             hasMore={false}
             loader={<Loading loading={allFollowers.length !== totalUsers} size={16} />}
-            style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-            endMessage={<b>No more Connect'n Grow</b>}
-            scrollableTarget="scrollableDiv">
+            style={{ overflowX: "hidden", overflowY: "hidden" }}
+            endMessage={<b className="text-muted">No more Connect'n Grow</b>}
+            scrollableTarget="scrollableDiv"
+          >
             {allFollowers.map((friend, idx) => (
-              <div className="d-md-flex align-items-center mb-4" key={idx}>
-                <div className="avatar me-3 mb-3 mb-md-0">
-                  {friend.profilePictureUrl ? (
+              <div
+                key={idx}
+                className={`p-3 d-flex align-items-center ${idx === allFollowers.length - 1 ? '' : 'border-bottom'}`}
+              >
+                <div className="avatar me-3">
+                  <span role="button">
                     <img
                       className="avatar-img rounded-circle"
-                      src={friend.profilePictureUrl}
+                      src={friend.profilePictureUrl || avatar}
                       alt={`${friend.firstName} ${friend.lastName}'s profile`}
+                      style={{ width: "50px", height: "50px", objectFit: "cover" }}
                     />
-                  ) : (
-                    <img className="avatar-img rounded-circle" src={avatar} alt={`${friend.firstName} ${friend.lastName}'s profile`} />
+                  </span>
+                </div>
+                <div className="flex-grow-1">
+                  <h6 className="mb-1">
+                    <Link to={`/profile/feed/${friend.id}`} className="text-dark fw-semibold text-decoration-none">
+                      {`${friend.firstName} ${friend.lastName}`}
+                    </Link>
+                  </h6>
+                  <p className="small text-muted mb-1">{friend.userRole}</p>
+                  {friend.mutual && (
+                    <p style={{ fontSize: "12px" }} className="small text-info mb-0">
+                      Mutual connection
+                    </p>
                   )}
                 </div>
-                <div className="w-100">
-                  <div className="d-sm-flex align-items-start">
-                    <h6 className="mb-0">
-                      <Link to={`/profile/feed/${friend.id}`}>{`${friend.firstName} ${friend.lastName}`}</Link>
-                    </h6>
-                    <p className="small ms-sm-2 mb-0 text-muted">{friend.userRole}</p>
-                    {friend.mutual && (
-                      <p style={{ fontSize: '10px' }} className="small text-info ms-sm-2 mb-0">
-                        Mutual connection
-                      </p>
-                    )}
-                  </div>
-                  <ul className="avatar-group mt-1 list-unstyled align-items-sm-center">
-                    <li className="small">{friend.meeted}</li>
-                  </ul>
-                </div>
-                <div className="ms-md-auto d-flex">
-                  {sentStatus[friend.id] ? (
-                    <FaUserTimes
-                      size={24}
-                      color="red"
-                      className="me-2 cursor-pointer"
-                      onClick={() => UserRequest(friend.id)}
-                      style={{ opacity: loading === friend.id ? 0.5 : 1, pointerEvents: loading === friend.id ? "none" : "auto" }}
-                    />
-                  ) : (
-                    <FaUserPlus
-                      size={24}
-                      color="#0f6fec"
-                      className="me-2 cursor-pointer"
-                      onClick={() => UserRequest(friend.id)}
-                      style={{ opacity: loading === friend.id ? 0.5 : 1, pointerEvents: loading === friend.id ? "none" : "auto" }}
-                    />
-                  )}
+
+                {/* Connect Button */}
+                <div className="ms-auto d-flex">
+                    <Button
+                    variant={sentStatus[friend.id] ? "outline-secondary" : "primary"}
+                    size="sm"
+                    className="me-2"
+                    onClick={() => UserRequest(friend.id)}
+                    disabled={loading === friend.id}
+                    style={{ minWidth: "120px", transition: "0.2s ease-in-out", fontSize: "15px" }}
+                    >
+                    {loading === friend.id ? <Loading size={16} loading={true} /> : sentStatus[friend.id] ? "Request Sent" : "Connect"}
+                    </Button>
                 </div>
               </div>
             ))}
@@ -194,6 +188,7 @@ const SuggestedConnections = () => {
         )}
       </CardBody>
     </Card>
+  
   )
 }
 

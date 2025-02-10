@@ -38,7 +38,7 @@ export const LastMessageProvider: React.FC<React.PropsWithChildren<{}>> = ({ chi
                     limit: 1,
                 },
             });
-            console.log('Last message response:', response);
+            // console.log('Last message response:', response);
             const message = response?.data?.messages[0]?.content;
             setLastMessages(prevMessages => {
                 const updatedMessages = {

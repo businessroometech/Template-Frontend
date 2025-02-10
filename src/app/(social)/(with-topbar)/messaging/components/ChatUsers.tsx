@@ -9,19 +9,19 @@ import { useOnlineUsers } from '@/context/OnlineUser.'
 import { useState, useEffect } from 'react'
 //import { io } from 'socket.io-client'
 import { Card, Spinner } from 'react-bootstrap'
-import { useLastMessage } from '@/context/LastMesageContext'
+// import { useLastMessage } from '@/context/LastMesageContext'
 import { LIVE_URL } from '@/utils/api'
 import { BsSearch } from 'react-icons/bs'
 // import { useContext } from 'react'
 
 
-const ChatItem = ({ userId, connectionId,lastMessage, profilePictureUrl, firstName, lastName, isStory }: UserType) => {
+const ChatItem = ({ userId, connectionId,lastMessage ,profilePictureUrl, firstName, lastName, isStory }: UserType) => {
   const { changeActiveChat, activeChat } = useChatContext();
   const { onlineUsers } = useOnlineUsers();
   const { user } = useAuthContext();
   // const { fetchLastMessage, lastMessage } = useLastMessage();
   const { unreadMessages } = useUnreadMessages();
-  console.log(lastMessage)
+  // console.log(lastMessage)
   // const [done, setDone] = useState(false);
 
   // useEffect(() => {
@@ -95,7 +95,7 @@ const ChatItem = ({ userId, connectionId,lastMessage, profilePictureUrl, firstNa
               {`${firstName} ${lastName}`}
             </h6>
             <div className="small text-dark" style={{ color: "#333" }}>
-              {lastMessage.length > 25 ? `${lastMessage.substring(0, 25)}...` : lastMessage}
+            {"No message yet"}  {/* {lastMessage.length > 25 ? `${lastMessage.substring(0, 25)}...` : lastMessage} */}
             </div>
           </div>
           {unreadCount > 0 && (
@@ -126,24 +126,24 @@ const ChatItem = ({ userId, connectionId,lastMessage, profilePictureUrl, firstNa
 const ChatUsers = ({ chats }: { chats: UserType[] }) => {
   const [users, setUsers] = useState<UserType[]>([])
   const [loading, setLoading] = useState(true)
-  const { lastMessages } = useLastMessage()
+  // const { lastMessages } = useLastMessage()
   // console.log('lastMessage', lastMessages);
 
 
   useEffect(() => {
     if (chats.length > 0) {
-      console.log(lastMessages);
-      const updatedChats = chats.map(chat => {
-        const lastMessage = lastMessages[chat.userId]; // Accessing object property
-        return {
-          ...chat,
-          lastMessage: lastMessage ? lastMessage : 'No message yet'
-        };
-      });
-      setUsers(updatedChats);
+      // console.log(lastMessages);
+      // const updatedChats = chats.map(chat => {
+        // const lastMessage = lastMessages[chat.userId]; // Accessing object property
+      //   return {
+      //     ...chat,
+      //     lastMessage: lastMessage ? lastMessage : 'No message yet'
+      //   };
+      // });
+      setUsers(chats);
       setLoading(false);
     }
-  }, [chats, lastMessages]);
+  }, [chats]);
 
   const search = (text: string) => {
     setUsers(
