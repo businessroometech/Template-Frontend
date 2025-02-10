@@ -109,9 +109,9 @@ console.log("----------------------------",id)
 <div style={{ width: "100%" }}>
   <PageMetaData title="About" />
   <Card>
-    <CardHeader className="border-0 pb-0">
-      {/* <CardTitle>Business Profile Information</CardTitle> */}
-    </CardHeader>
+    {/* <CardHeader className="border-0 pb-0">
+      {/* <CardTitle>Business Profile Information</CardTitle> }
+    </CardHeader> */}
     <CardBody>
       {subrole === "BusinessBuyer" && <AboutBusinessBuyer />}
       {subrole === "Investor" && <InvestorCards />}
