@@ -139,44 +139,7 @@ const CommentItem = ({
     }
   }
 
-  const handleCommentSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-    console.log(post)
-    const userId = user?.id
-    const postId = post.Id
-    const commentId = level < 1 ? comment.id : parentId
-    const text = level < 1 ? commentText : formatText(commentText, comment.commenterName)
-    try {
-      const response = await fetch(`${LIVE_URL}api/v1/post/create-nested-comment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-          postId,
-          commentId, // Include only if it is a reply to another comment
-          text,
-        }),
-      })
 
-      const result = await response.json()
-
-      if (response.ok) {
-        // console.log('Comment created successfully:', result.data.comment);
-        // Add additional logic here, such as updating the UI or clearing the form
-
-        // setCommentCount(() => commentCount + 1);
-        setRefresh(() => refresh + 1)
-      } else {
-        console.error('Error creating comment:', result.message)
-        alert(`Error: ${result.message}`)
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error)
-      alert('An unexpected error occurred. Please try again later.')
-    }
-  }
 
   const toggleLike = async () => {
     try {
@@ -264,68 +227,108 @@ const CommentItem = ({
     handleGetAllLikesForComment(post.Id, comment.id)
   }, [comment.commenterId, comment.id, commentRefresh, level, profile])
 
- 
-  
-   const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
-    // Handle input change and check for mentions
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const value = e.target.value;
-      setCommentText(value);
-      checkForMention(value);
-    };
-  
-    // Check if user is typing a mention
-    const checkForMention = (text: string) => {
-      const match = text.match(/@\S*$/);
-      if (text.endsWith("@")) {
-        fetchUsers("");
-      } else if (match) {
-        fetchUsers(match[0].slice(1));
+
+  const [mentionMap, setMentionMap] = useState<Record<string, string>>({});
+  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+
+  const handleCommentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    console.log(post)
+    const userId = user?.id
+    const postId = post.Id
+    const commentId = level < 1 ? comment.id : parentId
+    const text = level < 1 ? commentText : formatText(commentText, comment.commenterName)
+    try {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-nested-comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          postId,
+          commentId,
+          text: processMentionsForSubmission(text)
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        // console.log('Comment created successfully:', result.data.comment);
+        // Add additional logic here, such as updating the UI or clearing the form
+
+        // setCommentCount(() => commentCount + 1);
+        setRefresh(() => refresh + 1)
       } else {
-        setMentionDropdownVisible(false);
+        console.error('Error creating comment:', result.message)
+        alert(`Error: ${result.message}`)
       }
-    };
-  
-    // Fetch users when '@' is typed
-    const fetchUsers = async (query: string) => {
-      try {
-        const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user?.id, query }),
-        });
-  
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-  
-        const data = await response.json();
-        setSearchResults(data?.data || []);
-        setMentionDropdownVisible(data?.data.length > 0);
-        console.log("searchResult*****", searchResults);
-  
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-  
-    // Insert mention into the text correctly
-    const handleMentionClick = (selectedUser: string) => {
-      const mention = `@${selectedUser} `;
-  
-      setCommentText((prev) => prev.replace(/@\S*$/, mention));
+    } catch (error) {
+      console.error('Unexpected error:', error)
+      alert('An unexpected error occurred. Please try again later.')
+    }
+  }
+
+  // Handle input change and check for mentions
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCommentText(value);
+    checkForMention(value);
+  };
+
+  // Check if user is typing a mention
+  const checkForMention = (text: string) => {
+    const match = text.match(/@\S*$/);
+    if (text.endsWith("@")) {
+      fetchUsers("");
+    } else if (match) {
+      fetchUsers(match[0].slice(1));
+    } else {
       setMentionDropdownVisible(false);
-  
-      // Move cursor to end
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.focus();
-        }
-      }, 0);
-    };
-  
-  
+    }
+  };
+
+  // Fetch users when '@' is typed
+  const fetchUsers = async (query: string) => {
+    try {
+      const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id, query }),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      setSearchResults(data?.data || []);
+      setMentionDropdownVisible(data?.data.length > 0);
+      console.log("searchResult*****", searchResults);
+
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  // Function to insert mention correctly
+  const handleMentionClick = (mentionedUser: any) => {
+    const mentionDisplay = `@${mentionedUser.fullName}`;
+    const mentionActual = `@${mentionedUser.userName}`;
+    setMentionMap((prev) => ({ ...prev, [mentionDisplay]: mentionActual }));
+    setCommentText((prev) => prev.replace(/@\S*$/, mentionDisplay + " "));
+    setMentionDropdownVisible(false);
+  };
+
+  const processMentionsForSubmission = (text: string) => {
+    let processedText = text;
+    Object.entries(mentionMap).forEach(([display, actual]) => {
+      processedText = processedText.replace(display, actual);
+    });
+    return processedText;
+  };
 
   if (isDeleted) return null
 
@@ -468,18 +471,18 @@ const CommentItem = ({
               data-autoresize
               className="form-control"
               style={{
-                backgroundColor: '#fff', 
-                color: '#000', 
-                whiteSpace: 'nowrap', 
-                overflow: 'hidden', 
-                textOverflow: 'ellipsis', 
-                textAlign: 'left', 
-                resize: 'none', 
-                height: '38px', 
-                flex: 1, 
-                border: '1px solid #ced4da', 
-                borderRadius: '4px', 
-                padding: '5px 10px', 
+                backgroundColor: '#fff',
+                color: '#000',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                textAlign: 'left',
+                resize: 'none',
+                height: '38px',
+                flex: 1,
+                border: '1px solid #ced4da',
+                borderRadius: '4px',
+                padding: '5px 10px',
               }}
               rows={1}
               placeholder="Add a comment... "
@@ -487,48 +490,48 @@ const CommentItem = ({
               onChange={handleChange}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault() 
-                  handleCommentSubmit(e) 
+                  e.preventDefault()
+                  handleCommentSubmit(e)
                 }
               }}
             />
 
-{mentionDropdownVisible && searchResults.length > 0 && (
-                <div
-                  className="position bg-white shadow rounded w-100 mt-1"
-                  style={{
-                    zIndex: 1000,
-                    maxHeight: "10rem",
-                    overflowY: "auto",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  {searchResults.map((user) => (
-                    <div
-                      key={user.id}
-                      className="d-flex align-items-center p-2 cursor-pointer"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleMentionClick(user.userName)}
-                    >
-                      <div className="avatar">
-                        <img
-                          src={user.avatar || "default-avatar.png"}
-                          alt={user.fullName}
-                          className="avatar-img rounded-circle border border-white border-3"
-                          width={34}
-                          height={34}
-                        />
-                      </div>
-                      <div>
-                        <h6 className="mb-0">{user.fullName}</h6>
-                        <small className="text-muted">{user.userRole}</small>
-                      </div>
+            {mentionDropdownVisible && searchResults.length > 0 && (
+              <div
+                className="position bg-white shadow rounded w-100 mt-1"
+                style={{
+                  zIndex: 1000,
+                  maxHeight: "10rem",
+                  overflowY: "auto",
+                  border: "1px solid #ddd",
+                }}
+              >
+                {searchResults.map((user) => (
+                  <div
+                    key={user.id}
+                    className="d-flex align-items-center p-2 cursor-pointer"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleMentionClick(user)}
+                  >
+                    <div className="avatar">
+                      <img
+                        src={user.avatar || "default-avatar.png"}
+                        alt={user.fullName}
+                        className="avatar-img rounded-circle border border-white border-3"
+                        width={34}
+                        height={34}
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
+                    <div>
+                      <h6 className="mb-0">{user.fullName}</h6>
+                      <small className="text-muted">{user.userRole}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </form>
-          
+
         </div>
       )}
 
