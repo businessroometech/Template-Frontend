@@ -58,6 +58,7 @@ const RepostModal = ({ isOpen, onClose, authorName,item,setIsCreated,isCreated }
           content : item.post.content,   
           mediaKeys : (item as PostSchema).post.mediaKeys,    
           repostText : thoughts,
+          originalPostedAt : item.post.createdAt
         },
       })
 

@@ -6,7 +6,7 @@ import fallBackAvatar from '@/assets/images/avatar/default avatar.png'
 import { FaGlobe } from "react-icons/fa";
 import { useAuthContext } from "@/context/useAuthContext";
 import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from "react-icons/bs";
-import { ChevronLeft, ChevronRight, MessageSquare, Repeat, ThumbsUp } from "lucide-react";
+import { ChevronLeft, ChevronRight, Copy, MessageSquare, Repeat, Share, ThumbsUp } from "lucide-react";
 import { LIVE_URL } from "@/utils/api";
 import { MdComment, MdThumbUp } from "react-icons/md";
 import { UserProfile } from "@/app/(social)/feed/(container)/home/page";
@@ -17,6 +17,8 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { UtilType } from "./MediaGallery";
+import { toast } from "react-toastify";
+import RepostModal from "../RepostModal";
 const PostModal = ({
   show,
   handleClose,
@@ -24,6 +26,7 @@ const PostModal = ({
   item,
   profile,
   media,
+  showRepostOp,
   setShowRepostOp,
   utils
 }:
@@ -34,6 +37,7 @@ const PostModal = ({
     item: PostSchema;
     profile: UserProfile;
     media: string[];
+    showRepostOp : boolean
     setShowRepostOp: React.Dispatch<React.SetStateAction<boolean>>
     utils: UtilType
   }) => {
@@ -132,7 +136,31 @@ const PostModal = ({
       setLen(0);
     }
   }, [])
+
+  const handleShare = (postId: string) => {
+    const shareUrl = `http://13.216.146.100/feed/home#${postId}`;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Check out this post!",
+          url: shareUrl,
+        })
+        .catch((error) => console.error("Error sharing:", error));
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
+    }
+  };
   
+    const handleCopy = (postId: string) => {
+      const shareUrl = `http://13.216.146.100/feed/post/${postId}`;
+  
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => toast.success("Link copied to clipboard!"))
+        .catch((error) => console.error("Error copying link:", error));
+    }
 
   useEffect(() => {
     likeStatus ? setTrue() : setFalse();
@@ -524,56 +552,68 @@ const PostModal = ({
                   className="w-100 border-top border-bottom mb-3"
                   style={{
                     backgroundColor: "white",
-                    borderBottom: "1px solid #dee2e6", // Bootstrap's light gray border color
+                    borderBottom: "1px solid #dee2e6",
                   }}
                 >
-                  <Button
-                    variant="ghost" // Always remains ghost
-                    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-                    onClick={toggleLike}
-                    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-                  >
-                    {likeStatus ? (
-                      <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} /> // Blue icon when liked
-                    ) : (
-                      <ThumbsUp size={16} style={{ color: "inherit" }} /> // Default color when not liked
-                    )}
-                    {/* <span>Like</span> */}
-                  </Button>
+                <Button
+                  variant="ghost"
+                  className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                  onClick={toggleLike}
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  {likeStatus ? (
+                    <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
+                  ) : (
+                    <ThumbsUp size={16} style={{ color: "inherit" }} />
+                  )}
+                  {/* <span>Like</span> */}
+                </Button>
 
-                  <Button
-                    variant="ghost"
-                    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-                    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-                  >
-                    <MessageSquare size={16} />
-                    {/* <span>Comment</span> */}
-                  </Button>
+                <Button
+                  variant="ghost"
+                  className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                  onClick={() => setOpenComment(!openComment)}
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  <MessageSquare size={16} />
+                  {/* <span>Comment</span> */}
+                </Button>
 
-                  <Button
-                    variant="ghost"
-                    className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-                    style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-                    onClick={() => {
-                      setShowRepostOp(true)
-                      handleClose()
-                    }}
-                  >
-                    <Repeat size={16} />
-                    {/* <span>Repost</span> */}
-                  </Button>
-                  {
-
-                  }
-                  {/* <Button
-            variant="ghost"
-            className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-            style={{ fontSize: "0.8rem" }} // Slightly smaller font size
-          >
-            <Share size={16} />
-           
-          </Button> */}
-                </ButtonGroup>
+                <Button
+                  variant="ghost"
+                  className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                  style={{ fontSize: "0.8rem" }}
+                  onClick={() => setShowRepostOp(true)}
+                >
+                  <Repeat size={16} />
+                  {/* <span>Repost</span> */}
+                </Button>
+            {/* {
+              <RepostModal
+                isOpen={showRepostOp}
+                onClose={() => setShowRepostOp(false)}
+                authorName={userInfo?.firstName}
+                item={item}
+                isCreated={isCreated}
+                setIsCreated={setIsCreated}
+              />} */}
+              <Button
+                onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+              >
+                <Copy size={16} />
+              </Button>
+            <Button
+              onClick={() => handleShare(post.Id)}
+              variant="ghost"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+              style={{ fontSize: "0.8rem" }}
+            >
+              <Share size={16} />
+            </Button>
+          </ButtonGroup>
                 {<div className="d-flex mb-4 px-3">
                   <div className="avatar avatar-xs me-3">
                     <Link to={`/profile/feed/${user?.id}`}>

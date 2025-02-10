@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { BsFillHandThumbsUpFill, BsThreeDots, BsTrash } from 'react-icons/bs';
 import { MdComment, MdThumbUp } from "react-icons/md";
-import { Link, useNavigate } from 'react-router-dom';
-import { Copy, MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Copy, EyeOff, MessageSquare, Repeat, Share, ThumbsUp } from 'lucide-react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Image } from 'react-bootstrap';
 import CommentItem from './components/CommentItem';
 import LoadContentButton from '../LoadContentButton';
@@ -24,7 +24,7 @@ import LinkPreview from '@ashwamegh/react-link-preview'
 // If you're using built in layout, you will need to import this css
 import '@ashwamegh/react-link-preview/dist/index.css'
 import LikeListModal from './components/LikeListModal';
-import formatContent from './components/ContentFormating';
+import FormatContent from './components/ContentFormating';
 export interface Like {
   id: string;
   occupation: string;
@@ -71,6 +71,8 @@ export interface Post {
   repostedFrom?: string;
   repostText?: string;
   likeStatus: boolean;
+  originalPostedAt? : string;
+  createdAt : string;
 }
 export interface UserDetails {
   postedId: string;
@@ -105,12 +107,12 @@ const PostCard = ({
   isCreated,
   setIsCreated
 }:
-  {
-    item: PostSchema;
-    profile: UserProfile;
-    isCreated: boolean;
-    setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
-  }) => {
+{
+  item: PostSchema;
+  profile: UserProfile;
+  isCreated: boolean;
+  setIsCreated: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   //  console.log('---profile in post card---',profile);
   const [comments, setComments] = useState<[]>([]);
   const [commentText, setCommentText] = useState('');
@@ -556,10 +558,9 @@ const PostCard = ({
       }
     }, 0);
   };
-
+  if(isDeleted) return null;
   if (isRepostWithText()) {
     return (
-      isDeleted ? null : 
       <Card className="mb-4">
         <LikeListModal
           isOpen={showList}
@@ -642,8 +643,6 @@ const PostCard = ({
             </div>
 
             {
-              post.userId === user?.id &&
-
               <div style={{ position: "relative" }}>
                 <button
                   className="btn btn-link p-0 text-dark"
@@ -653,7 +652,8 @@ const PostCard = ({
                   <BsThreeDots />
                 </button>
                 {menuVisible && (
-                  <div
+                  <>
+                 { post.userId === user?.id && <div
                     className="dropdown-menu show"
                     style={{
                       position: "absolute",
@@ -674,7 +674,30 @@ const PostCard = ({
                     >
                       <BsTrash /> Delete Post
                     </button>
-                  </div>
+                  </div> }
+                  { post.userId !== user?.id && <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      right: 0,
+                      zIndex: 1000,
+                      display: "block",
+                      backgroundColor: "white",
+                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                      borderRadius: "0.25rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <button
+                      className="dropdown-item text-danger d-flex align-items-center"
+                      onClick={() => handleDeletePost(post?.Id)}
+                      style={{ gap: "0.5rem" }}
+                    >
+                      <EyeOff /> Hide Post
+                    </button>
+                  </div> }
+                  </>
                 )}
               </div>
             }
@@ -697,7 +720,7 @@ const PostCard = ({
                   overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
-                {formatContent(post.repostText)}
+                {<FormatContent content={post.repostText}  />}
               </div>
               {!isExpanded && post.repostText.length > 230 && (
                 <span
@@ -762,7 +785,7 @@ const PostCard = ({
                             <span className='mx-2'></span>
                           </span>
                           <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
-                            {userInfo?.timestamp}
+                            {post?.originalPostedAt}
                             <span
                               className='nav-item small'
                               style={{
@@ -805,7 +828,7 @@ const PostCard = ({
                       overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                     }}
                   >
-                    {formatContent(post.content)}
+                    {<FormatContent content={post.content}  />}
                   </div>
                   {!isExpanded && post.content.length > 230 && (
                     <span
@@ -1046,7 +1069,6 @@ const PostCard = ({
   }
 
   return (
-    isDeleted ? null : 
     <>
       <Card className="mb-4">
         <LikeListModal
@@ -1283,7 +1305,7 @@ const PostCard = ({
                   overflow: post.content.match(/(https?:\/\/[^\s]+)/g) ? 'visible' : (isExpanded ? 'visible' : 'hidden'),
                 }}
               >
-                {formatContent(post.content)}
+                {<FormatContent content={post.content}  />}
               </div>
               {!isExpanded && post.content.length > 230 && (
                 <span
