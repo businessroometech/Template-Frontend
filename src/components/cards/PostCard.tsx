@@ -994,7 +994,7 @@ const PostCard = ({
                     padding: "5px 10px",
                   }}
                   rows={1}
-                  placeholder="Add a comment... sachin"
+                  placeholder="Add a comment..."
                   value={commentText}
                   onChange={handleChange}
                   onKeyDown={(e) => {
