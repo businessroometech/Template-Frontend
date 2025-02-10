@@ -77,50 +77,50 @@ const CustomLinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
       rel="noopener noreferrer"
       style={{ textDecoration: "none", color: "inherit" }}
     >
-{metadata.title?
-     ( <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          overflow: "hidden",
-          width: "100%",
-          height: "150px",
-          boxShadow: "none",
-          MozWindowShadow: "none",
-        }}
-      >
-        {metadata.image && (
-          <img
-            src={metadata.image}
-            alt="Preview"
-            style={{
-              width: "150px",
-              height: "150px",
-              objectFit: "cover",
-              borderTopLeftRadius: "12px",
-              borderBottomLeftRadius: "12px",
-            }}
-          />
+      {metadata.title ?
+        (<div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            border: "1px solid #ddd",
+            borderRadius: "12px",
+            overflow: "hidden",
+            width: "100%",
+            height: "150px",
+            boxShadow: "none",
+            MozWindowShadow: "none",
+          }}
+        >
+          {metadata.image && (
+            <img
+              src={metadata.image}
+              alt="Preview"
+              style={{
+                width: "150px",
+                height: "150px",
+                objectFit: "cover",
+                borderTopLeftRadius: "12px",
+                borderBottomLeftRadius: "12px",
+              }}
+            />
+          )}
+          <div style={{ padding: "10px", flex: 1 }}>
+            <h4 style={{ margin: "0", fontSize: "14px", fontWeight: "bold", color: "#333" }}>
+              {metadata.title && metadata.title.length > 50 ? `${metadata.title.substring(0, 50)}...` : metadata.title}
+            </h4>
+            <p style={{ margin: "5px 0 0", fontSize: "12px", color: "#666" }}>{metadata.siteName}</p>
+            <p style={{ margin: "5px 0 0", fontSize: "14px", color: "#333" }}>
+              {metadata.description && metadata.description.length > 150 ? `${metadata.description.substring(0, 150)}...` : metadata.description}
+            </p>
+          </div>
+        </div>) : (
+          <a href={url} target="_blank"
+            className="text-primary"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", color: "inherit" }}>
+            {url}
+          </a>
         )}
-        <div style={{ padding: "10px", flex: 1 }}>
-          <h4 style={{ margin: "0", fontSize: "14px", fontWeight: "bold", color: "#333" }}>
-            {metadata.title && metadata.title.length > 50 ? `${metadata.title.substring(0, 50)}...` : metadata.title}
-          </h4>
-          <p style={{ margin: "5px 0 0", fontSize: "12px", color: "#666" }}>{metadata.siteName}</p>
-          <p style={{ margin: "5px 0 0", fontSize: "14px", color: "#333" }}>
-            {metadata.description && metadata.description.length > 150 ? `${metadata.description.substring(0, 150)}...` : metadata.description}
-          </p>
-        </div> 
-      </div>):(
-       <a href={url} target="_blank" 
-      className="text-primary"
-       rel="noopener noreferrer"
-       style={{ textDecoration: "none", color: "inherit" }}>
-        {url}
-        </a>
-      )}
     </a>
   );
 };
