@@ -369,10 +369,7 @@ const fetchUsers = async (query: string) => {
 const handleMentionClick = (mentionedUser: any) => {
   const mentionDisplay = `@${mentionedUser.fullName}`;
   const mentionActual = `@${mentionedUser.userName}`;
-
-  // Store mapping of displayed mention to actual username
   setMentionMap((prev) => ({ ...prev, [mentionDisplay]: mentionActual }));
-
   setThoughts((prev) => prev.replace(/@\S*$/, mentionDisplay + " "));
   setMentionDropdownVisible(false);
 };

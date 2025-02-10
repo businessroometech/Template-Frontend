@@ -140,10 +140,6 @@ const PostCard = ({
   const [repostProfile, setRepostProfile] = useState<UserProfile>({});
   const [close, setClose] = useState<boolean>(true);
   const [showList, setShowList] = useState<boolean>(false);
-  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   const utils: UtilType = {
     comments: comments,
     setComments: setComments,
@@ -386,32 +382,6 @@ const PostCard = ({
     return null;
   }, [media]);
 
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
-
-    try {
-      const response = await fetch(`${LIVE_URL}api/v1/post/create-comment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer YOUR_ACCESS_TOKEN',
-        },
-        body: JSON.stringify({ postId: post.Id, userId: user?.id, text: commentText }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      setRefresh((prev) => prev + 1);
-      setCommentText('');
-      setCommentCount(() => commentCount + 1);
-    } catch (error) {
-      console.error('Error posting comment:', error);
-    }
-  };
-
-
 
   const toggleLike = async () => {
     setLikeStatus((prev) => !prev);
@@ -502,16 +472,50 @@ const PostCard = ({
   }
 
 
+  const [mentionDropdownVisible, setMentionDropdownVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [mentionMap, setMentionMap] = useState<Record<string, string>>({});
+  // const [commentText, setCommentText] = useState("");
+  // const [commentCount, setCommentCount] = useState(0);
 
 
-  // Handle input change and check for mentions
+  const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    try {
+      const response = await fetch(`${LIVE_URL}api/v1/post/create-comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer YOUR_ACCESS_TOKEN",
+        },
+        body: JSON.stringify({
+          postId: post?.Id,
+          userId: user?.id,
+          text: processMentionsForSubmission(commentText),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setRefresh((prev) => prev + 1);
+      setCommentText("");
+      setCommentCount((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setCommentText(value);
     checkForMention(value);
   };
 
-  // Check if user is typing a mention
   const checkForMention = (text: string) => {
     const match = text.match(/@\S*$/);
     if (text.endsWith("@")) {
@@ -523,7 +527,6 @@ const PostCard = ({
     }
   };
 
-  // Fetch users when '@' is typed
   const fetchUsers = async (query: string) => {
     try {
       const response = await fetch("http://13.216.146.100/api/v1/post/mention", {
@@ -531,32 +534,30 @@ const PostCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user?.id, query }),
       });
-
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
       const data = await response.json();
       setSearchResults(data?.data || []);
-      setMentionDropdownVisible(data?.data.length > 0);
-      console.log("searchResult*****", searchResults);
-
+      setMentionDropdownVisible((data?.data.length ?? 0) > 0);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
-
-  // Insert mention into the text correctly
-  const handleMentionClick = (selectedUser: string) => {
-    const mention = `@${selectedUser} `;
-
-    setCommentText((prev) => prev.replace(/@\S*$/, mention));
+  
+  // Function to insert mention correctly
+  const handleMentionClick = (mentionedUser: any) => {
+    const mentionDisplay = `@${mentionedUser.fullName}`;
+    const mentionActual = `@${mentionedUser.userName}`;
+    setMentionMap((prev) => ({ ...prev, [mentionDisplay]: mentionActual }));
+    setCommentText((prev) => prev.replace(/@\S*$/, mentionDisplay + " "));
     setMentionDropdownVisible(false);
+  };
 
-    // Move cursor to end
-    setTimeout(() => {
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-      }
-    }, 0);
+  const processMentionsForSubmission = (text: string) => {
+    let processedText = text;
+    Object.entries(mentionMap).forEach(([display, actual]) => {
+      processedText = processedText.replace(display, actual);
+    });
+    return processedText;
   };
   if(isDeleted) return null;
   if (isRepostWithText()) {
@@ -580,67 +581,67 @@ const PostCard = ({
                       borderRadius: "50%",
                       overflow: "hidden",
 
-                    }}
-                  >
-                    <Image
-                      src={userInfo.avatar ? userInfo.avatar : fallBackAvatar} // Replace with your actual image source
-                      alt="Profile"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
                       }}
-                    />
-                  </div>
-                </Link>
-                {/* {post.repostedFrom && <p>This is a repost</p>} */}
-              </div>
-              <div>
-                <div className="nav nav-divider">
-                  <h6
-                    className="nav-item card-title mb-0"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
-                      {userInfo?.firstName} {userInfo?.lastName}
-                    </Link>
-                    <div style={{ flex: 1, flexDirection: 'row' }}>
-                      <span className="small mx-3" style={{ color: "#8b959b" }}>
-                        {/* {console.log(post, '---userInfo---')} */}
-                        {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
-                        {userInfo?.userRole && userInfo?.userRole}
-                        <span className='mx-2'></span>
-                      </span>
-                      <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
-                        {userInfo?.timestamp}
-                        <span
-                          className='nav-item small'
-                          style={{
-                            borderRadius: '100%',
-                            width: '3px', // Adjust size of the dot as needed
-                            height: '3px', // Adjust size of the dot as needed
-                            backgroundColor: '#8b959b',
-                            marginLeft: '8px', // Space between dot and icon
-                          }}
-                        />
-                        <FaGlobe
-                          style={{
-                            color: '#8b959b', // Adjust the color of the globe icon as needed
-                            fontSize: '12px', // Adjust the size of the globe icon as needed
-                            marginLeft: '6px', // Space between dot and icon
-                          }}
-                        />
-                      </span>
+                    >
+                      <Image
+                        src={userInfo.avatar ? userInfo.avatar : fallBackAvatar}
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                        }}
+                      />
                     </div>
-                  </h6>
+                  </Link>
+                  {/* {post.repostedFrom && <p>This is a repost</p>} */}
+                </div>
+                <div>
+                  <div className="nav nav-divider">
+                    <h6
+                      className="nav-item card-title mb-0"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
+                        {userInfo?.firstName} {userInfo?.lastName}
+                      </Link>
+                      <div style={{ flex: 1, flexDirection: 'row' }}>
+                        <span className="small mx-3" style={{ color: "#8b959b" }}>
+                          {/* {console.log(post, '---userInfo---')} */}
+                          {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
+                          {userInfo?.userRole && userInfo?.userRole}
+                          <span className='mx-2'></span>
+                        </span>
+                        <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
+                          {userInfo?.timestamp}
+                          <span
+                            className='nav-item small'
+                            style={{
+                              borderRadius: '100%',
+                              width: '3px', // Adjust size of the dot as needed
+                              height: '3px', // Adjust size of the dot as needed
+                              backgroundColor: '#8b959b',
+                              marginLeft: '8px', // Space between dot and icon
+                            }}
+                          />
+                          <FaGlobe
+                            style={{
+                              color: '#8b959b', // Adjust the color of the globe icon as needed
+                              fontSize: '12px', // Adjust the size of the globe icon as needed
+                              marginLeft: '6px', // Space between dot and icon
+                            }}
+                          />
+                        </span>
+                      </div>
+                    </h6>
+                  </div>
                 </div>
               </div>
-            </div>
 
             {
               <div style={{ position: "relative" }}>
@@ -733,34 +734,34 @@ const PostCard = ({
             </div>
           )}
 
-          <Card className="mb-4">
-            <CardHeader className="border-0 pb-0">
-              <div className="d-flex align-items-center justify-content-between">
-                <div className="d-flex align-items-center">
-                  <div className="avatar me-2">
-                    <Link to={`/profile/feed/${post?.repostedFrom}`} role="button">
-                      <div
-                        style={{
-                          border: '3px solid white',
-                          width: "55px",
-                          height: "55px",
-                          borderRadius: "50%",
-                          overflow: "hidden",
-
-                        }}
-                      >
-                        <Image
-                          src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} // Replace with your actual image source
-                          alt="Profile"
+            <Card className="mb-4">
+              <CardHeader className="border-0 pb-0">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center">
+                    <div className="avatar me-2">
+                      <Link to={`/profile/feed/${post?.repostedFrom}`} role="button">
+                        <div
                           style={{
-                            width: "100%",
-                            height: "100%",
-                            transform: `scale(${(repostProfile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(repostProfile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
-                          }}
-                        />
-                      </div>
+                            border: '3px solid white',
+                            width: "55px",
+                            height: "55px",
+                            borderRadius: "50%",
+                            overflow: "hidden",
 
-                    </Link>
+                          }}
+                        >
+                          <Image
+                            src={repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                            alt="Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              transform: `scale(${(repostProfile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(repostProfile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                            }}
+                          />
+                        </div>
+
+                      </Link>
 
                   </div>
                   <div>
@@ -843,228 +844,229 @@ const PostCard = ({
 
 
 
-              {media?.length > 0 && (
-                isVideo ? (
-                  <div
-                    style={{
-                      position: "relative",
-                      marginBottom: "10px",
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {videoPlayer}
-                  </div>
-                ) : (
-                  <ResponsiveGallery
-                    media={media}
-                    item={item}
-                    profile={profile}
-                    setShowRepostOp={setShowRepostOp}
-                    utils={utils}
-                  />
-                )
-              )}
-
-            </CardBody>
-          </Card>
-          <div style={{ marginTop: '20px' }}>
-            {LikeText(allLikes)}
-          </div>
-          <ButtonGroup
-            className="w-100 border-top border-bottom mb-3"
-            style={{
-              backgroundColor: "white",
-              borderBottom: "1px solid #dee2e6",
-            }}
-          >
-            <Button
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              onClick={toggleLike}
-              style={{ fontSize: "0.8rem" }}
-            >
-              {likeStatus ? (
-                <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
-              ) : (
-                <ThumbsUp size={16} style={{ color: "inherit" }} />
-              )}
-              {/* <span>Like</span> */}
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              onClick={() => setOpenComment(!openComment)}
-              style={{ fontSize: "0.8rem" }}
-            >
-              <MessageSquare size={16} />
-              {/* <span>Comment</span> */}
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }}
-              onClick={() => setShowRepostOp(true)}
-            >
-              <Repeat size={16} />
-              {/* <span>Repost</span> */}
-            </Button>
-            {
-              <RepostModal
-                isOpen={showRepostOp}
-                onClose={() => setShowRepostOp(false)}
-                authorName={userInfo?.firstName}
-                item={item}
-                isCreated={isCreated}
-                setIsCreated={setIsCreated}
-              />}
-            <Button
-              onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }}
-            >
-              <Copy size={16} />
-            </Button>
-            <Button
-              onClick={() => handleShare(post.Id)}
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }}
-            >
-              <Share size={16} />
-            </Button>
-          </ButtonGroup>
-          {openComment && <div className="d-flex mb-4 px-3">
-            <div className="avatar avatar-xs me-3">
-              <Link to={`/profile/feed/${user?.id}`}>
-                <span role="button">
-                  <div
-                    style={{
-                      border: '3px solid white',
-                      width: "45px",
-                      height: "45px",
-                      borderRadius: "50%",
-                      overflow: "hidden",
-
-                    }}
-                  >
-                    <Image
-                      src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar} // Replace with your actual image source
-                      alt="Profile"
+                {media?.length > 0 && (
+                  isVideo ? (
+                    <div
                       style={{
+                        position: "relative",
+                        marginBottom: "10px",
                         width: "100%",
                         height: "100%",
-                        transform: `scale(${(profile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
-                    />
-                  </div>
-                </span>
-              </Link>
-            </div>
-            <form
-              className="nav nav-item w-100 d-flex align-items-center"
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log("Submitted:", commentText);
-              }}
-              style={{ gap: "10px" }}
-            >
-              <textarea
-                ref={textareaRef}
-                className="form-control"
-                style={{
-                  backgroundColor: "#fff",
-                  color: "#000",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  textAlign: "left",
-                  resize: "none",
-                  height: "38px",
-                  flex: 1,
-                  border: "1px solid #ced4da",
-                  borderRadius: "4px",
-                  padding: "5px 10px",
-                }}
-                rows={1}
-                placeholder="Add a comment... sachin"
-                value={commentText}
-                onChange={handleChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    console.log("Comment submitted:", commentText);
-                  }
-                }}
-              />
-
-
-              {/* Mention Dropdown */}
-              {mentionDropdownVisible && searchResults.length > 0 && (
-                <div
-                  className="position bg-white shadow rounded w-100 mt-1"
-                  style={{
-                    zIndex: 1000,
-                    maxHeight: "10rem",
-                    overflowY: "auto",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  {searchResults.map((user) => (
-                    <div
-                      key={user.id}
-                      className="d-flex align-items-center p-2 cursor-pointer"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleMentionClick(user.userName)}
                     >
-                      <div className="avatar">
-                        <img
-                          src={user.avatar || "default-avatar.png"}
-                          alt={user.fullName}
-                          className="avatar-img rounded-circle border border-white border-3"
-                          width={34}
-                          height={34}
-                        />
-                      </div>
-                      <div>
-                        <h6 className="mb-0">{user.fullName}</h6>
-                        <small className="text-muted">{user.userRole}</small>
-                      </div>
+                      {videoPlayer}
                     </div>
-                  ))}
-                </div>
-              )}
-            </form>
-          </div>}
+                  ) : (
+                    <ResponsiveGallery
+                      media={media}
+                      item={item}
+                      profile={profile}
+                      setShowRepostOp={setShowRepostOp}
+                      utils={utils}
+                    />
+                  )
+                )}
 
-          {openComment && (isLoading ? (
-            <p>Loading comments...</p>
-          ) : (
-            <ul className="comment-wrap list-unstyled px-3">
-              {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-                <CommentItem
-                  key={index}
-                  post={post}
-                  comment={comment}
-                  level={0}
-                  refresh={refresh}
-                  setRefresh={setRefresh}
-                  commentCount={commentCount}
-                  setCommentCount={setCommentCount}
-                  myProfile={profile}
+              </CardBody>
+            </Card>
+            <div style={{ marginTop: '20px' }}>
+              {LikeText(allLikes)}
+            </div>
+            <ButtonGroup
+              className="w-100 border-top border-bottom mb-3"
+              style={{
+                backgroundColor: "white",
+                borderBottom: "1px solid #dee2e6",
+              }}
+            >
+              <Button
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                onClick={toggleLike}
+                style={{ fontSize: "0.8rem" }}
+              >
+                {likeStatus ? (
+                  <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
+                ) : (
+                  <ThumbsUp size={16} style={{ color: "inherit" }} />
+                )}
+                {/* <span>Like</span> */}
+              </Button>
+
+              <Button
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                onClick={() => setOpenComment(!openComment)}
+                style={{ fontSize: "0.8rem" }}
+              >
+                <MessageSquare size={16} />
+                {/* <span>Comment</span> */}
+              </Button>
+
+              <Button
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+                onClick={() => setShowRepostOp(true)}
+              >
+                <Repeat size={16} />
+                {/* <span>Repost</span> */}
+              </Button>
+              {
+                <RepostModal
+                  isOpen={showRepostOp}
+                  onClose={() => setShowRepostOp(false)}
+                  authorName={userInfo?.firstName}
+                  item={item}
+                  isCreated={isCreated}
+                  setIsCreated={setIsCreated}
+                />}
+              <Button
+                onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+              >
+                <Copy size={16} />
+              </Button>
+              <Button
+                onClick={() => handleShare(post.Id)}
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+              >
+                <Share size={16} />
+              </Button>
+            </ButtonGroup>
+            {openComment && <div className="d-flex mb-4 px-3">
+              <div className="avatar avatar-xs me-3">
+                <Link to={`/profile/feed/${user?.id}`}>
+                  <span role="button">
+                    <div
+                      style={{
+                        border: '3px solid white',
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+
+                      }}
+                    >
+                      <Image
+                        src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar} // Replace with your actual image source
+                        alt="Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          transform: `scale(${(profile?.personalDetails?.zoomProfile || 50) / 50}) rotate(${(profile?.personalDetails?.rotateProfile || 50) - 50}deg)`,
+                        }}
+                      />
+                    </div>
+                  </span>
+                </Link>
+              </div>
+              <form
+                className="nav nav-item w-100 d-flex align-items-center"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log("Submitted:", commentText);
+                }}
+                style={{ gap: "10px" }}
+              >
+                <textarea
+                  ref={textareaRef}
+                  className="form-control"
+                  style={{
+                    backgroundColor: "#fff",
+                    color: "#000",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    textAlign: "left",
+                    resize: "none",
+                    height: "38px",
+                    flex: 1,
+                    border: "1px solid #ced4da",
+                    borderRadius: "4px",
+                    padding: "5px 10px",
+                  }}
+                  rows={1}
+                  placeholder="Add a comment... sachin"
+                  value={commentText}
+                  onChange={handleChange}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleCommentSubmit(e);
+                      console.log("Comment submitted:", commentText);
+                    }
+                  }}
                 />
-              ))}
-            </ul>
-          ))}
-        </CardBody>
 
-      </Card>
+
+                {/* Mention Dropdown */}
+                {mentionDropdownVisible && searchResults.length > 0 && (
+                  <div
+                    className="position bg-white shadow rounded w-100 mt-1"
+                    style={{
+                      zIndex: 1000,
+                      maxHeight: "10rem",
+                      overflowY: "auto",
+                      border: "1px solid #ddd",
+                    }}
+                  >
+                    {searchResults.map((user) => (
+                      <div
+                        key={user.id}
+                        className="d-flex align-items-center p-2 cursor-pointer"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleMentionClick(user)}
+                      >
+                        <div className="avatar">
+                          <img 
+                            src={user.avatar || "default-avatar.png"}
+                            alt={user.fullName}
+                            className="avatar-img rounded-circle border border-white border-3"
+                            width={34}
+                            height={34}
+                          />
+                        </div>
+                        <div>
+                          <h6 className="mb-0">{user.fullName}</h6>
+                          <small className="text-muted">{user.userRole}</small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </form>
+            </div>}
+
+            {openComment && (isLoading ? (
+              <p>Loading comments...</p>
+            ) : (
+              <ul className="comment-wrap list-unstyled px-3">
+                {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
+                  <CommentItem
+                    key={index}
+                    post={post}
+                    comment={comment}
+                    level={0}
+                    refresh={refresh}
+                    setRefresh={setRefresh}
+                    commentCount={commentCount}
+                    setCommentCount={setCommentCount}
+                    myProfile={profile}
+                  />
+                ))}
+              </ul>
+            ))}
+          </CardBody>
+
+        </Card>
     )
   }
 
@@ -1092,27 +1094,27 @@ const PostCard = ({
                   {/* Avatar */}
                   <Link to={`/profile/feed/${post?.userId}`} role="button" style={{ paddingBottom: '3px', paddingRight: '4px' }}>
 
-                    <div
-                      style={{
-                        border: '3px solid white',
-                        width: "55px",
-                        height: "55px",
-                        borderRadius: "50%",
-                        overflow: "hidden",
-
-                      }}
-                    >
-                      <Image
-                        src={userInfo.avatar ? userInfo?.avatar : fallBackAvatar} // Replace with your actual image source
-                        alt="Profile"
+                      <div
                         style={{
-                          width: "100%",
-                          height: "100%",
-                          transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                          border: '3px solid white',
+                          width: "55px",
+                          height: "55px",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+
                         }}
-                      />
-                    </div>
-                    {/* <img
+                      >
+                        <Image
+                          src={userInfo.avatar ? userInfo?.avatar : fallBackAvatar} // Replace with your actual image source
+                          alt="Profile"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            transform: `scale(${(userInfo?.zoomProfile || 50) / 50}) rotate(${(userInfo?.rotateProfile || 50) - 50}deg)`,
+                          }}
+                        />
+                      </div>
+                      {/* <img
                       style={{
                         width: 30,
                         height: 30,
@@ -1122,145 +1124,41 @@ const PostCard = ({
                       src={userInfo?.avatar ? userInfo.avatar : fallBackAvatar}
                       alt={userInfo?.firstName || "avatar"}
                     /> */}
-                  </Link>
-
-                  {/* Name and Repost Text */}
-                  <p
-                    style={{
-                      margin: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      lineHeight: "1.2",
-                    }}
-                  >
-                    <Link
-                      to={`/profile/feed/${post?.userId}`}
-                      style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}
-                    >
-                      {userInfo?.firstName} {userInfo?.lastName}
                     </Link>
-                    <span style={{ marginLeft: "6px", color: "#555", paddingTop: '2px' }}>reposted this</span>
-                  </p>
-                </div>
 
-                {/* Close Button */}
-                {post.userId === user?.id &&
-
-
-                  <div style={{ position: "relative" }}>
-                    <button
-                      className="btn btn-link p-0 text-dark"
-                      style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                      onClick={() => setMenuVisible(!menuVisible)}
+                    {/* Name and Repost Text */}
+                    <p
+                      style={{
+                        margin: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        lineHeight: "1.2",
+                      }}
                     >
-                      <BsThreeDots />
-                    </button>
-                    {menuVisible && (
-                      <div
-                        className="dropdown-menu show"
-                        style={{
-                          position: "absolute",
-                          top: "100%",
-                          right: 0,
-                          zIndex: 1000,
-                          display: "block",
-                          backgroundColor: "white",
-                          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                          borderRadius: "0.25rem",
-                          overflow: "hidden",
-                        }}
+                      <Link
+                        to={`/profile/feed/${post?.userId}`}
+                        style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}
                       >
-                        {<button
-                          className="dropdown-item text-danger d-flex align-items-center"
-                          onClick={() => handleDeletePost(post?.Id)}
-                          style={{ gap: "0.5rem" }}
-                        >
-                          <BsTrash /> Delete Post
-                        </button>}
-                      </div>
-                    )}
+                        {userInfo?.firstName} {userInfo?.lastName}
+                      </Link>
+                      <span style={{ marginLeft: "6px", color: "#555", paddingTop: '2px' }}>reposted this</span>
+                    </p>
                   </div>
-                }
-              </div>
-            </>
-          }
-          {post.repostedFrom && close && <div style={{ height: '1px', width: '100%', backgroundColor: '#F2F2F2', marginTop: '-5px', marginBottom: '10px' }} />}
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <div className="avatar me-2">
-                <Link to={`/profile/feed/${post.repostedFrom ? repostProfile?.personalDetails?.id : post?.userId}`} role="button">
-                  {userInfo?.avatar ? (
-                    <ImageZoom
-                      src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar}
-                      zoom={post.repostedFrom ? repostProfile?.personalDetails?.zoomProfile : userInfo?.zoomProfile}
-                      rotate={post.repostedFrom ? repostProfile?.personalDetails?.rotateProfile : userInfo?.rotateProfile}
-                    />
-                  ) : (
-                    <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
-                  )}
-                </Link>
-                {/* {post.repostedFrom && <p>This is a repost</p>} */}
-              </div>
-              <div>
-                <div className="nav nav-divider">
-                  <h6
-                    className="nav-item card-title mb-0"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
-                      {post.repostedFrom ? repostProfile?.personalDetails?.firstName : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}
-                    </Link>
-                    <div style={{ flex: 1, flexDirection: 'row' }}>
-                      <span className="small mx-3" style={{ color: "#8b959b" }}>
-                        {/* {console.log(post, '---userInfo---')} */}
-                        {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
-                        {post.repostedFrom ? repostProfile?.personalDetails?.userRole : userInfo?.userRole}
-                        <span className='mx-2'></span>
-                      </span>
-                      <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
-                        {userInfo?.timestamp}
-                        <span
-                          className='nav-item small'
-                          style={{
-                            borderRadius: '100%',
-                            width: '3px',
-                            height: '3px',
-                            backgroundColor: '#8b959b',
-                            marginLeft: '8px',
-                          }}
-                        />
-                        <FaGlobe
-                          style={{
-                            color: '#8b959b',
-                            fontSize: '12px',
-                            marginLeft: '6px',
-                          }}
-                        />
-                      </span>
-                    </div>
-                  </h6>
-                </div>
-              </div>
-            </div>
 
-            {
-              post.userId === user?.id && !post.repostedFrom &&
+                  {/* Close Button */}
+                  {post.userId === user?.id &&
 
-              <div style={{ position: "relative" }}>
-                <button
-                  className="btn btn-link p-0 text-dark"
-                  style={{ fontSize: "1.5rem", lineHeight: "1", marginTop: '-25px', marginRight: '15px' }}
-                  onClick={() => setMenuVisible(!menuVisible)}
-                >
-                  <BsThreeDots />
-                </button>
-                {menuVisible && (
-                  <div
+                    <div style={{ position: "relative" }}>
+                      <button
+                        className="btn btn-link p-0 text-dark"
+                        style={{ fontSize: "1.5rem", lineHeight: "1" }}
+                        onClick={() => setMenuVisible(!menuVisible)}
+                      >
+                        <BsThreeDots />
+                      </button>
+                      {menuVisible && (
+                  <>
+                 { post.userId === user?.id && <div
                     className="dropdown-menu show"
                     style={{
                       position: "absolute",
@@ -1281,12 +1179,139 @@ const PostCard = ({
                     >
                       <BsTrash /> Delete Post
                     </button>
-                  </div>
+                  </div> }
+                  { post.userId !== user?.id && <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      right: 0,
+                      zIndex: 1000,
+                      display: "block",
+                      backgroundColor: "white",
+                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                      borderRadius: "0.25rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <button
+                      className="dropdown-item text-danger d-flex align-items-center"
+                      onClick={() => handleDeletePost(post?.Id)}
+                      style={{ gap: "0.5rem" }}
+                    >
+                      <EyeOff /> Hide Post
+                    </button>
+                  </div> }
+                  </>
                 )}
-              </div>
+                    </div>
+                  }
+                </div>
+              </>
             }
-          </div>
-        </CardHeader>
+            {post.repostedFrom && close && <div style={{ height: '1px', width: '100%', backgroundColor: '#F2F2F2', marginTop: '-5px', marginBottom: '10px' }} />}
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center">
+                <div className="avatar me-2">
+                  <Link to={`/profile/feed/${post.repostedFrom ? repostProfile?.personalDetails?.id : post?.userId}`} role="button">
+                    {userInfo?.avatar ? (
+                      <ImageZoom
+                        src={post.repostedFrom ? repostProfile?.profileImgUrl ? repostProfile?.profileImgUrl : fallBackAvatar : userInfo.avatar ? userInfo.avatar : fallBackAvatar}
+                        zoom={post.repostedFrom ? repostProfile?.personalDetails?.zoomProfile : userInfo?.zoomProfile}
+                        rotate={post.repostedFrom ? repostProfile?.personalDetails?.rotateProfile : userInfo?.rotateProfile}
+                      />
+                    ) : (
+                      <img className="avatar-img rounded-circle" src={fallBackAvatar} alt="avatar" />
+                    )}
+                  </Link>
+                  {/* {post.repostedFrom && <p>This is a repost</p>} */}
+                </div>
+                <div>
+                  <div className="nav nav-divider">
+                    <h6
+                      className="nav-item card-title mb-0"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Link to={`/profile/feed/${post?.userId}`} role="button" className="nav-item text-start mx-3">
+                        {post.repostedFrom ? repostProfile?.personalDetails?.firstName : userInfo?.firstName} {post.repostedFrom ? repostProfile?.personalDetails?.lastName : userInfo?.lastName}
+                      </Link>
+                      <div style={{ flex: 1, flexDirection: 'row' }}>
+                        <span className="small mx-3" style={{ color: "#8b959b" }}>
+                          {/* {console.log(post, '---userInfo---')} */}
+                          {/* {userInfo?.userRole ? userInfo?.userRole : null} */}
+                          {post.repostedFrom ? repostProfile?.personalDetails?.userRole : userInfo?.userRole}
+                          <span className='mx-2'></span>
+                        </span>
+                        <span className="nav-item small mx-3" style={{ color: "#8b959b" }}>
+                          {userInfo?.timestamp}
+                          <span
+                            className='nav-item small'
+                            style={{
+                              borderRadius: '100%',
+                              width: '3px',
+                              height: '3px',
+                              backgroundColor: '#8b959b',
+                              marginLeft: '8px',
+                            }}
+                          />
+                          <FaGlobe
+                            style={{
+                              color: '#8b959b',
+                              fontSize: '12px',
+                              marginLeft: '6px',
+                            }}
+                          />
+                        </span>
+                      </div>
+                    </h6>
+                  </div>
+                </div>
+              </div>
+
+              {
+                post.userId === user?.id && !post.repostedFrom &&
+
+                <div style={{ position: "relative" }}>
+                  <button
+                    className="btn btn-link p-0 text-dark"
+                    style={{ fontSize: "1.5rem", lineHeight: "1", marginTop: '-25px', marginRight: '15px' }}
+                    onClick={() => setMenuVisible(!menuVisible)}
+                  >
+                    <BsThreeDots />
+                  </button>
+                  {menuVisible && (
+                    <div
+                      className="dropdown-menu show"
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        right: 0,
+                        zIndex: 1000,
+                        display: "block",
+                        backgroundColor: "white",
+                        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                        borderRadius: "0.25rem",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <button
+                        className="dropdown-item text-danger d-flex align-items-center"
+                        onClick={() => handleDeletePost(post?.Id)}
+                        style={{ gap: "0.5rem" }}
+                      >
+                        <BsTrash /> Delete Post
+                      </button>
+                    </div>
+                  )}
+                </div>
+              }
+            </div>
+          </CardHeader>
 
         <CardBody>
           {post?.content && (
@@ -1319,227 +1344,227 @@ const PostCard = ({
           )}
 
 
-          {media?.length > 0 && (
-            isVideo ? (
-              <div
-                style={{
-                  position: "relative",
-                  marginBottom: "10px",
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {videoPlayer}
-              </div>
-            ) : (
-              <ResponsiveGallery
-                media={media}
-                item={item}
-                profile={profile}
-                setShowRepostOp={setShowRepostOp}
-                utils={utils}
-              />
-            )
-          )}
-          <div style={{ marginTop: '20px' }}>
-            {LikeText(allLikes)}
-          </div>
-          <ButtonGroup
-            className="w-100 border-top border-bottom mb-3"
-            style={{
-              backgroundColor: "white",
-              borderBottom: "1px solid #dee2e6",
-            }}
-          >
-            <Button
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              onClick={toggleLike}
-              style={{ fontSize: "0.8rem" }}
-            >
-              {likeStatus ? (
-                <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
+            {media?.length > 0 && (
+              isVideo ? (
+                <div
+                  style={{
+                    position: "relative",
+                    marginBottom: "10px",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {videoPlayer}
+                </div>
               ) : (
-                <ThumbsUp size={16} style={{ color: "inherit" }} />
-              )}
-              {/* <span>Like</span> */}
-            </Button>
+                <ResponsiveGallery
+                  media={media}
+                  item={item}
+                  profile={profile}
+                  setShowRepostOp={setShowRepostOp}
+                  utils={utils}
+                />
+              )
+            )}
+            <div style={{ marginTop: '20px' }}>
+              {LikeText(allLikes)}
+            </div>
+            <ButtonGroup
+              className="w-100 border-top border-bottom mb-3"
+              style={{
+                backgroundColor: "white",
+                borderBottom: "1px solid #dee2e6",
+              }}
+            >
+              <Button
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                onClick={toggleLike}
+                style={{ fontSize: "0.8rem" }}
+              >
+                {likeStatus ? (
+                  <BsFillHandThumbsUpFill size={16} style={{ color: "#1EA1F2" }} />
+                ) : (
+                  <ThumbsUp size={16} style={{ color: "inherit" }} />
+                )}
+                {/* <span>Like</span> */}
+              </Button>
 
-            <Button
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              onClick={() => setOpenComment(!openComment)}
-              style={{ fontSize: "0.8rem" }}
-            >
-              <MessageSquare size={16} />
-              {/* <span>Comment</span> */}
-            </Button>
+              <Button
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                onClick={() => setOpenComment(!openComment)}
+                style={{ fontSize: "0.8rem" }}
+              >
+                <MessageSquare size={16} />
+                {/* <span>Comment</span> */}
+              </Button>
 
-            <Button
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }}
-              onClick={() => setShowRepostOp(true)}
-            >
-              <Repeat size={16} />
-              {/* <span>Repost</span> */}
-            </Button>
-            {
-              <RepostModal
-                isOpen={showRepostOp}
-                onClose={() => setShowRepostOp(false)}
-                authorName={userInfo?.firstName}
-                item={item}
-                isCreated={isCreated}
-                setIsCreated={setIsCreated}
-              />}
-            <Button
-              onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }}
-            >
-              <Copy size={16} />
-            </Button>
-            <Button
-              onClick={() => handleShare(post.Id)}
-              variant="ghost"
-              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
-              style={{ fontSize: "0.8rem" }}
-            >
-              <Share size={16} />
-            </Button>
-          </ButtonGroup>
-          {openComment && <div className="d-flex mb-4 px-3">
-            <div className="avatar avatar-xs me-3">
-              <Link to={`/profile/feed/${user?.id}`}>
-                <span role="button">
-                  <ImageZoom
-                    src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
-                    zoom={profile?.personalDetails?.zoomProfile}
-                    rotate={profile?.personalDetails?.rotateProfile}
-                    width='45px'
-                    height='45px'
-                  />
-                  {/* <img
+              <Button
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+                onClick={() => setShowRepostOp(true)}
+              >
+                <Repeat size={16} />
+                {/* <span>Repost</span> */}
+              </Button>
+              {
+                <RepostModal
+                  isOpen={showRepostOp}
+                  onClose={() => setShowRepostOp(false)}
+                  authorName={userInfo?.firstName}
+                  item={item}
+                  isCreated={isCreated}
+                  setIsCreated={setIsCreated}
+                />}
+              <Button
+                onClick={() => handleCopy(post.Id)} // onclick copy this link to clip board
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+              >
+                <Copy size={16} />
+              </Button>
+              <Button
+                onClick={() => handleShare(post.Id)}
+                variant="ghost"
+                className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                style={{ fontSize: "0.8rem" }}
+              >
+                <Share size={16} />
+              </Button>
+            </ButtonGroup>
+            {openComment && <div className="d-flex mb-4 px-3">
+              <div className="avatar avatar-xs me-3">
+                <Link to={`/profile/feed/${user?.id}`}>
+                  <span role="button">
+                    <ImageZoom
+                      src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
+                      zoom={profile?.personalDetails?.zoomProfile}
+                      rotate={profile?.personalDetails?.rotateProfile}
+                      width='45px'
+                      height='45px'
+                    />
+                    {/* <img
                     className="avatar-img rounded-circle"
                     style={{ width: '52px', height: '35px', objectFit: 'cover' }}
                     src={profile?.profileImgUrl ? profile.profileImgUrl : fallBackAvatar}
                     alt="avatar"
                   /> */}
-                </span>
-              </Link>
-            </div>
-            <form
-              className="nav nav-item w-100 d-flex align-items-center"
-              onSubmit={handleCommentSubmit}
-              style={{ gap: "10px" }}
-            >
-              <textarea
-                data-autoresize
-                className="form-control"
-                style={{
-                  backgroundColor: "#fff",
-                  color: "#000",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  textAlign: "left",
-                  resize: "none",
-                  height: "38px",
-                  flex: 1,
-                  border: "1px solid #ced4da",
-                  borderRadius: "4px",
-                  padding: "5px 10px",
-                }}
-                rows={1}
-                placeholder="Add a comment... "
-                value={commentText}
-                onChange={handleChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleCommentSubmit(e);
-                  }
-                }}
-              />
-
-              {/* Mention Dropdown */}
-              {mentionDropdownVisible && searchResults.length > 0 && (
-                <div
-                  className="position bg-white shadow rounded w-100 mt-1"
+                  </span>
+                </Link>
+              </div>
+              <form
+                className="nav nav-item w-100 d-flex align-items-center"
+                onSubmit={handleCommentSubmit}
+                style={{ gap: "10px" }}
+              >
+                <textarea
+                  data-autoresize
+                  className="form-control"
                   style={{
-                    zIndex: 1000,
-                    maxHeight: "10rem",
-                    overflowY: "auto",
-                    border: "1px solid #ddd",
+                    backgroundColor: "#fff",
+                    color: "#000",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    textAlign: "left",
+                    resize: "none",
+                    height: "38px",
+                    flex: 1,
+                    border: "1px solid #ced4da",
+                    borderRadius: "4px",
+                    padding: "5px 10px",
                   }}
-                >
-                  {searchResults.map((user) => (
-                    <div
-                      key={user.id}
-                      className="d-flex align-items-center p-2 cursor-pointer"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleMentionClick(user.userName)}
-                    >
-                      <div className="avatar">
-                        <img
-                          src={user.avatar || "default-avatar.png"}
-                          alt={user.fullName}
-                          className="avatar-img rounded-circle border border-white border-3"
-                          width={34}
-                          height={34}
-                        />
-                      </div>
-                      <div>
-                        <h6 className="mb-0">{user.fullName}</h6>
-                        <small className="text-muted">{user.userRole}</small>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </form>
-          </div>}
-
-          {openComment && (isLoading ? (
-            <p>Loading comments...</p>
-          ) : (
-            <ul className="comment-wrap list-unstyled px-3">
-              {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
-                <CommentItem
-                  key={index}
-                  post={post}
-                  comment={comment}
-                  level={0}
-                  refresh={refresh}
-                  setRefresh={setRefresh}
-                  commentCount={commentCount}
-                  setCommentCount={setCommentCount}
-                  myProfile={profile}
+                  rows={1}
+                  placeholder="Add a comment... "
+                  value={commentText}
+                  onChange={handleChange}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleCommentSubmit(e);
+                    }
+                  }}
                 />
-              ))}
-            </ul>
-          ))}
-        </CardBody>
 
-        {openComment && (
-          comments.length > 2 && (
-            <CardFooter
-              className="border-0 pt-0"
-              onClick={() => {
-                setLoadMore(!loadMore);
-              }}
-            >
-              <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
-            </CardFooter>
-          )
-        )}
-      </Card>
-    </>
+                {/* Mention Dropdown */}
+                {mentionDropdownVisible && searchResults.length > 0 && (
+                  <div
+                    className="position bg-white shadow rounded w-100 mt-1"
+                    style={{
+                      zIndex: 1000,
+                      maxHeight: "10rem",
+                      overflowY: "auto",
+                      border: "1px solid #ddd",
+                    }}
+                  >
+                    {searchResults.map((user) => (
+                      <div
+                        key={user.id}
+                        className="d-flex align-items-center p-2 cursor-pointer"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleMentionClick(user)}
+                      >
+                        <div className="avatar">
+                          <img
+                            src={user.avatar || "default-avatar.png"}
+                            alt={user.fullName}
+                            className="avatar-img rounded-circle border border-white border-3"
+                            width={34}
+                            height={34}
+                          />
+                        </div>
+                        <div>
+                          <h6 className="mb-0">{user.fullName}</h6>
+                          <small className="text-muted">{user.userRole}</small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </form>
+            </div>}
+
+            {openComment && (isLoading ? (
+              <p>Loading comments...</p>
+            ) : (
+              <ul className="comment-wrap list-unstyled px-3">
+                {(loadMore ? comments : comments.slice(0, 2)).map((comment, index) => (
+                  <CommentItem
+                    key={index}
+                    post={post}
+                    comment={comment}
+                    level={0}
+                    refresh={refresh}
+                    setRefresh={setRefresh}
+                    commentCount={commentCount}
+                    setCommentCount={setCommentCount}
+                    myProfile={profile}
+                  />
+                ))}
+              </ul>
+            ))}
+          </CardBody>
+
+          {openComment && (
+            comments.length > 2 && (
+              <CardFooter
+                className="border-0 pt-0"
+                onClick={() => {
+                  setLoadMore(!loadMore);
+                }}
+              >
+                <LoadContentButton name={!loadMore ? "Load more comments" : "Close comments"} toggle={loadMore} />
+              </CardFooter>
+            )
+          )}
+        </Card>
+      </>
   );
 };
 

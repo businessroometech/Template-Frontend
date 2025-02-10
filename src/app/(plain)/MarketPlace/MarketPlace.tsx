@@ -95,13 +95,22 @@ const MarketPlace = () => {
   }, [activeTab, user.id]);
 
   const getCurrentData = () => {
-    
-    const data = isMyBusiness ? myBusinessData[0].data: isMyWishlist? Wishlists.data.flatMap(item => item.Wishlistdata): allBusinessData;
-    console.log('Data From GetCurrentData',data);
+    if (isMyBusiness) {
+      if (!myBusinessData.length || !myBusinessData[0]?.data) {
+        return []; // Return empty array if no data is available
+      }
+      return myBusinessData[0].data;
+    }
+  
+    if (isMyWishlist) {
+      return Wishlists?.data?.flatMap(item => item.Wishlistdata) || [];
+    }
+  
     return selectedCategory === 'All' 
-      ? data 
-      : data.filter(business => business.industry === selectedCategory);
+      ? allBusinessData 
+      : allBusinessData.filter(business => business.industry === selectedCategory);
   };
+  
 
   const formatCurrency = (value) => value ? (value.startsWith('$') ? value : `$${value}`) : 'N/A';
 
@@ -244,7 +253,7 @@ const MarketPlace = () => {
                 {getCurrentData().map((business) => {
                   return <MarketplaceCard business={business} key={business.id} isMyBusiness={isMyBusiness}   isMyWishlist={isMyWishlist}/>
                 })}
-                {getCurrentData().length === 0 && (
+                {getCurrentData().length === 0     && (
                   <div style={{ 
                     textAlign: 'center',
                     padding: '3rem',

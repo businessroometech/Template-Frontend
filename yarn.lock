@@ -3354,6 +3354,11 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
+file-extension@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.npmjs.org/file-extension/-/file-extension-4.0.5.tgz"
+  integrity sha512-l0rOL3aKkoi6ea7MNZe6OHgqYYpn48Qfflr8Pe9G9JPPTx5A+sfboK91ZufzIs59/lPqh351l0eb6iKU9J5oGg==
+
 file-selector@^0.6.0:
   version "0.6.0"
   resolved "https://registry.npmjs.org/file-selector/-/file-selector-0.6.0.tgz"
@@ -3996,6 +4001,11 @@ is-typed-array@^1.1.3:
   integrity sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==
   dependencies:
     which-typed-array "^1.1.16"
+
+is-url@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/is-url/-/is-url-1.2.4.tgz"
+  integrity sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==
 
 is-wsl@^2.1.1, is-wsl@^2.2.0:
   version "2.2.0"

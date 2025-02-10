@@ -15,14 +15,14 @@ import { LIVE_URL } from '@/utils/api'
 
 const MyConnections = () => {
   // const allConnections = useFetchData(getAllUserConnections)
-  const { user } = useAuthContext();
-  const [allConnections, setAllConnections] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuthContext()
+  const [allConnections, setAllConnections] = useState([])
+  const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
+  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({})
   const [sentStates, setSentStates] = useState<{ [key: string]: boolean }>({})
   const [id, setId] = useState(user?.id)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (allConnections.length) {
@@ -32,281 +32,227 @@ const MyConnections = () => {
   }, [allConnections])
 
   const fetchConnections = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const res = await fetch(`${LIVE_URL}api/v1/connection/get-connection-list`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userId: user?.id,
-          profileId: id
+          profileId: id,
         }),
-      });
+      })
 
       if (!res.ok) {
-        throw new Error(`Failed to fetch connection list.`);
+        throw new Error(`Failed to fetch connection list.`)
       }
 
-      const data = await res.json();
-      setAllConnections(data.connections);
+      const data = await res.json()
+      setAllConnections(data.connections)
       // toast.info(`Connection list get successfully.`);
     } catch (error) {
-      console.error(`Error while fetching connection list:`, error);
+      console.error(`Error while fetching connection list:`, error)
       // toast.error(`Failed to fetch connection list.`);
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-  ;
-
+  }
   const UserRequest = async (profileId: string) => {
-    // Set loading to true only for the specific profileId
-    setLoadingStates((prev) => ({ ...prev, [profileId]: true }));
+    setLoadingStates((prev) => ({ ...prev, [profileId]: true }))
 
-    const apiUrl = `${LIVE_URL}api/v1/connection/send-connection-request`;
+    const apiUrl = `${LIVE_URL}api/v1/connection/send-connection-request`
 
     try {
       const res = await fetch(apiUrl, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           requesterId: user?.id,
           receiverId: profileId,
         }),
-      });
+      })
 
       if (!res.ok) {
-        throw new Error(`Failed to send connection request.`);
+        throw new Error(`Failed to send connection request.`)
       }
-      setSentStates((prev) => ({ ...prev, [profileId]: true }));
-      toast.success(`Connection request sent successfully.`);
+      setSentStates((prev) => ({ ...prev, [profileId]: true }))
+      toast.success(`Connection request sent successfully.`)
     } catch (error) {
-      console.error(`Error while sending connection request:`, error);
+      console.error(`Error while sending connection request:`, error)
 
-      setSentStates((prev) => ({ ...prev, [profileId]: true }));
-      toast.info(`Already sent connection request.`);
+      setSentStates((prev) => ({ ...prev, [profileId]: true }))
+      toast.info(`Already sent connection request.`)
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [profileId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [profileId]: false }))
     }
-  };
+  }
 
   const handleCancel = async () => {
-    setLoading(true);
-    const apiUrl = `${LIVE_URL}api/v1/connection/unsend-connection-request`;
+    setLoading(true)
+    const apiUrl = `${LIVE_URL}api/v1/connection/unsend-connection-request`
     try {
       const res = await fetch(apiUrl, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           requesterId: user?.id,
           receiverId: id,
         }),
-      });
+      })
 
       if (!res.ok) {
-        throw new Error(`Failed to unsend connection request.`);
+        throw new Error(`Failed to unsend connection request.`)
       }
       setSent(false)
-      toast.info(`Connection request unsent successfully.`);
+      toast.info(`Connection request unsent successfully.`)
     } catch (error) {
-      console.error(`Error while unsending connection request:`, error);
-      toast.error(`Failed to unsend connection request.`);
+      console.error(`Error while unsending connection request:`, error)
+      toast.error(`Failed to unsend connection request.`)
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRemove = async (connectionId: string) => {
-    const apiUrl = `${LIVE_URL}api/v1/connection/remove-connection`;
-    try {
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          connectionId: connectionId
-        }),
-      });
-      fetchConnections()
-      if (!res.ok) {
-        throw new Error(`Failed to remove connection request.`);
-      }
-      setSent(false);
-      toast.info(`Connection request remove successfully.`);
-
-    } catch (error) {
-      console.error(`Error while remove connection request:`, error);
-      toast.error(`Failed to remove connection request.`);
-    }
-    finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
+
+  const handleRemove = async (connectionId: string) => {
+    // Set loading to true only for the specific connectionId
+    setLoadingStates((prev) => ({ ...prev, [connectionId]: true }))
+
+    const apiUrl = `${LIVE_URL}api/v1/connection/remove-connection`
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          connectionId: connectionId,
+        }),
+      })
+      fetchConnections()
+      if (!res.ok) {
+        throw new Error(`Failed to remove connection request.`)
+      }
+      setSent(false)
+      toast.info(`Connection request remove successfully.`)
+    } catch (error) {
+      console.error(`Error while remove connection request:`, error)
+      toast.error(`Failed to remove connection request.`)
+    } finally {
+      // Set loading to false only for the specific connectionId
+      setLoadingStates((prev) => ({ ...prev, [connectionId]: false }))
+    }
+  }
+
   if (loading) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center bg-light"
-        style={{ height: '100vh' }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}
-        >
+      <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status" style={{ width: '4rem', height: '4rem', borderWidth: '6px' }}>
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <>
-      <PageMetaData title='Connections' />
-      {/* <ToastContainer /> */}
-      {allConnections.length === 0 ? (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
-          <div className="text-center">
-            <p
-              className="mb-0"
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: '600',
-                color: '#6c757d',
-                opacity: '0.8',
-              }}
-            >
-              No connection requests found
-            </p>
-            <p className="small text-muted">
-              It looks like you have no new connection requests at the moment.
-            </p>
+    <Card className="mb-3"  >
+    <CardBody>
+      {allConnections.map((connection, idx) => (
+        <div
+          key={idx}
+          className={`p-3 d-flex align-items-center ${idx === allConnections.length - 1 ? '' : 'border-bottom'}`}
+          style={{ marginBottom: idx === allConnections.length - 1 ? 0 : '1rem' }} // Add margin-bottom only if it's not the last card
+        >
+          <div className="avatar me-3">
+            <span role="button">
+              <img
+          className="avatar-img rounded-circle"
+          src={connection.profilePictureUrl || avatar}
+          alt={`${connection.firstName} ${connection.lastName}`}
+          style={{ width: '50px', height: '50px' }}
+              />
+            </span>
           </div>
-        </div>
-      ) : (
-        <Card>
-          <CardHeader className="border-0 pb-0">
-            {/* <CardTitle>My Connections</CardTitle> */}
-          </CardHeader>
-          <CardBody>
-            {allConnections && allConnections.map((connection, idx) => (
-              <div >
-                <div className="d-md-flex align-items-center mb-4" key={idx}>
-                  <div className="avatar me-3 mb-3 mb-md-0">
-                    {
-                      <span role="button">
-                        <img className="avatar-img rounded-circle" src={connection.profilePictureUrl ? connection.profilePictureUrl : avatar} alt={`${connection.firstName} ${connection.lastName} picture`} />
-                      </span>
-                    }
-                  </div>
-                  <div className="w-100">
-                    <div className="d-sm-flex align-items-start">
-                      <h6 className="mb-0">
-                        <a href={`/profile/feed/${connection.userId}#${connection.userId}`}>{`${connection.firstName} ${connection.lastName}`}</a>
-                      </h6>
-                      <p className="small ms-sm-2 mb-0">{connection.userRole}</p>
-                      {user?.id !== id && <p style={{ fontSize: "10px" }} className="small text-info ms-sm-2  mb-0">{connection.mutual && "mutual connection"}</p>}
-                    </div>
-                    <ul className="avatar-group mt-1 list-unstyled align-items-sm-center">
-                      {connection?.sharedConnectionAvatars && (
-                        <>
-                          {connection.sharedConnectionAvatars.map((avatar, idx) => (
-                            <li className="avatar avatar-xxs" key={idx}>
-                              <img className="avatar-img rounded-circle" src={avatar} alt="avatar" />
-                            </li>
-                          ))}
-                          <li className="avatar avatar-xxs">
-                            <div className="avatar-img rounded-circle bg-primary">
-                              <span className="smaller text-white position-absolute top-50 start-50 translate-middle">
-                                +{Math.floor(Math.random() * 10)}
-                              </span>
-                            </div>
-                          </li>
-                        </>
-                      )}
-                      <li className={clsx('small', { 'ms-3': connection.sharedConnectionAvatars })}>{connection.meeted}</li>
-                    </ul>
-                  </div>
-                  {connection?.userId !== user?.id ? (<div className="ms-md-auto d-flex">
-                    {(user?.id === id || connection.mutual) ? (
-                      <>
-                        {<Button onClick={() => handleRemove(connection.connectionId)} variant="danger-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0 me-2">
-                          Remove
-                        </Button>}
-                        <Link to="/messaging"><Button onClick={() => navigate('/messaging')} variant="primary-soft" style={{ minWidth: '120px' }} size="sm" className="mb-0">
-                          Message
-                        </Button>
-                        </Link>
-                      </>) : (
-                      <>
-                        {sent && (
-                          <Button
-                            variant="danger-soft"
-                            className="me-2"
-                            type="button"
-                            onClick={handleCancel}
-                            disabled={loading}
-                          >
-                            {loading ? (
-                              <Loading size={15} loading={true} />
-                            ) : (
-                              <>
-                                <FaUserTimes size={19} className="pe-1" />
-                              </>
-                            )}
-                          </Button>
-                        )}
-
-                        {!sent && (
-                          <Button
-                            variant={sentStates[connection?.userId] ? "success-soft" : "primary-soft"}
-                            className="me-2"
-                            type="button"
-                            onClick={() => UserRequest(connection?.userId)}
-                            disabled={loadingStates[connection?.userId]}
-                          >
-                            {loadingStates[connection?.userId] ? (
-                              <Loading size={15} loading={true} />
-                            ) : sentStates[connection?.userId] ? (
-                              <>
-                                <FaUserCheck size={19} className="pe-1" />
-                              </>
-                            ) : (
-                              <>
-                                <FaUserPlus size={19} className="pe-1" />
-                              </>
-                            )}
-                          </Button>
-                        )}
-                      </>
-                    )}
-                  </div>) : (
-                    <Link
-                      to={"/feed/home"}
-                      className="mx-4 text-primary"
-                      type="button"
-
-                    >
-                      <FaUser size={19} className="pe-1" />
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-            <div className="d-grid">
-              {/* <LoadMoreButton /> */}
+          <div className="flex-grow-1">
+            <h6 className="mb-1">
+              <a href={`/profile/feed/${connection.userId}#${connection.userId}`} className="text-dark">
+          {`${connection.firstName} ${connection.lastName}`}
+              </a>
+            </h6>
+            <p className="small text-muted mb-1">{connection.userRole}</p>
+            <p className="small text-muted mb-0">{connection.meeted}</p>
+          </div>
+          {connection?.userId !== user?.id ? (
+            <div className="ms-auto d-flex">
+              {user?.id === id ? (
+          <>
+            <Button
+              onClick={() => handleRemove(connection.connectionId)}
+              variant="outline-danger"
+              size="sm"
+              className="me-2"
+              style={{ minWidth: '120px', transition: '0.2s ease-in-out', fontSize: '15px' }}
+              disabled={loadingStates[connection.connectionId]}
+            >
+              {loadingStates[connection.connectionId] ? <Loading size={15} loading={true} /> : 'Remove'}
+            </Button>
+            <Button
+              onClick={() => navigate('/messaging')}
+              variant="outline-primary"
+              size="sm"
+              style={{ minWidth: '120px', transition: '0.2s ease-in-out', fontSize: '15px' }}
+            >
+              Message
+            </Button>
+          </>
+              ) : (
+          <>
+            {sent ? (
+              <Button
+                variant="outline-danger"
+                size="sm"
+                className="me-2"
+                onClick={handleCancel}
+                disabled={loading}
+                style={{ minWidth: '140px', transition: '0.2s ease-in-out', fontSize: '15px' }}
+              >
+                {loading ? <Loading size={15} loading={true} /> : <FaUserTimes size={16} />}
+              </Button>
+            ) : (
+              <Button
+                variant={sentStates[connection?.userId] ? 'outline-success' : 'outline-primary'}
+                size="sm"
+                className="me-2"
+                onClick={() => UserRequest(connection?.userId)}
+                disabled={loadingStates[connection?.userId]}
+                style={{ minWidth: '140px', transition: '0.2s ease-in-out', fontSize: '15px' }}
+              >
+                {loadingStates[connection?.userId] ? (
+            <Loading size={15} loading={true} />
+                ) : sentStates[connection?.userId] ? (
+            <FaUserCheck size={16} />
+                ) : (
+            <FaUserPlus size={16} />
+                )}
+              </Button>
+            )}
+          </>
+              )}
             </div>
-          </CardBody>
-        </Card>
-      )
-      }
-    </>
+          ) : (
+            <Link to={'/feed/home'} className="mx-4 text-primary">
+              <FaUser size={16} />
+            </Link>
+          )}
+        </div>
+      ))}
+    </CardBody>
+  </Card>  
   )
 }
 export default MyConnections

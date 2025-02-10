@@ -9,6 +9,7 @@ import { useOnlineUsers } from "@/context/OnlineUser.";
 import LoadContentButton from "@/components/LoadContentButton";
 import { useAuthContext } from "@/context/useAuthContext";
 import {  LIVE_URL, SOCKET_URL } from "@/utils/api";
+import { useLastMessage } from "@/context/LastMesageContext";
 
 
 export interface PersonalDetails {
@@ -63,11 +64,12 @@ const Home = () => {
   const { user} = useAuthContext();
   const {fetchOnlineUsers} = useOnlineUsers();
   const navigate = useNavigate();
+  const { fetchLastMessage } = useLastMessage();
   // const [profile,setProfile] = useState({});
-  console.log('Home reloads')
+  // console.log('Home reloads')
+
 
   const [profile,setProfile] = useState<UserProfile>({});
-  // Theek se merge karo isse mat hatao please 🙏
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -78,27 +80,51 @@ const Home = () => {
           },
           body: JSON.stringify({
             userId: user?.id,
-            //profileId: user?.id,
           }),
-        })
-  
+        });
+
         if (!response.ok) {
-          //  navigate('/not-found')
-          throw new Error('Network response was not ok')
+          throw new Error('Network response was not ok');
         }
-        if (response.status === 404) {
-          // navigate('/not-found')
-        }
-        const data = await response.json()
-        
+
+        const data = await response.json();
         setProfile(data?.data);
       } catch (error) {
-        console.error('Error fetching user profile:', error)
-      } 
-    }
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    const fetchConnections = async () => {
+      try {
+        const res = await fetch(`${LIVE_URL}api/v1/connection/get-connection-list`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            profileId: user?.id,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const connectionData = await res.json();
+        // console.log('Connection Data:', connectionData.connections);
+        connectionData.connections.forEach((connection: { userId: string }) => {
+          fetchLastMessage(connection.userId);
+        });
+        // Handle connection data if needed
+      } catch (error) {
+        console.error('Error fetching connection list:', error);
+      }
+    };
+
     fetchUser();
-  },[user.id])
-;
+    fetchConnections();
+  }, [user?.id]);
 
 
 

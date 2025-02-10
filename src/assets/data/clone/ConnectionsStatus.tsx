@@ -146,55 +146,60 @@ const ConnectionsStatus = () => {
           </div>
         </div>
       ) : (
-        
-        <Card>
-            <CardHeader className="border-0 pb-0" />
-            <CardBody>
-                {allConnections && allConnections.map((connection, idx) => (
-                    <div className="d-md-flex align-items-center mb-4" key={idx}>
-                        <div className="avatar me-3 mb-3 mb-md-0">
-                            {
-                                <span role="button">
-                                    <img className="avatar-img rounded-circle" src={connection.requester.profilePictureUrl?connection.requester.profilePictureUrl:avatar} alt={`${connection.requester.firstName} ${connection.requester.lastName} picture`} />
-                                </span>
-                            }
-                        </div>
-                        <div className="w-50">
-                            <div className="d-sm-flex align-items-start">
-                                <h6 className="mb-0">
-                                    <a href={`/profile/feed/${connection.receiver.id}#${connection.receiver.id}`}>
-                                        {`${connection.receiver.firstName} ${connection.receiver.lastName}`}
-                                    </a>
-                                </h6>
-                                <p className="small ms-sm-2 mb-0">{connection.receiver.userRole}</p>
-                            </div>
-                        </div>
-                        <div className="ms-md-auto d-flex align-items-center">
-                            <Button
-                                variant="danger-soft"
-                                size="sm"
-                                className="mb-0 me-2"
-                                onClick={() => handleCancel(connection.receiver.id)}
-                                disabled={loadingStates[connection.receiver.id]}
-                                style={{ minWidth: '120px' }}
-                            >
-                                {loadingStates[connection.receiver.id] ? <span>Loading...</span> : "Cancel"}
-                            </Button>
-                            <Button
-                                variant="light"
-                                size="sm"
-                                className="ms-sm-2 mb-0"
-                                disabled
-                                style={{ minWidth: '120px', borderColor: 'black', color: 'black' }}
-                            >
-                                {connection.status === 'pending' && 'Pending'}
-                            </Button>
-                        </div>
-                    </div>
-                ))}
-            </CardBody>
-        </Card>
-        )}
+        <Card className="rounded">
+        <CardBody>
+          {allConnections.map((connection, idx) => (
+            <div 
+              key={idx} 
+              className={`p-3 d-flex align-items-center ${idx === allConnections.length - 1 ? '' : 'border-bottom'}`}
+            >
+              <div className="avatar me-3">
+            <span role="button">
+              <img
+                className="avatar-img rounded-circle"
+                src={connection.requester.profilePictureUrl || avatar}
+                alt={`${connection.requester.firstName} ${connection.requester.lastName}`}
+                style={{ width: "50px", height: "50px", objectFit: "cover" }}
+              />
+            </span>
+              </div>
+              <div className="flex-grow-1">
+            <h6 className="mb-1">
+              <a href={`/profile/feed/${connection.receiver.id}#${connection.receiver.id}`} 
+                className="text-dark fw-semibold text-decoration-none">
+                {`${connection.receiver.firstName} ${connection.receiver.lastName}`}
+              </a>
+            </h6>
+            <p className="small text-muted mb-1">{connection.receiver.userRole}</p>
+            {/* <p className="small text-muted mb-0">{connection.meeted}</p> */}
+              </div>
+              <div className="ms-auto d-flex">
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="me-2"
+              onClick={() => handleCancel(connection.receiver.id)}
+              disabled={loadingStates[connection.receiver.id]}
+              style={{ minWidth: '120px', transition: "0.2s ease-in-out", fontSize: '15px' }}
+            >
+              {loadingStates[connection.receiver.id] ? <span>Loading...</span> : "Cancel"}
+            </Button>
+            <Button
+              variant="light"
+              size="sm"
+              className="border border-dark text-dark"
+              disabled
+              style={{ minWidth: '120px', transition: "0.2s ease-in-out" }}
+            >
+              {connection.status === 'pending' && 'Pending'}
+            </Button>
+              </div>
+            </div>
+          ))}
+        </CardBody>
+          </Card>
+      
+         )}
         </>
     );
 };

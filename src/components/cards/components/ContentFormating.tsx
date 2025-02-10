@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 // If you're using built-in layout, you will need to import this CSS
 import "@ashwamegh/react-link-preview/dist/index.css";
 import CustomLinkPreview from "./CustomLinkPreview";
+import Loading from "@/components/Loading";
 
 const FormatContent = ({ content }: { content: string }) => {
   const [mentionMap, setMentionMap] = useState<{ [key: string]: string }>({});
@@ -66,7 +67,7 @@ const FormatContent = ({ content }: { content: string }) => {
   const mentionRegex = /(@[a-zA-Z0-9_]+)/g;
   const hashtagRegex = /(#\w+)/g;
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i;
+  const imageRegex = /(https?:\/\/[^\s]+(?:\.(?:png|jpg|jpeg|gif|webp|svg)|\?[^ ]*(?:format=|auto=format))[^ ]*)/gi;
   const videoRegex = /(https?:\/\/.*\.(?:mp4|webm|ogg))/i;
   const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+))/;
   const pptRegex = /(https?:\/\/[^\s]+\.pptx?)/g;
