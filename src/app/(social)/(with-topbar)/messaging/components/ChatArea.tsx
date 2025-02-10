@@ -243,49 +243,37 @@ const ChatArea = () => {
   const status = onlineUsers?.includes(activeChat.personalDetails.id) ? 'online' : 'offline'
 
   return (
-    <Card className="card-chat rounded-0 border-0 mx-5" >
-  <CardBody className="d-flex flex-column h-100 p-0 ">
-    {/* Header */}
-    <div className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white sticky-top" style={{ top: 0, zIndex: 1, borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
-      <div className="d-flex align-items-center">
-        <img className="avatar-img rounded-circle me-2" src={profileImgUrl || avatar} alt={firstName} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+    <Card className="card-chat rounded-0 border-0 mx-2 mx-md-5 mt-3 mt-md-5" style={{ height: '90vh' }}>
+      <CardBody className="d-flex flex-column h-100 p-0">
+      <div className="d-flex align-items-center justify-content-between p-2 p-md-3 border-bottom bg-white sticky-top" style={{ top: 0, zIndex: 1, borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
+        <div className="d-flex align-items-center">
+        <img className="avatar-img rounded-circle me-2" src={profileImgUrl || avatar} alt={firstName} style={{ width: '40px', height: '40px', objectFit: 'cover' }} />
         <div>
           <h6 className="mb-0 text-dark" style={{ fontWeight: '600' }}>{`${firstName} ${lastName}`}</h6>
           <small className="text-secondary" style={{ fontSize: '0.85rem' }}>{status}</small>
         </div>
+        </div>
       </div>
-    </div>
 
-    {/* Message Box */}
-    <div
-      className="flex-grow-1 message-box bg-light"
-      style={{
+      {/* Message Box */}
+      <div
+        className="flex-grow-1 message-box bg-light"
+        style={{
         overflowY: 'auto',
-        padding: '20px',
+        padding: '10px 15px',
         background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
         borderBottomLeftRadius: '15px',
         borderBottomRightRadius: '15px',
-      }}>
-      {/* <InfiniteScroll
-        dataLength={userMessages.length}
-        next={loadMore}
-        hasMore={hasMore}
-        inverse={true}
-        loader={
-          <div className="d-flex justify-content-center align-items-center py-3">
-            <Spinner animation="border" variant="primary" />
-          </div>
-        }> */}
+        }}>
         {[...userMessages].reverse().map((message, index) => (
-          <UserMessage key={index} message={message} toUser={activeChat.personalDetails} profile={profileImgUrl} />
+        <UserMessage key={index} message={message} toUser={activeChat.personalDetails} profile={profileImgUrl} />
         ))}
-      {/* </InfiniteScroll> */}
-      <div ref={messageEndRef} />
-    </div>
+        <div ref={messageEndRef} />
+      </div>
 
-    {/* Footer */}
-    <CardFooter className="bg-white border-top p-3" style={{ borderBottomLeftRadius: '15px', borderBottomRightRadius: '15px' }}>
-      <form onSubmit={handleSubmit(sendChatMessage)}>
+      {/* Footer */}
+      <CardFooter className="bg-white border-top p-2 p-md-3" style={{ borderBottomLeftRadius: '15px', borderBottomRightRadius: '15px' }}>
+        <form onSubmit={handleSubmit(sendChatMessage)} className="d-flex flex-column flex-md-row align-items-center">
         {/* Input Field */}
         <TextFormInput
           placeholder="Type a message"
@@ -294,36 +282,35 @@ const ChatArea = () => {
           maxLength={500}
           rows={1}
           autoComplete="off"
-          className="form-control flex-grow-1 me-2 px-3 py-2 shadow-sm rounded"
+          className="form-control flex-grow-1 me-0 me-md-2 mb-2 mb-md-0 px-3 py-2 shadow-sm rounded"
           style={{
-            fontSize: '1rem',
-            border: '2px solid #ced4da',
-            outline: 'none',
-            borderRadius: '25px',
-            transition: 'border-color 0.3s ease',
+          fontSize: '1rem',
+          border: '2px solid #ced4da',
+          outline: 'none',
+          borderRadius: '25px',
+          transition: 'border-color 0.3s ease',
           }}
         />
         <div className='d-flex align-items-center'>
-        {/* Emoji Button */}
-        <Button
+          {/* Emoji Button */}
+          <Button
           variant="light"
           onClick={() => setShowEmojiPicker((prev) => !prev)}
-          className="d-flex align-items-center m-2 justify-content-center p-2 rounded-circle border shadow-sm me-2"
-          style={{ width: '45px', height: '45px' }}>
+          className="d-flex align-items-center m-1 justify-content-center p-2 rounded-circle border shadow-sm me-1"
+          style={{ width: '40px', height: '40px' }}>
           <BsEmojiSmile size={20} />
-        </Button>
+          </Button>
 
-        <Button
+          <Button
           variant="success-soft"
-          // size="sm"
-          className="d-flex align-items-center m-2 justify-content-center p-2 rounded-circle border shadow-sm me-3"
+          className="d-flex align-items-center m-1 justify-content-center p-2 rounded-circle border shadow-sm me-1"
           onClick={() => setIsGifPickerVisible((prev) => !prev)}
-          style={{ width: '45px', height: '45px' }}>
+          style={{ width: '40px', height: '40px' }}>
           Gif
-        </Button>
+          </Button>
 
-        {/* Send Button */}
-        <Button
+          {/* Send Button */}
+          <Button
           type="submit"
           variant="primary"
           disabled={isLoading}
@@ -337,50 +324,50 @@ const ChatArea = () => {
             transition: 'background-color 0.3s ease',
           }}>
           Send
-        </Button>
+          </Button>
         </div>
-      </form>
+        </form>
 
-      {/* Gif Picker */}
-      {isGifPickerVisible && (
+        {/* Gif Picker */}
+        {isGifPickerVisible && (
         <div
           className="gif-picker-container bg-white shadow-sm border rounded"
           style={{
-            position: 'absolute',
-            bottom: '60px',
-            right: '15px',
-            zIndex: 10,
-            maxWidth: '300px',
-            maxHeight: '300px',
-            overflow: 'hidden',
-            borderRadius: '10px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          position: 'absolute',
+          bottom: '60px',
+          right: '15px',
+          zIndex: 10,
+          maxWidth: '300px',
+          maxHeight: '300px',
+          overflow: 'hidden',
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           }}>
           <GifPicker onGifClick={handleGifClick} tenorApiKey="AIzaSyD1wsKDALKwa8_pRGvhHcENUGFLq5DWhfs" />
         </div>
-      )}
+        )}
 
-      {/* Emoji Picker */}
-      {showEmojiPicker && (
+        {/* Emoji Picker */}
+        {showEmojiPicker && (
         <div
           className="emoji-picker-container bg-white shadow-sm border rounded"
           style={{
-            position: 'absolute',
-            bottom: '60px',
-            right: '15px',
-            zIndex: 10,
-            maxWidth: '300px',
-            maxHeight: '300px',
-            overflow: 'hidden',
-            borderRadius: '10px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          position: 'absolute',
+          bottom: '60px',
+          right: '15px',
+          zIndex: 10,
+          maxWidth: '300px',
+          maxHeight: '300px',
+          overflow: 'hidden',
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           }}>
           <Picker onEmojiClick={handleEmojiClick} />
         </div>
-      )}
-    </CardFooter>
-  </CardBody>
-</Card>
+        )}
+      </CardFooter>
+      </CardBody>
+    </Card>
 
   )
 }

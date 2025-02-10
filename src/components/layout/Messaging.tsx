@@ -6,6 +6,7 @@ import Picker from 'emoji-picker-react'
 import { useAuthContext } from '@/context/useAuthContext'
 import GifPicker from 'gif-picker-react'
 import useToggle from '@/hooks/useToggle'
+import { useLastMessage } from '@/context/LastMesageContext'
 import { useOnlineUsers } from '@/context/OnlineUser.'
 import { formatDistanceToNow } from 'date-fns'
 import { type ChatMessageType, type UserType } from '@/types/data'
@@ -202,6 +203,7 @@ const Messaging = () => {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
   const [messageMap, setMessageMap] = useState<{ [key: string]: string }>({}) // Track messages per user
   const [isOpenCollapseToast, setIsOpenCollapseToast] = useState<{ [key: string]: boolean }>({})
+//  const { lastMessages } = useLastMessage()
   const messageSchema = yup.object({
     newMessage: yup.string().required('Please enter message'),
   })
@@ -209,6 +211,21 @@ const Messaging = () => {
   const { reset, handleSubmit, control, getValues, setValue } = useForm({
     resolver: yupResolver(messageSchema),
   })
+
+  // useEffect(() => {
+  //   if (allUserMessages.length > 0) {
+  //     console.log(lastMessages);
+  //     const updatedChats = allUserMessages.map(user => {
+  //       const lastMessage = lastMessages[user.userId]; // Accessing object property
+  //       return {
+  //         ...user,
+  //         lastMessage: lastMessage ? lastMessage : 'No message yet'
+  //       };
+  //     });
+  //     setAllUserMessages(updatedChats);
+  //     setIsLoading(false);
+  //   }
+  // }, [allUserMessages, lastMessages]);
 
   useEffect(() => {
     if (!selectedUser) return
@@ -290,7 +307,7 @@ const Messaging = () => {
   }, [selectedUser?.userId, page, user])
 
   const sendChatMessage = async (values, chatUser) => {
-    console.log('values', values)
+    // console.log('values', values)
     if (!values.newMessage || !chatUser) return
 
     const newMessage = {
@@ -392,7 +409,7 @@ const Messaging = () => {
           className="form-control"
           placeholder="Search users..."
           onChange={(e) => {
-        const searchTerm = e.target.value.toLowerCase();
+        const searchTerm = e.target.value.toLowerCase();w
         if (searchTerm === '') {
           fetchChatsList(); // Reset to original list when input is cleared
         } else {

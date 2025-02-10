@@ -7,6 +7,8 @@ import { useAuthContext } from '@/context/useAuthContext'
 import { useEffect, useState } from 'react'
 import makeApiRequest from '@/utils/apiServer'
 
+
+
 const ChatUserList = ({ setTotalChats }) => {
   const { width } = useViewPort();
   const { chatList } = useChatContext();
@@ -22,6 +24,7 @@ const ChatUserList = ({ setTotalChats }) => {
         url: 'api/v1/connection/get-connection-list',
         data: { userId: user?.id, profileId: user?.id },
       });
+      
       setChats(res.connections);
       setTotalChats(res.connections.length);
     } catch (error) {

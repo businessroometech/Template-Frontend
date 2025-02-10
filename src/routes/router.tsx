@@ -92,6 +92,7 @@ const AppRouter = (props: RouteProps) => {
       }
     });
     socket.on('messageRead', async () => {
+      console.log('messageRead')
       if (user?.id) {
         await fetchUnreadMessages();
       }
